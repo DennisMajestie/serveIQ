@@ -1,0 +1,455 @@
+[33m❯[39m Building...
+[32m✔[39m Building...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m                       [2m | [22m  [36m5.22 kB[37m[2m | [22m
+[32mstyles.css[37m         [2m | [22m[2mstyles[22m                     [2m | [22m  [36m3.30 kB[37m[2m | [22m
+[32mchunk-YQOESBWP.js[37m  [2m | [22m[2m-[22m                          [2m | [22m[36m754 bytes[37m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m              [2m | [22m  [1m9.28 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mchunk-ISWNQZ37.js[37m  [2m | [22m[2mautopilot-component[22m        [2m | [22m [36m64.01 kB[37m[2m | [22m
+[32mchunk-H7ML3PY6.js[37m  [2m | [22m[2mwaiter-management-component[22m[2m | [22m [36m44.87 kB[37m[2m | [22m
+[32mchunk-4Y5JDKNL.js[37m  [2m | [22m[2msettings-component[22m         [2m | [22m [36m42.91 kB[37m[2m | [22m
+[32mchunk-HCSGHHG3.js[37m  [2m | [22m[2mmenu-management-component[22m  [2m | [22m [36m38.98 kB[37m[2m | [22m
+[32mchunk-3M2HA3HO.js[37m  [2m | [22m[2mtable-detail-component[22m     [2m | [22m [36m37.87 kB[37m[2m | [22m
+[32mchunk-73TT3IOE.js[37m  [2m | [22m[2mtables-management-component[22m[2m | [22m [36m36.66 kB[37m[2m | [22m
+[32mchunk-5TULPMFA.js[37m  [2m | [22m[2manalytics-component[22m        [2m | [22m [36m31.16 kB[37m[2m | [22m
+[32mchunk-LMF6I7NV.js[37m  [2m | [22m[2mdashboard-component[22m        [2m | [22m [36m30.53 kB[37m[2m | [22m
+[32mchunk-G6AAPFGC.js[37m  [2m | [22m[2mregister-business-component[22m[2m | [22m [36m30.14 kB[37m[2m | [22m
+[32mchunk-HY527IGV.js[37m  [2m | [22m[2madmin-shell-component[22m      [2m | [22m [36m24.22 kB[37m[2m | [22m
+[32mchunk-JVML76O5.js[37m  [2m | [22m[2mlogin-component[22m            [2m | [22m [36m19.13 kB[39m[37m[39m[2m | [22m
+[32mchunk-RWQR3H2Z.js[37m  [2m | [22m[2m-[22m                          [2m | [22m [36m17.74 kB[37m[2m | [22m
+
+Application bundle generation complete. [39.768 seconds] - 2026-06-16T14:16:10.886Z
+[39m
+[37mWatch mode enabled. Watching for file changes...[39m
+[37mNOTE: Raw file sizes do not reflect development server per-request transformations.[39m
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4200[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m                      [2m | [22m[1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m                       [2m | [22m [36m5.22 kB[37m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                      [2m | [22m[1mRaw size[22m
+[32mchunk-YEVQ65MO.js[37m  [2m | [22m[2mautopilot-component[22m        [2m | [22m[36m64.01 kB[37m[2m | [22m
+[32mchunk-ZIJLH325.js[37m  [2m | [22m[2mtables-management-component[22m[2m | [22m[36m36.66 kB[37m[2m | [22m
+[32mchunk-VDC55BVO.js[37m  [2m | [22m[2mregister-business-component[22m[2m | [22m[36m35.83 kB[37m[2m | [22m
+[32mchunk-RBTU64U3.js[37m  [2m | [22m[2mdashboard-component[22m        [2m | [22m[36m30.53 kB[37m[2m | [22m
+[32mchunk-HEVQBJSC.js[37m  [2m | [22m[2m-[22m                          [2m | [22m[36m17.82 kB[37m[2m | [22m
+
+Application bundle generation complete. [8.037 seconds] - 2026-06-16T14:40:47.271Z
+[39m
+[37mPage reload sent to client(s).[39m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m          [2m | [22m[1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m           [2m | [22m [36m5.22 kB[37m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m          [2m | [22m[1mRaw size[22m
+[32mchunk-Y4KWMTFX.js[37m  [2m | [22m[2mlogin-component[22m[2m | [22m[36m23.21 kB[37m[2m | [22m
+
+Application bundle generation complete. [1.442 seconds] - 2026-06-16T14:41:02.250Z
+[39m
+[37mPage reload sent to client(s).[39m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m          [2m | [22m[1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m           [2m | [22m [36m5.22 kB[37m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m          [2m | [22m[1mRaw size[22m
+[32mchunk-CU6RA6EO.js[37m  [2m | [22m[2mlogin-component[22m[2m | [22m[36m27.41 kB[37m[2m | [22m
+
+Application bundle generation complete. [1.711 seconds] - 2026-06-16T14:54:10.675Z
+[39m
+[37mComponent update sent to client(s).[39m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m          [2m | [22m[1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m           [2m | [22m [36m5.22 kB[37m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m          [2m | [22m[1mRaw size[22m
+[32mchunk-VDZ477MG.js[37m  [2m | [22m[2mlogin-component[22m[2m | [22m[36m29.99 kB[37m[2m | [22m
+
+Application bundle generation complete. [1.445 seconds] - 2026-06-16T14:54:32.703Z
+[39m
+[37mComponent update sent to client(s).[39m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m          [2m | [22m[1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m           [2m | [22m [36m5.22 kB[37m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m          [2m | [22m[1mRaw size[22m
+[32mchunk-62XEJ7QL.js[37m  [2m | [22m[2mlogin-component[22m[2m | [22m[36m29.98 kB[37m[2m | [22m
+
+Application bundle generation complete. [1.567 seconds] - 2026-06-16T15:05:48.680Z
+[39m
+[37mComponent update sent to client(s).[39m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37mApplication bundle generation failed. [3.824 seconds] - 2026-06-16T15:07:12.974Z
+[39m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'onInfoChange' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:51:153:
+[37m      51 │ ...e.g. The Golden Bistro" (ngModelChange)="[32monInfoChange[37m()" required>
+         ╵                                             [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'onInfoChange' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:62:108:
+[37m      62 │ ...pe" name="businessType" (ngModelChange)="[32monInfoChange[37m()" required>
+         ╵                                             [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isThinking' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:76:51:
+[37m      76 │ ... class="nemotron-reasoning" *ngIf="[32misThinking[37m() || suggestions()">
+         ╵                                       [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:76:67:
+[37m      76 │ ... class="nemotron-reasoning" *ngIf="isThinking() || [32msuggestions[37m()">
+         ╵                                                       [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isThinking' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:83:53:
+[37m      83 │ ...        <span class="thinking-loader" *ngIf="[32misThinki[39m[22m[1m[31mng[37m()"></span>
+         ╵                                                 [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'reasoning' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:86:51:
+[37m      86 │               <div class="reasoning-bubble" *ngIf="[32mreasoning[37m()">
+         ╵                                                    [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'reasoning' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:87:61:
+[37m      87 │ ... <div class="reasoning-content inter-font">{{ [32mreasoning[37m() }}</div>
+         ╵                                                  [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:90:50:
+[37m      90 │               <div class="suggestions-box" *ngIf="[32msuggestions[37m()">
+         ╵                                                   [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:91:63:
+[37m      91 │ ...v class="suggestions-content inter-font">{{ [32msuggestions[37m() }}</div>
+         ╵                                                [32m~~~~~~~~~~~[0m
+
+[39m[22m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37mApplication bundle generation failed. [2.136 seconds] - 2026-06-16T15:07:21.898Z
+[39m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'onInfoChange' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:51:153:
+[37m      51 │ ...e.g. The Golden Bistro" (ngModelChange)="[32monInfoChange[37m()" required>
+         ╵                                             [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'onInfoChange' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:62:108:
+[37m      62 │ ...pe" name="businessType" (ngModelChange)="[32monInfoChange[37m()" required>
+         ╵                                             [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isThinking' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:76:51:
+[37m      76 │ ... class="nemotron-reasoning" *ngIf="[32misThinking[37m() || suggestions()">
+         ╵                                       [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:76:67:
+[37m      76 │ ... class="nemotron-reasoning" *ngIf="isThinking() || [32msuggestions[37m()">
+         ╵                                                       [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isThinking' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:83:53:
+[37m      83 │ ...        <span class="thinking-loader" *ngIf="[32misThinki[39m[22m[1m[31mng[37m()"></span>
+         ╵                                                 [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'reasoning' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:86:51:
+[37m      86 │               <div class="reasoning-bubble" *ngIf="[32mreasoning[37m()">
+         ╵                                                    [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'reasoning' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:87:61:
+[37m      87 │ ... <div class="reasoning-content inter-font">{{ [32mreasoning[37m() }}</div>
+         ╵                                                  [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:90:50:
+[37m      90 │               <div class="suggestions-box" *ngIf="[32msuggestions[37m()">
+         ╵                                                   [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:91:63:
+[37m      91 │ ...v class="suggestions-content inter-font">{{ [32msuggestions[37m() }}</div>
+         ╵                                                [32m~~~~~~~~~~~[0m
+
+[39m[22m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37mApplication bundle generation failed. [5.213 seconds] - 2026-06-16T15:07:34.508Z
+[39m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'onInfoChange' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:53:153:
+[37m      53 │ ...e.g. The Golden Bistro" (ngModelChange)="[32monInfoChange[37m()" required>
+         ╵                                             [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'onInfoChange' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:64:108:
+[37m      64 │ ...pe" name="businessType" (ngModelChange)="[32monInfoChange[37m()" required>
+         ╵                                             [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isThinking' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:78:51:
+[37m      78 │ ... class="nemotron-reasoning" *ngIf="[32misThinking[37m() || suggestions()">
+         ╵                                       [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:78:67:
+[37m      78 │ ... class="nemotron-reasoning" *ngIf="isThinking() || [32msuggestions[37m()">
+         ╵                                                       [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'isThinking' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:85:53:
+[37m      85 │ ...        <span class="thinking-loader" *ngIf="[32misThinki[39m[22m[1m[31mng[37m()"></span>
+         ╵                                                 [32m~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'reasoning' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:88:51:
+[37m      88 │               <div class="reasoning-bubble" *ngIf="[32mreasoning[37m()">
+         ╵                                                    [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'reasoning' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:89:61:
+[37m      89 │ ... <div class="reasoning-content inter-font">{{ [32mreasoning[37m() }}</div>
+         ╵                                                  [32m~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:92:50:
+[37m      92 │               <div class="suggestions-box" *ngIf="[32msuggestions[37m()">
+         ╵                                                   [32m~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'suggestions' does not exist on type 'RegisterBusinessComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:93:63:
+[37m      93 │ ...v class="suggestions-content inter-font">{{ [32msuggestions[37m() }}</div>
+         ╵                                                [32m~~~~~~~~~~~[0m
+
+[39m[22m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37mApplication bundle generation failed. [1.889 seconds] - 2026-06-16T15:07:45.946Z
+[39m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2345: Argument of type '(prev: any) => string' is not assignable to parameter of type 'string'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:355:44:
+[37m      355 │           if (content) this.suggestions.set([32mprev => prev + content[37m);
+          ╵                                             [32m~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Did you mean to call this expression?
+
+    apps/admin/src/app/register/register-business.component.ts:355:44:
+[37m      355 │           if (content) this.suggestions.set([32mprev => prev + content[37m);
+          ╵                                             [32m~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS7006: Parameter 'prev' implicitly has an 'any' type.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/register/register-business.component.ts:355:44:
+[37m      355 │           if (content) this.suggestions.set([32mprev[37m => prev + content);
+          ╵                                             [32m~~~~[0m
+
+[39m[22m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m                       [2m | [22m  [36m5.22 kB[37m[2m | [22m
+[32mstyles.css[37m         [2m | [22m[2mstyles[22m                     [2m | [22m  [36m3.30 kB[37m[2m | [22m
+[32mchunk-YQOESBWP.js[37m  [2m | [22m[2m-[22m                          [2m | [22m[36m754 bytes[37m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m              [2m | [22m  [1m9.28 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mchunk-AKZ3N7YW.js[37m  [2m | [22m[2mautopilot-component[22m        [2m | [22m [36m61.10 kB[37m[2m | [22m
+[32mchunk-XIATHXIO.js[37m  [2m | [22m[2mregister-business-component[22m[2m | [22m [36m45.32 kB[37m[2m | [22m
+[32mchunk-H7ML3PY6.js[37m  [2m | [22m[2mwaiter-management-component[22m[2m | [22m [36m44.87 kB[37m[2m | [22m
+[32mchunk-4Y5JDKNL.js[37m  [2m | [22m[2msettings-component[22m         [2m | [22m [36m42.91 kB[37m[2m | [22m
+[32mchunk-HCSGHHG3.js[37m  [2m | [22m[2mmenu-management-component[22m  [2m | [22m [36m38.98 kB[37m[2m | [22m
+[32mchunk-3M2HA3HO.js[37m  [2m | [22m[2mtable-detail-component[22m     [2m | [22m [36m37.87 kB[37m[2m | [22m
+[32mchunk-ZIJLH325.js[37m  [2m | [22m[2mtables-management-component[22m[2m | [22m [36m36.66 kB[37m[2m | [22m
+[32mchunk-5TULPMFA.js[37m  [2m | [22m[2manalytics-component[22m        [2m | [22m [36m31.16 kB[37m[2m | [22m
+[32mchunk-RBTU64U3.js[37m  [2m | [22m[2mdashboard-component[22m        [2m | [22m [36m30.53 kB[37m[2m | [22m
+[32mchunk-62XEJ7QL.js[37m  [2m | [22m[2mlogin-component[22m            [2m | [22m [36m29.98 kB[37m[2m | [22m
+[32mchunk-HY527IGV.js[37m  [2m | [22m[2madmin-shell-component[22m      [2m | [22m [36m24.22 kB[39m[37m[39m[2m | [22m
+[32mchunk-HEVQBJSC.js[37m  [2m | [22m[2m-[22m                          [2m | [22m [36m17.82 kB[37m[2m | [22m
+[32mchunk-QVFANDJI.js[37m  [2m | [22m[2m-[22m                          [2m | [22m  [36m2.67 kB[37m[2m | [22m
+
+Application bundle generation complete. [2.878 seconds] - 2026-06-16T15:07:54.376Z
+[39m
+[37mPage reload sent to client(s).[39m
+[2m16:08:13[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ new dependencies optimized: [33msweetalert2[32m[39m
+[2m16:08:13[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37mApplication bundle generation failed. [1.464 seconds] - 2026-06-16T15:08:22.069Z
+[39m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'errorMessage' does not exist on type 'LoginComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:73:46:
+[37m      73 │             <div class="error-message" *ngIf="[32merrorMessage[37m()">
+         ╵                                               [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'errorMessage' does not exist on type 'LoginComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:74:17:
+[37m      74 │               {{ [32merrorMessage[37m() }}
+         ╵                  [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'Swal'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:243:6:
+[37m      243 │       [32mSwal[37m.fire({
+          ╵       [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'Swal'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:256:8:
+[37m      256 │         [32mSwal[37m.fire({
+          ╵         [32m~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'Swal'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:269:8:
+[37m      269 │         [32mSwal[37m.fire({
+          ╵         [32m~~~~[0m
+
+[39m[22m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37mApplication bundle generation failed. [1.044 seconds] - 2026-06-16T15:08:33.084Z
+[39m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'errorMessage' does not exist on type 'LoginComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:74:46:
+[37m      74 │             <div class="error-message" *ngIf="[32merrorMessage[37m()">
+         ╵                                               [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'errorMessage' does not exist on type 'LoginComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:75:17:
+[37m      75 │               {{ [32merrorMessage[37m() }}
+         ╵                  [32m~~~~~~~~~~~~[0m
+
+[39m[22m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37mApplication bundle generation failed. [0.138 seconds] - 2026-06-16T15:09:00.670Z
+[39m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'errorMessage' does not exist on type 'LoginComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:74:46:
+[37m      74 │             <div class="error-message" *ngIf="[32merrorMessage[37m()">
+         ╵                                               [32m~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'errorMessage' does not exist on type 'LoginComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/admin/src/app/login/login.component.ts:75:17:
+[37m      75 │               {{ [32merrorMessage[37m() }}
+         ╵                  [32m~~~~~~~~~~~~[0m
+
+[39m[22m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m                       [2m | [22m  [36m5.22 kB[37m[2m | [22m
+[32mstyles.css[37m         [2m | [22m[2mstyles[22m                     [2m | [22m  [36m3.77 kB[37m[2m | [22m
+[32mchunk-YQOESBWP.js[37m  [2m | [22m[2m-[22m                          [2m | [22m[36m754 bytes[37m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m              [2m | [22m  [1m9.75 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mchunk-AKZ3N7YW.js[37m  [2m | [22m[2mautopilot-component[22m        [2m | [22m [36m61.10 kB[37m[2m | [22m
+[32mchunk-XIATHXIO.js[37m  [2m | [22m[2mregister-business-component[22m[2m | [22m [36m45.32 kB[37m[2m | [22m
+[32mchunk-H7ML3PY6.js[37m  [2m | [22m[2mwaiter-management-component[22m[2m | [22m [36m44.87 kB[37m[2m | [22m
+[32mchunk-4Y5JDKNL.js[37m  [2m | [22m[2msettings-component[22m         [2m | [22m [36m42.91 kB[37m[2m | [22m
+[32mchunk-HCSGHHG3.js[37m  [2m | [22m[2mmenu-management-component[22m  [2m | [22m [36m38.98 kB[37m[2m | [22m
+[32mchunk-3M2HA3HO.js[37m  [2m | [22m[2mtable-detail-component[22m     [2m | [22m [36m37.87 kB[37m[2m | [22m
+[32mchunk-ZIJLH325.js[37m  [2m | [22m[2mtables-management-component[22m[2m | [22m [36m36.66 kB[37m[2m | [22m
+[32mchunk-5TULPMFA.js[37m  [2m | [22m[2manalytics-component[22m        [2m | [22m [36m31.16 kB[37m[2m | [22m
+[32mchunk-RBTU64U3.js[37m  [2m | [22m[2mdashboard-component[22m        [2m | [22m [36m30.53 kB[37m[2m | [22m
+[32mchunk-TTX4H5JV.js[37m  [2m | [22m[2mlogin-component[22m            [2m | [22m [36m29.71 kB[37m[2m | [22m
+[32mchunk-HY527IGV.js[37m  [2m | [22m[2madmin-shell-component[22m      [2m | [22m [36m24.22 kB[39m[37m[39m[2m | [22m
+[32mchunk-HEVQBJSC.js[37m  [2m | [22m[2m-[22m                          [2m | [22m [36m17.82 kB[37m[2m | [22m
+[32mchunk-QVFANDJI.js[37m  [2m | [22m[2m-[22m                          [2m | [22m  [36m2.67 kB[37m[2m | [22m
+
+Application bundle generation complete. [2.217 seconds] - 2026-06-16T15:09:08.788Z
+[39m
+[37mPage reload sent to client(s).[39m
+[33m❯[39m Changes detected. Rebuilding...
+[32m✔[39m Changes detected. Rebuilding...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m              [2m | [22m[1mRaw size[22m
+[32mmain.js[37m            [2m | [22m[2mmain[22m               [2m | [22m [36m5.22 kB[37m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m              [2m | [22m[1mRaw size[22m
+[32mchunk-5MY3KW54.js[37m  [2m | [22m[2mdashboard-component[22m[2m | [22m[36m36.69 kB[37m[2m | [22m
+
+Application bundle generation complete. [1.631 seconds] - 2026-06-16T15:09:42.786Z
+[39m
+[37mPage reload sent to client(s).[39m

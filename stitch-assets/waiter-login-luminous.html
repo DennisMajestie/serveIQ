@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LUMINA | ServeIQ Waiter Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Space+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#3d4a3d",
+                    "on-background": "#dce1fb",
+                    "on-surface-variant": "#bccbb9",
+                    "inverse-on-surface": "#2a3043",
+                    "inverse-surface": "#dce1fb",
+                    "surface-variant": "#2e3447",
+                    "surface-dim": "#0c1324",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-surface": "#dce1fb",
+                    "tertiary-container": "#ff8892",
+                    "primary-fixed-dim": "#4ae176",
+                    "on-secondary-fixed": "#001a42",
+                    "primary": "#4be277",
+                    "inverse-primary": "#006e2f",
+                    "primary-fixed": "#6bff8f",
+                    "on-primary-container": "#004b1e",
+                    "outline": "#869585",
+                    "tertiary": "#ffb3b7",
+                    "on-primary-fixed-variant": "#005321",
+                    "on-tertiary-fixed-variant": "#92002a",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-tertiary": "#67001b",
+                    "error": "#ffb4ab",
+                    "background": "#0c1324",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-tertiary-container": "#840025",
+                    "on-error": "#690005",
+                    "on-primary": "#003915",
+                    "surface-container": "#191f31",
+                    "surface-container-low": "#151b2d",
+                    "secondary-container": "#0566d9",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed": "#002109",
+                    "on-secondary-container": "#e6ecff",
+                    "surface-container-highest": "#2e3447",
+                    "primary-container": "#22c55e",
+                    "surface-tint": "#4ae176",
+                    "secondary": "#adc6ff",
+                    "surface-container-high": "#23293c",
+                    "tertiary-fixed-dim": "#ffb2b7",
+                    "surface-bright": "#33394c",
+                    "tertiary-fixed": "#ffdadb",
+                    "surface": "#0c1324",
+                    "on-tertiary-fixed": "#40000d",
+                    "surface-container-lowest": "#070d1f",
+                    "on-secondary": "#002e6a",
+                    "error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "container-padding": "32px",
+                    "bento-gap": "20px",
+                    "inner-padding": "24px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Space Grotesk"],
+                    "headline-md": ["Space Grotesk"],
+                    "display-lg": ["Space Grotesk"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "body-lg": ["Inter"],
+                    "metric-sm": ["Space Grotesk"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "metric-sm": ["18px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .mesh-gradient {
+            background-color: #0c1324;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(75, 226, 119, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(173, 198, 255, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(255, 178, 183, 0.1) 0px, transparent 50%);
+            animation: pulse-mesh 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-mesh {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        .glass-card {
+            background: rgba(25, 31, 49, 0.4);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .pin-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pin-dot.active {
+            background: #4be277;
+            box-shadow: 0 0 15px rgba(75, 226, 119, 0.8);
+            transform: scale(1.2);
+        }
+
+        .numpad-btn {
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .numpad-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .numpad-btn:active {
+            transform: scale(0.9);
+            background: rgba(75, 226, 119, 0.2);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 10px rgba(75, 226, 119, 0.4);
+        }
+
+        body {
+            overflow: hidden;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center mesh-gradient">
+<!-- Background Atmospheric Elements -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden">
+<div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary/10 blur-[120px]"></div>
+<div class="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-secondary/10 blur-[120px]"></div>
+</div>
+<!-- Main Login Canvas -->
+<main class="relative z-10 w-full max-w-[480px] px-6">
+<!-- Top App Bar (Simplified for Login Context) -->
+<div class="flex flex-col items-center mb-10 space-y-2">
+<h1 class="font-headline-lg text-headline-lg tracking-tighter text-primary drop-shadow-[0_0_10px_rgba(75,226,119,0.4)]">
+                LUMINA
+            </h1>
+<p class="font-label-md text-label-md text-on-surface-variant/60 tracking-[0.2em] uppercase">
+                Staff Authentication
+            </p>
+</div>
+<!-- Central Login Bento Card -->
+<div class="glass-card rounded-[40px] p-inner-padding flex flex-col items-center space-y-10">
+<!-- User Avatar & Status -->
+<div class="flex flex-col items-center space-y-4">
+<div class="relative">
+<div class="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 p-1">
+<img class="w-full h-full object-cover rounded-full" data-alt="A professional portrait of a young male waiter with a friendly and focused expression. He is wearing a modern black restaurant uniform. The lighting is dramatic and moody, with emerald and azure highlights that match the dark, high-tech hospitality interface. The background is a blurred, high-end restaurant interior with glowing architectural details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbXhDu6u0C5qxbXGYZO5L2K6IZQfM59ZkXv9gph0qxGy24bSF_y70MCNx7dbmZXphUZrhEWj90TlkXT4Y-3XyIqiXSQueBrzkvQTDFh3ZZHq1UMk4T-JGb3cfFpkcrBpRLbKqulvyQnzdVuss8-GZIJ7ch68-zUPqk4nf9uWormhbkColBAcqRAH8Q0PKoWdUinOYefIl6Ib_LODiqtoan8qr7Njy0YrBc-h9S7o_vV68XSaep68oJbHAy3tzTqrrqMwwd5b0p1adV"/>
+</div>
+<div class="absolute bottom-1 right-1 w-5 h-5 bg-primary border-4 border-surface-container rounded-full shadow-[0_0_10px_rgba(75,226,119,0.5)]"></div>
+</div>
+<div class="text-center">
+<h2 class="font-headline-md text-headline-md text-on-surface">Enter Staff PIN</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Welcome back to Shift #402</p>
+</div>
+</div>
+<!-- PIN Display Indicators -->
+<div class="flex space-x-4" id="pin-indicators">
+<div class="pin-dot"></div>
+<div class="pin-dot"></div>
+<div class="pin-dot"></div>
+<div class="pin-dot"></div>
+<div class="pin-dot"></div>
+<div class="pin-dot"></div>
+</div>
+<!-- Numpad Grid -->
+<div class="grid grid-cols-3 gap-6 w-full max-w-[280px]">
+<button class="numpad-btn" onclick="handlePin('1')"><span class="font-headline-md text-headline-md">1</span></button>
+<button class="numpad-btn" onclick="handlePin('2')"><span class="font-headline-md text-headline-md">2</span></button>
+<button class="numpad-btn" onclick="handlePin('3')"><span class="font-headline-md text-headline-md">3</span></button>
+<button class="numpad-btn" onclick="handlePin('4')"><span class="font-headline-md text-headline-md">4</span></button>
+<button class="numpad-btn" onclick="handlePin('5')"><span class="font-headline-md text-headline-md">5</span></button>
+<button class="numpad-btn" onclick="handlePin('6')"><span class="font-headline-md text-headline-md">6</span></button>
+<button class="numpad-btn" onclick="handlePin('7')"><span class="font-headline-md text-headline-md">7</span></button>
+<button class="numpad-btn" onclick="handlePin('8')"><span class="font-headline-md text-headline-md">8</span></button>
+<button class="numpad-btn" onclick="handlePin('9')"><span class="font-headline-md text-headline-md">9</span></button>
+<div class="flex items-center justify-center">
+<button class="text-error/60 hover:text-error transition-colors font-label-md text-label-md" onclick="clearPin()">CLEAR</button>
+</div>
+<button class="numpad-btn" onclick="handlePin('0')"><span class="font-headline-md text-headline-md">0</span></button>
+<div class="flex items-center justify-center">
+<button class="text-on-surface-variant/40 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">fingerprint</span>
+</button>
+</div>
+</div>
+<!-- Footer Links -->
+<div class="w-full flex justify-between items-center px-4 pt-4">
+<a class="font-body-md text-label-md text-on-surface-variant/60 hover:text-primary transition-colors" href="#">Forgot PIN?</a>
+<div class="flex items-center space-x-2 text-on-surface-variant/40">
+<span class="material-symbols-outlined text-sm">lock</span>
+<span class="font-label-sm text-label-sm">Secure Terminal</span>
+</div>
+</div>
+</div>
+<!-- Help Info Bento Cell (Secondary) -->
+<div class="mt-8 grid grid-cols-2 gap-4">
+<div class="glass-card rounded-[24px] p-4 flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">support_agent</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Manager Call</span>
+</div>
+<div class="glass-card rounded-[24px] p-4 flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">schedule</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">View Roster</span>
+</div>
+</div>
+</main>
+<script>
+        let currentPin = "";
+        const MAX_PIN = 6;
+        const indicators = document.querySelectorAll('.pin-dot');
+
+        function updateIndicators() {
+            indicators.forEach((dot, index) => {
+                if (index < currentPin.length) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function handlePin(digit) {
+            if (currentPin.length < MAX_PIN) {
+                currentPin += digit;
+                updateIndicators();
+                
+                // Micro-interaction: Haptic feel via scale
+                const btn = event.currentTarget;
+                
+                if (currentPin.length === MAX_PIN) {
+                    // Simulate processing
+                    setTimeout(() => {
+                        console.log("PIN Entered: ", currentPin);
+                        // Visual feedback for "success"
+                        document.querySelector('.glass-card').style.boxShadow = "0 0 50px rgba(75, 226, 119, 0.2)";
+                        
+                        // Transition logic would go here
+                        setTimeout(() => {
+                            // Reset for demo
+                            currentPin = "";
+                            updateIndicators();
+                            document.querySelector('.glass-card').style.boxShadow = "";
+                        }, 1000);
+                    }, 300);
+                }
+            }
+        }
+
+        function clearPin() {
+            currentPin = "";
+            updateIndicators();
+        }
+
+        // Atmosphere: Subtle cursor glow effect
+        const body = document.body;
+        body.addEventListener('mousemove', e => {
+            const x = e.clientX;
+            const y = e.clientY;
+            body.style.backgroundImage = `
+                radial-gradient(circle at ${x}px ${y}px, rgba(75, 226, 119, 0.05) 0%, transparent 40%),
+                radial-gradient(at 0% 0%, rgba(75, 226, 119, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(173, 198, 255, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(255, 178, 183, 0.1) 0px, transparent 50%)
+            `;
+        });
+    </script>
+</body></html>

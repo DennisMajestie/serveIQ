@@ -1,0 +1,57 @@
+<div class="receipt-container">
+  <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+  <!-- Main Content -->
+  <main class="receipt-main">
+    <!-- Success Icon -->
+    <div class="success-icon">
+      <div class="success-circle">
+        <span class="material-symbols-outlined">check</span>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="title-section">
+      <h1>Payment Confirmed</h1>
+      <p>The transaction was processed successfully.</p>
+    </div>
+
+    <!-- Receipt Card -->
+    <div class="receipt-card">
+      <div class="detail-row">
+        <span class="label">Amount Paid</span>
+        <span class="value">₦{{ amountPaid.toLocaleString('en-US', {minimumFractionDigits: 2})}}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Date</span>
+        <span class="value">{{ date }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Table Number</span>
+        <span class="value">Table {{ tableNumber }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Transaction ID</span>
+        <span class="value">{{ transactionId }}</span>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons-section">
+      <button class="btn-primary" (click)="whatsAppReceipt()">
+        <span class="material-symbols-outlined">share</span>
+        WhatsApp Receipt
+      </button>
+      <button class="btn-secondary" (click)="printReceipt()">
+        <span class="material-symbols-outlined">print</span>
+        Print Receipt
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="receipt-footer">
+    <button class="footer-btn" (click)="goToTables()">
+      Back to Tables
+    </button>
+  </footer>
+</div>

@@ -1,0 +1,54 @@
+<div class="open-tab-container">
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <button class="back-btn" (click)="cancel()">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h1 class="nav-title">Open New Tab — {{ tableName }}</h1>
+    </div>
+    <button class="close-btn" (click)="cancel()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="open-tab-main">
+    <div class="form-section">
+      <!-- Customer Name -->
+      <div class="field-group">
+        <label class="field-label">Customer Name (Optional)</label>
+        <input 
+          type="text" 
+          class="field-input" 
+          placeholder="Enter name"
+          [(ngModel)]="customerName"
+        />
+      </div>
+
+      <!-- Number of People -->
+      <div class="field-group">
+        <label class="field-label">Number of People</label>
+        <div class="stepper">
+          <button class="stepper-btn" (click)="numPeople = (numPeople > 1 ? numPeople - 1 : 1)">
+            <span class="material-symbols-outlined">remove</span>
+          </button>
+          <span class="stepper-count">{{ numPeople }}</span>
+          <button class="stepper-btn" (click)="numPeople = numPeople + 1">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Actions -->
+  <footer class="open-tab-footer">
+    <button class="confirm-btn" (click)="confirm()">
+      Open Tab
+    </button>
+    <button class="cancel-btn" (click)="cancel()">
+      Cancel
+    </button>
+  </footer>
+</div>

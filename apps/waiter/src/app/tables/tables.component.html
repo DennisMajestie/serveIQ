@@ -1,0 +1,97 @@
+<div class="tables-container">
+  <!-- Top App Bar -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <button class="icon-btn">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <h1 class="app-title">ServeIQ</h1>
+    </div>
+    <div class="top-bar-right">
+      <div class="profile-avatar">
+        <img alt="User Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDERyoik6wC9viKHAGUBrP6h3aTLSHEH0zRa25brzSonbwMabTx07ChzW9BR0zsbOO1mb7XQIeh56oKNONAZxIPAKSHlBs6KHIzvVr4oH0wp1uwxCU_gBreIbUYtXOcGlecII4AOCtFN_VhWyIpseV5FOs1xc0iaHJCfa2bj1jrs1Zm0RZt6V7HYO9nk1tbZgHGcO--W68sKJC3VzTJszUZpj87qXDPv0ePJI2T8TvHe0IR3kQQxdgy1Bt_g7xevecdRnRpZXVqK7u7">
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- Dashboard Summary -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <p class="stat-label">Total Tables</p>
+        <p class="stat-value total">{{ stats().totalTables }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Available</p>
+        <p class="stat-value available">{{ stats().available }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Pending Clean</p>
+        <p class="stat-value pending">{{ stats().occupied }}</p>
+      </div>
+    </div>
+
+    <!-- Section Title -->
+    <div class="page-header">
+      <h2 class="page-title">{{ branchName }}</h2>
+      <button class="filter-btn">
+        <span class="material-symbols-outlined text-xs">filter_list</span>
+        Filter
+      </button>
+    </div>
+
+    <!-- Tables Grid -->
+    <div class="tables-grid">
+      @for (table of tables(); track table.id) {
+        <div class="table-card" [class]="getStatusClass(table.status)" (click)="onTableClick(table)">
+          <div class="card-top">
+            <span class="table-name">{{ table.label || table.tableNumber }}</span>
+            <span class="table-status"
+                  [class.status-pulse]="table.status === 'occupied'"
+                  [style.backgroundColor]="getStatusColor(table.status) + '20'"
+                  [style.color]="getStatusColor(table.status)">
+              {{ table.status }}
+            </span>
+          </div>
+          
+          <div class="card-bottom">
+            <div class="capacity-row">
+              <span class="text-on-surface-variant font-label-md text-xs">Capacity: {{ table.capacity }}</span>
+            </div>
+
+            @if (table.status === 'available') {
+              <button class="seat-table-btn" (click)="$event.stopPropagation(); onSeatTable(table)">
+                Seat Table
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+
+  <!-- FAB for Quick Order -->
+  <button class="fab">
+    <span class="material-symbols-outlined text-3xl">add_shopping_cart</span>
+  </button>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a class="nav-item active" routerLink="/tables" routerLinkActive="active">
+      <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">table_restaurant</span>
+      <span class="nav-label">Tables</span>
+    </a>
+    <a class="nav-item" routerLink="/tabs/history" routerLinkActive="active">
+      <span class="material-symbols-outlined text-2xl">receipt_long</span>
+      <span class="nav-label">Orders</span>
+    </a>
+    <a class="nav-item" routerLink="/menu" routerLinkActive="active">
+      <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
+      <span class="nav-label">Menu</span>
+    </a>
+    <a class="nav-item" routerLink="/tabs/history" routerLinkActive="active">
+      <span class="material-symbols-outlined text-2xl">more_horiz</span>
+      <span class="nav-label">More</span>
+    </a>
+  </nav>
+</div>

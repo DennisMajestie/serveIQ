@@ -1,0 +1,341 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>ServeIQ | Tables Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#cde5ff",
+                    "error": "#ba1a1a",
+                    "secondary-container": "#d9dff5",
+                    "primary": "#9d4300",
+                    "on-primary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#341100",
+                    "background": "#0F0F0F",
+                    "on-tertiary-container": "#003554",
+                    "surface": "#1A1A1A",
+                    "on-secondary-fixed": "#141b2b",
+                    "surface-variant": "#dce2f3",
+                    "on-secondary-container": "#5c6274",
+                    "secondary-fixed": "#dce2f7",
+                    "primary-container": "#f97316",
+                    "surface-container-highest": "#262626",
+                    "outline-variant": "#e0c0b1",
+                    "inverse-surface": "#ebf1ff",
+                    "inverse-primary": "#ffb690",
+                    "surface-container-lowest": "#000000",
+                    "secondary-fixed-dim": "#c0c6db",
+                    "primary-fixed": "#ffdbca",
+                    "inverse-on-surface": "#2a313d",
+                    "surface-dim": "#121212",
+                    "on-tertiary-fixed": "#001d32",
+                    "on-tertiary": "#ffffff",
+                    "secondary": "#575e70",
+                    "on-tertiary-fixed-variant": "#004b74",
+                    "tertiary-container": "#00a2f4",
+                    "surface-tint": "#9d4300",
+                    "on-secondary-fixed-variant": "#404758",
+                    "on-surface-variant": "#dce2f3",
+                    "primary-fixed-dim": "#ffb690",
+                    "on-background": "#f9f9ff",
+                    "on-primary-container": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#1A1A1A",
+                    "surface-container": "#262626",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed-dim": "#93ccff",
+                    "outline": "#8c7164",
+                    "on-surface": "#f9f9ff",
+                    "tertiary": "#006398",
+                    "surface-bright": "#1A1A1A",
+                    "on-primary-fixed-variant": "#783200",
+                    "surface-container-high": "#2c2c2c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "gutter-mobile": "16px",
+                    "tap-target-min": "48px",
+                    "stack-md": "16px",
+                    "margin-page": "24px",
+                    "gutter-web": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "mono-sm": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "mono-xs": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "mono-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "mono-xs": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0F0F0F;
+            color: #f9f9ff;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .status-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .7; }
+        }
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased select-none">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#0F0F0F] border-b border-white/10 flex justify-between items-center px-gutter-mobile h-tap-target-min">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary-container active:scale-95 transition-transform" data-icon="menu">menu</button>
+<h1 class="font-headline-md text-headline-md-mobile font-bold text-primary-container">ServeIQ</h1>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden border border-white/20 active:scale-95 transition-transform">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDERyoik6wC9viKHAGUBrP6h3aTLSHEH0zRa25brzSonbwMabTx07ChzW9BR0zsbOO1mb7XQIeh56oKNONAZxIPAKSHlBs6KHIzvVr4oH0wp1uwxCU_gBreIbUYtXOcGlecII4AOCtFN_VhWyIpseV5FOs1xc0iaHJCfa2bj1jrs1Zm0RZt6V7HYO9nk1tbZgHGcO--W68sKJC3VzTJszUZpj87qXDPv0ePJI2T8TvHe0IR3kQQxdgy1Bt_g7xevecdRnRpZXVqK7u7">
+</div>
+</div>
+</header>
+<main class="pt-20 px-gutter-mobile pb-40">
+<!-- Dashboard Summary -->
+<div class="mb-6 flex gap-3 overflow-x-auto pb-2 no-scrollbar px-gutter-mobile -mx-gutter-mobile">
+<div class="bg-surface p-4 rounded-xl flex-shrink-0 min-w-[140px] border border-white/5">
+<p class="text-on-surface-variant font-label-md text-xs mb-1">Total Tables</p>
+<p class="font-headline-md text-primary-container">12</p>
+</div>
+<div class="bg-surface p-4 rounded-xl flex-shrink-0 min-w-[140px] border border-white/5">
+<p class="text-on-surface-variant font-label-md text-xs mb-1">Available</p>
+<p class="font-headline-md text-[#22C55E]">4</p>
+</div>
+<div class="bg-surface p-4 rounded-xl flex-shrink-0 min-w-[140px] border border-white/5">
+<p class="text-on-surface-variant font-label-md text-xs mb-1">Pending Clean</p>
+<p class="font-headline-md text-[#EAB308]">2</p>
+</div>
+</div>
+<!-- Section Title -->
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface">Main Dining Room</h2>
+<button class="flex items-center gap-1 text-primary-container font-label-md">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                Filter
+            </button>
+</div>
+<!-- Table Grid -->
+<div class="grid grid-cols-2 gap-4 w-full">
+<!-- Table 1 - Occupied -->
+<div class="bg-surface border-l-4 border-[#EF4444] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform shadow-lg shadow-black/20">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T1</span>
+<span class="bg-[#EF4444]/20 text-[#EF4444] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Occupied</span>
+</div>
+<div class="mt-4">
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span>
+<span class="font-mono-sm text-xs">45m seated</span>
+</div>
+<p class="font-label-md text-on-surface">$142.50</p>
+</div>
+</div>
+<!-- Table 2 - Available -->
+<div class="bg-surface border-l-4 border-[#22C55E] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T2</span>
+<span class="bg-[#22C55E]/20 text-[#22C55E] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Ready</span>
+</div>
+<div class="mt-4 flex flex-col items-start">
+<span class="text-on-surface-variant font-label-md text-xs">Capacity: 4</span>
+<button class="mt-2 w-full py-2 bg-primary-container/10 border border-primary-container/30 text-primary-container rounded-lg font-label-md text-xs">Seat Table</button>
+</div>
+</div>
+<!-- Table 3 - Pending -->
+<div class="bg-surface border-l-4 border-[#EAB308] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T3</span>
+<span class="bg-[#EAB308]/20 text-[#EAB308] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider status-pulse">Cleaning</span>
+</div>
+<div class="mt-4">
+<div class="flex items-center gap-2 text-[#EAB308] mb-1">
+<span class="material-symbols-outlined text-xs" data-icon="mop">mop</span>
+<span class="font-label-md text-xs">Dirty</span>
+</div>
+</div>
+</div>
+<!-- Table 4 - Occupied -->
+<div class="bg-surface border-l-4 border-[#EF4444] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform shadow-lg shadow-black/20">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T4</span>
+<span class="bg-[#EF4444]/20 text-[#EF4444] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Occupied</span>
+</div>
+<div class="mt-4">
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span>
+<span class="font-mono-sm text-xs">12m seated</span>
+</div>
+<p class="font-label-md text-on-surface">$54.20</p>
+</div>
+</div>
+<!-- Table 5 - Available -->
+<div class="bg-surface border-l-4 border-[#22C55E] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T5</span>
+<span class="bg-[#22C55E]/20 text-[#22C55E] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Ready</span>
+</div>
+<div class="mt-4 flex flex-col items-start">
+<span class="text-on-surface-variant font-label-md text-xs">Capacity: 2</span>
+<button class="mt-2 w-full py-2 bg-primary-container/10 border border-primary-container/30 text-primary-container rounded-lg font-label-md text-xs">Seat Table</button>
+</div>
+</div>
+<!-- Table 6 - Occupied -->
+<div class="bg-surface border-l-4 border-[#EF4444] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform shadow-lg shadow-black/20">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T6</span>
+<span class="bg-[#EF4444]/20 text-[#EF4444] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Occupied</span>
+</div>
+<div class="mt-4">
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span>
+<span class="font-mono-sm text-xs">1h 20m</span>
+</div>
+<p class="font-label-md text-on-surface">$310.00</p>
+</div>
+</div>
+<!-- Table 7 - Available -->
+<div class="bg-surface border-l-4 border-[#22C55E] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T7</span>
+<span class="bg-[#22C55E]/20 text-[#22C55E] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Ready</span>
+</div>
+<div class="mt-4 flex flex-col items-start">
+<span class="text-on-surface-variant font-label-md text-xs">Capacity: 6</span>
+<button class="mt-2 w-full py-2 bg-primary-container/10 border border-primary-container/30 text-primary-container rounded-lg font-label-md text-xs">Seat Table</button>
+</div>
+</div>
+<!-- Table 8 - Pending -->
+<div class="bg-surface border-l-4 border-[#EAB308] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T8</span>
+<span class="bg-[#EAB308]/20 text-[#EAB308] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider status-pulse">Paying Out</span>
+</div>
+<div class="mt-4">
+<div class="flex items-center gap-2 text-[#EAB308] mb-1">
+<span class="material-symbols-outlined text-xs" data-icon="payments">payments</span>
+<span class="font-label-md text-xs">$89.00</span>
+</div>
+</div>
+</div>
+<!-- Table 9 - Occupied -->
+<div class="bg-surface border-l-4 border-[#EF4444] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform shadow-lg shadow-black/20">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T9</span>
+<span class="bg-[#EF4444]/20 text-[#EF4444] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Occupied</span>
+</div>
+<div class="mt-4">
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span>
+<span class="font-mono-sm text-xs">5m seated</span>
+</div>
+<p class="font-label-md text-on-surface">$0.00</p>
+</div>
+</div>
+<!-- Table 10 - Available -->
+<div class="bg-surface border-l-4 border-[#22C55E] rounded-xl p-4 min-h-[120px] flex flex-col justify-between active:scale-95 transition-transform">
+<div class="flex justify-between items-start">
+<span class="font-display-lg text-primary-container">T10</span>
+<span class="bg-[#22C55E]/20 text-[#22C55E] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Ready</span>
+</div>
+<div class="mt-4 flex flex-col items-start">
+<span class="text-on-surface-variant font-label-md text-xs">Capacity: 4</span>
+<button class="mt-2 w-full py-2 bg-primary-container/10 border border-primary-container/30 text-primary-container rounded-lg font-label-md text-xs">Seat Table</button>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for Quick Order -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary-container text-white rounded-full flex items-center justify-center shadow-xl shadow-primary/20 active:scale-90 transition-all z-40 border-4 border-[#0F0F0F]">
+<span class="material-symbols-outlined text-3xl" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-2 pb-safe bg-[#0F0F0F] border-t border-white/10 h-[80px]">
+<!-- Active Item: Tables -->
+<a class="flex flex-col items-center justify-center bg-white/10 text-primary-container rounded-xl px-4 py-1 transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="table_restaurant" style="font-variation-settings: 'FILL' 1;">table_restaurant</span>
+<span class="font-label-md text-[10px] mt-0.5">Tables</span>
+</a>
+<!-- Inactive Item: Orders -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-white/5 px-4 py-1 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-[10px] mt-0.5">Orders</span>
+</a>
+<!-- Inactive Item: Menu -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-white/5 px-4 py-1 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="restaurant_menu">restaurant_menu</span>
+<span class="font-label-md text-[10px] mt-0.5">Menu</span>
+</a>
+<!-- Inactive Item: More -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-white/5 px-4 py-1 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-md text-[10px] mt-0.5">More</span>
+</a>
+</nav>
+<script>
+        // Simple haptic-like vibration on tap (for supported mobile browsers)
+        document.querySelectorAll('button, a, .active\\:scale-95').forEach(element => {
+            element.addEventListener('click', () => {
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(5);
+                }
+            });
+        });
+
+        // Dynamic time updating (faked for UI demo)
+        setInterval(() => {
+            const timeLabels = document.querySelectorAll('.font-mono-sm');
+            timeLabels.forEach(label => {
+                // Just a visual hint that logic can be attached here
+            });
+        }, 60000);
+    </script>
+
+
+</body></html>

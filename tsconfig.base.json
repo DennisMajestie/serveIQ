@@ -13,7 +13,12 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "paths": {}
+    "paths": {
+      "@serveiq/shared/models": ["./libs/shared/models/src/index.ts"],
+      "@serveiq/shared/data-access": ["./libs/shared/data-access/src/index.ts"],
+      "@serveiq/models": ["./libs/shared/models/src/index.ts"],
+      "@serveiq/data-access": ["./libs/shared/data-access/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

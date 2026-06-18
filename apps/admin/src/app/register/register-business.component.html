@@ -1,0 +1,77 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <mat-card-header>
+      <div class="brand-header">
+        <mat-icon color="primary">restaurant</mat-icon>
+        <h1 class="brand-text">ServeIQ</h1>
+      </div>
+      <mat-card-title>Register Your Business</mat-card-title>
+      <mat-card-subtitle>Join the future of hospitality management</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-stepper #stepper>
+        <!-- Step 1: Business Details -->
+        <mat-step [stepControl]="businessForm">
+          <form [formGroup]="businessForm">
+            <ng-template matStepLabel>Business Info</ng-template>
+            
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Business Name</mat-label>
+                <input matInput formControlName="businessName" placeholder="e.g. Gourmet Garden">
+                <mat-icon matSuffix>business</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Business Type</mat-label>
+                <input matInput formControlName="businessType">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Physical Address</mat-label>
+                <textarea matInput formControlName="address" rows="3"></textarea>
+              </mat-form-field>
+            </div>
+
+            <div class="stepper-actions">
+              <button mat-flat-button color="primary" matStepperNext>Next</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 2: Administrator Account -->
+        <mat-step [stepControl]="adminForm">
+          <form [formGroup]="adminForm">
+            <ng-template matStepLabel>Admin Account</ng-template>
+            
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Full Name</mat-label>
+                <input matInput formControlName="fullName" placeholder="Super Admin Name">
+                <mat-icon matSuffix>person</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Email Address</mat-label>
+                <input matInput formControlName="email" type="email">
+                <mat-icon matSuffix>email</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" type="password">
+                <mat-icon matSuffix>lock</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="stepper-actions">
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-flat-button color="primary" (click)="onSubmit()">Complete Registration</button>
+            </div>
+          </form>
+        </mat-step>
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,72 @@
+<div class="tab-detail-container">
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <h1 class="nav-title">Table {{ tab()?.tableId }}</h1>
+    <div class="nav-avatar">
+      <span class="material-symbols-outlined">person</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="tab-detail-main">
+    <!-- Order Items Section -->
+    <div class="items-section">
+      <div class="section-header">
+        <span class="section-title">ORDERED ITEMS</span>
+        <span class="item-count">{{ items().length }} Items</span>
+      </div>
+
+      @for (item of items(); track item.id) {
+        <div class="item-card">
+          <div class="qty-badge">{{ item.quantity }}x</div>
+          <div class="item-details">
+            <div class="item-name">
+              {{ item.menuItemName }}
+            </div>
+            @if (item.notes) {
+              <div class="item-description">{{ item.notes }}</div>
+            }
+          </div>
+          <div class="item-price">
+            <span class="current-price">₦{{ formatKobo(item.priceKobo * item.quantity) }}</span>
+          </div>
+          <button (click)="removeItem(item)" style="background: none; border: none; color: #EF4444; margin-left: 10px; cursor: pointer;">
+            <span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span>
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Totals Section -->
+    <div class="totals-section">
+      <div class="total-row">
+        <span class="total-label">Subtotal</span>
+        <span class="total-value">₦{{ formatKobo(subtotal()) }}</span>
+      </div>
+      <div class="total-row">
+        <span class="total-label">VAT (7.5%)</span>
+        <span class="total-value">₦{{ formatKobo(vat()) }}</span>
+      </div>
+      <div class="total-row final">
+        <span class="total-label">Total</span>
+        <span class="total-value">₦{{ formatKobo(total()) }}</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Actions -->
+  <footer class="tab-detail-footer">
+    <div class="footer-actions">
+      <button class="view-bill-btn" (click)="viewBill()">
+        <span class="material-symbols-outlined">receipt_long</span>
+        <span>View Bill</span>
+      </button>
+      <button class="add-item-btn" (click)="addItem()">
+        <span class="material-symbols-outlined">add</span>
+      </button>
+    </div>
+  </footer>
+</div>

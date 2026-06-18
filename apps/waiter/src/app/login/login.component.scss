@@ -1,0 +1,419 @@
+:host {
+  --outline-variant: #3d4a3d;
+  --on-background: #dce1fb;
+  --on-surface-variant: #bccbb9;
+  --inverse-on-surface: #2a3043;
+  --inverse-surface: #dce1fb;
+  --surface-variant: #2e3447;
+  --surface-dim: #0c1324;
+  --secondary-fixed: #d8e2ff;
+  --on-surface: #dce1fb;
+  --tertiary-container: #ff8892;
+  --primary-fixed-dim: #4ae176;
+  --on-secondary-fixed: #001a42;
+  --primary: #4be277;
+  --inverse-primary: #006e2f;
+  --primary-fixed: #6bff8f;
+  --on-primary-container: #004b1e;
+  --outline: #869585;
+  --tertiary: #ffb3b7;
+  --on-primary-fixed-variant: #005321;
+  --on-tertiary-fixed-variant: #92002a;
+  --on-secondary-fixed-variant: #004395;
+  --on-tertiary: #67001b;
+  --error: #ffb4ab;
+  --background: #0c1324;
+  --secondary-fixed-dim: #adc6ff;
+  --on-tertiary-container: #840025;
+  --on-error: #690005;
+  --on-primary: #003915;
+  --surface-container: #191f31;
+  --surface-container-low: #151b2d;
+  --secondary-container: #0566d9;
+  --on-error-container: #ffdad6;
+  --on-primary-fixed: #002109;
+  --on-secondary-container: #e6ecff;
+  --surface-container-highest: #2e3447;
+  --primary-container: #22c55e;
+  --surface-tint: #4ae176;
+  --secondary: #adc6ff;
+  --surface-container-high: #23293c;
+  --tertiary-fixed-dim: #ffb2b7;
+  --surface-bright: #33394c;
+  --tertiary-fixed: #ffdadb;
+  --surface: #0c1324;
+  --on-tertiary-fixed: #40000d;
+  --surface-container-lowest: #070d1f;
+  --on-secondary: #002e6a;
+  --error-container: #93000a;
+
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--background);
+  color: var(--on-background);
+  font-family: 'Inter', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* Atmospheric Background */
+.atmospheric-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.atmosphere-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+}
+
+.blob-1 {
+  top: -20%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background-color: var(--primary);
+}
+
+.blob-2 {
+  bottom: -20%;
+  right: -10%;
+  width: 60%;
+  height: 60%;
+  background-color: var(--secondary);
+}
+
+/* Main Login Canvas */
+.login-main {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  justify-content: center;
+}
+
+/* Header */
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 8px;
+}
+
+.login-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+  text-shadow: 0 0 10px rgba(75, 226, 119, 0.4);
+}
+
+.login-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(188, 203, 185, 0.6);
+}
+
+/* Glass Card */
+.glass-card {
+  background: rgba(25, 31, 49, 0.4);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.login-card {
+  width: 100%;
+  border-radius: 40px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+/* Avatar Section */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(75, 226, 119, 0.2);
+  padding: 4px;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--primary);
+  border: 4px solid var(--surface-container);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(75, 226, 119, 0.5);
+}
+
+.avatar-text {
+  text-align: center;
+}
+
+.pin-header {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  line-height: 31px;
+  font-weight: 500;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+.shift-info {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: var(--on-surface-variant);
+  margin: 4px 0 0 0;
+}
+
+/* PIN Indicators */
+.pin-indicators {
+  display: flex;
+  gap: 16px;
+}
+
+.pin-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pin-dot.active {
+  background-color: var(--primary);
+  box-shadow: 0 0 15px rgba(75, 226, 119, 0.8);
+  transform: scale(1.2);
+}
+
+/* Numpad Grid */
+.numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.numpad-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--on-surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.numpad-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.numpad-btn:active {
+  transform: scale(0.9);
+  background: rgba(75, 226, 119, 0.2);
+}
+
+.digit-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  line-height: 31px;
+  font-weight: 500;
+}
+
+.numpad-empty {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 180, 171, 0.6);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clear-btn:hover {
+  color: var(--error);
+}
+
+.fingerprint-btn {
+  background: none;
+  border: none;
+  color: rgba(188, 203, 185, 0.4);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.fingerprint-btn:hover {
+  color: var(--primary);
+}
+
+.fingerprint-icon {
+  font-size: 36px;
+}
+
+/* Footer */
+.login-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  padding-top: 16px;
+}
+
+.forgot-pin {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: rgba(188, 203, 185, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.forgot-pin:hover {
+  color: var(--primary);
+}
+
+.secure-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(188, 203, 185, 0.4);
+}
+
+.lock-icon {
+  font-size: 14px;
+}
+
+.secure-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+/* Help Section */
+.help-section {
+  margin-top: 32px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.help-card {
+  border-radius: 24px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.help-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-icon-wrapper.help-icon-secondary {
+  background-color: rgba(173, 198, 255, 0.1);
+}
+
+.help-icon-wrapper.help-icon-primary {
+  background-color: rgba(75, 226, 119, 0.1);
+}
+
+.help-icon.help-icon-secondary {
+  color: var(--secondary);
+  font-size: 20px;
+}
+
+.help-icon.help-icon-primary {
+  color: var(--primary);
+  font-size: 20px;
+}
+
+.help-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--on-surface-variant);
+}

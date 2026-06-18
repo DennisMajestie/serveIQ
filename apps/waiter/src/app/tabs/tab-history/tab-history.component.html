@@ -1,0 +1,73 @@
+<div class="history-container">
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <button class="back-btn" (click)="goBack()">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h1 class="page-title">Shift History — {{ currentDate }}</h1>
+    </div>
+    <div class="top-bar-right">
+      <div class="profile-avatar">
+        <span class="material-symbols-outlined">person</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="history-main">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input 
+        type="text" 
+        placeholder="Search tables, names, or amounts..." 
+        class="search-input"
+      />
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-cards">
+      <div class="stat-card">
+        <p class="stat-label">Shift Total</p>
+        <p class="stat-value total">₦{{ shiftTotal.toLocaleString() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Transactions</p>
+        <p class="stat-value count">{{ transactionsCount }}</p>
+      </div>
+    </div>
+
+    <!-- Recent Transactions Section -->
+    <div class="section-header">
+      <h3 class="section-title">Recent Transactions</h3>
+    </div>
+
+    <div class="transactions-list">
+      @for (transaction of transactions; track transaction.id) {
+        <div class="transaction-card" (click)="openTransaction(transaction)">
+          <div class="card-left">
+            <span class="table-badge">{{ transaction.table }}</span>
+            <div class="customer-info">
+              <h4 class="customer-name">{{ transaction.customer }}</h4>
+              <p class="transaction-status">
+                {{ transaction.status }} 
+                <span class="material-symbols-outlined status-icon">{{ transaction.statusIcon }}</span>
+              </p>
+            </div>
+          </div>
+          <div class="card-right">
+            <span class="transaction-amount">₦{{ transaction.amount.toLocaleString() }}</span>
+            <span class="payment-method-badge">{{ transaction.method }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- View All Button -->
+    <button class="view-all-btn">
+      View All Shift Records
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </main>
+</div>

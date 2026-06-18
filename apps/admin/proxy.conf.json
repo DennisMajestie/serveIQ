@@ -1,0 +1,11 @@
+{
+  "/api/nvidia": {
+    "target": "https://integrate.api.nvidia.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/nvidia": "/v1"
+    },
+    "logLevel": "debug"
+  }
+}

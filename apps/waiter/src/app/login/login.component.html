@@ -1,0 +1,92 @@
+<!-- Background Atmospheric Elements -->
+<div class="atmospheric-background">
+  <div class="atmosphere-blob blob-1"></div>
+  <div class="atmosphere-blob blob-2"></div>
+</div>
+
+<!-- Main Login Canvas -->
+<main class="login-main">
+  <!-- Top Section -->
+  <div class="login-header">
+    <h1 class="login-title">LUMINA</h1>
+    <p class="login-subtitle">Staff Authentication</p>
+  </div>
+
+  <!-- Central Login Card -->
+  <div class="login-card glass-card">
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-wrapper">
+        <div class="profile-avatar">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbXhDu6u0C5qxbXGYZO5L2K6IZQfM59ZkXv9gph0qxGy24bSF_y70MCNx7dbmZXphUZrhEWj90TlkXT4Y-3XyIqiXSQueBrzkvQTDFh3ZZHq1UMk4T-JGb3cfFpkcrBpRLbKqulvyQnzdVuss8-GZIJ7ch68-zUPqk4nf9uWormhbkColBAcqRAH8Q0PKoWdUinOYefIl6Ib_LODiqtoan8qr7Njy0YrBc-h9S7o_vV68XSaep68oJbHAy3tzTqrrqMwwd5b0p1adV"
+            alt="Waiter"
+            class="profile-image"
+          />
+        </div>
+        <div class="status-indicator"></div>
+      </div>
+      <div class="avatar-text">
+        <h2 class="pin-header">Enter Staff PIN</h2>
+        <p class="shift-info">Welcome back to Shift #402</p>
+      </div>
+    </div>
+
+    <!-- PIN Indicators -->
+    <div class="pin-indicators">
+      <div class="pin-dot" [class.active]="pin().length > 0"></div>
+      <div class="pin-dot" [class.active]="pin().length > 1"></div>
+      <div class="pin-dot" [class.active]="pin().length > 2"></div>
+      <div class="pin-dot" [class.active]="pin().length > 3"></div>
+      <div class="pin-dot" [class.active]="pin().length > 4"></div>
+      <div class="pin-dot" [class.active]="pin().length > 5"></div>
+    </div>
+
+    <!-- Numpad Grid -->
+    <div class="numpad-grid">
+      <button class="numpad-btn" (click)="onDigit('1')"><span class="digit-text">1</span></button>
+      <button class="numpad-btn" (click)="onDigit('2')"><span class="digit-text">2</span></button>
+      <button class="numpad-btn" (click)="onDigit('3')"><span class="digit-text">3</span></button>
+      <button class="numpad-btn" (click)="onDigit('4')"><span class="digit-text">4</span></button>
+      <button class="numpad-btn" (click)="onDigit('5')"><span class="digit-text">5</span></button>
+      <button class="numpad-btn" (click)="onDigit('6')"><span class="digit-text">6</span></button>
+      <button class="numpad-btn" (click)="onDigit('7')"><span class="digit-text">7</span></button>
+      <button class="numpad-btn" (click)="onDigit('8')"><span class="digit-text">8</span></button>
+      <button class="numpad-btn" (click)="onDigit('9')"><span class="digit-text">9</span></button>
+      <div class="numpad-empty">
+        <button class="clear-btn" (click)="clearPin()">CLEAR</button>
+      </div>
+      <button class="numpad-btn" (click)="onDigit('0')"><span class="digit-text">0</span></button>
+      <div class="numpad-empty">
+        <button class="fingerprint-btn">
+          <span class="material-symbols-outlined fingerprint-icon">fingerprint</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="login-footer">
+      <a class="forgot-pin" href="#">Forgot PIN?</a>
+      <div class="secure-indicator">
+        <span class="material-symbols-outlined lock-icon">lock</span>
+        <span class="secure-text">Secure Terminal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Section -->
+  <div class="help-section">
+    <div class="help-card glass-card">
+      <div class="help-icon-wrapper help-icon-secondary">
+        <span class="material-symbols-outlined help-icon">support_agent</span>
+      </div>
+      <span class="help-text">Manager Call</span>
+    </div>
+    <div class="help-card glass-card">
+      <div class="help-icon-wrapper help-icon-primary">
+        <span class="material-symbols-outlined help-icon">schedule</span>
+      </div>
+      <span class="help-text">View Roster</span>
+    </div>
+  </div>
+</main>

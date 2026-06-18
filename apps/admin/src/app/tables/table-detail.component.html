@@ -1,0 +1,205 @@
+<div class="page-wrapper">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1 class="brand-name">RestoAdmin</h1>
+      <p class="brand-subtitle">Management Portal</p>
+    </div>
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="#">
+            <span class="material-symbols-outlined">table_restaurant</span>
+            <span>Tables</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <span class="material-symbols-outlined">restaurant_menu</span>
+            <span>Menu</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <span class="material-symbols-outlined">group</span>
+            <span>Staff</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <span class="material-symbols-outlined">settings</span>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="new-order-btn">
+        <span class="material-symbols-outlined">add</span>
+        New Order
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="search-bar">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" placeholder="Search orders, tables, or staff..." />
+      </div>
+      <div class="top-nav-right">
+        <div class="top-nav-actions">
+          <button class="icon-btn">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="notification-dot"></span>
+          </button>
+          <button class="icon-btn">
+            <span class="material-symbols-outlined">help</span>
+            <span class="btn-text">Help</span>
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="user-profile">
+          <div class="user-info">
+            <p class="user-name">Marcus Cole</p>
+            <p class="user-role">Manager</p>
+          </div>
+          <img alt="Admin Profile Image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaybusLQmZnunOL2JqdLVUOHNP3YQz-SAlAew7fOiFV3L_wuzBKG5uhzMTAnTwmPJBVAE-tW8LhiM0IfR0R1gDEk19ZAY9ouxL0eNCl4dbbLLL94CsZrtgAkbZ7kjlOPCHuBadffduliQa_BilWO0c6wkLaswj6BKBm7PtpU4x-lWHhyvBYTbX2aWEwxNhfUchW3osXvrPUxWyJq1Ko2kNk7CBujdSeALxFPjFsFribrqzHjloASkDUmQRwq56TpjWROFdrLTeCiN7" />
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-section">
+          <a routerLink="/tables" class="icon-btn">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </a>
+          <h2 class="page-title">{{ tableTitle() }}</h2>
+          <span class="status-badge open">
+            <span class="status-dot"></span>
+            Open Status
+          </span>
+        </div>
+        <div class="page-actions">
+          <button class="page-action-btn">
+            <span class="material-symbols-outlined">history</span>
+            View History
+          </button>
+          <button class="page-action-btn">
+            <span class="material-symbols-outlined">edit</span>
+            Edit Table
+          </button>
+        </div>
+      </div>
+
+      <!-- Two-Column Layout -->
+      <div class="grid-layout">
+        <!-- Left Column: Current Order -->
+        <div class="column left">
+          <div class="order-card">
+            <div class="card-header">
+              <h3 class="card-title">Current Order</h3>
+              <button class="add-item-btn">
+                <span class="material-symbols-outlined">add</span>
+                Add Item
+              </button>
+            </div>
+            <div class="table-wrapper">
+              <table class="order-table">
+                <thead>
+                  <tr>
+                    <th>Item Name</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="table-row" *ngFor="let item of orderItems(); let i = index">
+                    <td>
+                      <div class="item-cell">
+                        <div class="item-icon">
+                          <span class="material-symbols-outlined">{{ item.icon }}</span>
+                        </div>
+                        <div class="item-details">
+                          <p class="item-name">{{ item.name }}</p>
+                          <p class="item-notes">{{ item.description }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center">{{ item.qty }}</td>
+                    <td class="text-right">₦{{ item.unitPrice.toLocaleString('en-US', {minimumFractionDigits: 2}) }}</td>
+                    <td class="text-right total">₦{{ (item.qty * item.unitPrice).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</td>
+                    <td class="text-center">
+                      <button class="delete-btn">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Order Summary -->
+        <div class="column right">
+          <div class="summary-card">
+            <div class="card-header">
+              <h3 class="card-title">Order Summary</h3>
+            </div>
+            <div class="summary-content">
+              <div class="summary-row">
+                <span class="label">Subtotal</span>
+                <span class="value">₦{{ subtotal().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">VAT (7.5%)</span>
+                <span class="value">₦{{ vat().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Service Charge</span>
+                <span class="value">₦{{ serviceCharge().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+              </div>
+              <div class="summary-row total">
+                <span class="label">Total Amount</span>
+                <span class="value">₦{{ totalAmount().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+              </div>
+            </div>
+            <div class="summary-footer">
+              <button class="close-tab-btn">Close Tab</button>
+              <button class="print-bill-btn">Print Bill</button>
+            </div>
+          </div>
+          <button class="void-btn">
+            <span class="material-symbols-outlined">cancel</span>
+            Void Order
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <div class="footer-left">
+        <span class="material-symbols-outlined">schedule</span>
+        <span>Opened by Sarah J. • 42 Minutes ago</span>
+      </div>
+      <div class="footer-right">
+        RestoAdmin v2.4.1 • Server Node 04
+      </div>
+    </footer>
+  </div>
+</div>

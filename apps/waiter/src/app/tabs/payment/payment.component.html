@@ -1,0 +1,110 @@
+<div class="payment-container">
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <h1 class="nav-title">Table 5 — Payment</h1>
+    <div class="nav-avatar">
+      <span class="material-symbols-outlined">person</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="payment-main">
+    <!-- Total Amount Display -->
+    <section class="total-section">
+      <p class="total-label">Total Due</p>
+      <h2 class="total-amount">₦{{ formattedAmount }}</h2>
+    </section>
+
+    <!-- Payment Methods Grid -->
+    <section class="methods-section">
+      <p class="methods-label">Method</p>
+      <div class="methods-grid">
+        <button 
+          class="method-btn" 
+          [class.selected]="selectedMethod === 'cash'"
+          (click)="selectMethod('cash')">
+          <span class="material-symbols-outlined method-icon" [class.selected-icon]="selectedMethod === 'cash'">payments</span>
+          <span class="method-text">Cash</span>
+        </button>
+
+        <button 
+          class="method-btn" 
+          [class.selected]="selectedMethod === 'card'"
+          (click)="selectMethod('card')">
+          <span class="material-symbols-outlined method-icon" [class.selected-icon]="selectedMethod === 'card'">credit_card</span>
+          <span class="method-text">Card</span>
+        </button>
+
+        <button 
+          class="method-btn" 
+          [class.selected]="selectedMethod === 'transfer'"
+          (click)="selectMethod('transfer')">
+          <span class="material-symbols-outlined method-icon" [class.selected-icon]="selectedMethod === 'transfer'">account_balance</span>
+          <span class="method-text">Transfer</span>
+        </button>
+
+        <button 
+          class="method-btn" 
+          [class.selected]="selectedMethod === 'ussd'"
+          (click)="selectMethod('ussd')">
+          <span class="material-symbols-outlined method-icon" [class.selected-icon]="selectedMethod === 'ussd'">dialpad</span>
+          <span class="method-text">USSD</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Amount Entry Field -->
+    <section class="amount-section">
+      <p class="amount-label">Paying Now</p>
+      <div class="amount-input-wrapper">
+        <span class="currency-symbol">₦</span>
+        <input 
+          type="text" 
+          class="amount-input" 
+          [value]="formattedAmount"
+          readonly
+          id="amount-input"
+        />
+      </div>
+    </section>
+
+    <!-- Numeric Keypad -->
+    <section class="numpad-section">
+      <div class="numpad-grid">
+        <button class="numpad-key" (click)="appendNumber('1')">1</button>
+        <button class="numpad-key" (click)="appendNumber('2')">2</button>
+        <button class="numpad-key" (click)="appendNumber('3')">3</button>
+        <button class="numpad-key" (click)="appendNumber('4')">4</button>
+        <button class="numpad-key" (click)="appendNumber('5')">5</button>
+        <button class="numpad-key" (click)="appendNumber('6')">6</button>
+        <button class="numpad-key" (click)="appendNumber('7')">7</button>
+        <button class="numpad-key" (click)="appendNumber('8')">8</button>
+        <button class="numpad-key" (click)="appendNumber('9')">9</button>
+        <button class="numpad-key" (click)="appendNumber('.')">.</button>
+        <button class="numpad-key" (click)="appendNumber('0')">0</button>
+        <button class="numpad-key" (click)="clearLast()">
+          <span class="material-symbols-outlined">backspace</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Confirmation Action -->
+  <footer class="payment-footer">
+    <button 
+      class="confirm-btn" 
+      (click)="confirmPayment()"
+      [disabled]="isProcessing()"
+      [class.processing]="isProcessing()"
+      [class.success]="isSuccess()"
+    >
+      <span class="material-symbols-outlined btn-icon" *ngIf="!isProcessing() && !isSuccess()">check_circle</span>
+      <span class="material-symbols-outlined btn-icon animate-spin" *ngIf="isProcessing()">sync</span>
+      <span class="material-symbols-outlined btn-icon" *ngIf="isSuccess()">task_alt</span>
+      <span class="btn-text">{{ getButtonText() }}</span>
+    </button>
+  </footer>
+</div>

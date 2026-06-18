@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nemotron Agent Command Center</title>
+    <style>
+        :root {
+            --bg: #0D0D12; --surface: rgba(26,26,32,0.8);
+            --primary: #F97316; --glow: rgba(249,115,22,0.2);
+            --text: #E2E8F0; --muted: #94A3B8;
+            --border: rgba(255,255,255,0.05); --gb: rgba(255,255,255,0.1);
+            --green: #22C55E; --yellow: #EAB308; --red: #EF4444;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); font-family:'Inter',-apple-system,sans-serif; color:var(--text); height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+        .glow { position:fixed; top:-100px; left:-100px; width:600px; height:600px; background:radial-gradient(circle,var(--glow) 0%,transparent 70%); z-index:-1; filter:blur(80px); }
+        header { height:64px; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; background:rgba(13,13,18,0.8); backdrop-filter:blur(20px); justify-content:space-between; flex-shrink:0; }
+        .logo { display:flex; align-items:center; gap:12px; font-weight:800; font-size:20px; color:var(--primary); }
+        .sbadge { display:flex; align-items:center; gap:8px; font-size:14px; background:rgba(0,0,0,0.3); padding:4px 12px; border-radius:20px; border:1px solid var(--border); }
+        .pulse { width:8px; height:8px; border-radius:50%; background:var(--muted); transition:background 0.3s; }
+        .pulse.running { background:var(--green); box-shadow:0 0 10px var(--green); animation:blink 1.2s infinite; }
+        .pulse.error { background:var(--red); }
+        @keyframes blink { 0%,100%{transform:scale(0.9);opacity:0.7;} 70%{transform:scale(1.15);opacity:1;} }
+        .cbadge { font-size:11px; padding:2px 8px; border-radius:10px; }
+        .cbadge.ok { background:rgba(34,197,94,0.15); color:var(--green); }
+        .cbadge.no { background:rgba(239,68,68,0.1); color:var(--red); }
+        main { flex:1; display:grid; grid-template-columns:260px 1fr 320px; gap:16px; padding:16px; overflow:hidden; min-height:0; }
+        .card { background:var(--surface); border:1px solid var(--gb); border-radius:16px; backdrop-filter:blur(16px); display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+        .ch { padding:14px 18px; border-bottom:1px solid var(--border); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+        .pill { background:var(--primary); color:white; font-size:11px; padding:2px 8px; border-radius:10px; }
+        .term { flex:1; padding:16px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.65; overflow-y:auto; background:rgba(0,0,0,0.2); min-height:0; }
+        .sb { margin-bottom:20px; }
+        .sl { color:var(--primary); font-weight:700; margin-bottom:8px; font-size:12px; }
+        .think { color:#84CC16; padding-left:12px; border-left:2px solid rgba(132,204,22,.4); font-size:12px; opacity:.75; white-space:pre-wrap; margin-bottom:10px; }
+        .resp { color:var(--text); background:rgba(255,255,255,.03); padding:12px; border-radius:8px; border:1px solid var(--border); white-space:pre-wrap; }
+        .ttag { display:inline-block; background:rgba(234,179,8,.15); color:var(--yellow); border:1px solid rgba(234,179,8,.3); padding:3px 10px; border-radius:6px; font-size:11px; margin:8px 0 4px; }
+        .tout { color:var(--muted); font-size:11px; opacity:.7; padding-left:8px; white-space:pre-wrap; }
+        .live { color:#60A5FA; font-style:italic; font-size:12px; margin-top:6px; }
+        .empty { color:var(--muted); opacity:.4; text-align:center; padding:32px 20px; font-size:13px; line-height:1.8; }
+        .tlist { padding:10px; overflow-y:auto; flex:1; }
+        .titem { padding:12px; border-radius:10px; border:1px solid transparent; margin-bottom:6px; }
+        .titem.active { background:var(--glow); border-color:rgba(249,115,22,.3); }
+        .ttitle { font-size:13px; font-weight:600; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .tmeta { font-size:11px; color:var(--muted); display:flex; gap:8px; align-items:center; }
+        .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+        .dot.running { background:var(--green); } .dot.finished { background:var(--muted); } .dot.error { background:var(--red); }
+        .exp { flex:1; padding:14px; overflow-y:auto; font-size:12px; }
+        .ctx { padding:10px 12px; border-radius:8px; border:1px solid var(--border); margin-bottom:8px; }
+        .ctool { color:var(--yellow); font-weight:600; font-size:11px; margin-bottom:4px; }
+        .cout { color:var(--text); font-family:monospace; word-break:break-all; opacity:.8; }
+        footer { height:72px; padding:0 16px 16px; display:flex; align-items:center; gap:12px; flex-shrink:0; }
+        .iw { flex:1; background:var(--surface); border:1px solid var(--gb); border-radius:12px; display:flex; align-items:center; padding:0 12px; }
+        input { flex:1; background:transparent; border:none; color:white; padding:12px; font-size:14px; outline:none; }
+        button { background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer; transition:.2s; font-size:13px; white-space:nowrap; }
+        button:hover { filter:brightness(1.15); transform:translateY(-1px); }
+        button:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.08); border-radius:10px; }
+    </style>
+</head>
+<body>
+<div class="glow"></div>
+<header>
+    <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        NEMOTRON AGENT
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+        <span class="cbadge no" id="conn">● DISCONNECTED</span>
+        <div class="sbadge"><div class="pulse" id="pulse"></div>AUTOPILOT: <span id="st">IDLE</span></div>
+    </div>
+</header>
+<main>
+    <section class="card">
+        <div class="ch">Active Tasks <span class="pill" id="tc">0</span></div>
+        <div class="tlist" id="tlist"><div class="empty">No tasks yet.</div></div>
+    </section>
+    <section class="card">
+        <div class="ch">Execution Stream <span id="si" style="color:var(--primary);font-size:13px;font-weight:700;"></span></div>
+        <div class="term" id="term"><div class="empty">Start the agent:<br><br><code style="font-size:12px;opacity:.7;">node tools/nemotron-agent.js "your task"</code></div></div>
+    </section>
+    <section class="card">
+        <div class="ch">Context Explorer</div>
+        <div class="exp" id="exp"><div class="empty">Tool outputs<br>will appear here.</div></div>
+    </section>
+</main>
+<footer>
+    <div class="iw"><input id="inp" placeholder="Give Nemotron a goal…" type="text"></div>
+    <button id="btn">▶ RUN AUTOPILOT</button>
+</footer>
+<script>
+const API='http://localhost:4242/status';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function setConn(ok){$('conn').textContent=ok?'● CONNECTED':'● DISCONNECTED';$('conn').className='cbadge '+(ok?'ok':'no');}
+function setSt(s){$('st').textContent=({idle:'IDLE',running:'RUNNING',finished:'DONE',error:'ERROR'})[s]||s.toUpperCase();$('pulse').className='pulse '+(s==='running'?'running':s==='error'?'error':'');}
+
+function renderSteps(steps,cR,cC){
+    const all=[...steps];
+    if(cR||cC)all.push({id:steps.length+1,reasoning:cR,response:cC,tool:null,toolOutput:'',live:true});
+    if(!all.length){$('term').innerHTML='<div class="empty">Waiting for agent…</div>';$('si').textContent='';return;}
+    $('si').textContent='STEP '+all.length;
+    $('term').innerHTML=all.map(s=>`<div class="sb">
+        <div class="sl">── STEP ${s.id}${s.live?' (live)':''}</div>
+        ${s.reasoning?`<div class="think">${esc(s.reasoning.trim())}</div>`:''}
+        ${s.response?`<div class="resp">${esc(s.response.trim())}</div>`:''}
+        ${s.tool?`<div class="ttag">⚙ ${esc(s.tool)}</div><div class="tout">${esc((s.toolOutput||'').slice(0,300))}</div>`:''}
+        ${s.live?'<div class="live">⟳ Streaming…</div>':''}
+    </div>`).join('');
+    $('term').scrollTop=$('term').scrollHeight;
+}
+function renderTask(state){
+    $('tc').textContent=state.task?1:0;
+    if(!state.task){$('tlist').innerHTML='<div class="empty">No tasks yet.</div>';return;}
+    const dc=state.status==='error'?'error':state.status==='running'?'running':'finished';
+    $('tlist').innerHTML=`<div class="titem active"><div class="ttitle">${esc(state.task)}</div><div class="tmeta"><span class="dot ${dc}"></span>${state.status} · ${state.steps.length} step${state.steps.length!==1?'s':''}</div></div>`;
+}
+function renderExp(steps){
+    const ts=steps.filter(s=>s.tool);
+    if(!ts.length){$('exp').innerHTML='<div class="empty">Tool outputs<br>will appear here.</div>';return;}
+    $('exp').innerHTML=ts.map(s=>`<div class="ctx"><div class="ctool">⚙ ${esc(s.tool)}</div><div class="cout">${esc((s.toolOutput||'').slice(0,120))}</div></div>`).join('');
+}
+async function poll(){
+    try{
+        const r=await fetch(API,{signal:AbortSignal.timeout(2000)});
+        if(!r.ok)throw 0;
+        const s=await r.json();
+        setConn(true);setSt(s.status);renderTask(s);renderSteps(s.steps||[],s.currentReasoning||'',s.currentResponse||'');renderExp(s.steps||[]);
+        $('btn').disabled=s.status==='running';
+    }catch{setConn(false);setSt('idle');$('btn').disabled=false;}
+}
+$('btn').onclick=async ()=>{
+    const t=$('inp').value.trim();if(!t)return;
+    try{
+        await fetch('http://localhost:4242/task',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({task:t})
+        });
+        $('inp').value='';
+    }catch(e){
+        alert('Error starting agent: '+e.message);
+    }
+};
+$('inp').addEventListener('keydown',e=>{if(e.key==='Enter')$('btn').click();});
+poll();setInterval(poll,1500);
+</script>
+</body>
+</html>

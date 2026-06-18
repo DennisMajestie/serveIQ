@@ -1,0 +1,95 @@
+<div class="menu-container">
+  <!-- Top App Bar -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <span class="material-symbols-outlined icon-primary">restaurant</span>
+      <h1 class="page-title">Menu</h1>
+    </div>
+    <div class="top-bar-right">
+      <span class="material-symbols-outlined icon-secondary">search</span>
+      <div class="table-badge">
+        <span class="table-badge-text">Table 4</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Category Navigation -->
+    <nav class="category-nav">
+      <button 
+        *ngFor="let cat of categories; let i = index" 
+        class="category-button"
+        [class.active]="selectedCategory === cat"
+        (click)="selectCategory(cat)">
+        {{ cat }}
+      </button>
+    </nav>
+
+    <!-- Menu Grid -->
+    <div class="menu-grid">
+      <div 
+        *ngFor="let item of filteredItems" 
+        class="menu-item-card card-tap-feedback">
+        <div class="item-image">
+          <img [src]="item.image" [alt]="item.name" />
+        </div>
+        <div class="item-info">
+          <h3 class="item-name">{{ item.name }}</h3>
+          <p class="item-price">₦{{ getDisplayPrice(item).toLocaleString() }}</p>
+        </div>
+        
+        <!-- Portion Selector -->
+        <div *ngIf="item.portions" class="portion-selector">
+          <button 
+            *ngFor="let portion of item.portions" 
+            class="portion-btn"
+            [class.active]="getSelectedPortion(item.id) === portion.id"
+            (click)="$event.stopPropagation(); setSelectedPortion(item.id, portion.id)">
+            {{ portion.name }}
+          </button>
+        </div>
+        
+        <button *ngIf="getItemQty(item.id) === 0" class="add-button" (click)="addToSelection(item)">
+          <span class="material-symbols-outlined">add</span>
+        </button>
+        <div *ngIf="getItemQty(item.id) > 0" class="qty-control">
+          <button class="qty-btn minus" (click)="$event.stopPropagation(); removeFromSelection(item.id, getSelectedPortion(item.id))">-</button>
+          <span class="qty-display">{{ getItemQty(item.id) }}</span>
+          <button class="qty-btn plus" (click)="$event.stopPropagation(); addToSelection(item)">+</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Cart Summary Bar -->
+  <div 
+    *ngIf="selectedItems.length > 0"
+    class="cart-summary"
+    [class.visible]="selectedItems.length > 0">
+    <div class="cart-info">
+      <span class="item-count">{{ selectedItems.length }}</span>
+      <span class="cart-label">Items in Cart</span>
+    </div>
+    <div class="cart-action" (click)="confirmSelection()">
+      <span class="cart-total">₦{{ selectionTotal.toLocaleString() }}</span>
+      <span class="material-symbols-outlined">arrow_forward</span>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <a class="nav-item active" (click)="goToTables()">
+      <span class="material-symbols-outlined">table_restaurant</span>
+      <span class="nav-label">Tables</span>
+    </a>
+    <a class="nav-item" (click)="goToHistory()">
+      <span class="material-symbols-outlined">history</span>
+      <span class="nav-label">History</span>
+    </a>
+    <a class="nav-item" (click)="goToProfile()">
+      <span class="material-symbols-outlined">person</span>
+      <span class="nav-label">Profile</span>
+    </a>
+  </nav>
+</div>

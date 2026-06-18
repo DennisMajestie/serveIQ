@@ -1,0 +1,75 @@
+<div class="bill-container">
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <button class="back-btn" (click)="goBack()">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h1 class="nav-title">Billing Review</h1>
+    </div>
+    <div class="nav-avatar">
+      <span class="material-symbols-outlined">person</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="bill-main">
+    <!-- Bill Paper -->
+    <div class="bill-paper">
+      <div class="bill-header">
+        <p class="waiter-info">Waiter: {{ waiterName }} • {{ time }}</p>
+        <h2>ServeIQ</h2>
+        <div class="premium-tag">PREMIUM SERVICE</div>
+        <div class="divider"></div>
+      </div>
+
+      <div class="bill-items">
+        @for (item of items; track item.name) {
+          <div class="item-line">
+            <span class="qty">{{ item.qty > 1 ? item.qty + 'x' : '' }}</span>
+            <span class="name">{{ item.name }}</span>
+            <span class="price">₦{{ (item.price * item.qty).toLocaleString() }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="bill-summary">
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span>₦{{ getSubtotal().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+        <div class="summary-line">
+          <span>VAT (7.5%)</span>
+          <span>₦{{ getVat().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+        <div class="summary-line">
+          <span>Service Charge</span>
+          <span>₦{{ getServiceCharge().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+        <div class="summary-line total">
+          <span>TOTAL AMOUNT</span>
+          <span>₦{{ getTotal().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+      </div>
+
+      <button class="discount-btn">
+        <span class="material-symbols-outlined">local_offer</span>
+        Apply Discount
+      </button>
+
+      <p class="split-info">
+        <span class="material-symbols-outlined">info</span>
+        Split billing is available on the payment screen.
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer Actions -->
+  <footer class="bill-footer">
+    <button class="proceed-btn" (click)="proceedToPayment()">
+      Proceed to Payment
+    </button>
+  </footer>
+</div>

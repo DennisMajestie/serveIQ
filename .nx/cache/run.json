@@ -1,0 +1,9 @@
+{
+  "run": {
+    "command": "nx run-many --target=build --projects=admin waiter --parallel=2",
+    "startTime": "2026-06-17T15:41:55.909Z",
+    "endTime": "2026-06-17T15:41:56.238Z",
+    "inner": false
+  },
+  "tasks": []
+}

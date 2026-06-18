@@ -1,0 +1,39 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { BaseApiService } from './base-api.service';
+import { API_CONFIG, buildUrl } from './api.config';
+import { User, CreateWaiterRequest } from '@serveiq/shared/models';
+
+/** Manages user profiles and waiter accounts. */
+@Injectable({ providedIn: 'root' })
+export class UserApiService extends BaseApiService {
+  constructor(http: HttpClient) {
+    super(http);
+  }
+
+  /** Get the currently authenticated user's profile. */
+  getMe(): Observable<User> {
+    return this.get<User>(API_CONFIG.endpoints.users.me);
+  }
+
+  /** Update the authenticated user's name/email. */
+  updateMe(data: Partial<Pick<User, 'fullName' | 'email'>>): Observable<User> {
+    return this.put<User>(API_CONFIG.endpoints.users.me, data);
+  }
+
+  /** List all waiters for the business. */
+  listWaiters(): Observable<User[]> {
+    return this.get<User[]>(API_CONFIG.endpoints.users.waiters);
+  }
+
+  /** Create a new waiter account (owner only). */
+  createWaiter(data: CreateWaiterRequest): Observable<User> {
+    return this.post<User>(API_CONFIG.endpoints.users.waiter, data);
+  }
+
+  /** Delete a waiter (owner only). */
+  deleteWaiter(id: string): Observable<void> {
+    return this.delete<void>(buildUrl(API_CONFIG.endpoints.users.delete, { id }));
+  }
+}

@@ -2,17 +2,26 @@ import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { appRoutes } from './app.routes';
+import { provideRouter, withRouterConfig } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import {
-  provideClientHydration,
-  withEventReplay,
-} from '@angular/platform-browser';
+  provideHttpClient,
+  withInterceptorsFromDi,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
+import { AuthInterceptor } from '@serveiq/shared/data-access';
+import { appRoutes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideClientHydration(withEventReplay()),
     provideBrowserGlobalErrorListeners(),
-    provideRouter(appRoutes),
+    provideRouter(appRoutes, withRouterConfig({ onSameUrlNavigation: 'reload' })),
+    provideAnimations(),
+    provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
   ],
 };
