@@ -1,15 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
+import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 import { Bill, Receipt, GenerateBillRequest, RecordPaymentRequest } from '@serveiq/shared/models';
 
 /** Manages bill generation, payment recording and receipts. */
 @Injectable({ providedIn: 'root' })
 export class BillsApiService extends BaseApiService {
-  constructor(http: HttpClient) {
-    super(http);
+  constructor(
+    http: HttpClient,
+    @Inject(ENVIRONMENT_CONFIG) env: EnvironmentConfig
+  ) {
+    super(http, env);
   }
 
   /** Generate (or re-generate) a bill for a tab. */

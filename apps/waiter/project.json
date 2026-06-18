@@ -22,7 +22,13 @@
           }
         ],
         "styles": ["apps/waiter/src/styles.scss"],
-        "outputMode": "static"
+        "outputMode": "static",
+        "fileReplacements": [
+          {
+            "replace": "apps/waiter/src/environments/environment.ts",
+            "with": "apps/waiter/src/environments/environment.prod.ts"
+          }
+        ]
       },
       "configurations": {
         "production": {

@@ -1,15 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
+import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 import { OrderItem, AddOrderItemsRequest } from '@serveiq/shared/models';
 
 /** Manages order items within a tab. */
 @Injectable({ providedIn: 'root' })
 export class OrdersApiService extends BaseApiService {
-  constructor(http: HttpClient) {
-    super(http);
+  constructor(
+    http: HttpClient,
+    @Inject(ENVIRONMENT_CONFIG) env: EnvironmentConfig
+  ) {
+    super(http, env);
   }
 
   /** Get all order items for a tab. */

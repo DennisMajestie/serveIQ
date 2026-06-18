@@ -63,7 +63,13 @@
               "styles": [
                 "apps/waiter/src/styles.scss"
               ],
-              "outputMode": "static"
+              "outputMode": "static",
+              "fileReplacements": [
+                {
+                  "replace": "apps/waiter/src/environments/environment.ts",
+                  "with": "apps/waiter/src/environments/environment.prod.ts"
+                }
+              ]
             },
             "configurations": {
               "production": {
@@ -189,6 +195,12 @@
               ],
               "styles": [
                 "apps/admin/src/styles.scss"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/admin/src/environments/environment.ts",
+                  "with": "apps/admin/src/environments/environment.prod.ts"
+                }
               ]
             },
             "configurations": {
@@ -40619,5 +40631,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1781793260063
+  "computedAt": 1781804219739
 }

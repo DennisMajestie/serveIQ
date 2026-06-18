@@ -1,18 +1,25 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { API_CONFIG, buildUrl } from './api.config';
+import { buildUrl } from './api.config';
 import { handleApiError } from './api-error';
+import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 
 @Injectable({ providedIn: 'root' })
 export class BaseApiService {
-  protected readonly baseUrl = API_CONFIG.baseUrl;
   protected readonly defaultHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
   });
 
-  constructor(protected http: HttpClient) {}
+  constructor(
+    protected http: HttpClient,
+    @Inject(ENVIRONMENT_CONFIG) protected env: EnvironmentConfig
+  ) {}
+
+  protected get apiUrl(): string {
+    return this.env.apiUrl;
+  }
 
   // GET Request
   protected get<T>(url: string, params?: Record<string, string | number>): Observable<T> {
@@ -57,6 +64,6 @@ export class BaseApiService {
   // Helper: Build full URL
   private buildFullUrl(urlTemplate: string, params?: Record<string, string | number>): string {
     const path = buildUrl(urlTemplate, params || {});
-    return `${this.baseUrl}${path}`;
+    return `${this.apiUrl}${path}`;
   }
 }

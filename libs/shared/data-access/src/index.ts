@@ -4,6 +4,7 @@ export * from './lib/offline-sync.engine';
 // API Config
 export * from './lib/api/api.config';
 export * from './lib/api/api-error';
+export * from './lib/api/environment.token';
 
 // Base
 export * from './lib/api/base-api.service';

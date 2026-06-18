@@ -310,6 +310,10 @@
       "apps/admin/project.json",
       "nx/core/project-json"
     ],
+    "targets.build.options.fileReplacements": [
+      "apps/admin/project.json",
+      "nx/core/project-json"
+    ],
     "targets.build.configurations.production": [
       "apps/admin/project.json",
       "nx/core/project-json"
@@ -591,6 +595,10 @@
       "nx/core/project-json"
     ],
     "targets.build.options.outputMode": [
+      "apps/waiter/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.fileReplacements": [
       "apps/waiter/project.json",
       "nx/core/project-json"
     ],

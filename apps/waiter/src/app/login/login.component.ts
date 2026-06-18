@@ -23,7 +23,6 @@ export class LoginComponent {
       if (this.pin().length === 6) {
         // Demo: Let's say correct PIN is 123456
         if (this.pin() === '123456') {
-          console.log('Login successful!');
           this.router.navigate(['/tables']);
         } else {
           this.pinError.set(true);

@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG } from './api.config';
+import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 
 // Nemotron API Types
 export interface ChatMessage {
@@ -39,8 +40,11 @@ export interface CompletionResponse {
 
 @Injectable({ providedIn: 'root' })
 export class NemotronApiService extends BaseApiService {
-  constructor(http: HttpClient) {
-    super(http);
+  constructor(
+    http: HttpClient,
+    @Inject(ENVIRONMENT_CONFIG) env: EnvironmentConfig
+  ) {
+    super(http, env);
   }
 
   // Create a completion

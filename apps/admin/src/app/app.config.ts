@@ -11,6 +11,8 @@ import {
 } from '@angular/common/http';
 import { AuthInterceptor } from '@serveiq/shared/data-access';
 import { appRoutes } from './app.routes';
+import { environment } from '../environments/environment';
+import { ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,6 +24,10 @@ export const appConfig: ApplicationConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
+    },
+    {
+      provide: ENVIRONMENT_CONFIG,
+      useValue: environment,
     },
   ],
 };

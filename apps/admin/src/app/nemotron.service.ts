@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { API_CONFIG, ChatMessage } from '@serveiq/shared/data-access';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -63,7 +64,9 @@ export class NemotronService {
         }
       }
     } catch (error) {
-      console.error('Error in Nemotron integration:', error);
+      if (!environment.production) {
+        console.error('Error in Nemotron integration:', error);
+      }
       throw error;
     }
   }
