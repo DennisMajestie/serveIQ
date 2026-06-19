@@ -33,7 +33,7 @@
     </div>
 
     <!-- PIN Indicators -->
-    <div class="pin-indicators">
+    <div class="pin-indicators" [class.error]="pinError()">
       <div class="pin-dot" [class.active]="pin().length > 0"></div>
       <div class="pin-dot" [class.active]="pin().length > 1"></div>
       <div class="pin-dot" [class.active]="pin().length > 2"></div>

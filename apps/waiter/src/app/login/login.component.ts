@@ -1,6 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -26,10 +27,23 @@ export class LoginComponent {
           this.router.navigate(['/tables']);
         } else {
           this.pinError.set(true);
+          
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'Incorrect PIN',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            background: '#1e293b',
+            color: '#ef4444'
+          });
+
           setTimeout(() => {
             this.pin.set('');
             this.pinError.set(false);
-          }, 1000);
+          }, 800);
         }
       }
     }
