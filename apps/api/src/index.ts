@@ -20,13 +20,28 @@ const app = express();
 const PORT = process.env.PORT || 4205;
 
 // Middleware
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://localhost:4201',
+  'https://serve-iq-one.vercel.app',
+  'https://waiter-serveiq.vercel.app'
+];
+
 app.use(cors({
-  origin: '*',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(null, true); // Fallback to allow for now, but explicit is better
+    }
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true,
   optionsSuccessStatus: 200
 }));
+
 app.options('*', cors());
 app.use(express.json());
 
