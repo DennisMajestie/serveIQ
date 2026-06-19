@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@serveiq/shared/data-access';
-import { NemotronService } from '../nemotron.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -36,16 +35,9 @@ export class RegisterBusinessComponent {
   logoUploadProgress = signal(0);
   cacUploadProgress = signal(0);
 
-  // Reasoning signals
-  isThinking = signal(false);
-  reasoning = signal('');
-  suggestions = signal('');
-
   private authService = inject(AuthService);
-  private nemotron = inject(NemotronService);
   private router = inject(Router);
 
-  private thinkingTimeout: any;
 
   get stepPercent(): number {
     return Math.round((this.currentStep() / this.totalSteps) * 100);
@@ -86,32 +78,7 @@ export class RegisterBusinessComponent {
   }
 
   onInfoChange() {
-    if (!this.businessName() || !this.businessType()) return;
-
-    if (this.thinkingTimeout) clearTimeout(this.thinkingTimeout);
-    
-    this.thinkingTimeout = setTimeout(() => {
-      this.isThinking.set(true);
-      this.reasoning.set('');
-      this.suggestions.set('');
-
-      const prompt = `I am starting a business called "${this.businessName()}" which is a "${this.businessType()}". 
-      Can you provide a quick reasoning for why this setup is AI-ready and suggest one optimized workflow feature? 
-      Keep the reasoning to one short sentence and the suggestion to one short bullet point.`;
-
-      this.nemotron.askNemotron(
-        prompt,
-        (content, reasoning) => {
-          if (reasoning) this.reasoning.set(reasoning);
-          if (content) this.suggestions.update(prev => prev + content);
-        },
-        "You are ServeIQ's onboarding assistant. Be concise and professional."
-      ).then(() => {
-        this.isThinking.set(false);
-      }).catch(() => {
-        this.isThinking.set(false);
-      });
-    }, 1000);
+    // Logic removed as it was only for AI reasoning
   }
 
   onLogoSelected(event: Event) {

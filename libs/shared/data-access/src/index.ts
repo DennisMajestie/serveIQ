@@ -15,9 +15,6 @@ export * from './lib/api/auth.interceptor';
 export * from './lib/auth.guard';
 export * from './lib/no-auth.guard';
 
-// Nemotron AI
-export * from './lib/api/nemotron-api.service';
-
 // Domain Services
 export * from './lib/api/branches-api.service';
 export * from './lib/api/menu-api.service';

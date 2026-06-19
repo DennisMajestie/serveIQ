@@ -74,25 +74,6 @@
             <input type="text" class="form-input" [(ngModel)]="fullName" name="fullName" placeholder="e.g. John Doe" required>
           </div>
 
-          <!-- AI Reasoning Section (Harness Nemotron) -->
-          <div class="nemotron-reasoning" *ngIf="isThinking() || suggestions()">
-            <div class="reasoning-header">
-              <svg viewBox="0 0 24 24" fill="#F97316" class="ai-icon">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
-                <path d="M2 17L12 22L22 17" stroke="#F97316" stroke-width="2"/>
-              </svg>
-              <span class="reasoning-label space-font">Nemotron Intelligence</span>
-              <span class="thinking-loader" *ngIf="isThinking()"></span>
-            </div>
-            
-            <div class="reasoning-bubble" *ngIf="reasoning()">
-              <div class="reasoning-content inter-font">{{ reasoning() }}</div>
-            </div>
-
-            <div class="suggestions-box" *ngIf="suggestions()">
-              <div class="suggestions-content inter-font">{{ suggestions() }}</div>
-            </div>
-          </div>
         </ng-container>
 
         <!-- STEP 2: Admin Account -->

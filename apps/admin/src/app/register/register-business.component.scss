@@ -92,32 +92,6 @@
 .login-link { margin: 0; text-align: center; font-size: 0.875rem; font-weight: 600; color: #64748b; }
 .login-link a { color: #d97706; text-decoration: none; font-weight: 700; }
 
-/* ===== NEMOTRON REASONING (Harness Nemotron) ===== */
-.nemotron-reasoning {
-  background: rgba(249, 115, 22, 0.03); border: 1.5px dashed rgba(249, 115, 22, 0.2);
-  border-radius: 12px; padding: 16px; margin: 8px 0;
-  animation: fadeIn 0.3s ease-out;
-}
-.reasoning-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.ai-icon { width: 18px; height: 18px; }
-.reasoning-label { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; color: #F97316; text-transform: uppercase; }
-
-.thinking-loader {
-  width: 6px; height: 6px; background: #F97316; border-radius: 50%;
-  animation: pulse 1s infinite alternate;
-}
-
-.reasoning-bubble {
-  background: rgba(132, 204, 22, 0.08); border-left: 3px solid #84CC16;
-  padding: 10px 12px; border-radius: 4px 12px 12px 4px; margin-bottom: 10px;
-}
-.reasoning-content { font-size: 0.8125rem; color: #4D7C0F; font-style: italic; line-height: 1.5; }
-
-.suggestions-box { background: white; border: 1px solid #f1f5f9; padding: 10px 12px; border-radius: 8px; }
-.suggestions-content { font-size: 0.875rem; color: #334155; line-height: 1.5; }
-
-@keyframes pulse { from { opacity: 0.4; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ===== FILE UPLOAD ===== */
 .file-upload-wrapper {

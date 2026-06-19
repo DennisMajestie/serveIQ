@@ -45,10 +45,6 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
       },
       {
-        path: 'autopilot',
-        loadComponent: () => import('./autopilot/autopilot.component').then(m => m.AutopilotComponent)
-      },
-      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
