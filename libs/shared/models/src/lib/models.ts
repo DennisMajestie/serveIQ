@@ -8,6 +8,7 @@ export interface User {
   fullName: string;
   email: string;
   role: 'owner' | 'waiter';
+  pin?: string;
 }
 
 export interface Business {
@@ -129,7 +130,8 @@ export interface RegisterResponse {
 export interface CreateWaiterRequest {
   fullName: string;
   email: string;
-  password: string;
+  password?: string;
+  pin: string;
 }
 
 export interface CreateBranchRequest {

@@ -53,6 +53,32 @@ export class AuthService {
     );
   }
 
+  /** Activate a terminal device and link it to a business (Admin only) */
+  activateTerminal(email: string, password: string): Observable<{ businessId: string; businessName: string }> {
+    return this.http.post<{ businessId: string; businessName: string; accessToken: string }>(
+      `${this.apiUrl}/api/v1/auth/activate`, { email, password }
+    ).pipe(
+      tap(response => {
+        localStorage.setItem('businessId', response.businessId);
+        localStorage.setItem('businessName', response.businessName);
+        localStorage.setItem('accessToken', response.accessToken);
+        this.tokenSubject.next(response.accessToken);
+      })
+    );
+  }
+
+  /** Verify a staff member's PIN for an activated terminal */
+  verifyStaffPin(pin: string, businessId: string): Observable<{ user: any; accessToken: string }> {
+    return this.http.post<{ user: any; accessToken: string }>(
+      `${this.apiUrl}/api/v1/auth/staff-login`, { pin, businessId }
+    ).pipe(
+      tap(response => {
+        localStorage.setItem('staffToken', response.accessToken);
+        // We keep the businessId/accessToken separate from the staff session
+      })
+    );
+  }
+
   register(data: RegisterRequest): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/api/v1/auth/register`, data);
   }

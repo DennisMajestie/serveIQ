@@ -76,28 +76,27 @@ router.post('/waiter', async (req: AuthRequest, res: Response) => {
     return res.sendStatus(403);
   }
 
-  const { fullName, email, password } = req.body;
-  if (!fullName || !email || !password) {
-    return res.status(400).json({ message: 'fullName, email and password are required' });
-  }
-
-  if (db.emails.has(email)) {
-    return res.status(409).json({ message: 'Email already registered' });
+  const { fullName, email, pin } = req.body;
+  if (!fullName || !pin) {
+    return res.status(400).json({ message: 'fullName and pin are required' });
   }
 
   const id = uuidv4();
-  const passwordHash = await bcrypt.hash(password, 10);
+  // For demo/simple staff login, we can keep the PIN plain or hash it (using plain for now for simplicity)
   const waiter = {
     id,
     businessId: req.user!.businessId,
     fullName,
-    email,
-    passwordHash,
+    email: email || `${id}@serveiq.com`,
+    passwordHash: '', // Waiters don't use passwords for web login
+    pin,
     role: 'waiter' as const,
   };
 
   db.users.set(id, waiter);
-  db.emails.set(email, id);
+  if (email) {
+    db.emails.set(email, id);
+  }
 
   const { passwordHash: _, ...safeWaiter } = waiter;
   return res.status(201).json(safeWaiter);

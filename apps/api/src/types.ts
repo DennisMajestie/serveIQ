@@ -11,6 +11,7 @@ export interface User {
   email: string;
   passwordHash: string;
   role: 'owner' | 'waiter';
+  pin?: string;
 }
 
 export interface Business {

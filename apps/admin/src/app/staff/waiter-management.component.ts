@@ -47,18 +47,27 @@ export class WaiterManagementComponent implements OnInit {
     Swal.fire({
       title: 'Add New Waiter',
       html: `
-        <input id="sw-name" class="swal2-input" placeholder="Full Name">
-        <input id="sw-email" class="swal2-input" placeholder="Email" type="email">
-        <input id="sw-pass" class="swal2-input" placeholder="Password" type="password">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <input id="sw-name" class="swal2-input" placeholder="Full Name" style="margin: 0;">
+          <input id="sw-email" class="swal2-input" placeholder="Email (Optional)" type="email" style="margin: 0;">
+          <input id="sw-pin" class="swal2-input" placeholder="6-Digit PIN" type="text" maxlength="6" style="margin: 0;">
+        </div>
       `,
       confirmButtonText: 'Create Waiter',
       confirmButtonColor: '#F97316',
       showCancelButton: true,
-      preConfirm: () => ({
-        fullName: (document.getElementById('sw-name') as HTMLInputElement).value,
-        email: (document.getElementById('sw-email') as HTMLInputElement).value,
-        password: (document.getElementById('sw-pass') as HTMLInputElement).value
-      })
+      preConfirm: () => {
+        const fullName = (document.getElementById('sw-name') as HTMLInputElement).value;
+        const email = (document.getElementById('sw-email') as HTMLInputElement).value;
+        const pin = (document.getElementById('sw-pin') as HTMLInputElement).value;
+        
+        if (!fullName || !pin || pin.length !== 6) {
+          Swal.showValidationMessage('Full name and a 6-digit PIN are required');
+          return null;
+        }
+        
+        return { fullName, email, pin };
+      }
     }).then(result => {
       if (result.isConfirmed && result.value?.fullName) {
         this.userApi.createWaiter(result.value).subscribe({

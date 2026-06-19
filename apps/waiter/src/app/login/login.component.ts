@@ -1,20 +1,59 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+  // State
   pin = signal<string>('');
   pinError = signal<boolean>(false);
+  isActivated = signal<boolean>(false);
+  businessName = signal<string>('');
+  
+  // Activation Form
+  adminEmail = '';
+  adminPassword = '';
+  isActivating = signal(false);
 
+  private authService = inject(AuthService);
   private router = inject(Router);
+
+  ngOnInit() {
+    const bizId = localStorage.getItem('businessId');
+    const bizName = localStorage.getItem('businessName');
+    
+    if (bizId) {
+      this.isActivated.set(true);
+      this.businessName.set(bizName || 'ServeIQ Business');
+    }
+  }
+
+  onActivateTerminal() {
+    if (!this.adminEmail || !this.adminPassword) return;
+    
+    this.isActivating.set(true);
+    this.authService.activateTerminal(this.adminEmail, this.adminPassword).subscribe({
+      next: (res) => {
+        this.isActivated.set(true);
+        this.businessName.set(res.businessName);
+        this.isActivating.set(false);
+        Swal.fire({ icon: 'success', title: 'Terminal Activated', timer: 1500, showConfirmButton: false });
+      },
+      error: () => {
+        this.isActivating.set(false);
+        Swal.fire({ icon: 'error', title: 'Activation Failed', text: 'Invalid admin credentials.' });
+      }
+    });
+  }
 
   onDigit(digit: string) {
     if (this.pin().length < 6) {
@@ -22,34 +61,44 @@ export class LoginComponent {
       this.pinError.set(false);
 
       if (this.pin().length === 6) {
-        // Demo: Let's say correct PIN is 123456
-        if (this.pin() === '123456') {
-          this.router.navigate(['/tables']);
-        } else {
-          this.pinError.set(true);
-          
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'error',
-            title: 'Incorrect PIN',
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true,
-            background: '#1e293b',
-            color: '#ef4444'
-          });
+        const businessId = localStorage.getItem('businessId');
+        if (!businessId) return;
 
-          setTimeout(() => {
-            this.pin.set('');
-            this.pinError.set(false);
-          }, 800);
-        }
+        this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
+          next: () => {
+            this.router.navigate(['/tables']);
+          },
+          error: (err) => {
+            this.pinError.set(true);
+            
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: err.error?.message || 'Incorrect PIN',
+              showConfirmButton: false,
+              timer: 2000,
+              background: '#1e293b',
+              color: '#ef4444'
+            });
+
+            setTimeout(() => {
+              this.pin.set('');
+              this.pinError.set(false);
+            }, 800);
+          }
+        });
       }
     }
   }
 
   clearPin() {
     this.pin.set('');
+  }
+
+  resetActivation() {
+    localStorage.removeItem('businessId');
+    localStorage.removeItem('businessName');
+    this.isActivated.set(false);
   }
 }
