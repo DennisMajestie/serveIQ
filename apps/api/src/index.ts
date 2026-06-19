@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 
+import OpenAI from 'openai';
 import { seedDatabase } from './db';
 import authRoutes from './routes/auth';
 import uploadRoutes from './routes/upload';
@@ -18,6 +19,12 @@ import billsRoutes from './routes/bills';
 
 const app = express();
 const PORT = process.env.PORT || 4205;
+
+// Initialize OpenAI client for Nemotron
+const openai = new OpenAI({
+  apiKey: process.env.NEMOTRON_API_KEY,
+  baseURL: process.env.NEMOTRON_BASE_URL || 'https://integrate.api.nvidia.com/v1'
+});
 
 // Middleware
 const allowedOrigins = [
@@ -62,7 +69,52 @@ app.use('/api/v1/bills', billsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'ServeIQ API' });
+  res.json({ status: 'ok', service: 'ServeIQ Unified API' });
+});
+
+// Streaming reasoning endpoint (Nemotron)
+app.post('/api/v1/chat/completions', async (req, res) => {
+  try {
+    const { messages, model, temperature, top_p, max_tokens, reasoning_budget, chat_template_kwargs, stream } = req.body;
+
+    if (stream) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+
+      const completion: any = await openai.chat.completions.create({
+        model: model || 'nvidia/nemotron-3-ultra-550b-a55b',
+        messages,
+        temperature: temperature || 0.6,
+        top_p: top_p || 0.95,
+        max_tokens: max_tokens || 16384,
+        reasoning_budget: reasoning_budget || 16384,
+        chat_template_kwargs: chat_template_kwargs || { enable_thinking: true },
+        stream: true
+      } as any);
+
+      for await (const chunk of completion) {
+        res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+      }
+      res.write('data: [DONE]\n\n');
+      res.end();
+    } else {
+      const completion = await openai.chat.completions.create({
+        model: model || 'nvidia/nemotron-3-ultra-550b-a55b',
+        messages,
+        temperature: temperature || 0.6,
+        top_p: top_p || 0.95,
+        max_tokens: max_tokens || 16384,
+        reasoning_budget: reasoning_budget || 16384,
+        chat_template_kwargs: chat_template_kwargs || { enable_thinking: true },
+        stream: false
+      } as any);
+      res.json(completion);
+    }
+  } catch (error) {
+    console.error('Error in Nemotron API:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Start server
