@@ -4,6 +4,16 @@ import { Router } from '@angular/router';
 import { TabsApiService } from '@serveiq/shared/data-access';
 import { Tab } from '@serveiq/shared/models';
 
+interface Transaction {
+  id: string;
+  table: string;
+  customer: string;
+  status: string;
+  statusIcon: string;
+  amount: number;
+  method: string;
+}
+
 @Component({
   selector: 'app-tab-history',
   standalone: true,
@@ -20,8 +30,22 @@ export class TabHistoryComponent implements OnInit {
 
   currentDate = new Date().toLocaleDateString('en-NG', { month: 'long', day: 'numeric' });
 
+  transactions = computed<Transaction[]>(() =>
+    this.closedTabs().map(t => ({
+      id: t.id,
+      table: t.tableId ?? '—',
+      customer: t.customerName ?? 'Walk-in',
+      status: t.status === 'paid' ? 'Paid' : t.status === 'voided' ? 'Voided' : t.status,
+      statusIcon: t.status === 'paid' ? 'check_circle' : t.status === 'voided' ? 'cancel' : 'help',
+      amount: (t as any).totalKobo ?? 0,
+      method: (t as any).paymentMethod ?? 'Cash'
+    }))
+  );
+
+  transactionsCount = computed(() => this.transactions().length);
+
   shiftTotal = computed(() =>
-    this.closedTabs().length
+    this.transactions().reduce((sum, t) => sum + t.amount, 0) / 100
   );
 
   ngOnInit() {
@@ -46,6 +70,13 @@ export class TabHistoryComponent implements OnInit {
 
   openTransaction(tab: Tab) {
     this.router.navigate(['/tabs/receipt', tab.id]);
+  }
+
+  openTransactionById(id: string) {
+    const tab = this.closedTabs().find(t => t.id === id);
+    if (tab) {
+      this.router.navigate(['/tabs/receipt', tab.id]);
+    }
   }
 
   goBack() {

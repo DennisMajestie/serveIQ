@@ -18,7 +18,7 @@
     <!-- Category Navigation -->
     <nav class="category-nav">
       <button 
-        *ngFor="let cat of categories; let i = index" 
+        *ngFor="let cat of categories(); let i = index" 
         class="category-button"
         [class.active]="selectedCategory === cat"
         (click)="selectCategory(cat)">

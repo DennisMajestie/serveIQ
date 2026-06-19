@@ -20,6 +20,8 @@ export class BillComponent implements OnInit {
   bill = signal<Bill | null>(null);
   isLoading = signal(true);
   error = signal('');
+  waiterName = signal('Waiter');
+  time = signal(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
   subtotalNaira = computed(() => (this.bill()?.subtotalKobo ?? 0) / 100);
   serviceChargeNaira = computed(() =>
@@ -27,6 +29,13 @@ export class BillComponent implements OnInit {
   );
   discountNaira = computed(() => (this.bill()?.discountKobo ?? 0) / 100);
   totalNaira = computed(() => (this.bill()?.totalKobo ?? 0) / 100);
+
+  items = computed(() => this.bill()?.orderItems ?? []);
+
+  getSubtotal = () => this.subtotalNaira();
+  getVat = () => Math.round((this.subtotalNaira() * 0.075) * 100) / 100;
+  getServiceCharge = () => this.serviceChargeNaira();
+  getTotal = () => this.totalNaira();
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {

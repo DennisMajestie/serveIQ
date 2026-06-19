@@ -1,0 +1,51 @@
+[33m❯[39m Building...
+[32m✔[39m Building...
+[37m[1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mmain-IVR24ARS.js[37m   [2m | [22m[2mmain[22m         [2m | [22m[36m510.32 kB[37m[2m | [22m              [36m122.75 kB[37m
+[32mstyles-VCKWUS5U.css[37m[2m | [22m[2mstyles[22m       [2m | [22m [36m14.64 kB[37m[2m | [22m                [36m1.04 kB[37m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m[93m524.95 kB[37m[22m[2m | [22m              [1m123.79 kB[22m
+
+Application bundle generation complete. [54.564 seconds] - 2026-06-19T13:06:00.990Z
+[39m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mbundle initial exceeded maximum budget. Budget 500.00 kB was not met by 24.95 kB with a total of 524.95 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/menu/menu.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 2.62 kB with a total of 6.62 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/tables/tables.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 2.61 kB with a total of 6.61 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/tabs/tab-detail/tab-detail.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 1.46 kB with a total of 5.46 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mangular:styles/component:scss;8052d53e1ae4d631b2ede52bbd2e26187318fec0b66f51c5fbf7e891e53c748d;C:/Users/charl/.gemini/antigravity/scratch/serveiq/apps/waiter/src/app/nx-welcome.ts exceeded maximum budget. Budget 4.00 kB was not met by 3.03 kB with a total of 7.03 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/tabs/payment/payment.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 1.81 kB with a total of 5.81 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/tabs/receipt/receipt.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 158 bytes with a total of 4.16 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/tabs/tab-history/tab-history.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 1.21 kB with a total of 5.21 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/tables/open-tab/open-tab.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 488 bytes with a total of 4.49 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/login/login.component.scss exceeded maximum budg[39m[22m[1m[33met. Budget 4.00 kB was not met by 2.20 kB with a total of 6.20 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mapps/waiter/src/app/tabs/bill/bill.component.scss exceeded maximum budget. Budget 4.00 kB was not met by 1.44 kB with a total of 5.44 kB.[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mModule 'sweetalert2' used by 'apps/waiter/src/app/tabs/tab-detail/tab-detail.component.ts' is not ESM[0m
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: [4mhttps://angular.dev/tools/cli/build#configuring-commonjs-dependencies[0m
+
+[39m[22m
+[37mOutput location: C:\Users\charl\.gemini\antigravity\scratch\serveiq\dist\apps\waiter
+[39m

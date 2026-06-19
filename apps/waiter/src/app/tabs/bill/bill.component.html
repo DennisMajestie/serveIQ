@@ -17,18 +17,18 @@
     <!-- Bill Paper -->
     <div class="bill-paper">
       <div class="bill-header">
-        <p class="waiter-info">Waiter: {{ waiterName }} • {{ time }}</p>
+        <p class="waiter-info">Waiter: {{ waiterName() }} • {{ time() }}</p>
         <h2>ServeIQ</h2>
         <div class="premium-tag">PREMIUM SERVICE</div>
         <div class="divider"></div>
       </div>
 
       <div class="bill-items">
-        @for (item of items; track item.name) {
+        @for (item of items(); track item.menuItemName) {
           <div class="item-line">
-            <span class="qty">{{ item.qty > 1 ? item.qty + 'x' : '' }}</span>
-            <span class="name">{{ item.name }}</span>
-            <span class="price">₦{{ (item.price * item.qty).toLocaleString() }}</span>
+            <span class="qty">{{ item.quantity > 1 ? item.quantity + 'x' : '' }}</span>
+            <span class="name">{{ item.menuItemName }}</span>
+            <span class="price">₦{{ ((item.priceKobo / 100) * item.quantity).toLocaleString() }}</span>
           </div>
         }
       </div>

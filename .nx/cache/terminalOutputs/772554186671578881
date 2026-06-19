@@ -1,0 +1,160 @@
+[33m❯[39m Building...
+[32m✔[39m Building...
+[37mApplication bundle generation failed. [151.450 seconds] - 2026-06-19T11:58:00.424Z
+[39m
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'WritableSignal<string[]>' is not assignable to type 'NgIterable<any> | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/menu/menu.component.html:21:24:
+[37m      21 │         *ngFor="let cat [32mof categories; [37mlet i = index"
+         ╵                         [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component MenuComponent.
+
+    apps/waiter/src/app/menu/menu.component.ts:30:15:
+[37m      30 │   templateUrl: [32m'./menu.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'waiterName' does not exist on type 'BillComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/bill/bill.component.html:20:42:
+[37m      20 │ ...<p class="waiter-info">Waiter: {{ [32mwaiterName[37m }} • {{ time }}</p>
+         ╵                                      [32m~~~~~~~~~~[0m
+
+  Error occurs in the template of component BillComponent.
+
+    apps/waiter/src/app/tabs/bill/bill.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./bill.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'time' does not exist on type 'BillComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/bill/bill.component.html:20:61:
+[37m      20 │ ...<p class="waiter-info">Waiter: {{ waiterName }} • {[32m{ ti[37mme }}</p>
+         ╵                                                       [32m~~~~[0m
+
+  Error occurs in the template of component BillComponent.
+
+    apps/waiter/src/app/tabs/bill/bill.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./bill.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'items' does not exist on type 'Bill[39m[22m[1m[31mComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/bill/bill.component.html:27:22:
+[37m      27 │         @for (item of [32mitems[37m; track item.name) {
+         ╵                       [32m~~~~~[0m
+
+  Error occurs in the template of component BillComponent.
+
+    apps/waiter/src/app/tabs/bill/bill.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./bill.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'getSubtotal' does not exist on type 'BillComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/bill/bill.component.html:41:20:
+[37m      41 │           <span>₦{[32m{ getSubtot[37mal().toLocaleString('en-US', {minim...
+         ╵                   [32m~~~~~~~~~~~[0m
+
+  Error occurs in the template of component BillComponent.
+
+    apps/waiter/src/app/tabs/bill/bill.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./bill.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'getVat' does not exist on type 'BillComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/bill/bill.component.html:45:20:
+[37m      45 │           <span>₦{[32m{ getV[37mat().toLocaleString('en-US', {minimumFra...
+         ╵                   [32m~~~~~~[0m
+
+  Error occurs in the template of component BillComponent.
+
+    apps/waiter/src/app/tabs/bill/bill.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./bill.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'getServiceCharge' does not exist on type 'BillComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/bill/bill.component.html:49:20:
+[37m      49 │           <span>₦{[32m{ getServiceChar[37mge().toL[39m[22m[1m[31mocaleString('en-US', {...
+         ╵                   [32m~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component BillComponent.
+
+    apps/waiter/src/app/tabs/bill/bill.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./bill.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'getTotal' does not exist on type 'BillComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/bill/bill.component.html:53:20:
+[37m      53 │           <span>₦{[32m{ getTot[37mal().toLocaleString('en-US', {minimumF...
+         ╵                   [32m~~~~~~~~[0m
+
+  Error occurs in the template of component BillComponent.
+
+    apps/waiter/src/app/tabs/bill/bill.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./bill.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'tableNumber' does not exist on type 'ReceiptComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/receipt/receipt.component.html:30:37:
+[37m      30 │         <span class="value">Table {{ [32mtableNumber[37m }}</span>
+         ╵                                      [32m~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ReceiptComponent.
+
+    apps/waiter/src/app/tabs/receipt/receipt.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./receipt.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'transactionId' does not exist on type 'ReceiptComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/receipt/receipt.component.html:34:31:
+[37m      34 │         <span class="value">{{ [32mtransactionId[37m }}</span>
+         ╵                                [32m~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of c[39m[22m[1m[31momponent ReceiptComponent.
+
+    apps/waiter/src/app/tabs/receipt/receipt.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./receipt.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'transactionsCount' does not exist on type 'TabHistoryComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/tab-history/tab-history.component.html:37:39:
+[37m      37 │         <p class="stat-value count">{{ [32mtransactionsCount[37m }}</p>
+         ╵                                        [32m~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component TabHistoryComponent.
+
+    apps/waiter/src/app/tabs/tab-history/tab-history.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./tab-history.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'transactions' does not exist on type 'TabHistoryComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    apps/waiter/src/app/tabs/tab-history/tab-history.component.html:47:27:
+[37m      47 │       @for (transaction of [32mtransactions[37m; track transaction.id) {
+         ╵                            [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component TabHistoryComponent.
+
+    apps/waiter/src/app/tabs/tab-history/tab-history.component.ts:11:15:
+[37m      11 │   templateUrl: [32m'./tab-history.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m

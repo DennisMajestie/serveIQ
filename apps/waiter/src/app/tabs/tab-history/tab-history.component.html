@@ -30,11 +30,11 @@
     <div class="stats-cards">
       <div class="stat-card">
         <p class="stat-label">Shift Total</p>
-        <p class="stat-value total">₦{{ shiftTotal.toLocaleString() }}</p>
+        <p class="stat-value total">₦{{ shiftTotal().toLocaleString() }}</p>
       </div>
       <div class="stat-card">
         <p class="stat-label">Transactions</p>
-        <p class="stat-value count">{{ transactionsCount }}</p>
+        <p class="stat-value count">{{ transactionsCount() }}</p>
       </div>
     </div>
 
@@ -44,8 +44,8 @@
     </div>
 
     <div class="transactions-list">
-      @for (transaction of transactions; track transaction.id) {
-        <div class="transaction-card" (click)="openTransaction(transaction)">
+      @for (transaction of transactions(); track transaction.id) {
+        <div class="transaction-card" (click)="openTransactionById(transaction.id)">
           <div class="card-left">
             <span class="table-badge">{{ transaction.table }}</span>
             <div class="customer-info">

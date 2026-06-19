@@ -19,19 +19,19 @@
     <div class="receipt-card">
       <div class="detail-row">
         <span class="label">Amount Paid</span>
-        <span class="value">₦{{ amountPaid.toLocaleString('en-US', {minimumFractionDigits: 2})}}</span>
+        <span class="value">₦{{ amountPaid().toLocaleString('en-US', {minimumFractionDigits: 2})}}</span>
       </div>
       <div class="detail-row">
         <span class="label">Date</span>
-        <span class="value">{{ date }}</span>
+        <span class="value">{{ date() }}</span>
       </div>
       <div class="detail-row">
         <span class="label">Table Number</span>
-        <span class="value">Table {{ tableNumber }}</span>
+        <span class="value">Table {{ tableNumber() }}</span>
       </div>
       <div class="detail-row">
         <span class="label">Transaction ID</span>
-        <span class="value">{{ transactionId }}</span>
+        <span class="value">{{ transactionId() }}</span>
       </div>
     </div>
 

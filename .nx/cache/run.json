@@ -1,9 +1,21 @@
 {
   "run": {
-    "command": "nx run-many --target=build --projects=admin waiter --parallel=2",
-    "startTime": "2026-06-17T15:41:55.909Z",
-    "endTime": "2026-06-17T15:41:56.238Z",
+    "command": "nx build admin --configuration=production",
+    "startTime": "2026-06-19T13:07:47.838Z",
+    "endTime": "2026-06-19T13:07:48.066Z",
     "inner": false
   },
-  "tasks": []
+  "tasks": [
+    {
+      "taskId": "admin:build:production",
+      "target": "build",
+      "projectName": "admin",
+      "hash": "717323737093446339",
+      "startTime": "2026-06-19T13:07:47.959Z",
+      "endTime": "2026-06-19T13:07:48.063Z",
+      "params": "",
+      "cacheStatus": "local-cache-hit",
+      "status": 0
+    }
+  ]
 }

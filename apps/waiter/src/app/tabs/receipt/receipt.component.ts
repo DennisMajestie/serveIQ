@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillsApiService } from '@serveiq/shared/data-access';
@@ -22,10 +22,12 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   receipt = signal<Receipt | null>(null);
   isLoading = signal(true);
 
-  get amountPaid() { return (this.receipt()?.bill.paymentAmountKobo ?? 0) / 100; }
-  get total() { return (this.receipt()?.bill.totalKobo ?? 0) / 100; }
-  get receiptNumber() { return this.receipt()?.receiptNumber ?? '—'; }
-  get date() { return this.receipt()?.bill.paidAt ? new Date(this.receipt()!.bill.paidAt!).toLocaleString() : '—'; }
+  amountPaid = computed(() => (this.receipt()?.bill.paymentAmountKobo ?? 0) / 100);
+  total = computed(() => (this.receipt()?.bill.totalKobo ?? 0) / 100);
+  receiptNumber = computed(() => this.receipt()?.receiptNumber ?? '—');
+  date = computed(() => this.receipt()?.bill.paidAt ? new Date(this.receipt()!.bill.paidAt!).toLocaleString() : '—');
+  tableNumber = computed(() => this.receipt()?.tab.tableId ?? '—');
+  transactionId = computed(() => this.receipt()?.bill.id ?? '—');
 
   private canvas: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
