@@ -1,77 +1,250 @@
-<div class="register-container">
-  <mat-card class="register-card">
-    <mat-card-header>
-      <div class="brand-header">
-        <mat-icon color="primary">restaurant</mat-icon>
-        <h1 class="brand-text">ServeIQ</h1>
+<div class="onboarding-layout inter-font">
+
+  <!-- Top Bar -->
+  <header class="onboarding-topbar">
+    <div class="brand">
+      <svg class="brand-x" viewBox="0 0 14 14" fill="#F97316">
+        <path d="M7 0L8.5 5.5L14 7L8.5 8.5L7 14L5.5 8.5L0 7L5.5 5.5Z"/>
+      </svg>
+      <span class="brand-name space-font">ServeIQ</span>
+    </div>
+    <a href="#" class="topbar-support inter-font">Support</a>
+  </header>
+
+  <!-- Center Card -->
+  <main class="onboarding-main">
+    <div class="onboarding-card">
+
+      <!-- Step Header -->
+      <div class="step-meta">
+        <span class="step-eyebrow">ONBOARDING</span>
+        <div class="step-title-row">
+          <h1 class="step-title space-font">{{ stepTitle }}</h1>
+          <span class="step-percent">{{ stepPercent }}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="stepPercent"></div>
+        </div>
       </div>
-      <mat-card-title>Register Your Business</mat-card-title>
-      <mat-card-subtitle>Join the future of hospitality management</mat-card-subtitle>
-    </mat-card-header>
 
-    <mat-card-content>
-      <mat-stepper #stepper>
-        <!-- Step 1: Business Details -->
-        <mat-step [stepControl]="businessForm">
-          <form [formGroup]="businessForm">
-            <ng-template matStepLabel>Business Info</ng-template>
+      <!-- Form -->
+      <form class="onboarding-form" (ngSubmit)="onSubmit()">
+
+        <!-- STEP 1: Business Details -->
+        <ng-container *ngIf="currentStep() === 1">
+          <div class="form-group">
+            <label class="input-label">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              </svg>
+              Business Name
+            </label>
+            <input type="text" class="form-input" [(ngModel)]="businessName" name="businessName" placeholder="e.g. The Golden Bistro" (ngModelChange)="onInfoChange()" required>
+          </div>
+
+          <div class="form-group">
+            <label class="input-label">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+              </svg>
+              Business Type
+            </label>
+            <div class="select-wrapper">
+              <select class="form-select" [(ngModel)]="businessType" name="businessType" (ngModelChange)="onInfoChange()" required>
+                <option value="">Select business type</option>
+                <option value="restaurant">Restaurant</option>
+                <option value="bar">Bar & Lounge</option>
+                <option value="cafe">Café</option>
+                <option value="fastfood">Fast Food</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="input-label">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Full Name
+            </label>
+            <input type="text" class="form-input" [(ngModel)]="fullName" name="fullName" placeholder="e.g. John Doe" required>
+          </div>
+
+          <!-- AI Reasoning Section (Harness Nemotron) -->
+          <div class="nemotron-reasoning" *ngIf="isThinking() || suggestions()">
+            <div class="reasoning-header">
+              <svg viewBox="0 0 24 24" fill="#F97316" class="ai-icon">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z"/>
+                <path d="M2 17L12 22L22 17" stroke="#F97316" stroke-width="2"/>
+              </svg>
+              <span class="reasoning-label space-font">Nemotron Intelligence</span>
+              <span class="thinking-loader" *ngIf="isThinking()"></span>
+            </div>
             
-            <div class="form-grid">
-              <mat-form-field appearance="outline">
-                <mat-label>Business Name</mat-label>
-                <input matInput formControlName="businessName" placeholder="e.g. Gourmet Garden">
-                <mat-icon matSuffix>business</mat-icon>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Business Type</mat-label>
-                <input matInput formControlName="businessType">
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Physical Address</mat-label>
-                <textarea matInput formControlName="address" rows="3"></textarea>
-              </mat-form-field>
+            <div class="reasoning-bubble" *ngIf="reasoning()">
+              <div class="reasoning-content inter-font">{{ reasoning() }}</div>
             </div>
 
-            <div class="stepper-actions">
-              <button mat-flat-button color="primary" matStepperNext>Next</button>
+            <div class="suggestions-box" *ngIf="suggestions()">
+              <div class="suggestions-content inter-font">{{ suggestions() }}</div>
             </div>
-          </form>
-        </mat-step>
+          </div>
+        </ng-container>
 
-        <!-- Step 2: Administrator Account -->
-        <mat-step [stepControl]="adminForm">
-          <form [formGroup]="adminForm">
-            <ng-template matStepLabel>Admin Account</ng-template>
-            
-            <div class="form-grid">
-              <mat-form-field appearance="outline">
-                <mat-label>Full Name</mat-label>
-                <input matInput formControlName="fullName" placeholder="Super Admin Name">
-                <mat-icon matSuffix>person</mat-icon>
-              </mat-form-field>
+        <!-- STEP 2: Admin Account -->
+        <ng-container *ngIf="currentStep() === 2">
+          <div class="form-group">
+            <label class="input-label">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              Email Address
+            </label>
+            <input type="email" class="form-input" [(ngModel)]="email" name="email" placeholder="name@business.com" required>
+          </div>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Email Address</mat-label>
-                <input matInput formControlName="email" type="email">
-                <mat-icon matSuffix>email</mat-icon>
-              </mat-form-field>
+          <div class="form-group">
+            <label class="input-label">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              Password
+            </label>
+            <input type="password" class="form-input" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+          </div>
+        </ng-container>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Password</mat-label>
-                <input matInput formControlName="password" type="password">
-                <mat-icon matSuffix>lock</mat-icon>
-              </mat-form-field>
+        <!-- STEP 3: Documents -->
+        <ng-container *ngIf="currentStep() === 3">
+          <div class="form-group">
+            <label class="input-label">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              Business Logo
+            </label>
+            <div class="file-upload-wrapper" (click)="logoInput.click()">
+              <input type="file" class="file-input" accept="image/*" (change)="onLogoSelected($event)" [disabled]="isUploadingLogo()" #logoInput hidden>
+              <div class="file-upload-info" *ngIf="logoFile(); else logoPlaceholder">
+                <span class="file-name">{{ logoFile()?.name }}</span>
+                <div class="upload-progress" *ngIf="isUploadingLogo()">
+                  <div class="progress-bar" [style.width.%]="logoUploadProgress()"></div>
+                  <span class="progress-text">Uploading... {{ logoUploadProgress() }}%</span>
+                </div>
+                <span class="upload-success" *ngIf="!isUploadingLogo() && logoUrl()">Uploaded</span>
+              </div>
+              <ng-template #logoPlaceholder>
+                <div class="file-upload-info">
+                  <span class="file-placeholder">Select logo image (PNG, JPG, WebP)</span>
+                </div>
+              </ng-template>
             </div>
+          </div>
 
-            <div class="stepper-actions">
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-flat-button color="primary" (click)="onSubmit()">Complete Registration</button>
+          <div class="form-group">
+            <label class="input-label">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              CAC Document
+            </label>
+            <div class="file-upload-wrapper" (click)="cacInput.click()">
+              <input type="file" class="file-input" accept=".pdf,image/*" (change)="onCacDocumentSelected($event)" [disabled]="isUploadingCac()" #cacInput hidden>
+              <div class="file-upload-info" *ngIf="cacDocumentFile(); else cacPlaceholder">
+                <span class="file-name">{{ cacDocumentFile()?.name }}</span>
+                <div class="upload-progress" *ngIf="isUploadingCac()">
+                  <div class="progress-bar" [style.width.%]="cacUploadProgress()"></div>
+                  <span class="progress-text">Uploading... {{ cacUploadProgress() }}%</span>
+                </div>
+                <span class="upload-success" *ngIf="!isUploadingCac() && cacDocumentUrl()">Uploaded</span>
+              </div>
+              <ng-template #cacPlaceholder>
+                <div class="file-upload-info">
+                  <span class="file-placeholder">Select CAC document (PDF, PNG, JPG)</span>
+                </div>
+              </ng-template>
             </div>
-          </form>
-        </mat-step>
-      </mat-stepper>
-    </mat-card-content>
-  </mat-card>
+          </div>
+        </ng-container>
+
+        <div class="error-message" *ngIf="errorMessage()">
+          {{ errorMessage() }}
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="step-navigation">
+          <button type="button" class="btn-secondary space-font" *ngIf="currentStep() > 1" (click)="prevStep()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+          </button>
+          
+          <button type="button" class="btn-primary space-font" *ngIf="currentStep() < totalSteps" [disabled]="!canProceed()" (click)="nextStep()">
+            Continue
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <button type="submit" class="btn-primary space-font" *ngIf="currentStep() === totalSteps" [disabled]="isLoading() || !canProceed()">
+            {{ isLoading() ? 'Creating Account...' : 'Complete Registration' }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon" *ngIf="!isLoading()">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="login-link">Already registered? <a routerLink="/login">Log In</a></p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Bottom Features Strip -->
+  <footer class="onboarding-footer">
+    <div class="feature-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feature-icon">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span>Optimized Workflow</span>
+    </div>
+    <div class="feature-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feature-icon">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span>Real-time Insights</span>
+    </div>
+    <div class="feature-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="feature-icon">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span>Staff Management</span>
+    </div>
+  </footer>
+
+  <!-- Bottom Branding -->
+  <div class="bottom-brand">
+    <span class="space-font bottom-brand-text">ServeIQ</span>
+    <div class="bottom-links inter-font">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Help Center</a>
+      <span class="copyright">© 2024 ServeIQ Technologies. All rights reserved.</span>
+    </div>
+  </div>
 </div>

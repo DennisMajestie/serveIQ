@@ -19,211 +19,495 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": ".angular/cache/21.2.14/admin/.tsbuildinfo",
-        "hash": "17373257976911027942"
+        "file": "libs/shared/data-access/src/lib/auth.guard.ts",
+        "hash": "12940097199880033461"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/angular-compiler.db",
-        "hash": "3473916711281759256"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/angular-compiler.db-lock",
-        "hash": "6230782540516508881"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/com.chrome.devtools.json",
-        "hash": "4324311240366750039"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_cdk_bidi.js",
-        "hash": "2000659952448963829"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_cdk_bidi.js.map",
+        "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs.js.map",
         "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common.js",
-        "hash": "14296494076661780512"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common_http.js",
-        "hash": "1811817549833062186"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common_http.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_core.js",
-        "hash": "7809430910000708550"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_core.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_forms.js",
-        "hash": "15453014799765872062"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_forms.js.map",
-        "hash": "13201563086821432690"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_button.js",
-        "hash": "11758062428094389575"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_button.js.map",
-        "hash": "7602377060942670300"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_icon.js",
-        "hash": "12171026790106878189"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_icon.js.map",
-        "hash": "11470562034229163207"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser.js",
-        "hash": "6726377529785639959"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser_animations.js",
-        "hash": "1675239459019439872"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser_animations.js.map",
-        "hash": "5217770749499158788"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_router.js",
-        "hash": "9810896291830320487"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_router.js.map",
-        "hash": "10304050739103084054"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/_metadata.json",
-        "hash": "4308248746079097455"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-6BP5VLDC.js",
-        "hash": "166254467784364620"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-6BP5VLDC.js.map",
-        "hash": "12774978123019703767"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-C55PKB35.js",
-        "hash": "12982160423270754317"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-C55PKB35.js.map",
-        "hash": "11915596010980685391"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-CVGEJRBC.js",
-        "hash": "6804762442895528105"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-CVGEJRBC.js.map",
-        "hash": "4360464750970283676"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-GOMI4DH3.js",
-        "hash": "17547961288688141781"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-GOMI4DH3.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-HWYXSU2G.js",
-        "hash": "5469500415343401607"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-HWYXSU2G.js.map",
-        "hash": "9568921713545865456"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JRFR6BLO.js",
-        "hash": "17810935877921968651"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JRFR6BLO.js.map",
-        "hash": "4050072333179275062"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JZZU3NXU.js",
-        "hash": "17944153919110536065"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JZZU3NXU.js.map",
-        "hash": "17967470169159110016"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-MARUHEWW.js",
-        "hash": "2921752674536186890"
       },
       {
         "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-MARUHEWW.js.map",
         "hash": "13433390867113790089"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-PKLHNM3J.js",
-        "hash": "1727838585886925833"
+        "file": "libs/shared/data-access/src/lib/api/auth.interceptor.ts",
+        "hash": "1562209427784310752"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-PKLHNM3J.js.map",
-        "hash": "13400976162473720229"
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_common.js",
+        "hash": "13060525929518558037"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-QNRWE5RM.js",
-        "hash": "5281880444956793402"
+        "file": ".angular/cache/21.2.14/admin/vite/com.chrome.devtools.json",
+        "hash": "4324311240366750039"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-QNRWE5RM.js.map",
-        "hash": "3875747291068420996"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-XGI5745C.js",
-        "hash": "10537949481232384288"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-XGI5745C.js.map",
-        "hash": "1096068652740148250"
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-RNZINQAU.js.map",
+        "hash": "10300014685417660876"
       },
       {
         "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-ZTDWK4PF.js",
         "hash": "13647057484773675264"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-ZTDWK4PF.js.map",
-        "hash": "3676038579027990197"
+        "file": "libs/shared/data-access/src/lib/api/tabs-api.service.ts",
+        "hash": "15675881791877208465"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/package.json",
-        "hash": "8630294688235076505"
+        "file": "get-payment-screen.json",
+        "hash": "15566985286082720122"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/api.config.ts",
+        "hash": "11615551032097324672"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-HDE3VBLT.js.map",
+        "hash": "104683393836303774"
+      },
+      {
+        "file": "list-all-screens.json",
+        "hash": "6886557894809545775"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-QNRWE5RM.js",
+        "hash": "5281880444956793402"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/angular-compiler.db",
+        "hash": "3473916711281759256"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/nemotron-api.service.ts",
+        "hash": "12820304084004840317"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "5407418692668764289"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/.tsbuildinfo",
+        "hash": "8613340168612461659"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-HWYXSU2G.js",
+        "hash": "5469500415343401607"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_cdk_bidi.js",
+        "hash": "2000659952448963829"
+      },
+      {
+        "file": "libs/shared/models/src/index.ts",
+        "hash": "5783204083390380591"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_cdk_bidi.js.map",
+        "hash": "9947606979680686569"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs_operators.js.map",
+        "hash": "9947606979680686569"
       },
       {
         "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs.js",
         "hash": "9474227763779345694"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs.js.map",
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-ZTDWK4PF.js.map",
+        "hash": "3676038579027990197"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser.js.map",
+        "hash": "9947606979680686569"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/package.json",
+        "hash": "8630294688235076505"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_platform-browser.js.map",
+        "hash": "9947606979680686569"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/business-api.service.ts",
+        "hash": "3225054759845664092"
+      },
+      {
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_icon.js.map",
+        "hash": "11470562034229163207"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-GOMI4DH3.js",
+        "hash": "17547961288688141781"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/com.chrome.devtools.json",
+        "hash": "17659401319966417301"
+      },
+      {
+        "file": "stitch-assets/waiter-login-luminous-screenshot.png",
+        "hash": "9121690744031845746"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_router.js",
+        "hash": "14635583693722225263"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-6BP5VLDC.js",
+        "hash": "166254467784364620"
+      },
+      {
+        "file": "stitch-assets/admin-tab-detail.html",
+        "hash": "7070132059337927552"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "12429645109642640886"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-PKLHNM3J.js.map",
+        "hash": "13400976162473720229"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/_metadata.json",
+        "hash": "4308248746079097455"
+      },
+      {
+        "file": "scripts/nemotron-bridge.js",
+        "hash": "16525717468953461535"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_router.js",
+        "hash": "9810896291830320487"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_icon.js",
+        "hash": "12171026790106878189"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "8986843797959579273"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JZZU3NXU.js.map",
+        "hash": "17967470169159110016"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common_http.js",
+        "hash": "1811817549833062186"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-XGI5745C.js",
+        "hash": "10537949481232384288"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/angular-compiler.db",
+        "hash": "3770875852516798597"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_forms.js.map",
+        "hash": "13201563086821432690"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/base-api.service.ts",
+        "hash": "14077026531210943855"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_core.js.map",
+        "hash": "9947606979680686569"
+      },
+      {
+        "file": "nx.json",
+        "hash": "17099836163847712162"
+      },
+      {
+        "file": "tools/nemotron-dashboard.html",
+        "hash": "717356766578005879"
+      },
+      {
+        "file": "graph.json",
+        "hash": "17506520209123636365"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "13003173787224399124"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-C55PKB35.js.map",
+        "hash": "11915596010980685391"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/_metadata.json",
+        "hash": "12031031519146180341"
+      },
+      {
+        "file": "stitch-assets/waiter-payment-processing.html",
+        "hash": "8795678845720682127"
+      },
+      {
+        "file": "stitch-assets/waiter-tables-overview.html",
+        "hash": "5700752494219249124"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common.js.map",
+        "hash": "9947606979680686569"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/api-error.ts",
+        "hash": "5487371263600252314"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/.tsbuildinfo",
+        "hash": "17373257976911027942"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-CVGEJRBC.js",
+        "hash": "6804762442895528105"
+      },
+      {
+        "file": "tools/agent-logs.json",
+        "hash": "7712447724200102864"
+      },
+      {
+        "file": "README.md",
+        "hash": "2375592829385214498"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-C55PKB35.js",
+        "hash": "12982160423270754317"
+      },
+      {
+        "file": "DESIGN.md",
+        "hash": "7343598625284131304"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-DWICV4V4.js.map",
+        "hash": "17647702135998888637"
+      },
+      {
+        "file": "stitch-assets/waiter-login-luminous.html",
+        "hash": "7712969720425212771"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/branches-api.service.ts",
+        "hash": "2156022596993929763"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-HWYXSU2G.js.map",
+        "hash": "9568921713545865456"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-6BP5VLDC.js.map",
+        "hash": "12774978123019703767"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_core.js.map",
+        "hash": "9947606979680686569"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-PKLHNM3J.js",
+        "hash": "1727838585886925833"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-HDE3VBLT.js",
+        "hash": "9162340689626221868"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/angular-compiler.db-lock",
+        "hash": "4622130329258251529"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_platform-browser.js",
+        "hash": "12770719478933704957"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/auth.service.ts",
+        "hash": "1516224813470380270"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser_animations.js.map",
+        "hash": "5217770749499158788"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-XGI5745C.js.map",
+        "hash": "1096068652740148250"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/menu-api.service.ts",
+        "hash": "4923875894704306406"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_core.js",
+        "hash": "7809430910000708550"
+      },
+      {
+        "file": "eslint.config.mjs",
+        "hash": "12926286793420397906"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common_http.js.map",
+        "hash": "9947606979680686569"
+      },
+      {
+        "file": "waiter-login-luminous-screen.json",
+        "hash": "1533892044672814806"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_button.js",
+        "hash": "11758062428094389575"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-QNRWE5RM.js.map",
+        "hash": "3875747291068420996"
+      },
+      {
+        "file": "tables-overview-screen.json",
+        "hash": "6690980964967746057"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_button.js.map",
+        "hash": "7602377060942670300"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/sweetalert2.js.map",
+        "hash": "4706373900426206988"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_router.js.map",
+        "hash": "10304050739103084054"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser_animations.js",
+        "hash": "1675239459019439872"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-CVGEJRBC.js.map",
+        "hash": "4360464750970283676"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/sweetalert2.js",
+        "hash": "3975119488703470942"
+      },
+      {
+        "file": "stitch-assets/waiter-payment-processing-screenshot.png",
+        "hash": "8038594768386327849"
+      },
+      {
+        "file": "stitch-tools-list.json",
+        "hash": "13700480287998061921"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JZZU3NXU.js",
+        "hash": "17944153919110536065"
+      },
+      {
+        "file": "all-screens-list.json",
+        "hash": "1142427051664513398"
+      },
+      {
+        "file": "run-api-simple.js",
+        "hash": "782183296305903703"
+      },
+      {
+        "file": "package.json",
+        "hash": "5927556847431979844"
+      },
+      {
+        "file": "DESIGN_PRD.md",
+        "hash": "6988088705392247899"
+      },
+      {
+        "file": "download-waiter-screens.ps1",
+        "hash": "2283411919401608520"
+      },
+      {
+        "file": "get-waiter-login-luminous.json",
+        "hash": "7161272614349447168"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JRFR6BLO.js.map",
+        "hash": "4050072333179275062"
+      },
+      {
+        "file": "tools/nemotron-agent.js",
+        "hash": "3784879653036111978"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/tables-api.service.ts",
+        "hash": "11764998009318632219"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/no-auth.guard.ts",
+        "hash": "8626497035140010774"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser.js",
+        "hash": "6726377529785639959"
+      },
+      {
+        "file": "stitch-assets/waiter-tables-overview-screenshot.png",
+        "hash": "3936373967813791194"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/sync.store.ts",
+        "hash": "8688726736201151320"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_forms.js",
+        "hash": "15453014799765872062"
+      },
+      {
+        "file": "check-screens.json",
+        "hash": "3412442812599912981"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/package.json",
+        "hash": "8630294688235076505"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JRFR6BLO.js",
+        "hash": "17810935877921968651"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_core.js",
+        "hash": "748319902659123648"
+      },
+      {
+        "file": "libs/shared/models/src/lib/models.ts",
+        "hash": "17515469171270454442"
+      },
+      {
+        "file": "stitch-assets/admin-tab-detail-screenshot.png",
+        "hash": "8371036794754529773"
+      },
+      {
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-GOMI4DH3.js.map",
+        "hash": "9947606979680686569"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-RNZINQAU.js",
+        "hash": "16599374148391657668"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-DWICV4V4.js",
+        "hash": "7210520449013163940"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/orders-api.service.ts",
+        "hash": "3082313739759624490"
+      },
+      {
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_common.js.map",
         "hash": "9947606979680686569"
       },
       {
@@ -231,328 +515,52 @@
         "hash": "3971942607514746779"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs_operators.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/sweetalert2.js",
-        "hash": "3975119488703470942"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/sweetalert2.js.map",
-        "hash": "4706373900426206988"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/.tsbuildinfo",
-        "hash": "18228717511423159139"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/com.chrome.devtools.json",
-        "hash": "17659401319966417301"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_common.js",
-        "hash": "13060525929518558037"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_common.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_core.js",
-        "hash": "748319902659123648"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_core.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_platform-browser.js",
-        "hash": "12770719478933704957"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_platform-browser.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_router.js",
-        "hash": "14635583693722225263"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_router.js.map",
-        "hash": "7804385790730814902"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/_metadata.json",
-        "hash": "12031031519146180341"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-DWICV4V4.js",
-        "hash": "7210520449013163940"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-DWICV4V4.js.map",
-        "hash": "17647702135998888637"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-HDE3VBLT.js",
-        "hash": "9162340689626221868"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-HDE3VBLT.js.map",
-        "hash": "104683393836303774"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-RNZINQAU.js",
-        "hash": "16599374148391657668"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-RNZINQAU.js.map",
-        "hash": "10300014685417660876"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/package.json",
-        "hash": "8630294688235076505"
-      },
-      {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "13003173787224399124"
-      },
-      {
-        "file": ".prettierignore",
-        "hash": "5407418692668764289"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
-      },
-      {
-        "file": "DESIGN.md",
-        "hash": "7343598625284131304"
-      },
-      {
-        "file": "DESIGN_PRD.md",
-        "hash": "6988088705392247899"
-      },
-      {
-        "file": "README.md",
-        "hash": "2375592829385214498"
-      },
-      {
-        "file": "all-screens-list.json",
-        "hash": "1142427051664513398"
-      },
-      {
-        "file": "check-screens.json",
-        "hash": "3412442812599912981"
-      },
-      {
-        "file": "download-waiter-screens.ps1",
-        "hash": "2283411919401608520"
-      },
-      {
-        "file": "eslint.config.mjs",
-        "hash": "12926286793420397906"
-      },
-      {
-        "file": "get-payment-screen.json",
-        "hash": "15566985286082720122"
-      },
-      {
-        "file": "get-tables-overview.json",
-        "hash": "9931247920132416658"
-      },
-      {
-        "file": "get-waiter-login-luminous.json",
-        "hash": "7161272614349447168"
-      },
-      {
-        "file": "graph.json",
-        "hash": "17506520209123636365"
-      },
-      {
-        "file": "libs/shared/data-access/src/index.ts",
-        "hash": "15228929487463493099"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/api-error.ts",
-        "hash": "5487371263600252314"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/api.config.ts",
-        "hash": "11615551032097324672"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/auth.interceptor.ts",
-        "hash": "1562209427784310752"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/auth.service.ts",
-        "hash": "1516224813470380270"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/base-api.service.ts",
-        "hash": "14077026531210943855"
+        "file": "tools/test-file.txt",
+        "hash": "14017865338531813990"
       },
       {
         "file": "libs/shared/data-access/src/lib/api/bills-api.service.ts",
         "hash": "15612817117456271726"
       },
       {
-        "file": "libs/shared/data-access/src/lib/api/branches-api.service.ts",
-        "hash": "2156022596993929763"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/business-api.service.ts",
-        "hash": "3225054759845664092"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/environment.token.ts",
-        "hash": "15307048961140630495"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/menu-api.service.ts",
-        "hash": "4923875894704306406"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/nemotron-api.service.ts",
-        "hash": "12820304084004840317"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/orders-api.service.ts",
-        "hash": "3082313739759624490"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/tables-api.service.ts",
-        "hash": "11764998009318632219"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/tabs-api.service.ts",
-        "hash": "15675881791877208465"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/user-api.service.ts",
-        "hash": "796016516096832451"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/auth.guard.ts",
-        "hash": "12940097199880033461"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/no-auth.guard.ts",
-        "hash": "8626497035140010774"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/offline-sync.engine.ts",
-        "hash": "14355522972485572853"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/sync.store.ts",
-        "hash": "8688726736201151320"
-      },
-      {
-        "file": "libs/shared/models/src/index.ts",
-        "hash": "5783204083390380591"
-      },
-      {
-        "file": "libs/shared/models/src/lib/models.ts",
-        "hash": "17515469171270454442"
-      },
-      {
-        "file": "list-all-screens.json",
-        "hash": "6886557894809545775"
-      },
-      {
-        "file": "nx.json",
-        "hash": "17099836163847712162"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "12429645109642640886"
-      },
-      {
-        "file": "package.json",
-        "hash": "5927556847431979844"
+        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_router.js.map",
+        "hash": "7804385790730814902"
       },
       {
         "file": "payment-screen.json",
         "hash": "13978899730367308447"
       },
       {
-        "file": "run-api-simple.js",
-        "hash": "782183296305903703"
+        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-MARUHEWW.js",
+        "hash": "2921752674536186890"
       },
       {
-        "file": "scripts/nemotron-bridge.js",
-        "hash": "16525717468953461535"
+        "file": ".angular/cache/21.2.14/admin/angular-compiler.db-lock",
+        "hash": "6230782540516508881"
       },
       {
-        "file": "stitch-assets/admin-tab-detail-screenshot.png",
-        "hash": "8371036794754529773"
+        "file": "libs/shared/data-access/src/lib/api/environment.token.ts",
+        "hash": "15307048961140630495"
       },
       {
-        "file": "stitch-assets/admin-tab-detail.html",
-        "hash": "7070132059337927552"
+        "file": "libs/shared/data-access/src/index.ts",
+        "hash": "15228929487463493099"
       },
       {
-        "file": "stitch-assets/waiter-login-luminous-screenshot.png",
-        "hash": "9121690744031845746"
+        "file": "get-tables-overview.json",
+        "hash": "9931247920132416658"
       },
       {
-        "file": "stitch-assets/waiter-login-luminous.html",
-        "hash": "7712969720425212771"
+        "file": "libs/shared/data-access/src/lib/api/user-api.service.ts",
+        "hash": "796016516096832451"
       },
       {
-        "file": "stitch-assets/waiter-payment-processing-screenshot.png",
-        "hash": "8038594768386327849"
+        "file": "libs/shared/data-access/src/lib/offline-sync.engine.ts",
+        "hash": "14355522972485572853"
       },
       {
-        "file": "stitch-assets/waiter-payment-processing.html",
-        "hash": "8795678845720682127"
-      },
-      {
-        "file": "stitch-assets/waiter-tables-overview-screenshot.png",
-        "hash": "3936373967813791194"
-      },
-      {
-        "file": "stitch-assets/waiter-tables-overview.html",
-        "hash": "5700752494219249124"
-      },
-      {
-        "file": "stitch-tools-list.json",
-        "hash": "13700480287998061921"
-      },
-      {
-        "file": "tables-overview-screen.json",
-        "hash": "6690980964967746057"
-      },
-      {
-        "file": "tools/agent-logs.json",
-        "hash": "7712447724200102864"
-      },
-      {
-        "file": "tools/nemotron-agent.js",
-        "hash": "3784879653036111978"
-      },
-      {
-        "file": "tools/nemotron-dashboard.html",
-        "hash": "717356766578005879"
-      },
-      {
-        "file": "tools/test-file.txt",
-        "hash": "14017865338531813990"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "8986843797959579273"
-      },
-      {
-        "file": "waiter-login-luminous-screen.json",
-        "hash": "1533892044672814806"
+        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common.js",
+        "hash": "14296494076661780512"
       }
     ],
     "projectFileMap": {
@@ -593,8 +601,16 @@
           "hash": "9303420814833116677"
         },
         {
+          "file": "apps/admin/src/app/analytics/analytics.component.html",
+          "hash": "5401815789561403498"
+        },
+        {
+          "file": "apps/admin/src/app/analytics/analytics.component.scss",
+          "hash": "12881783720408634213"
+        },
+        {
           "file": "apps/admin/src/app/analytics/analytics.component.ts",
-          "hash": "13659802652201931576",
+          "hash": "11145238968877536983",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -644,8 +660,16 @@
           ]
         },
         {
+          "file": "apps/admin/src/app/autopilot/autopilot.component.html",
+          "hash": "7148722516895956148"
+        },
+        {
+          "file": "apps/admin/src/app/autopilot/autopilot.component.scss",
+          "hash": "4864806827489790209"
+        },
+        {
           "file": "apps/admin/src/app/autopilot/autopilot.component.ts",
-          "hash": "3729193931458643860",
+          "hash": "2759065747510827373",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -697,8 +721,16 @@
           ]
         },
         {
+          "file": "apps/admin/src/app/menu/menu-management.component.html",
+          "hash": "14142358992816847934"
+        },
+        {
+          "file": "apps/admin/src/app/menu/menu-management.component.scss",
+          "hash": "14397919253061611999"
+        },
+        {
           "file": "apps/admin/src/app/menu/menu-management.component.ts",
-          "hash": "15205095417106757701",
+          "hash": "7889258225615600399",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -724,15 +756,15 @@
         },
         {
           "file": "apps/admin/src/app/register/register-business.component.html",
-          "hash": "10423077441887483441"
+          "hash": "12061264877755421931"
         },
         {
           "file": "apps/admin/src/app/register/register-business.component.scss",
-          "hash": "7918120785180794959"
+          "hash": "8417130727564176101"
         },
         {
           "file": "apps/admin/src/app/register/register-business.component.ts",
-          "hash": "7153088504190592281",
+          "hash": "10665384750053191780",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -742,8 +774,16 @@
           ]
         },
         {
+          "file": "apps/admin/src/app/settings/settings.component.html",
+          "hash": "14666252172144577765"
+        },
+        {
+          "file": "apps/admin/src/app/settings/settings.component.scss",
+          "hash": "15047195420838049918"
+        },
+        {
           "file": "apps/admin/src/app/settings/settings.component.ts",
-          "hash": "13829646759893524363",
+          "hash": "10744254458713054728",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -760,8 +800,16 @@
           ]
         },
         {
+          "file": "apps/admin/src/app/staff/waiter-management.component.html",
+          "hash": "10804451110147904703"
+        },
+        {
+          "file": "apps/admin/src/app/staff/waiter-management.component.scss",
+          "hash": "14809471205651320959"
+        },
+        {
           "file": "apps/admin/src/app/staff/waiter-management.component.ts",
-          "hash": "1874153186135836184",
+          "hash": "1814691279075140200",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -783,8 +831,16 @@
           ]
         },
         {
+          "file": "apps/admin/src/app/tables/tables-management.component.html",
+          "hash": "11428341745751671069"
+        },
+        {
+          "file": "apps/admin/src/app/tables/tables-management.component.scss",
+          "hash": "7113871254909605689"
+        },
+        {
           "file": "apps/admin/src/app/tables/tables-management.component.ts",
-          "hash": "12918056605447931922",
+          "hash": "6996437172916704955",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -1198,7 +1254,7 @@
         },
         {
           "file": "apps/waiter/src/app/menu/menu.component.html",
-          "hash": "14785288944949388241"
+          "hash": "10433817528065749727"
         },
         {
           "file": "apps/waiter/src/app/menu/menu.component.scss",
@@ -1259,7 +1315,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/bill/bill.component.html",
-          "hash": "1797645695222246435"
+          "hash": "1070640974718741158"
         },
         {
           "file": "apps/waiter/src/app/tabs/bill/bill.component.scss",
@@ -1267,7 +1323,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/bill/bill.component.ts",
-          "hash": "7309249096610094133",
+          "hash": "13266820048155664069",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -1293,7 +1349,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/receipt/receipt.component.html",
-          "hash": "14886486860237861098"
+          "hash": "8066627094976435662"
         },
         {
           "file": "apps/waiter/src/app/tabs/receipt/receipt.component.scss",
@@ -1301,7 +1357,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/receipt/receipt.component.ts",
-          "hash": "10004584283985659945",
+          "hash": "13601284949691844369",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -1328,7 +1384,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.html",
-          "hash": "15999632913682168977"
+          "hash": "13028247454330210742"
         },
         {
           "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.scss",
@@ -1336,7 +1392,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.ts",
-          "hash": "12718005155241260867",
+          "hash": "1348320976028467714",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",

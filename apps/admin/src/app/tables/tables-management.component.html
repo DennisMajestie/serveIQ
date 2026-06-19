@@ -1,0 +1,112 @@
+<div class="table-management">
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumbs inter-font" aria-label="Breadcrumb">
+    <span class="breadcrumb-item">Admin</span>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-item active">Table Management</span>
+  </nav>
+
+  <header class="header">
+    <div class="header-content">
+      <h1 class="page-title space-font">Table Management</h1>
+      <p class="page-subtitle inter-font">Real-time floor status & occupancy</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="toggle-btn" (click)="toggleView()" [attr.aria-pressed]="isFloorPlan()">
+        <mat-icon>{{ isFloorPlan() ? 'grid_view' : 'map' }}</mat-icon>
+        <span>{{ isFloorPlan() ? 'Grid View' : 'Floor Plan' }}</span>
+      </button>
+      <button class="primary-btn inter-font" (click)="addNewTable()">
+        <mat-icon>add</mat-icon>
+        <span>Add Table</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- KPI Stats Row -->
+  <section class="stats-bar" aria-label="Summary statistics">
+    <div class="stat" *ngFor="let stat of summaryStats()">
+      <div class="stat-bubble" [class]="stat.color">
+        <mat-icon>{{ stat.icon }}</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label inter-font">{{ stat.label }}</span>
+        <span class="stat-value space-font">{{ stat.value }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Table Grid -->
+  <main class="bento-grid" [class.floor-plan]="isFloorPlan()" role="list" aria-label="Tables">
+    <!-- Add New Table (Ghost Card) -->
+    <article class="table-card ghost-card" (click)="addNewTable()" role="button" aria-label="Add new table">
+      <div class="card-inner">
+        <div class="add-btn-circle">
+          <mat-icon>add</mat-icon>
+        </div>
+        <span class="ghost-label inter-font">Add New Table</span>
+      </div>
+    </article>
+
+    <!-- Table Cards -->
+    <article class="table-card" *ngFor="let table of tables()"
+             role="listitem"
+             [class]="'status-' + table.status"
+             [routerLink]="['/tables', table.id]"
+             style="cursor: pointer;">
+      <div class="card-inner">
+        <div class="table-header">
+          <div class="table-number-group" [class]="table.status">
+            <span class="table-prefix inter-font">T</span>
+            <span class="table-number space-font">{{ table.tableNumber }}</span>
+          </div>
+          <span class="status-tag inter-font"
+                 [ngClass]="{
+                   'tag--available': table.status === 'available',
+                   'tag--occupied': table.status === 'occupied',
+                   'tag--reserved': table.status === 'reserved'
+                 }">
+            {{ getStatusLabel(table.status) }}
+          </span>
+        </div>
+
+        <div class="table-info">
+          <div class="seats-group">
+            <mat-icon>group</mat-icon>
+            <span class="seats-count inter-font">{{ table.capacity }} Seats</span>
+          </div>
+          <span class="zone-label inter-font">{{ table.label || 'Main Dining' }}</span>
+        </div>
+
+        <div class="table-footer">
+          <div class="card-actions">
+            <button class="card-link inter-font" (click)="editTable(table); $event.stopPropagation()">
+              <mat-icon>edit_note</mat-icon>
+              <span>Edit</span>
+            </button>
+            <button class="card-link inter-font delete" (click)="deleteTable(table); $event.stopPropagation()">
+              <mat-icon>delete_outline</mat-icon>
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-glow"></div>
+    </article>
+
+    <!-- Quick Tip Card -->
+    <article class="table-card tip-card">
+      <div class="card-inner">
+        <h3 class="tip-title inter-font">Quick Tip</h3>
+        <p class="tip-text inter-font">
+          Dragging tables into groups automatically creates temporary merged table IDs for large parties.
+        </p>
+        <a class="learn-more inter-font" href="#">
+          <span>Learn More</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </a>
+      </div>
+    </article>
+  </main>
+</div>

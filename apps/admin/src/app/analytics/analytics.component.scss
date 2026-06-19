@@ -1,0 +1,69 @@
+:host {
+  --surface-low: #eff4ff;
+  --on-surface: #0b1c30;
+  --on-surface-muted: #64748b;
+  --primary: #00D166;
+  --secondary: #0059bb;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+}
+
+.analytics-page { padding: 40px; display: flex; flex-direction: column; gap: 32px; }
+
+.metrics-bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.metric-card { background: white; border-radius: var(--radius-lg); padding: 24px; display: flex; gap: 16px; box-shadow: 0 8px 32px rgba(11,28,48,0.03); }
+.metric-icon-box { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+.metric-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.metric-label { font-size: 0.8125rem; font-weight: 500; color: var(--on-surface-muted); }
+.metric-row { display: flex; align-items: baseline; gap: 12px; }
+.metric-value { font-size: 1.5rem; color: var(--on-surface); }
+.metric-trend { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; }
+.metric-trend.up { color: #00D166; }
+.metric-trend.down { color: #FF7043; }
+
+.analytics-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; }
+.primary-col, .secondary-col { display: flex; flex-direction: column; gap: 32px; }
+
+.luminous-card { background: white; border-radius: var(--radius-xl); padding: 32px; box-shadow: 0 12px 48px rgba(11,28,48,0.04); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.card-title { font-size: 1.25rem; margin: 0; color: var(--on-surface); }
+
+.category-viz { display: flex; align-items: center; gap: 48px; }
+.radial-container { position: relative; width: 180px; height: 180px; }
+.radial-chart { transform: rotate(-90deg); width: 100%; height: 100%; }
+.bg-circle { fill: none; stroke: var(--surface-low); stroke-width: 8; }
+.fg-circle { fill: none; stroke-width: 8; stroke-linecap: round; }
+.fg-circle.food { stroke: var(--primary); }
+.fg-circle.drinks { stroke: var(--secondary); }
+.radial-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; }
+.total-label { font-size: 0.7rem; color: var(--on-surface-muted); text-transform: uppercase; }
+.total-value { font-size: 1.75rem; color: var(--on-surface); }
+
+.category-legend { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.legend-item { display: flex; align-items: center; gap: 16px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.legend-info { flex: 1; display: flex; flex-direction: column; }
+.cat-name { font-size: 0.9375rem; font-weight: 600; }
+.cat-val { font-size: 0.8125rem; color: var(--on-surface-muted); }
+.cat-perc { font-weight: 700; color: var(--on-surface); }
+
+.trend-viz { height: 200px; width: 100%; margin-top: 24px; position: relative; overflow: hidden; border-radius: 12px; }
+.pulse-chart { width: 100%; height: 100%; }
+.line-trace { filter: drop-shadow(0 4px 12px rgba(0, 209, 102, 0.4)); }
+
+.staff-list { display: flex; flex-direction: column; gap: 16px; }
+.staff-row { display: flex; align-items: center; gap: 16px; padding: 12px; border-radius: 16px; background: var(--surface-low); }
+.staff-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
+.staff-main { flex: 1; display: flex; flex-direction: column; }
+.staff-name { font-size: 0.9375rem; font-weight: 700; }
+.staff-role { font-size: 0.7rem; color: var(--on-surface-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.staff-metrics { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.staff-sales { font-size: 0.875rem; font-weight: 700; color: var(--secondary); }
+.efficiency-bar { width: 60px; height: 4px; background: rgba(0,0,0,0.05); border-radius: 2px; }
+.bar-fill { height: 100%; background: var(--primary); border-radius: 2px; }
+
+.insight-card { background: #fff8e1; border: none; }
+.insight-header { display: flex; align-items: center; gap: 12px; color: #f57c00; margin-bottom: 16px; }
+.insight-header h3 { margin: 0; font-size: 1.125rem; }
+.insight-list { padding-left: 20px; margin: 0; }
+.insight-list li { color: #5d4037; font-size: 0.875rem; margin-bottom: 8px; line-height: 1.5; }

@@ -1,0 +1,132 @@
+.staff-management {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 32px;
+  padding: 40px 48px;
+  max-width: 1600px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+  color: #0b1c30;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header { grid-row: 1; }
+.header-content { display: flex; justify-content: space-between; align-items: flex-end; }
+.title-group { display: grid; gap: 8px; }
+.page-title { margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.75rem; letter-spacing: -0.02em; }
+.page-subtitle { margin: 0; font-size: 1.1rem; color: #64748b; }
+
+/* ===== PRIMARY BUTTON ===== */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px;
+  background: var(--primary, #F97316); color: white; border: none; border-radius: 14px;
+  font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.2);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3); }
+.btn-icon { width: 20px; height: 20px; }
+
+/* ===== STATS GRID ===== */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.stat-card {
+  display: flex; align-items: center; gap: 20px; padding: 32px;
+  background: white; border-radius: 24px; box-shadow: 0 8px 32px rgba(11, 28, 48, 0.03);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(11, 28, 48, 0.08); }
+.stat-icon {
+  width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  svg { width: 28px; height: 28px; }
+}
+.stat-icon--orange { background: #fdf5f1; color: #F97316; }
+.stat-icon--blue { background: #f0f7ff; color: #0059bb; }
+.stat-icon--purple { background: #f5f3ff; color: #a855f7; }
+.stat-icon--green { background: #e7f9ed; color: #22c55e; }
+.stat-icon--brown { background: #fdf8f6; color: #78350f; }
+.stat-label { font-size: 1rem; font-weight: 500; color: #64748b; margin: 0 0 4px; }
+.stat-value { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem; margin: 0; line-height: 1; }
+
+/* ===== TABLE CARD ===== */
+.table-card {
+  background: white; border-radius: 24px; box-shadow: 0 12px 48px rgba(11, 28, 48, 0.04);
+  overflow: hidden; border: 1px solid #f1f5f9;
+}
+.table-sub-header {
+  background: #f8fbff; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+.filter-controls { display: flex; align-items: center; gap: 12px; }
+.filter-icon { width: 18px; height: 18px; color: #64748b; }
+.filter-label { font-size: 0.9375rem; color: #64748b; font-weight: 500; }
+.role-dropdown-trigger {
+  display: flex; align-items: center; gap: 8px; cursor: pointer; color: #F97316; font-weight: 700;
+  .arrow-icon { width: 14px; height: 14px; }
+}
+.showing-count { font-size: 0.875rem; color: #64748b; font-weight: 600; }
+
+.table-wrapper { padding: 0; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  text-align: left; padding: 24px 32px 16px; font-weight: 700; font-size: 0.75rem;
+  text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; background: white;
+}
+.data-table td { padding: 20px 32px; vertical-align: middle; border-bottom: 1px solid #f8fafc; }
+.data-row:hover { background: #fcfdfe; }
+
+/* ===== CELLS ===== */
+.cell-name { display: flex; align-items: center; gap: 16px; min-width: 280px; }
+.avatar-img { width: 48px; height: 48px; border-radius: 16px; object-fit: cover; }
+.staff-avatar { background: #0b1c30; color: white; width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.staff-name { display: block; font-weight: 700; font-size: 1.05rem; color: #1e293b; margin-bottom: 2px; }
+.staff-id { font-size: 0.8125rem; font-weight: 600; color: #94a3b8; letter-spacing: 0.02em; }
+
+.role-pill {
+  display: inline-block; padding: 6px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 800;
+  &.waiter { background: #eff6ff; color: #3b82f6; border: 1.5px solid rgba(59, 130, 246, 0.1); }
+  &.manager { background: #fff7ed; color: #F97316; border: 1.5px solid rgba(249, 115, 22, 0.1); }
+  &.senior-waiter { background: #f5f3ff; color: #8b5cf6; }
+}
+.branch-name { font-weight: 600; color: #475569; font-size: 1rem; }
+
+/* ===== TOGGLE SWITCH ===== */
+.status-toggle-group { display: flex; align-items: center; gap: 12px; }
+.toggle-switch {
+  width: 44px; height: 24px; background: #e2e8f0; border-radius: 100px; border: none;
+  position: relative; cursor: pointer; transition: background 0.3s;
+  &.active { background: #92400e; .toggle-thumb { transform: translateX(20px); } }
+}
+.toggle-thumb {
+  width: 18px; height: 18px; background: white; border-radius: 50%;
+  position: absolute; left: 3px; top: 3px; transition: transform 0.3s;
+}
+.status-text { font-weight: 600; color: #475569; font-size: 0.9375rem; }
+
+/* ===== ACTIONS ===== */
+.cell-actions { text-align: right; display: flex; justify-content: flex-end; gap: 16px; }
+.cell-actions-header { text-align: right; }
+.action-icon-btn {
+  background: transparent; border: none; cursor: pointer; color: #94a3b8;
+  transition: color 0.2s; padding: 8px; border-radius: 10px;
+  svg { width: 20px; height: 20px; }
+  &:hover { color: #F97316; background: #fdf5f1; }
+}
+
+/* ===== PAGINATION ===== */
+.table-pagination {
+  padding: 24px 32px; background: #f8fbff; display: flex; justify-content: space-between; align-items: center;
+}
+.pag-btn {
+  display: flex; align-items: center; gap: 8px; background: transparent; border: none;
+  color: #64748b; font-weight: 600; cursor: pointer; font-size: 0.9375rem;
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  svg { width: 18px; height: 18px; }
+}
+.pag-numbers { display: flex; gap: 8px; }
+.page-num {
+  width: 36px; height: 36px; border-radius: 10px; border: none; background: transparent;
+  color: #64748b; font-weight: 700; cursor: pointer;
+  &.active { background: #92400e; color: white; }
+  &:hover:not(.active) { background: #f1f5f9; }
+}
+
+.confidential-footer { text-align: center; color: #94a3b8; font-size: 0.8125rem; font-weight: 500; margin-top: 16px; }
