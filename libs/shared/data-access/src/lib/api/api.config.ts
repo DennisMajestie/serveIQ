@@ -13,10 +13,10 @@ export const API_CONFIG = {
     upload: '/api/v1/upload',
     // Users
     users: {
-      me: '/api/v1/users/me',
-      waiters: '/api/v1/users/waiters',
-      waiter: '/api/v1/users/waiter',
-      delete: '/api/v1/users/:id',
+      me: '/api/v1/user/me',
+      waiters: '/api/v1/user/waiters',
+      waiter: '/api/v1/user/waiter',
+      delete: '/api/v1/user/:id',
     },
     // Business
     business: {

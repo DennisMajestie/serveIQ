@@ -58,7 +58,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/upload', uploadRoutes);
-app.use('/api/v1/users', usersRoutes);
+app.use('/api/v1/user', usersRoutes);
 app.use('/api/v1/business', businessRoutes);
 app.use('/api/v1/branches', branchesRoutes);
 app.use('/api/v1/menu', menuRoutes);
