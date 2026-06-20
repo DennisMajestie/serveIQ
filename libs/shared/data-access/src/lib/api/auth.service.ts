@@ -35,7 +35,7 @@ export class AuthService {
   ) {}
 
   get isAuthenticated(): boolean {
-    return !!this.tokenSubject.value;
+    return !!localStorage.getItem('token') || !!localStorage.getItem('accessToken');
   }
 
   private get apiUrl(): string {
