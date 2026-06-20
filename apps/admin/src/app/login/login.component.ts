@@ -45,7 +45,17 @@ export class LoginComponent {
           iconColor: '#F97316'
         });
         this.isLoading.set(false);
-        setTimeout(() => this.router.navigate(['/dashboard']), 1000);
+        console.log('[Login] Success, token in localStorage:', !!localStorage.getItem('token'));
+        setTimeout(() => {
+          console.log('[Login] Attempting navigation to /dashboard');
+          this.router.navigate(['/dashboard']).then(success => {
+            if (success) {
+              console.log('[Login] Navigation successful');
+            } else {
+              console.error('[Login] Navigation failed');
+            }
+          });
+        }, 1500);
       },
       error: (err) => {
         this.isLoading.set(false);
