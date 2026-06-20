@@ -49,6 +49,12 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Seed database
 seedDatabase();
 
+// Request logger
+app.use((req, res, next) => {
+  console.log(`[API] ${req.method} ${req.url}`);
+  next();
+});
+
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/upload', uploadRoutes);
@@ -60,6 +66,12 @@ app.use('/api/v1/tables', tablesRoutes);
 app.use('/api/v1/tabs', tabsRoutes);
 app.use('/api/v1/orders', ordersRoutes);
 app.use('/api/v1/bills', billsRoutes);
+
+// Catch-all 404 for API routes
+app.use('/api/v1/*', (req, res) => {
+  console.warn(`[API] 404 Not Found: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({ message: `API route not found: ${req.method} ${req.originalUrl}` });
+});
 
 // Health check
 app.get('/health', (req, res) => {
