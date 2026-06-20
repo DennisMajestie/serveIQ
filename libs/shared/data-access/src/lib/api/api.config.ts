@@ -15,7 +15,7 @@ export const API_CONFIG = {
     users: {
       me: '/api/v1/user/me',
       waiters: '/api/v1/user/waiters',
-      waiter: '/api/v1/user/waiter',
+      resetPin: '/api/v1/user/waiters/:id/reset-pin',
       delete: '/api/v1/user/:id',
     },
     // Business

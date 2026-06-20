@@ -68,10 +68,10 @@ router.get('/waiters', (req: AuthRequest, res: Response) => {
 });
 
 /**
- * POST /api/v1/users/waiter
+ * POST /api/v1/user/waiters
  * Create a new waiter account for the business (owner only).
  */
-router.post('/waiter', async (req: AuthRequest, res: Response) => {
+router.post('/waiters', async (req: AuthRequest, res: Response) => {
   if (req.user!.role !== 'owner') {
     return res.sendStatus(403);
   }
@@ -82,13 +82,12 @@ router.post('/waiter', async (req: AuthRequest, res: Response) => {
   }
 
   const id = uuidv4();
-  // For demo/simple staff login, we can keep the PIN plain or hash it (using plain for now for simplicity)
   const waiter = {
     id,
     businessId: req.user!.businessId,
     fullName,
     email: email || `${id}@serveiq.com`,
-    passwordHash: '', // Waiters don't use passwords for web login
+    passwordHash: '',
     pin,
     role: 'waiter' as const,
   };
@@ -100,6 +99,29 @@ router.post('/waiter', async (req: AuthRequest, res: Response) => {
 
   const { passwordHash: _, ...safeWaiter } = waiter;
   return res.status(201).json(safeWaiter);
+});
+
+/**
+ * PATCH /api/v1/user/waiters/:id/reset-pin
+ * Reset a waiter's PIN (owner only).
+ */
+router.patch('/waiters/:id/reset-pin', (req: AuthRequest, res: Response) => {
+  if (req.user!.role !== 'owner') {
+    return res.sendStatus(403);
+  }
+
+  const { pin } = req.body;
+  if (!pin) {
+    return res.status(400).json({ message: 'pin is required' });
+  }
+
+  const user = db.users.get(req.params.id);
+  if (!user || user.businessId !== req.user!.businessId || user.role !== 'waiter') {
+    return res.sendStatus(404);
+  }
+
+  user.pin = pin;
+  return res.json({ message: 'PIN reset successful' });
 });
 
 /**

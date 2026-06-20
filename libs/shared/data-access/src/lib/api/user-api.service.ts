@@ -33,7 +33,12 @@ export class UserApiService extends BaseApiService {
 
   /** Create a new waiter account (owner only). */
   createWaiter(data: CreateWaiterRequest): Observable<User> {
-    return this.post<User>(API_CONFIG.endpoints.users.waiter, data);
+    return this.post<User>(API_CONFIG.endpoints.users.waiters, data);
+  }
+
+  /** Reset a staff member's PIN (owner only). */
+  resetStaffPin(id: string, pin: string): Observable<void> {
+    return this.patch<void>(buildUrl(API_CONFIG.endpoints.users.resetPin, { id }), { pin });
   }
 
   /** Delete a waiter (owner only). */
