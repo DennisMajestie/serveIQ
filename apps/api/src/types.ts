@@ -18,6 +18,8 @@ export interface Business {
   id: string;
   name: string;
   type: string;
+  logoUrl?: string;
+  cacDocumentUrl?: string;
 }
 
 export interface Branch {

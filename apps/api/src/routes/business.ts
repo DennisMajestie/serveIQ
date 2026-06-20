@@ -33,9 +33,11 @@ router.put('/', (req: AuthRequest, res: Response) => {
     return res.sendStatus(404);
   }
 
-  const { name, type } = req.body;
+  const { name, type, logoUrl, cacDocumentUrl } = req.body;
   if (name) business.name = name;
   if (type) business.type = type;
+  if (logoUrl) business.logoUrl = logoUrl;
+  if (cacDocumentUrl) business.cacDocumentUrl = cacDocumentUrl;
 
   return res.json(business);
 });

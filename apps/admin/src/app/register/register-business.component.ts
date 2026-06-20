@@ -117,10 +117,20 @@ export class RegisterBusinessComponent {
 
     this.authService.uploadFile(file).subscribe({
       next: (response) => {
-        console.log('[Upload] Logo success:', response.url);
-        this.logoUrl.set(response.url);
+        console.log('[Upload] Logo success response:', response);
+        const url = response.url;
+        this.logoUrl.set(url);
         this.isUploadingLogo.set(false);
         this.logoUploadProgress.set(100);
+        Swal.fire({
+          icon: 'success',
+          title: 'Logo Uploaded',
+          text: 'Your business logo has been successfully uploaded.',
+          timer: 1500,
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end'
+        });
       },
       error: (err) => {
         console.error('[Upload] Logo failed:', err);
@@ -141,10 +151,20 @@ export class RegisterBusinessComponent {
 
     this.authService.uploadFile(file).subscribe({
       next: (response) => {
-        console.log('[Upload] CAC success:', response.url);
-        this.cacDocumentUrl.set(response.url);
+        console.log('[Upload] CAC success response:', response);
+        const url = response.url;
+        this.cacDocumentUrl.set(url);
         this.isUploadingCac.set(false);
         this.cacUploadProgress.set(100);
+        Swal.fire({
+          icon: 'success',
+          title: 'CAC Document Uploaded',
+          text: 'Your registration document has been successfully processed.',
+          timer: 1500,
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end'
+        });
       },
       error: (err) => {
         console.error('[Upload] CAC failed:', err);

@@ -9,11 +9,14 @@ const router = Router();
 // POST /api/v1/auth/register
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { fullName, email, password, businessName, businessType } = req.body;
+    const { fullName, email, password, businessName, businessType, logoUrl, cacDocumentUrl } = req.body;
+
+    console.log(`[Register] Attempting registration for: ${email} (${businessName})`);
 
     // Check if email exists
     if (db.emails.has(email)) {
-      return res.status(409).json({ message: 'Email already registered' });
+      console.warn(`[Register] Email already exists: ${email}`);
+      return res.status(409).json({ message: 'Email already registered. Try logging in or use a different email.' });
     }
 
     // Create business and user in transaction
@@ -24,7 +27,9 @@ router.post('/register', async (req: Request, res: Response) => {
     db.businesses.set(businessId, {
       id: businessId,
       name: businessName,
-      type: businessType
+      type: businessType,
+      logoUrl,
+      cacDocumentUrl
     });
 
     db.users.set(userId, {
