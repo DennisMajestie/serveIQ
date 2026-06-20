@@ -117,14 +117,17 @@ export class RegisterBusinessComponent {
 
     this.authService.uploadFile(file).subscribe({
       next: (response) => {
+        console.log('[Upload] Logo success:', response.url);
         this.logoUrl.set(response.url);
         this.isUploadingLogo.set(false);
         this.logoUploadProgress.set(100);
       },
       error: (err) => {
+        console.error('[Upload] Logo failed:', err);
         this.isUploadingLogo.set(false);
         this.logoUploadProgress.set(0);
-        Swal.fire({ icon: 'error', title: 'Upload Failed', text: 'Failed to upload logo. Please try again.', confirmButtonColor: '#F97316' });
+        const errorMsg = err.error?.message || 'Check your internet connection and try again.';
+        Swal.fire({ icon: 'error', title: 'Upload Failed', text: `Failed to upload logo: ${errorMsg}`, confirmButtonColor: '#F97316' });
       }
     });
   }
@@ -138,14 +141,17 @@ export class RegisterBusinessComponent {
 
     this.authService.uploadFile(file).subscribe({
       next: (response) => {
+        console.log('[Upload] CAC success:', response.url);
         this.cacDocumentUrl.set(response.url);
         this.isUploadingCac.set(false);
         this.cacUploadProgress.set(100);
       },
       error: (err) => {
+        console.error('[Upload] CAC failed:', err);
         this.isUploadingCac.set(false);
         this.cacUploadProgress.set(0);
-        Swal.fire({ icon: 'error', title: 'Upload Failed', text: 'Failed to upload CAC document. Please try again.', confirmButtonColor: '#F97316' });
+        const errorMsg = err.error?.message || 'Check your internet connection and try again.';
+        Swal.fire({ icon: 'error', title: 'Upload Failed', text: `Failed to upload CAC document: ${errorMsg}`, confirmButtonColor: '#F97316' });
       }
     });
   }
@@ -192,7 +198,8 @@ export class RegisterBusinessComponent {
       logoUrl: this.logoUrl() || undefined,
       cacDocumentUrl: this.cacDocumentUrl() || undefined
     }).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log('[Register] Success:', res);
         Swal.fire({
           icon: 'success',
           title: 'Account Created!',
@@ -208,15 +215,20 @@ export class RegisterBusinessComponent {
           next: () => {
             setTimeout(() => this.router.navigate(['/dashboard']), 1000);
           },
-          error: () => this.router.navigate(['/login'])
+          error: (loginErr) => {
+            console.error('[Register] Post-reg login failed:', loginErr);
+            this.router.navigate(['/login']);
+          }
         });
       },
       error: (err) => {
+        console.error('[Register] Failed:', err);
         this.isLoading.set(false);
+        const errorMsg = err.error?.message || 'Registration failed. Check your internet connection or try different credentials.';
         Swal.fire({
           icon: 'error',
           title: 'Registration Failed',
-          text: err.error?.message || 'Please try again with different credentials.',
+          text: errorMsg,
           confirmButtonColor: '#F97316'
         });
       }
