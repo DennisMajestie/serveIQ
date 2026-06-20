@@ -44,6 +44,7 @@ export class LoginComponent {
           timerProgressBar: true,
           iconColor: '#F97316'
         });
+        this.isLoading.set(false);
         setTimeout(() => this.router.navigate(['/dashboard']), 1000);
       },
       error: (err) => {

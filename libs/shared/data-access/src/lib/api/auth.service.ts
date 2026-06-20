@@ -25,7 +25,7 @@ export interface RegisterResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenSubject = new BehaviorSubject<string | null>(
-    localStorage.getItem('accessToken')
+    localStorage.getItem('token') || localStorage.getItem('accessToken')
   );
   token$ = this.tokenSubject.asObservable();
 
@@ -47,7 +47,7 @@ export class AuthService {
       email, password
     }).pipe(
       tap(response => {
-        localStorage.setItem('accessToken', response.accessToken);
+        localStorage.setItem('token', response.accessToken);
         this.tokenSubject.next(response.accessToken);
       })
     );
@@ -61,7 +61,7 @@ export class AuthService {
       tap(response => {
         localStorage.setItem('businessId', response.businessId);
         localStorage.setItem('businessName', response.businessName);
-        localStorage.setItem('accessToken', response.accessToken);
+        localStorage.setItem('token', response.accessToken);
         this.tokenSubject.next(response.accessToken);
       })
     );
@@ -90,6 +90,7 @@ export class AuthService {
   }
 
   logout() {
+    localStorage.removeItem('token');
     localStorage.removeItem('accessToken');
     this.tokenSubject.next(null);
   }
