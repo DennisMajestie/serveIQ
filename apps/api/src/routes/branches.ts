@@ -30,6 +30,21 @@ router.post('/', (req: AuthRequest, res: Response) => {
   return res.status(201).json(branch);
 });
 
+// GET /api/v1/branches/dashboard/stats
+router.get('/dashboard/stats', (req: AuthRequest, res: Response) => {
+  const businessId = req.user!.businessId;
+  const branches = Array.from(db.branches.values()).filter(b => b.businessId === businessId);
+  const tables = Array.from(db.tables.values()).filter(t => branches.some(b => b.id === t.branchId));
+  const tabs = Array.from(db.tabs.values()).filter(tab => branches.some(b => b.id === tab.branchId));
+
+  return res.json({
+    totalBranches: branches.length,
+    totalTables: tables.length,
+    openTabs: tabs.filter(t => t.status === 'open').length,
+    totalOrders: Array.from(db.orderItems.values()).length
+  });
+});
+
 // GET /api/v1/branches/:id
 router.get('/:id', (req: AuthRequest, res: Response) => {
   const businessId = req.user!.businessId;
@@ -55,21 +70,6 @@ router.patch('/:id', (req: AuthRequest, res: Response) => {
   if (location !== undefined) branch.location = location;
 
   return res.json(branch);
-});
-
-// GET /api/v1/branches/dashboard/stats
-router.get('/dashboard/stats', (req: AuthRequest, res: Response) => {
-  const businessId = req.user!.businessId;
-  const branches = Array.from(db.branches.values()).filter(b => b.businessId === businessId);
-  const tables = Array.from(db.tables.values()).filter(t => branches.some(b => b.id === t.branchId));
-  const tabs = Array.from(db.tabs.values()).filter(tab => branches.some(b => b.id === tab.branchId));
-
-  return res.json({
-    totalBranches: branches.length,
-    totalTables: tables.length,
-    openTabs: tabs.filter(t => t.status === 'open').length,
-    totalOrders: Array.from(db.orderItems.values()).length
-  });
 });
 
 export default router;
