@@ -19,548 +19,228 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "libs/shared/data-access/src/lib/auth.guard.ts",
-        "hash": "12940097199880033461"
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-MARUHEWW.js.map",
-        "hash": "13433390867113790089"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/auth.interceptor.ts",
-        "hash": "1562209427784310752"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_common.js",
-        "hash": "13060525929518558037"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/com.chrome.devtools.json",
-        "hash": "4324311240366750039"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-RNZINQAU.js.map",
-        "hash": "10300014685417660876"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-ZTDWK4PF.js",
-        "hash": "13647057484773675264"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/tabs-api.service.ts",
-        "hash": "15675881791877208465"
-      },
-      {
-        "file": "get-payment-screen.json",
-        "hash": "15566985286082720122"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/api.config.ts",
-        "hash": "11615551032097324672"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-HDE3VBLT.js.map",
-        "hash": "104683393836303774"
-      },
-      {
-        "file": "list-all-screens.json",
-        "hash": "6886557894809545775"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-QNRWE5RM.js",
-        "hash": "5281880444956793402"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/angular-compiler.db",
-        "hash": "3473916711281759256"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/nemotron-api.service.ts",
-        "hash": "12820304084004840317"
+        "file": ".gitignore",
+        "hash": "15714102834279233425"
       },
       {
         "file": ".prettierignore",
         "hash": "5407418692668764289"
       },
       {
-        "file": ".angular/cache/21.2.14/waiter/.tsbuildinfo",
-        "hash": "8613340168612461659"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-HWYXSU2G.js",
-        "hash": "5469500415343401607"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_cdk_bidi.js",
-        "hash": "2000659952448963829"
-      },
-      {
-        "file": "libs/shared/models/src/index.ts",
-        "hash": "5783204083390380591"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_cdk_bidi.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs_operators.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs.js",
-        "hash": "9474227763779345694"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-ZTDWK4PF.js.map",
-        "hash": "3676038579027990197"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/package.json",
-        "hash": "8630294688235076505"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_platform-browser.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/business-api.service.ts",
-        "hash": "3225054759845664092"
-      },
-      {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_icon.js.map",
-        "hash": "11470562034229163207"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-GOMI4DH3.js",
-        "hash": "17547961288688141781"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/com.chrome.devtools.json",
-        "hash": "17659401319966417301"
-      },
-      {
-        "file": "stitch-assets/waiter-login-luminous-screenshot.png",
-        "hash": "9121690744031845746"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_router.js",
-        "hash": "14635583693722225263"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-6BP5VLDC.js",
-        "hash": "166254467784364620"
-      },
-      {
-        "file": "stitch-assets/admin-tab-detail.html",
-        "hash": "7070132059337927552"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "12429645109642640886"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-PKLHNM3J.js.map",
-        "hash": "13400976162473720229"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/_metadata.json",
-        "hash": "4308248746079097455"
-      },
-      {
-        "file": "scripts/nemotron-bridge.js",
-        "hash": "16525717468953461535"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_router.js",
-        "hash": "9810896291830320487"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_icon.js",
-        "hash": "12171026790106878189"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "8986843797959579273"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JZZU3NXU.js.map",
-        "hash": "17967470169159110016"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common_http.js",
-        "hash": "1811817549833062186"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-XGI5745C.js",
-        "hash": "10537949481232384288"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/angular-compiler.db",
-        "hash": "3770875852516798597"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_forms.js.map",
-        "hash": "13201563086821432690"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/base-api.service.ts",
-        "hash": "14077026531210943855"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_core.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": "nx.json",
-        "hash": "17099836163847712162"
-      },
-      {
-        "file": "tools/nemotron-dashboard.html",
-        "hash": "717356766578005879"
-      },
-      {
-        "file": "graph.json",
-        "hash": "17506520209123636365"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "13003173787224399124"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-C55PKB35.js.map",
-        "hash": "11915596010980685391"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/_metadata.json",
-        "hash": "12031031519146180341"
-      },
-      {
-        "file": "stitch-assets/waiter-payment-processing.html",
-        "hash": "8795678845720682127"
-      },
-      {
-        "file": "stitch-assets/waiter-tables-overview.html",
-        "hash": "5700752494219249124"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/api-error.ts",
-        "hash": "5487371263600252314"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/.tsbuildinfo",
-        "hash": "17373257976911027942"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-CVGEJRBC.js",
-        "hash": "6804762442895528105"
-      },
-      {
-        "file": "tools/agent-logs.json",
-        "hash": "7712447724200102864"
-      },
-      {
-        "file": "README.md",
-        "hash": "2375592829385214498"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-C55PKB35.js",
-        "hash": "12982160423270754317"
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
       },
       {
         "file": "DESIGN.md",
         "hash": "7343598625284131304"
       },
       {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-DWICV4V4.js.map",
-        "hash": "17647702135998888637"
+        "file": "DESIGN_PRD.md",
+        "hash": "6988088705392247899"
       },
       {
-        "file": "stitch-assets/waiter-login-luminous.html",
-        "hash": "7712969720425212771"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/branches-api.service.ts",
-        "hash": "2156022596993929763"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-HWYXSU2G.js.map",
-        "hash": "9568921713545865456"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-6BP5VLDC.js.map",
-        "hash": "12774978123019703767"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_core.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-PKLHNM3J.js",
-        "hash": "1727838585886925833"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-HDE3VBLT.js",
-        "hash": "9162340689626221868"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/angular-compiler.db-lock",
-        "hash": "4622130329258251529"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_platform-browser.js",
-        "hash": "12770719478933704957"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/auth.service.ts",
-        "hash": "1516224813470380270"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser_animations.js.map",
-        "hash": "5217770749499158788"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-XGI5745C.js.map",
-        "hash": "1096068652740148250"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/menu-api.service.ts",
-        "hash": "4923875894704306406"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_core.js",
-        "hash": "7809430910000708550"
-      },
-      {
-        "file": "eslint.config.mjs",
-        "hash": "12926286793420397906"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common_http.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": "waiter-login-luminous-screen.json",
-        "hash": "1533892044672814806"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_button.js",
-        "hash": "11758062428094389575"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-QNRWE5RM.js.map",
-        "hash": "3875747291068420996"
-      },
-      {
-        "file": "tables-overview-screen.json",
-        "hash": "6690980964967746057"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_material_button.js.map",
-        "hash": "7602377060942670300"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/sweetalert2.js.map",
-        "hash": "4706373900426206988"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_router.js.map",
-        "hash": "10304050739103084054"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser_animations.js",
-        "hash": "1675239459019439872"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-CVGEJRBC.js.map",
-        "hash": "4360464750970283676"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/sweetalert2.js",
-        "hash": "3975119488703470942"
-      },
-      {
-        "file": "stitch-assets/waiter-payment-processing-screenshot.png",
-        "hash": "8038594768386327849"
-      },
-      {
-        "file": "stitch-tools-list.json",
-        "hash": "13700480287998061921"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JZZU3NXU.js",
-        "hash": "17944153919110536065"
+        "file": "README.md",
+        "hash": "2375592829385214498"
       },
       {
         "file": "all-screens-list.json",
         "hash": "1142427051664513398"
       },
       {
-        "file": "run-api-simple.js",
-        "hash": "782183296305903703"
-      },
-      {
-        "file": "package.json",
-        "hash": "5927556847431979844"
-      },
-      {
-        "file": "DESIGN_PRD.md",
-        "hash": "6988088705392247899"
+        "file": "check-screens.json",
+        "hash": "3412442812599912981"
       },
       {
         "file": "download-waiter-screens.ps1",
         "hash": "2283411919401608520"
       },
       {
-        "file": "get-waiter-login-luminous.json",
-        "hash": "7161272614349447168"
+        "file": "eslint.config.mjs",
+        "hash": "12926286793420397906"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JRFR6BLO.js.map",
-        "hash": "4050072333179275062"
-      },
-      {
-        "file": "tools/nemotron-agent.js",
-        "hash": "3784879653036111978"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/tables-api.service.ts",
-        "hash": "11764998009318632219"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/no-auth.guard.ts",
-        "hash": "8626497035140010774"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_platform-browser.js",
-        "hash": "6726377529785639959"
-      },
-      {
-        "file": "stitch-assets/waiter-tables-overview-screenshot.png",
-        "hash": "3936373967813791194"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/sync.store.ts",
-        "hash": "8688726736201151320"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_forms.js",
-        "hash": "15453014799765872062"
-      },
-      {
-        "file": "check-screens.json",
-        "hash": "3412442812599912981"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/package.json",
-        "hash": "8630294688235076505"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-JRFR6BLO.js",
-        "hash": "17810935877921968651"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_core.js",
-        "hash": "748319902659123648"
-      },
-      {
-        "file": "libs/shared/models/src/lib/models.ts",
-        "hash": "17515469171270454442"
-      },
-      {
-        "file": "stitch-assets/admin-tab-detail-screenshot.png",
-        "hash": "8371036794754529773"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-GOMI4DH3.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-RNZINQAU.js",
-        "hash": "16599374148391657668"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/chunk-DWICV4V4.js",
-        "hash": "7210520449013163940"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/orders-api.service.ts",
-        "hash": "3082313739759624490"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_common.js.map",
-        "hash": "9947606979680686569"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/rxjs_operators.js",
-        "hash": "3971942607514746779"
-      },
-      {
-        "file": "tools/test-file.txt",
-        "hash": "14017865338531813990"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/bills-api.service.ts",
-        "hash": "15612817117456271726"
-      },
-      {
-        "file": ".angular/cache/21.2.14/waiter/vite/deps/@angular_router.js.map",
-        "hash": "7804385790730814902"
-      },
-      {
-        "file": "payment-screen.json",
-        "hash": "13978899730367308447"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/chunk-MARUHEWW.js",
-        "hash": "2921752674536186890"
-      },
-      {
-        "file": ".angular/cache/21.2.14/admin/angular-compiler.db-lock",
-        "hash": "6230782540516508881"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/environment.token.ts",
-        "hash": "15307048961140630495"
-      },
-      {
-        "file": "libs/shared/data-access/src/index.ts",
-        "hash": "15228929487463493099"
+        "file": "get-payment-screen.json",
+        "hash": "15566985286082720122"
       },
       {
         "file": "get-tables-overview.json",
         "hash": "9931247920132416658"
       },
       {
+        "file": "get-waiter-login-luminous.json",
+        "hash": "7161272614349447168"
+      },
+      {
+        "file": "graph.json",
+        "hash": "17506520209123636365"
+      },
+      {
+        "file": "libs/shared/data-access/src/index.ts",
+        "hash": "13711063542471542039"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/api-error.ts",
+        "hash": "5487371263600252314"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/api.config.ts",
+        "hash": "3088526630368362128"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/auth.interceptor.ts",
+        "hash": "14880099261035267365"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/auth.service.ts",
+        "hash": "14680126691121388407"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/base-api.service.ts",
+        "hash": "14077026531210943855"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/bills-api.service.ts",
+        "hash": "15612817117456271726"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/branches-api.service.ts",
+        "hash": "2156022596993929763"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/business-api.service.ts",
+        "hash": "3225054759845664092"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/environment.token.ts",
+        "hash": "15307048961140630495"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/menu-api.service.ts",
+        "hash": "4923875894704306406"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/orders-api.service.ts",
+        "hash": "3082313739759624490"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/tables-api.service.ts",
+        "hash": "11764998009318632219"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/api/tabs-api.service.ts",
+        "hash": "15675881791877208465"
+      },
+      {
         "file": "libs/shared/data-access/src/lib/api/user-api.service.ts",
-        "hash": "796016516096832451"
+        "hash": "5544622473484499149"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/auth.guard.ts",
+        "hash": "12940097199880033461"
+      },
+      {
+        "file": "libs/shared/data-access/src/lib/no-auth.guard.ts",
+        "hash": "8626497035140010774"
       },
       {
         "file": "libs/shared/data-access/src/lib/offline-sync.engine.ts",
         "hash": "14355522972485572853"
       },
       {
-        "file": ".angular/cache/21.2.14/admin/vite/deps/@angular_common.js",
-        "hash": "14296494076661780512"
+        "file": "libs/shared/data-access/src/lib/sync.store.ts",
+        "hash": "8688726736201151320"
+      },
+      {
+        "file": "libs/shared/models/src/index.ts",
+        "hash": "5783204083390380591"
+      },
+      {
+        "file": "libs/shared/models/src/lib/models.ts",
+        "hash": "7660630756141242799"
+      },
+      {
+        "file": "list-all-screens.json",
+        "hash": "6886557894809545775"
+      },
+      {
+        "file": "nx.json",
+        "hash": "17099836163847712162"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "12429645109642640886"
+      },
+      {
+        "file": "package.json",
+        "hash": "5927556847431979844"
+      },
+      {
+        "file": "payment-screen.json",
+        "hash": "13978899730367308447"
+      },
+      {
+        "file": "run-api-simple.js",
+        "hash": "782183296305903703"
+      },
+      {
+        "file": "stitch-assets/admin-tab-detail-screenshot.png",
+        "hash": "8371036794754529773"
+      },
+      {
+        "file": "stitch-assets/admin-tab-detail.html",
+        "hash": "7070132059337927552"
+      },
+      {
+        "file": "stitch-assets/waiter-login-luminous-screenshot.png",
+        "hash": "9121690744031845746"
+      },
+      {
+        "file": "stitch-assets/waiter-login-luminous.html",
+        "hash": "7712969720425212771"
+      },
+      {
+        "file": "stitch-assets/waiter-payment-processing-screenshot.png",
+        "hash": "8038594768386327849"
+      },
+      {
+        "file": "stitch-assets/waiter-payment-processing.html",
+        "hash": "8795678845720682127"
+      },
+      {
+        "file": "stitch-assets/waiter-tables-overview-screenshot.png",
+        "hash": "3936373967813791194"
+      },
+      {
+        "file": "stitch-assets/waiter-tables-overview.html",
+        "hash": "5700752494219249124"
+      },
+      {
+        "file": "stitch-tools-list.json",
+        "hash": "13700480287998061921"
+      },
+      {
+        "file": "tables-overview-screen.json",
+        "hash": "6690980964967746057"
+      },
+      {
+        "file": "tools/agent-logs.json",
+        "hash": "7712447724200102864"
+      },
+      {
+        "file": "tools/test-file.txt",
+        "hash": "14017865338531813990"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "8986843797959579273"
+      },
+      {
+        "file": "waiter-login-luminous-screen.json",
+        "hash": "1533892044672814806"
       }
     ],
     "projectFileMap": {
@@ -620,11 +300,10 @@
         },
         {
           "file": "apps/admin/src/app/app.config.ts",
-          "hash": "246487041166919426",
+          "hash": "2256512354299205095",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/router",
-            "npm:@angular/platform-browser",
             "npm:@angular/common"
           ]
         },
@@ -634,7 +313,7 @@
         },
         {
           "file": "apps/admin/src/app/app.routes.ts",
-          "hash": "7232148194836975857",
+          "hash": "3362767042676086978",
           "deps": [
             "npm:@angular/router"
           ]
@@ -660,24 +339,6 @@
           ]
         },
         {
-          "file": "apps/admin/src/app/autopilot/autopilot.component.html",
-          "hash": "7148722516895956148"
-        },
-        {
-          "file": "apps/admin/src/app/autopilot/autopilot.component.scss",
-          "hash": "4864806827489790209"
-        },
-        {
-          "file": "apps/admin/src/app/autopilot/autopilot.component.ts",
-          "hash": "2759065747510827373",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/forms",
-            "npm:@angular/material"
-          ]
-        },
-        {
           "file": "apps/admin/src/app/bills/bills.component.ts",
           "hash": "13940906151692061433",
           "deps": [
@@ -688,7 +349,7 @@
         },
         {
           "file": "apps/admin/src/app/core/auth.guard.ts",
-          "hash": "3459561219209622137",
+          "hash": "2703860035677507602",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/router"
@@ -700,7 +361,7 @@
         },
         {
           "file": "apps/admin/src/app/dashboard/dashboard.component.ts",
-          "hash": "14666452064732594018",
+          "hash": "7731806191635482405",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -710,8 +371,23 @@
           ]
         },
         {
+          "file": "apps/admin/src/app/interceptors/auth.interceptor.ts",
+          "hash": "6133743632989849701",
+          "deps": [
+            "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/login/login.component.html",
+          "hash": "873710583523434535"
+        },
+        {
+          "file": "apps/admin/src/app/login/login.component.scss",
+          "hash": "12670886215614091967"
+        },
+        {
           "file": "apps/admin/src/app/login/login.component.ts",
-          "hash": "11056333925379373191",
+          "hash": "6268060730069161848",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -730,7 +406,7 @@
         },
         {
           "file": "apps/admin/src/app/menu/menu-management.component.ts",
-          "hash": "7889258225615600399",
+          "hash": "13400908403825463916",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -739,12 +415,48 @@
           ]
         },
         {
-          "file": "apps/admin/src/app/nemotron.service.ts",
-          "hash": "7285196556079971154",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common"
-          ]
+          "file": "apps/admin/src/app/models/bill.interface.ts",
+          "hash": "16395828308057946095"
+        },
+        {
+          "file": "apps/admin/src/app/models/branch.interface.ts",
+          "hash": "962212152184677059"
+        },
+        {
+          "file": "apps/admin/src/app/models/dashboard-stats.interface.ts",
+          "hash": "38346507029073361"
+        },
+        {
+          "file": "apps/admin/src/app/models/index.ts",
+          "hash": "5124712176796403536"
+        },
+        {
+          "file": "apps/admin/src/app/models/login-response.interface.ts",
+          "hash": "13263649952213707744"
+        },
+        {
+          "file": "apps/admin/src/app/models/menu-item.interface.ts",
+          "hash": "1168959099403974385"
+        },
+        {
+          "file": "apps/admin/src/app/models/order-item.interface.ts",
+          "hash": "1820791416716799950"
+        },
+        {
+          "file": "apps/admin/src/app/models/tab.interface.ts",
+          "hash": "13092085100469616462"
+        },
+        {
+          "file": "apps/admin/src/app/models/table.interface.ts",
+          "hash": "915567920924937005"
+        },
+        {
+          "file": "apps/admin/src/app/models/waiter-login-response.interface.ts",
+          "hash": "4154113258428417638"
+        },
+        {
+          "file": "apps/admin/src/app/models/waiter.interface.ts",
+          "hash": "3495513053609730248"
         },
         {
           "file": "apps/admin/src/app/nx-welcome.ts",
@@ -755,22 +467,120 @@
           ]
         },
         {
+          "file": "apps/admin/src/app/pipes/kobo.pipe.ts",
+          "hash": "16104313348629920953",
+          "deps": [
+            "npm:@angular/core"
+          ]
+        },
+        {
           "file": "apps/admin/src/app/register/register-business.component.html",
-          "hash": "12061264877755421931"
+          "hash": "794919463955100769"
         },
         {
           "file": "apps/admin/src/app/register/register-business.component.scss",
-          "hash": "8417130727564176101"
+          "hash": "2032252657522813724"
         },
         {
           "file": "apps/admin/src/app/register/register-business.component.ts",
-          "hash": "10665384750053191780",
+          "hash": "5461858863941125812",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
             "npm:@angular/router",
             "npm:@angular/forms",
             "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/auth.service.ts",
+          "hash": "17058469638589111777",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/bill.service.ts",
+          "hash": "8820848286301696152",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/branch.service.ts",
+          "hash": "9406032337210712580",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/business.service.ts",
+          "hash": "10285525560175511600",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/menu.service.ts",
+          "hash": "15212431753837152839",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/order.service.ts",
+          "hash": "3345105401558879780",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/staff.service.ts",
+          "hash": "8300395025228526108",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/tab.service.ts",
+          "hash": "14520602135486054909",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/table.service.ts",
+          "hash": "11209315597058021469",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/services/upload.service.ts",
+          "hash": "8866908928543991219",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
           ]
         },
         {
@@ -809,7 +619,7 @@
         },
         {
           "file": "apps/admin/src/app/staff/waiter-management.component.ts",
-          "hash": "1814691279075140200",
+          "hash": "1807232859107411162",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -832,7 +642,7 @@
         },
         {
           "file": "apps/admin/src/app/tables/tables-management.component.html",
-          "hash": "11428341745751671069"
+          "hash": "5787387661109264365"
         },
         {
           "file": "apps/admin/src/app/tables/tables-management.component.scss",
@@ -840,7 +650,7 @@
         },
         {
           "file": "apps/admin/src/app/tables/tables-management.component.ts",
-          "hash": "6996437172916704955",
+          "hash": "10701621575113933494",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -871,7 +681,7 @@
         },
         {
           "file": "apps/admin/src/environments/environment.prod.ts",
-          "hash": "14830392372095486564"
+          "hash": "11646791496715210418"
         },
         {
           "file": "apps/admin/src/environments/environment.ts",
@@ -905,222 +715,17 @@
           "hash": "17724542442325471187"
         }
       ],
-      "api": [
+      "admin-e2e": [
         {
-          "file": "apps/api/eslint.config.mjs",
-          "hash": "15417441288406377240",
-          "deps": [
-            "npm:@eslint/js",
-            "npm:typescript-eslint"
-          ]
-        },
-        {
-          "file": "apps/api/package-lock.json",
-          "hash": "16224719483025156551"
-        },
-        {
-          "file": "apps/api/package.json",
-          "hash": "6093877474758726024",
-          "deps": [
-            "npm:@types/express",
-            "npm:@types/cors",
-            "npm:@types/jsonwebtoken",
-            "npm:@types/bcryptjs",
-            "npm:@types/uuid",
-            "npm:ts-node",
-            "npm:typescript",
-            "npm:nodemon",
-            "npm:express",
-            "npm:cors",
-            "npm:jsonwebtoken",
-            "npm:bcryptjs",
-            "npm:uuid",
-            "npm:dotenv"
-          ]
-        },
-        {
-          "file": "apps/api/project.json",
-          "hash": "864365604775084779"
-        },
-        {
-          "file": "apps/api/run-api.js",
-          "hash": "5231800504485166903"
-        },
-        {
-          "file": "apps/api/src/db.ts",
-          "hash": "1098008383208963968",
-          "deps": [
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/index.ts",
-          "hash": "14940697378448892946",
-          "deps": [
-            "npm:dotenv",
-            "npm:express",
-            "npm:cors"
-          ]
-        },
-        {
-          "file": "apps/api/src/main.js",
-          "hash": "17698976382821492106",
-          "deps": [
-            "npm:dotenv",
-            "npm:express",
-            "npm:openai",
-            "npm:cors"
-          ]
-        },
-        {
-          "file": "apps/api/src/main.ts",
-          "hash": "7221877766909393309",
-          "deps": [
-            "npm:dotenv",
-            "npm:express",
-            "npm:openai",
-            "npm:cors"
-          ]
-        },
-        {
-          "file": "apps/api/src/middleware.ts",
-          "hash": "6555484276415524507",
-          "deps": [
-            "npm:express",
-            "npm:jsonwebtoken"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/auth.ts",
-          "hash": "16901759201793637591",
-          "deps": [
-            "npm:express",
-            "npm:bcryptjs",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/bills.ts",
-          "hash": "2940182538878627876",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/branches.ts",
-          "hash": "15517824844170315908",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/business.ts",
-          "hash": "15716818346920187007",
-          "deps": [
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/menu.ts",
-          "hash": "444469417448098372",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/orders.ts",
-          "hash": "11449016197519040730",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/tables.ts",
-          "hash": "13946551595098612373",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/tabs.ts",
-          "hash": "5764676860918653386",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/upload.ts",
-          "hash": "2269565652025767894",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/users.ts",
-          "hash": "11214980531907071676",
-          "deps": [
-            "npm:express",
-            "npm:uuid",
-            "npm:bcryptjs"
-          ]
-        },
-        {
-          "file": "apps/api/src/types.ts",
-          "hash": "16858584716719426524",
-          "deps": [
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/api/standalone-api.js",
-          "hash": "918420008591038549",
-          "deps": [
-            "npm:dotenv",
-            "npm:express",
-            "npm:cors",
-            "npm:bcryptjs",
-            "npm:jsonwebtoken",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/test-server.js",
-          "hash": "2306406341691122364",
-          "deps": [
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/api/tsconfig.app.json",
-          "hash": "1031812218041938265"
-        },
-        {
-          "file": "apps/api/tsconfig.json",
-          "hash": "6633442535990990646"
-        },
-        {
-          "file": "apps/api/tsconfig.spec.json",
-          "hash": "917194442815265437"
-        }
-      ],
-      "waiter-e2e": [
-        {
-          "file": "apps/waiter-e2e/eslint.config.mjs",
-          "hash": "1172734138943286526",
+          "file": "apps/admin-e2e/eslint.config.mjs",
+          "hash": "9406519109376614868",
           "deps": [
             "npm:eslint-plugin-playwright"
           ]
         },
         {
-          "file": "apps/waiter-e2e/playwright.config.ts",
-          "hash": "15472624936646410989",
+          "file": "apps/admin-e2e/playwright.config.ts",
+          "hash": "7432757985344820213",
           "deps": [
             "npm:@playwright/test",
             "npm:@nx/playwright",
@@ -1128,19 +733,19 @@
           ]
         },
         {
-          "file": "apps/waiter-e2e/project.json",
-          "hash": "16168583750183648768"
+          "file": "apps/admin-e2e/project.json",
+          "hash": "10664730796060910305"
         },
         {
-          "file": "apps/waiter-e2e/src/example.spec.ts",
+          "file": "apps/admin-e2e/src/example.spec.ts",
           "hash": "16019101014373124625",
           "deps": [
             "npm:@playwright/test"
           ]
         },
         {
-          "file": "apps/waiter-e2e/tsconfig.json",
-          "hash": "15726545290547512047"
+          "file": "apps/admin-e2e/tsconfig.json",
+          "hash": "2249461092017240593"
         }
       ],
       "waiter": [
@@ -1237,19 +842,21 @@
         },
         {
           "file": "apps/waiter/src/app/login/login.component.html",
-          "hash": "7690751252265868192"
+          "hash": "10736542746473745885"
         },
         {
           "file": "apps/waiter/src/app/login/login.component.scss",
-          "hash": "8094374657610257999"
+          "hash": "2321401934615234738"
         },
         {
           "file": "apps/waiter/src/app/login/login.component.ts",
-          "hash": "1260185142709517847",
+          "hash": "11143908836793600627",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
-            "npm:@angular/router"
+            "npm:@angular/router",
+            "npm:@angular/forms",
+            "npm:sweetalert2"
           ]
         },
         {
@@ -1275,6 +882,16 @@
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/services/auth.service.ts",
+          "hash": "10575277160986212578",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "npm:@angular/router"
           ]
         },
         {
@@ -1323,7 +940,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/bill/bill.component.ts",
-          "hash": "13266820048155664069",
+          "hash": "3334077687551629562",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -1374,7 +991,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/tab-detail/tab-detail.component.ts",
-          "hash": "12297837914044869312",
+          "hash": "6117580924611259295",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -1401,7 +1018,7 @@
         },
         {
           "file": "apps/waiter/src/environments/environment.prod.ts",
-          "hash": "14830392372095486564"
+          "hash": "11646791496715210418"
         },
         {
           "file": "apps/waiter/src/environments/environment.ts",
@@ -1450,17 +1067,17 @@
           "hash": "13919890687900665478"
         }
       ],
-      "admin-e2e": [
+      "waiter-e2e": [
         {
-          "file": "apps/admin-e2e/eslint.config.mjs",
-          "hash": "9406519109376614868",
+          "file": "apps/waiter-e2e/eslint.config.mjs",
+          "hash": "1172734138943286526",
           "deps": [
             "npm:eslint-plugin-playwright"
           ]
         },
         {
-          "file": "apps/admin-e2e/playwright.config.ts",
-          "hash": "7432757985344820213",
+          "file": "apps/waiter-e2e/playwright.config.ts",
+          "hash": "15472624936646410989",
           "deps": [
             "npm:@playwright/test",
             "npm:@nx/playwright",
@@ -1468,19 +1085,192 @@
           ]
         },
         {
-          "file": "apps/admin-e2e/project.json",
-          "hash": "10664730796060910305"
+          "file": "apps/waiter-e2e/project.json",
+          "hash": "16168583750183648768"
         },
         {
-          "file": "apps/admin-e2e/src/example.spec.ts",
+          "file": "apps/waiter-e2e/src/example.spec.ts",
           "hash": "16019101014373124625",
           "deps": [
             "npm:@playwright/test"
           ]
         },
         {
-          "file": "apps/admin-e2e/tsconfig.json",
-          "hash": "2249461092017240593"
+          "file": "apps/waiter-e2e/tsconfig.json",
+          "hash": "15726545290547512047"
+        }
+      ],
+      "api": [
+        {
+          "file": "apps/api/eslint.config.mjs",
+          "hash": "15417441288406377240",
+          "deps": [
+            "npm:@eslint/js",
+            "npm:typescript-eslint"
+          ]
+        },
+        {
+          "file": "apps/api/package-lock.json",
+          "hash": "16224719483025156551"
+        },
+        {
+          "file": "apps/api/package.json",
+          "hash": "6093877474758726024",
+          "deps": [
+            "npm:@types/express",
+            "npm:@types/cors",
+            "npm:@types/jsonwebtoken",
+            "npm:@types/bcryptjs",
+            "npm:@types/uuid",
+            "npm:ts-node",
+            "npm:typescript",
+            "npm:nodemon",
+            "npm:express",
+            "npm:cors",
+            "npm:jsonwebtoken",
+            "npm:bcryptjs",
+            "npm:uuid",
+            "npm:dotenv"
+          ]
+        },
+        {
+          "file": "apps/api/project.json",
+          "hash": "16467388269753857774"
+        },
+        {
+          "file": "apps/api/run-api.js",
+          "hash": "5231800504485166903"
+        },
+        {
+          "file": "apps/api/src/db.ts",
+          "hash": "1098008383208963968",
+          "deps": [
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/index.ts",
+          "hash": "5898267388958392336",
+          "deps": [
+            "npm:dotenv",
+            "npm:express",
+            "npm:cors"
+          ]
+        },
+        {
+          "file": "apps/api/src/middleware.ts",
+          "hash": "6555484276415524507",
+          "deps": [
+            "npm:express",
+            "npm:jsonwebtoken"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/auth.ts",
+          "hash": "18050448527431207593",
+          "deps": [
+            "npm:express",
+            "npm:bcryptjs",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/bills.ts",
+          "hash": "2940182538878627876",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/branches.ts",
+          "hash": "5163614245641058530",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/business.ts",
+          "hash": "542135001578019906",
+          "deps": [
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/menu.ts",
+          "hash": "444469417448098372",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/orders.ts",
+          "hash": "11449016197519040730",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/tables.ts",
+          "hash": "13946551595098612373",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/tabs.ts",
+          "hash": "5764676860918653386",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/upload.ts",
+          "hash": "4441508261024783060",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/users.ts",
+          "hash": "16100765300272838280",
+          "deps": [
+            "npm:express",
+            "npm:uuid",
+            "npm:bcryptjs"
+          ]
+        },
+        {
+          "file": "apps/api/src/types.ts",
+          "hash": "6240308285440693404",
+          "deps": [
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/test-server.js",
+          "hash": "2306406341691122364",
+          "deps": [
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/tsconfig.app.json",
+          "hash": "1031812218041938265"
+        },
+        {
+          "file": "apps/api/tsconfig.json",
+          "hash": "6633442535990990646"
+        },
+        {
+          "file": "apps/api/tsconfig.spec.json",
+          "hash": "917194442815265437"
         }
       ]
     }

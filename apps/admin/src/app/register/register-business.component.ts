@@ -37,6 +37,7 @@ export class RegisterBusinessComponent {
   cacUploadProgress = signal(0);
 
   private authService = inject(AuthService);
+  private uploadService = inject(UploadService);
   private router = inject(Router);
 
 

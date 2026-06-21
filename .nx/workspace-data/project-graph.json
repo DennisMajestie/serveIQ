@@ -376,7 +376,7 @@
             ],
             "options": {
               "outputPath": "dist/apps/api",
-              "main": "apps/api/src/main.ts",
+              "main": "apps/api/src/index.ts",
               "tsConfig": "apps/api/tsconfig.app.json",
               "assets": [
                 "apps/api/src/assets"
@@ -16502,12 +16502,12 @@
       },
       {
         "source": "waiter",
-        "target": "npm:rxjs",
+        "target": "npm:sweetalert2",
         "type": "static"
       },
       {
         "source": "waiter",
-        "target": "npm:sweetalert2",
+        "target": "npm:rxjs",
         "type": "static"
       },
       {
@@ -16544,7 +16544,7 @@
       },
       {
         "source": "admin",
-        "target": "npm:@angular/platform-browser",
+        "target": "npm:sweetalert2",
         "type": "static"
       },
       {
@@ -16554,7 +16554,12 @@
       },
       {
         "source": "admin",
-        "target": "npm:sweetalert2",
+        "target": "npm:rxjs",
+        "type": "static"
+      },
+      {
+        "source": "admin",
+        "target": "npm:@angular/platform-browser",
         "type": "static"
       }
     ],
@@ -16637,11 +16642,6 @@
       {
         "source": "api",
         "target": "npm:dotenv",
-        "type": "static"
-      },
-      {
-        "source": "api",
-        "target": "npm:openai",
         "type": "static"
       }
     ],
@@ -40631,5 +40631,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1781892819919
+  "computedAt": 1782029656007
 }

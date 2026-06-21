@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabService, OrderService, MenuService } from '../services';
-import { Tab, OrderItem, MenuItem } from '../models';
+import { TabsApiService, OrdersApiService, MenuApiService } from '@serveiq/shared/data-access';
+import { Tab, OrderItem, MenuItem } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,9 +15,9 @@ import Swal from 'sweetalert2';
 export class TabDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private tabService = inject(TabService);
-  private orderService = inject(OrderService);
-  private menuService = inject(MenuService);
+  private tabService = inject(TabsApiService);
+  private orderService = inject(OrdersApiService);
+  private menuService = inject(MenuApiService);
 
   tabId = signal('');
   tab = signal<Tab | null>(null);
@@ -55,7 +55,7 @@ export class TabDetailComponent implements OnInit {
   }
 
   loadOrders(tabId: string) {
-    this.orderService.getOrdersByTab(tabId).subscribe({
+    this.orderService.getByTab(tabId).subscribe({
       next: (items) => { this.items.set(items); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
     });
@@ -71,7 +71,7 @@ export class TabDetailComponent implements OnInit {
       confirmButtonText: 'Remove'
     }).then(result => {
       if (result.isConfirmed) {
-        this.orderService.deleteOrder(item.id).subscribe(()
+        this.orderService.deleteItem(item.id).subscribe(() =>
           this.items.update(is => is.filter(i => i.id !== item.id))
         );
       }
@@ -79,7 +79,7 @@ export class TabDetailComponent implements OnInit {
   }
 
   addItem() {
-    this.menuService.getMenuItems().subscribe({
+    this.menuService.getAllItems().subscribe({
       next: (items) => {
         this.menuItems = items;
         this.openAddOrderDialog();
@@ -121,7 +121,7 @@ export class TabDetailComponent implements OnInit {
       }
     }).then(result => {
       if (result.isConfirmed && result.value) {
-        this.orderService.addOrders(this.tabId(), [result.value]).subscribe({
+        this.orderService.addItems(this.tabId(), [result.value]).subscribe({
           next: () => {
             this.loadOrders(this.tabId());
             Swal.fire({

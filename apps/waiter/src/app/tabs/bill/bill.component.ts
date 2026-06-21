@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BillService, TableService } from '../services';
-import { Bill } from '../models';
+import { BillsApiService, TablesApiService } from '@serveiq/shared/data-access';
+import { Bill } from '@serveiq/shared/models';
 
 @Component({
   selector: 'app-bill',
@@ -14,8 +14,8 @@ import { Bill } from '../models';
 export class BillComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private billService = inject(BillService);
-  private tableService = inject(TableService);
+  private billService = inject(BillsApiService);
+  private tableService = inject(TablesApiService);
 
   tabId = signal('');
   bill = signal<Bill | null>(null);
@@ -49,7 +49,7 @@ export class BillComponent implements OnInit {
   }
 
   generateBill(tabId: string) {
-    this.billService.generateBill(tabId, { service_charge_percent: 5 }).subscribe({
+    this.billService.generate(tabId, { service_charge_percent: 5 }).subscribe({
       next: (bill) => { this.bill.set(bill); this.isLoading.set(false); },
       error: (err) => {
         this.error.set('Could not generate bill. Please try again.');
