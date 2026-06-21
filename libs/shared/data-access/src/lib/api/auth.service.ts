@@ -4,7 +4,15 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 
 export interface AuthResponse {
-  accessToken: string;
+  success: boolean;
+  data: {
+    access_token: string;
+    user?: any;
+    business?: any;
+    branch?: any;
+    businessId?: string;
+    businessName?: string;
+  };
 }
 
 export interface RegisterRequest {
@@ -47,34 +55,42 @@ export class AuthService {
       email, password
     }).pipe(
       tap(response => {
-        localStorage.setItem('accessToken', response.accessToken);
-        this.tokenSubject.next(response.accessToken);
+        const token = response.data?.access_token;
+        if (token) {
+          localStorage.setItem('accessToken', token);
+          this.tokenSubject.next(token);
+        }
       })
     );
   }
 
   /** Activate a terminal device and link it to a business (Admin only) */
-  activateTerminal(email: string, password: string): Observable<{ businessId: string; businessName: string }> {
-    return this.http.post<{ businessId: string; businessName: string; accessToken: string }>(
+  activateTerminal(email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
       `${this.apiUrl}/api/v1/auth/activate`, { email, password }
     ).pipe(
       tap(response => {
-        localStorage.setItem('businessId', response.businessId);
-        localStorage.setItem('businessName', response.businessName);
-        localStorage.setItem('accessToken', response.accessToken);
-        this.tokenSubject.next(response.accessToken);
+        const token = response.data?.access_token;
+        if (token) {
+          localStorage.setItem('businessId', response.data.businessId || response.data.business?.id || '');
+          localStorage.setItem('businessName', response.data.businessName || response.data.business?.name || '');
+          localStorage.setItem('accessToken', token);
+          this.tokenSubject.next(token);
+        }
       })
     );
   }
 
   /** Verify a staff member's PIN for an activated terminal */
-  verifyStaffPin(pin: string, businessId: string): Observable<{ user: any; accessToken: string }> {
-    return this.http.post<{ user: any; accessToken: string }>(
+  verifyStaffPin(pin: string, businessId: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
       `${this.apiUrl}/api/v1/auth/staff-login`, { pin, businessId }
     ).pipe(
       tap(response => {
-        localStorage.setItem('staffToken', response.accessToken);
-        // We keep the businessId/accessToken separate from the staff session
+        const token = response.data?.access_token;
+        if (token) {
+          localStorage.setItem('staffToken', token);
+        }
       })
     );
   }

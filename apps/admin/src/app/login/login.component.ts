@@ -6,6 +6,14 @@ import { AuthService } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 @Component({
+import { Component, signal, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '@serveiq/shared/data-access';
+import Swal from 'sweetalert2';
+
+@Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
@@ -34,11 +42,7 @@ export class LoginComponent {
     this.isLoading.set(true);
 
     this.authService.login(this.email(), this.password()).subscribe({
-      next: (response) => {
-        console.log('[Login] Full response:', JSON.stringify(response));
-        console.log('[Login] Response type:', typeof response);
-        console.log('[Login] Response keys:', Object.keys(response));
-        console.log('[Login] accessToken in response:', response.accessToken);
+      next: () => {
         Swal.fire({
           icon: 'success',
           title: 'Welcome Back!',
@@ -49,17 +53,8 @@ export class LoginComponent {
           iconColor: '#F97316'
         });
         this.isLoading.set(false);
-        console.log('[Login] Token in localStorage after login:', localStorage.getItem('token')?.substring(0, 30));
-        console.log('[Login] All localStorage:', JSON.stringify(localStorage));
         setTimeout(() => {
-          console.log('[Login] Attempting navigation to /dashboard');
-          this.router.navigate(['/dashboard']).then(success => {
-            if (success) {
-              console.log('[Login] Navigation successful');
-            } else {
-              console.error('[Login] Navigation failed');
-            }
-          });
+          this.router.navigate(['/dashboard']);
         }, 1500);
       },
       error: (err) => {
