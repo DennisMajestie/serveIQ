@@ -70,7 +70,7 @@ export class TablesManagementComponent implements OnInit {
 
   editTable(table: Table) {
     Swal.fire({
-      title: `Edit Table ${table.tableNumber}`,
+      title: `Edit Table ${table.table_number}`,
       input: 'number',
       inputLabel: 'Capacity (seats)',
       inputValue: table.capacity,
@@ -100,7 +100,7 @@ export class TablesManagementComponent implements OnInit {
   deleteTable(table: Table) {
     Swal.fire({
       title: 'Delete Table?',
-      text: `Remove Table ${table.tableNumber} permanently?`,
+      text: `Remove Table ${table.table_number} permanently?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#EF4444',
