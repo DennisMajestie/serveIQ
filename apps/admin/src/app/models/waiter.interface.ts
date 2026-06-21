@@ -4,4 +4,5 @@ export interface Waiter {
   email?: string;
   phone?: string;
   branchId: string;
+  pin?: string;
 }
