@@ -133,7 +133,7 @@ export class RegisterBusinessComponent {
           position: 'top-end'
         });
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('[Upload] Logo failed:', err);
         this.isUploadingLogo.set(false);
         this.logoUploadProgress.set(0);
@@ -167,7 +167,7 @@ export class RegisterBusinessComponent {
           position: 'top-end'
         });
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('[Upload] CAC failed:', err);
         this.isUploadingCac.set(false);
         this.cacUploadProgress.set(0);
@@ -236,13 +236,13 @@ export class RegisterBusinessComponent {
           next: () => {
             setTimeout(() => this.router.navigate(['/dashboard']), 1000);
           },
-          error: (loginErr) => {
+          error: (loginErr: any) => {
             console.error('[Register] Post-reg login failed:', loginErr);
             this.router.navigate(['/login']);
           }
         });
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('[Register] Failed:', err);
         this.isLoading.set(false);
         
