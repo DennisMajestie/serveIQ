@@ -9,7 +9,7 @@ import { OrderItem } from './order-item.interface';
 import { Bill } from './bill.interface';
 import { Waiter } from './waiter.interface';
 
-export {
+export type {
   LoginResponse,
   WaiterLoginResponse,
   Branch,
