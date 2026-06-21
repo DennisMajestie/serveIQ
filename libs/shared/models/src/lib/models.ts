@@ -158,21 +158,21 @@ export interface CreateTableRequest {
 }
 
 export interface OpenTabRequest {
-  table_id: string;
-  party_size: number;
-  customer_name?: string;
+  tableId: string;
+  partySize: number;
+  customerName?: string;
   notes?: string;
 }
 
 export interface AddOrderItemsRequest {
-  menu_item_id: string;
+  menuItemId: string;
   quantity: number;
   notes?: string;
 }
 
 export interface GenerateBillRequest {
-  service_charge_percent?: number;
-  discount_kobo?: number;
+  serviceChargePercent?: number;
+  discountKobo?: number;
 }
 
 export interface RecordPaymentRequest {

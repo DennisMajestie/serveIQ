@@ -24,12 +24,12 @@ export class BillComponent implements OnInit {
   waiterName = signal('Waiter');
   time = signal(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
-  subtotalNaira = computed(() => (this.bill()?.total_kobo ?? 0) / 100);
+  subtotalNaira = computed(() => (this.bill()?.subtotalKobo ?? 0) / 100);
   serviceChargeNaira = computed(() =>
-    ((this.bill()?.total_kobo ?? 0) * (this.bill()?.service_charge_percent ?? 0)) / 10000
+    ((this.bill()?.subtotalKobo ?? 0) * (this.bill()?.serviceChargePercent ?? 0)) / 10000
   );
-  discountNaira = computed(() => (this.bill()?.discount_kobo ?? 0) / 100);
-  totalNaira = computed(() => (this.bill()?.total_kobo ?? 0) / 100);
+  discountNaira = computed(() => (this.bill()?.discountKobo ?? 0) / 100);
+  totalNaira = computed(() => (this.bill()?.totalKobo ?? 0) / 100);
 
   items = computed(() => this.bill()?.orderItems ?? []);
 
@@ -49,7 +49,7 @@ export class BillComponent implements OnInit {
   }
 
   generateBill(tabId: string) {
-    this.billService.generate(tabId, { service_charge_percent: 5 }).subscribe({
+    this.billService.generate(tabId, { serviceChargePercent: 5 }).subscribe({
       next: (bill) => { this.bill.set(bill); this.isLoading.set(false); },
       error: (err) => {
         this.error.set('Could not generate bill. Please try again.');

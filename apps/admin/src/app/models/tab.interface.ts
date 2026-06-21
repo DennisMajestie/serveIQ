@@ -1,3 +1,5 @@
+import { OrderItem } from './order-item.interface';
+
 export interface Tab {
   id: string;
   table_id: string;
