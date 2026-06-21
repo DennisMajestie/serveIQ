@@ -60,7 +60,7 @@ export class TablesManagementComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed && result.value) {
         this.tableService.createTable({
-          tableNumber: result.value.tableNumber,
+          table_number: result.value.tableNumber,
           capacity: Number(result.value.capacity)
         }).subscribe(t => this.tables.update(ts => [...ts, t]));
       }

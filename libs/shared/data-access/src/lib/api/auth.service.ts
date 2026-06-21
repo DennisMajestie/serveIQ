@@ -53,6 +53,9 @@ export class AuthService {
         const token = response.data?.access_token;
         if (token) {
           localStorage.setItem('token', token);
+          if (response.data.branch?.id || response.data.branchId) {
+            localStorage.setItem('branchId', response.data.branch?.id || response.data.branchId);
+          }
           this.tokenSubject.next(token);
         }
       })
@@ -69,6 +72,9 @@ export class AuthService {
         if (token) {
           localStorage.setItem('businessId', response.data.businessId || response.data.business?.id || '');
           localStorage.setItem('businessName', response.data.businessName || response.data.business?.name || '');
+          if (response.data.branch?.id || response.data.branchId) {
+            localStorage.setItem('branchId', response.data.branch?.id || response.data.branchId);
+          }
           localStorage.setItem('token', token);
           this.tokenSubject.next(token);
         }

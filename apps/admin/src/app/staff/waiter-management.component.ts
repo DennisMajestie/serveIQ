@@ -65,7 +65,7 @@ export class WaiterManagementComponent implements OnInit {
           return null;
         }
         
-        const branchId = localStorage.getItem('businessId') || 'default-branch';
+        const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || 'default-branch';
         return { fullName, email, phone, branchId };
       }
     }).then(result => {

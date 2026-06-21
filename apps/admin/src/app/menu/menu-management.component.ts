@@ -93,9 +93,9 @@ export class MenuManagementComponent implements OnInit {
         return {
           name,
           category,
-          priceKobo: Math.round(priceNaira * 100),
+          price_kobo: Math.round(priceNaira * 100),
           unit,
-          isAvailable
+          is_available: isAvailable
         };
       }
     }).then(result => {
