@@ -117,7 +117,7 @@ export class RegisterBusinessComponent {
     this.logoUploadProgress.set(0);
 
     this.uploadService.uploadFile(file).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('[Upload] Logo success response:', response);
         const url = response.url;
         this.logoUrl.set(url);
@@ -151,7 +151,7 @@ export class RegisterBusinessComponent {
     this.cacUploadProgress.set(0);
 
     this.uploadService.uploadFile(file).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('[Upload] CAC success response:', response);
         const url = response.url;
         this.cacDocumentUrl.set(url);

@@ -162,10 +162,10 @@ export class TabDetailComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed) {
         this.tabService.closeTab(this.tabId()).subscribe({
-          next: () => {
+          next: (_result: any) => {
             this.router.navigate(['/tabs/bill', this.tabId()]);
           },
-          error: () => {
+          error: (err: any) => {
             Swal.fire({
               icon: 'error',
               title: 'Error',
