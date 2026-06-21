@@ -11,6 +11,8 @@ export interface User {
   pin?: string;
 }
 
+export interface Waiter extends User {}
+
 export interface Business {
   id: string;
   name: string;
@@ -120,11 +122,14 @@ export interface RegisterRequest {
   password: string;
   businessName: string;
   businessType: string;
+  logoUrl?: string;
+  cacDocumentUrl?: string;
 }
 
 export interface RegisterResponse {
   business: Business;
   owner: User;
+  access_token?: string;
 }
 
 export interface CreateWaiterRequest {

@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
+import { RegisterRequest, RegisterResponse } from '@serveiq/shared/models';
 
 export interface AuthResponse {
   success: boolean;
@@ -15,25 +16,11 @@ export interface AuthResponse {
   };
 }
 
-export interface RegisterRequest {
-  fullName: string;
-  email: string;
-  password: string;
-  businessName: string;
-  businessType: string;
-  logoUrl?: string;
-  cacDocumentUrl?: string;
-}
-
-export interface RegisterResponse {
-  business: any;
-  owner: any;
-}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenSubject = new BehaviorSubject<string | null>(
-    localStorage.getItem('accessToken')
+    localStorage.getItem('token')
   );
   token$ = this.tokenSubject.asObservable();
 
@@ -43,7 +30,15 @@ export class AuthService {
   ) {}
 
   get isAuthenticated(): boolean {
-    return !!localStorage.getItem('accessToken');
+    return !!localStorage.getItem('token');
+  }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 
   private get apiUrl(): string {
@@ -57,7 +52,7 @@ export class AuthService {
       tap(response => {
         const token = response.data?.access_token;
         if (token) {
-          localStorage.setItem('accessToken', token);
+          localStorage.setItem('token', token);
           this.tokenSubject.next(token);
         }
       })
@@ -74,7 +69,7 @@ export class AuthService {
         if (token) {
           localStorage.setItem('businessId', response.data.businessId || response.data.business?.id || '');
           localStorage.setItem('businessName', response.data.businessName || response.data.business?.name || '');
-          localStorage.setItem('accessToken', token);
+          localStorage.setItem('token', token);
           this.tokenSubject.next(token);
         }
       })
@@ -106,7 +101,10 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem('token');
+    localStorage.removeItem('businessId');
+    localStorage.removeItem('businessName');
+    localStorage.removeItem('staffToken');
     this.tokenSubject.next(null);
   }
 }

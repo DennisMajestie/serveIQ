@@ -1,5 +1,6 @@
 export * from './lib/sync.store';
 export * from './lib/offline-sync.engine';
+export * from '@serveiq/shared/models';
 
 // API Config
 export * from './lib/api/api.config';
@@ -24,3 +25,4 @@ export * from './lib/api/orders-api.service';
 export * from './lib/api/bills-api.service';
 export * from './lib/api/user-api.service';
 export * from './lib/api/business-api.service';
+export * from './lib/api/upload-api.service';

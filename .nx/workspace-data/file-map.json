@@ -80,7 +80,7 @@
       },
       {
         "file": "libs/shared/data-access/src/index.ts",
-        "hash": "13711063542471542039"
+        "hash": "7554553618057699437"
       },
       {
         "file": "libs/shared/data-access/src/lib/api/api-error.ts",
@@ -96,7 +96,7 @@
       },
       {
         "file": "libs/shared/data-access/src/lib/api/auth.service.ts",
-        "hash": "14680126691121388407"
+        "hash": "15858050674343264738"
       },
       {
         "file": "libs/shared/data-access/src/lib/api/base-api.service.ts",
@@ -135,6 +135,10 @@
         "hash": "15675881791877208465"
       },
       {
+        "file": "libs/shared/data-access/src/lib/api/upload-api.service.ts",
+        "hash": "829762323936091411"
+      },
+      {
         "file": "libs/shared/data-access/src/lib/api/user-api.service.ts",
         "hash": "5544622473484499149"
       },
@@ -160,7 +164,7 @@
       },
       {
         "file": "libs/shared/models/src/lib/models.ts",
-        "hash": "6613050372427838050"
+        "hash": "8131564348202065564"
       },
       {
         "file": "list-all-screens.json",
@@ -244,177 +248,37 @@
       }
     ],
     "projectFileMap": {
-      "api": [
+      "admin-e2e": [
         {
-          "file": "apps/api/eslint.config.mjs",
-          "hash": "15417441288406377240",
+          "file": "apps/admin-e2e/eslint.config.mjs",
+          "hash": "9406519109376614868",
           "deps": [
-            "npm:@eslint/js",
-            "npm:typescript-eslint"
+            "npm:eslint-plugin-playwright"
           ]
         },
         {
-          "file": "apps/api/package-lock.json",
-          "hash": "16224719483025156551"
-        },
-        {
-          "file": "apps/api/package.json",
-          "hash": "6093877474758726024",
+          "file": "apps/admin-e2e/playwright.config.ts",
+          "hash": "7432757985344820213",
           "deps": [
-            "npm:@types/express",
-            "npm:@types/cors",
-            "npm:@types/jsonwebtoken",
-            "npm:@types/bcryptjs",
-            "npm:@types/uuid",
-            "npm:ts-node",
-            "npm:typescript",
-            "npm:nodemon",
-            "npm:express",
-            "npm:cors",
-            "npm:jsonwebtoken",
-            "npm:bcryptjs",
-            "npm:uuid",
-            "npm:dotenv"
+            "npm:@playwright/test",
+            "npm:@nx/playwright",
+            "npm:@nx/devkit"
           ]
         },
         {
-          "file": "apps/api/project.json",
-          "hash": "16467388269753857774"
+          "file": "apps/admin-e2e/project.json",
+          "hash": "10664730796060910305"
         },
         {
-          "file": "apps/api/run-api.js",
-          "hash": "5231800504485166903"
-        },
-        {
-          "file": "apps/api/src/db.ts",
-          "hash": "1098008383208963968",
+          "file": "apps/admin-e2e/src/example.spec.ts",
+          "hash": "16019101014373124625",
           "deps": [
-            "npm:uuid"
+            "npm:@playwright/test"
           ]
         },
         {
-          "file": "apps/api/src/index.ts",
-          "hash": "5898267388958392336",
-          "deps": [
-            "npm:dotenv",
-            "npm:express",
-            "npm:cors"
-          ]
-        },
-        {
-          "file": "apps/api/src/middleware.ts",
-          "hash": "6555484276415524507",
-          "deps": [
-            "npm:express",
-            "npm:jsonwebtoken"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/auth.ts",
-          "hash": "18050448527431207593",
-          "deps": [
-            "npm:express",
-            "npm:bcryptjs",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/bills.ts",
-          "hash": "18159987786306473823",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/branches.ts",
-          "hash": "5163614245641058530",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/business.ts",
-          "hash": "542135001578019906",
-          "deps": [
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/menu.ts",
-          "hash": "444469417448098372",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/orders.ts",
-          "hash": "15545540689146154111",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/tables.ts",
-          "hash": "13946551595098612373",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/tabs.ts",
-          "hash": "3031090652803192799",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/upload.ts",
-          "hash": "4441508261024783060",
-          "deps": [
-            "npm:express",
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/api/src/routes/users.ts",
-          "hash": "16100765300272838280",
-          "deps": [
-            "npm:express",
-            "npm:uuid",
-            "npm:bcryptjs"
-          ]
-        },
-        {
-          "file": "apps/api/src/types.ts",
-          "hash": "6240308285440693404",
-          "deps": [
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/api/test-server.js",
-          "hash": "2306406341691122364",
-          "deps": [
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/api/tsconfig.app.json",
-          "hash": "1031812218041938265"
-        },
-        {
-          "file": "apps/api/tsconfig.json",
-          "hash": "6633442535990990646"
-        },
-        {
-          "file": "apps/api/tsconfig.spec.json",
-          "hash": "917194442815265437"
+          "file": "apps/admin-e2e/tsconfig.json",
+          "hash": "2249461092017240593"
         }
       ],
       "waiter": [
@@ -736,6 +600,39 @@
           "hash": "13919890687900665478"
         }
       ],
+      "waiter-e2e": [
+        {
+          "file": "apps/waiter-e2e/eslint.config.mjs",
+          "hash": "1172734138943286526",
+          "deps": [
+            "npm:eslint-plugin-playwright"
+          ]
+        },
+        {
+          "file": "apps/waiter-e2e/playwright.config.ts",
+          "hash": "15472624936646410989",
+          "deps": [
+            "npm:@playwright/test",
+            "npm:@nx/playwright",
+            "npm:@nx/devkit"
+          ]
+        },
+        {
+          "file": "apps/waiter-e2e/project.json",
+          "hash": "16168583750183648768"
+        },
+        {
+          "file": "apps/waiter-e2e/src/example.spec.ts",
+          "hash": "16019101014373124625",
+          "deps": [
+            "npm:@playwright/test"
+          ]
+        },
+        {
+          "file": "apps/waiter-e2e/tsconfig.json",
+          "hash": "15726545290547512047"
+        }
+      ],
       "admin": [
         {
           "file": "apps/admin/eslint.config.mjs",
@@ -841,7 +738,7 @@
         },
         {
           "file": "apps/admin/src/app/core/auth.guard.ts",
-          "hash": "2703860035677507602",
+          "hash": "6092451255349552906",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/router"
@@ -853,7 +750,7 @@
         },
         {
           "file": "apps/admin/src/app/dashboard/dashboard.component.ts",
-          "hash": "7731806191635482405",
+          "hash": "1714172073231229278",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -864,7 +761,7 @@
         },
         {
           "file": "apps/admin/src/app/interceptors/auth.interceptor.ts",
-          "hash": "6133743632989849701",
+          "hash": "4324082172931730139",
           "deps": [
             "npm:@angular/common"
           ]
@@ -879,7 +776,7 @@
         },
         {
           "file": "apps/admin/src/app/login/login.component.ts",
-          "hash": "6268060730069161848",
+          "hash": "6857652711679201124",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -898,11 +795,12 @@
         },
         {
           "file": "apps/admin/src/app/menu/menu-management.component.ts",
-          "hash": "13400908403825463916",
+          "hash": "15664806094487939395",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
             "npm:@angular/forms",
+            "npm:rxjs",
             "npm:sweetalert2"
           ]
         },
@@ -920,7 +818,7 @@
         },
         {
           "file": "apps/admin/src/app/models/index.ts",
-          "hash": "5124712176796403536"
+          "hash": "11005358220631690110"
         },
         {
           "file": "apps/admin/src/app/models/login-response.interface.ts",
@@ -928,7 +826,7 @@
         },
         {
           "file": "apps/admin/src/app/models/menu-item.interface.ts",
-          "hash": "1168959099403974385"
+          "hash": "10719904579222700424"
         },
         {
           "file": "apps/admin/src/app/models/order-item.interface.ts",
@@ -975,104 +873,13 @@
         },
         {
           "file": "apps/admin/src/app/register/register-business.component.ts",
-          "hash": "15837309551468223518",
+          "hash": "13214260927932341924",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
             "npm:@angular/router",
             "npm:@angular/forms",
             "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/auth.service.ts",
-          "hash": "17058469638589111777",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/bill.service.ts",
-          "hash": "8820848286301696152",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/branch.service.ts",
-          "hash": "9406032337210712580",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/business.service.ts",
-          "hash": "10285525560175511600",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/menu.service.ts",
-          "hash": "15212431753837152839",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/order.service.ts",
-          "hash": "3345105401558879780",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/staff.service.ts",
-          "hash": "17975904366458695288",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/tab.service.ts",
-          "hash": "14520602135486054909",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/table.service.ts",
-          "hash": "11209315597058021469",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/services/upload.service.ts",
-          "hash": "8866908928543991219",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs"
           ]
         },
         {
@@ -1207,70 +1014,177 @@
           "hash": "17724542442325471187"
         }
       ],
-      "admin-e2e": [
+      "api": [
         {
-          "file": "apps/admin-e2e/eslint.config.mjs",
-          "hash": "9406519109376614868",
+          "file": "apps/api/eslint.config.mjs",
+          "hash": "15417441288406377240",
           "deps": [
-            "npm:eslint-plugin-playwright"
+            "npm:@eslint/js",
+            "npm:typescript-eslint"
           ]
         },
         {
-          "file": "apps/admin-e2e/playwright.config.ts",
-          "hash": "7432757985344820213",
+          "file": "apps/api/package-lock.json",
+          "hash": "16224719483025156551"
+        },
+        {
+          "file": "apps/api/package.json",
+          "hash": "6093877474758726024",
           "deps": [
-            "npm:@playwright/test",
-            "npm:@nx/playwright",
-            "npm:@nx/devkit"
+            "npm:@types/express",
+            "npm:@types/cors",
+            "npm:@types/jsonwebtoken",
+            "npm:@types/bcryptjs",
+            "npm:@types/uuid",
+            "npm:ts-node",
+            "npm:typescript",
+            "npm:nodemon",
+            "npm:express",
+            "npm:cors",
+            "npm:jsonwebtoken",
+            "npm:bcryptjs",
+            "npm:uuid",
+            "npm:dotenv"
           ]
         },
         {
-          "file": "apps/admin-e2e/project.json",
-          "hash": "10664730796060910305"
+          "file": "apps/api/project.json",
+          "hash": "16467388269753857774"
         },
         {
-          "file": "apps/admin-e2e/src/example.spec.ts",
-          "hash": "16019101014373124625",
+          "file": "apps/api/run-api.js",
+          "hash": "5231800504485166903"
+        },
+        {
+          "file": "apps/api/src/db.ts",
+          "hash": "1098008383208963968",
           "deps": [
-            "npm:@playwright/test"
+            "npm:uuid"
           ]
         },
         {
-          "file": "apps/admin-e2e/tsconfig.json",
-          "hash": "2249461092017240593"
-        }
-      ],
-      "waiter-e2e": [
-        {
-          "file": "apps/waiter-e2e/eslint.config.mjs",
-          "hash": "1172734138943286526",
+          "file": "apps/api/src/index.ts",
+          "hash": "5898267388958392336",
           "deps": [
-            "npm:eslint-plugin-playwright"
+            "npm:dotenv",
+            "npm:express",
+            "npm:cors"
           ]
         },
         {
-          "file": "apps/waiter-e2e/playwright.config.ts",
-          "hash": "15472624936646410989",
+          "file": "apps/api/src/middleware.ts",
+          "hash": "6555484276415524507",
           "deps": [
-            "npm:@playwright/test",
-            "npm:@nx/playwright",
-            "npm:@nx/devkit"
+            "npm:express",
+            "npm:jsonwebtoken"
           ]
         },
         {
-          "file": "apps/waiter-e2e/project.json",
-          "hash": "16168583750183648768"
-        },
-        {
-          "file": "apps/waiter-e2e/src/example.spec.ts",
-          "hash": "16019101014373124625",
+          "file": "apps/api/src/routes/auth.ts",
+          "hash": "18050448527431207593",
           "deps": [
-            "npm:@playwright/test"
+            "npm:express",
+            "npm:bcryptjs",
+            "npm:uuid"
           ]
         },
         {
-          "file": "apps/waiter-e2e/tsconfig.json",
-          "hash": "15726545290547512047"
+          "file": "apps/api/src/routes/bills.ts",
+          "hash": "12210049100869861850",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/branches.ts",
+          "hash": "5163614245641058530",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/business.ts",
+          "hash": "542135001578019906",
+          "deps": [
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/menu.ts",
+          "hash": "7890714379501830420",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/orders.ts",
+          "hash": "15896980450662072662",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/tables.ts",
+          "hash": "13946551595098612373",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/tabs.ts",
+          "hash": "12055837342573842424",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/upload.ts",
+          "hash": "4441508261024783060",
+          "deps": [
+            "npm:express",
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/api/src/routes/users.ts",
+          "hash": "16100765300272838280",
+          "deps": [
+            "npm:express",
+            "npm:uuid",
+            "npm:bcryptjs"
+          ]
+        },
+        {
+          "file": "apps/api/src/types.ts",
+          "hash": "6240308285440693404",
+          "deps": [
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/test-server.js",
+          "hash": "2306406341691122364",
+          "deps": [
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/api/tsconfig.app.json",
+          "hash": "1031812218041938265"
+        },
+        {
+          "file": "apps/api/tsconfig.json",
+          "hash": "6633442535990990646"
+        },
+        {
+          "file": "apps/api/tsconfig.spec.json",
+          "hash": "917194442815265437"
         }
       ]
     }

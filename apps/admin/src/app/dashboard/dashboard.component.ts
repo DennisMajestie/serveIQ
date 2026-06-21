@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { BranchService } from '../services/branch.service';
-import { DashboardStats } from '../models';
+import { BranchesApiService, DashboardStats } from '@serveiq/shared/data-access';
 
 @Component({
   selector: 'app-dashboard',
@@ -244,7 +243,7 @@ import { DashboardStats } from '../models';
   `]
 })
 export class DashboardComponent implements OnInit {
-  private branchService = inject(BranchService);
+  private branchService = inject(BranchesApiService);
 
   isLoading = signal(true);
   stats = signal<DashboardStats>({ totalBranches: 0, totalTables: 0, openTabs: 0, totalOrders: 0 });
@@ -257,9 +256,9 @@ export class DashboardComponent implements OnInit {
   loadStats() {
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.branchService.getDashboardStats().subscribe({
-      next: (s) => { this.stats.set(s); this.isLoading.set(false); },
-      error: (error) => {
+    this.branchService.getStats().subscribe({
+      next: (s: DashboardStats) => { this.stats.set(s); this.isLoading.set(false); },
+      error: (error: any) => {
         this.isLoading.set(false);
         if (error.status === 401) {
           this.errorMessage.set('Unauthorized. Please login again.');

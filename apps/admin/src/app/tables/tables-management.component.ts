@@ -2,8 +2,7 @@ import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-import { TableService } from '../services/table.service';
-import { Table } from '../models';
+import { TablesApiService, Table } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 
@@ -16,7 +15,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./tables-management.component.scss']
 })
 export class TablesManagementComponent implements OnInit {
-  private tableService = inject(TableService);
+  private tableService = inject(TablesApiService);
   isFloorPlan = signal(false);
   isLoading = signal(true);
 
@@ -37,8 +36,8 @@ export class TablesManagementComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.tableService.getTables().subscribe({
-      next: (tables) => { this.tables.set(tables); this.isLoading.set(false); },
+    this.tableService.getAllTables().subscribe({
+      next: (tables: any) => { this.tables.set(tables); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
     });
   }
@@ -55,13 +54,13 @@ export class TablesManagementComponent implements OnInit {
       confirmButtonColor: '#F97316',
       showCancelButton: true,
       preConfirm: () => ({
-        table_number: (document.getElementById('swal-number') as HTMLInputElement).value,
+        tableNumber: (document.getElementById('swal-number') as HTMLInputElement).value,
         capacity: (document.getElementById('swal-capacity') as HTMLInputElement).value
       })
     }).then(result => {
       if (result.isConfirmed && result.value) {
         this.tableService.createTable({
-          table_number: result.value.table_number,
+          tableNumber: result.value.tableNumber,
           capacity: Number(result.value.capacity)
         }).subscribe(t => this.tables.update(ts => [...ts, t]));
       }
@@ -70,7 +69,7 @@ export class TablesManagementComponent implements OnInit {
 
   editTable(table: Table) {
     Swal.fire({
-      title: `Edit Table ${table.table_number}`,
+      title: `Edit Table ${table.tableNumber}`,
       input: 'number',
       inputLabel: 'Capacity (seats)',
       inputValue: table.capacity,
@@ -100,7 +99,7 @@ export class TablesManagementComponent implements OnInit {
   deleteTable(table: Table) {
     Swal.fire({
       title: 'Delete Table?',
-      text: `Remove Table ${table.table_number} permanently?`,
+      text: `Remove Table ${table.tableNumber} permanently?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#EF4444',

@@ -2,12 +2,8 @@ import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { MenuService } from '../services/menu.service';
-import { UploadService } from '../services/upload.service';
-import { MenuItem } from '../models';
+import { MenuApiService, UploadApiService, MenuItem } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
-
-
 
 @Component({
   selector: 'app-menu-management',
@@ -17,39 +13,53 @@ import Swal from 'sweetalert2';
   styleUrls: ['./menu-management.component.scss']
 })
 export class MenuManagementComponent implements OnInit {
-  private menuService = inject(MenuService);
-  private uploadService = inject(UploadService);
+  private menuService = inject(MenuApiService);
+  private uploadService = inject(UploadApiService);
+  
   selectedCategory = signal('All');
   isLoading = signal(true);
-
-  allItems = signal<MenuItem[]>([]);
+  items = signal<MenuItem[]>([]);
 
   menuItems = computed(() => {
     const cat = this.selectedCategory();
     return cat === 'All'
-      ? this.allItems()
-      : this.allItems().filter(i => i.category === cat);
+      ? this.items()
+      : this.items().filter(i => i.category === cat);
   });
 
   categories = computed(() => {
-    const items = this.allItems();
+    const items = this.items();
     const cats = ['All', ...new Set(items.map(i => i.category))];
-    return cats.map(c => ({ name: c, count: c === 'All' ? items.length : items.filter(i => i.category === c).length }));
+    return cats.map(c => ({ 
+      name: c, 
+      count: c === 'All' ? items.length : items.filter(i => i.category === c).length 
+    }));
   });
 
   ngOnInit() {
-    this.menuService.getMenuItems().subscribe({
-      next: (items) => { this.allItems.set(items); this.isLoading.set(false); },
+    this.loadMenu();
+  }
+
+  loadMenu() {
+    this.isLoading.set(true);
+    this.menuService.getAllItems().subscribe({
+      next: (items: any) => {
+        this.items.set(items);
+        this.isLoading.set(false);
+      },
       error: () => this.isLoading.set(false)
     });
   }
 
-  selectCategory(name: string) { this.selectedCategory.set(name); }
+  selectCategory(name: string) {
+    this.selectedCategory.set(name);
+  }
 
   toggleAvailability(item: MenuItem) {
-    this.menuService.updateMenuItem(item.id, { isAvailable: !item.isAvailable }).subscribe(updated =>
-      this.allItems.update(items => items.map(i => i.id === updated.id ? updated : i))
-    );
+    this.menuService.updateItem(item.id, { isAvailable: !item.isAvailable })
+      .subscribe((updated: any) => {
+        this.items.update(is => is.map(i => i.id === updated.id ? updated : i));
+      });
   }
 
   addItem() {
@@ -80,47 +90,25 @@ export class MenuManagementComponent implements OnInit {
           return;
         }
 
-        let imageUrl: string | undefined = undefined;
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-        fileInput.onchange = async (e: any) => {
-          const file = e.target.files[0];
-          if (file) {
-            try {
-              const res = await firstValueFrom(this.uploadService.uploadFile(file));
-              if (res && res.url) {
-                imageUrl = res.url;
-              }
-              Swal.getPopup()?.querySelector('#mi-is-available')?.setAttribute('disabled', 'disabled');
-            } catch (error) {
-              console.error('Upload failed:', error);
-            }
-          }
+        return {
+          name,
+          category,
+          priceKobo: Math.round(priceNaira * 100),
+          unit,
+          isAvailable
         };
-        fileInput.click();
-
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve({
-              name,
-              category,
-              priceKobo: Math.round(priceNaira * 100),
-              unit,
-              isAvailable: isAvailable,
-              imageUrl: imageUrl
-            });
-          }, 100);
-        });
       }
     }).then(result => {
       if (result.isConfirmed && result.value?.name) {
-        this.menuService.createMenuItem(result.value).subscribe(item =>
-          this.allItems.update(items => [...items, item])
-        );
+        this.menuService.createItem(result.value).subscribe(item => {
+          this.items.update(is => [...is, item as any]);
+          Swal.fire({ icon: 'success', title: 'Item Added', timer: 1500, showConfirmButton: false });
+        });
       }
     });
   }
 
-  trackById(_: number, item: MenuItem) { return item.id; }
+  trackById(_: number, item: MenuItem) {
+    return item.id;
+  }
 }

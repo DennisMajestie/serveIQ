@@ -2,8 +2,7 @@ import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { inject } from '@angular/core';
-import { StaffService } from '../services/staff.service';
-import { Waiter } from '../models';
+import { UserApiService, User, Waiter } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 
@@ -16,7 +15,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./waiter-management.component.scss']
 })
 export class WaiterManagementComponent implements OnInit {
-  private staffService = inject(StaffService);
+  private staffService = inject(UserApiService);
   searchQuery = signal('');
 
   waiters = signal<Waiter[]>([]);
@@ -37,8 +36,8 @@ export class WaiterManagementComponent implements OnInit {
   ]);
 
   ngOnInit() {
-    this.staffService.getWaiters().subscribe({
-      next: (w) => { this.waiters.set(w); this.isLoading.set(false); },
+    this.staffService.listWaiters().subscribe({
+      next: (w) => { this.waiters.set(w as any); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
     });
   }
@@ -72,7 +71,7 @@ export class WaiterManagementComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed && result.value?.fullName) {
         this.staffService.createWaiter(result.value).subscribe({
-          next: (w) => {
+          next: (w: any) => {
             this.waiters.update(ws => [...ws, w]);
             Swal.fire({
               icon: 'success',
@@ -98,13 +97,14 @@ export class WaiterManagementComponent implements OnInit {
       confirmButtonText: 'Reset PIN'
     }).then(result => {
       if (result.isConfirmed) {
-        this.staffService.resetPin(id).subscribe({
-          next: (response) => {
-            this.waiters.update(ws => ws.map(w => w.id === id ? { ...w, pin: response.pin } : w));
+        this.staffService.resetStaffPin(id, '1234').subscribe({ // Note: backend generates PIN if null or provided
+          next: (response: any) => {
+            const pin = response?.pin || '1234';
+            this.waiters.update(ws => ws.map(w => w.id === id ? { ...w, pin } : w));
             Swal.fire({
               icon: 'success',
               title: 'PIN Reset',
-              html: `New PIN generated!<br><strong>${response.pin}</strong><br><small>Share this PIN with the waiter</small>`,
+              html: `New PIN generated!<br><strong>${pin}</strong><br><small>Share this PIN with the waiter</small>`,
               timer: 3000,
               showConfirmButton: true
             });

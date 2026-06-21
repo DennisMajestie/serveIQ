@@ -10,9 +10,9 @@ export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  const isAuthenticated = auth.isAuthenticated;
+  const isAuthenticated = auth.isLoggedIn();
   console.log('[AuthGuard] Checking authentication status:', isAuthenticated);
-  console.log('[AuthGuard] Token in localStorage (accessToken):', !!localStorage.getItem('accessToken'));
+  console.log('[AuthGuard] Token in localStorage (token):', !!localStorage.getItem('token'));
 
   if (isAuthenticated) {
     console.log('[AuthGuard] Access granted');

@@ -2,8 +2,7 @@ import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
-import { UploadService } from '../services/upload.service';
+import { AuthService, UploadService } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 @Component({
