@@ -12,7 +12,6 @@ export const authGuard: CanActivateFn = () => {
 
   const isAuthenticated = auth.isAuthenticated;
   console.log('[AuthGuard] Checking authentication status:', isAuthenticated);
-  console.log('[AuthGuard] Token in localStorage (token):', !!localStorage.getItem('token'));
   console.log('[AuthGuard] Token in localStorage (accessToken):', !!localStorage.getItem('accessToken'));
 
   if (isAuthenticated) {

@@ -1,9 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  console.log('!!! INTERCEPTOR START !!! URL:', req.url);
-  const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
-  console.log('!!! INTERCEPTOR TOKEN !!!', !!token);
+  const token = localStorage.getItem('accessToken');
   
   if (token) {
     const authReq = req.clone({
@@ -11,10 +9,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log('!!! INTERCEPTOR ATTACHED !!!');
     return next(authReq);
   }
   
-  console.warn('!!! INTERCEPTOR NO TOKEN !!!');
   return next(req);
 };
