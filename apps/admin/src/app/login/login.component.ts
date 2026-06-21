@@ -34,7 +34,11 @@ export class LoginComponent {
     this.isLoading.set(true);
 
     this.authService.login(this.email(), this.password()).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log('[Login] Full response:', JSON.stringify(response));
+        console.log('[Login] Response type:', typeof response);
+        console.log('[Login] Response keys:', Object.keys(response));
+        console.log('[Login] accessToken in response:', response.accessToken);
         Swal.fire({
           icon: 'success',
           title: 'Welcome Back!',
@@ -45,7 +49,8 @@ export class LoginComponent {
           iconColor: '#F97316'
         });
         this.isLoading.set(false);
-        console.log('[Login] Success, token in localStorage:', !!localStorage.getItem('token'));
+        console.log('[Login] Token in localStorage after login:', localStorage.getItem('token')?.substring(0, 30));
+        console.log('[Login] All localStorage:', JSON.stringify(localStorage));
         setTimeout(() => {
           console.log('[Login] Attempting navigation to /dashboard');
           this.router.navigate(['/dashboard']).then(success => {
