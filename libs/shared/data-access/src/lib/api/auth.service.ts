@@ -35,7 +35,7 @@ export class AuthService {
   ) {}
 
   get isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('accessToken') || !!localStorage.getItem('token');
   }
 
   private get apiUrl(): string {
@@ -48,6 +48,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         localStorage.setItem('token', response.accessToken);
+        localStorage.setItem('accessToken', response.accessToken);
         this.tokenSubject.next(response.accessToken);
       })
     );
@@ -62,6 +63,7 @@ export class AuthService {
         localStorage.setItem('businessId', response.businessId);
         localStorage.setItem('businessName', response.businessName);
         localStorage.setItem('token', response.accessToken);
+        localStorage.setItem('accessToken', response.accessToken);
         this.tokenSubject.next(response.accessToken);
       })
     );
@@ -91,6 +93,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
     this.tokenSubject.next(null);
   }
 }
