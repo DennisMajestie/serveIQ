@@ -23,10 +23,18 @@ export class TablesManagementComponent implements OnInit {
 
   readonly summaryStats = computed(() => {
     const t = this.tables();
+    if (!Array.isArray(t)) {
+      return [
+        { label: 'Available', value: '0 Tables', icon: 'check_circle', color: 'green' },
+        { label: 'Occupied', value: '0 Tables', icon: 'person', color: 'pink' },
+        { label: 'Reserved', value: '0 Tables', icon: 'event', color: 'yellow' },
+        { label: 'Total Capacity', value: '0 Seats', icon: 'group', color: 'brown' }
+      ];
+    }
     const occupied = t.filter(x => x.status === 'occupied').length;
     const available = t.filter(x => x.status === 'available').length;
     const reserved = t.filter(x => x.status === 'reserved').length;
-    const totalSeats = t.reduce((acc, curr) => acc + curr.capacity, 0);
+    const totalSeats = t.reduce((acc, curr) => acc + (curr.capacity || 0), 0);
     return [
       { label: 'Available', value: available + ' Tables', icon: 'check_circle', color: 'green' },
       { label: 'Occupied', value: occupied + ' Tables', icon: 'person', color: 'pink' },
@@ -60,7 +68,7 @@ export class TablesManagementComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed && result.value) {
         this.tableService.createTable({
-          table_number: result.value.tableNumber,
+          tableNumber: result.value.tableNumber,
           capacity: Number(result.value.capacity)
         }).subscribe(t => this.tables.update(ts => [...ts, t]));
       }

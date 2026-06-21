@@ -103,7 +103,7 @@ import { BranchesApiService, DashboardStats } from '@serveiq/shared/data-access'
                 <span class="txn-meta inter-font">{{ txn.time }} ago • {{ txn.paymentMethod }}</span>
               </div>
               <div class="txn-amount">
-                <span class="amount space-font">₦{{ txn.amount.toLocaleString() }}</span>
+                <span class="amount space-font">₦{{ txn.amount?.toLocaleString() || '0' }}</span>
               </div>
             </div>
           </div>

@@ -25,9 +25,10 @@ export class TabDetailComponent implements OnInit {
   isLoading = signal(true);
   menuItems: MenuItem[] = [];
 
-  subtotal = computed(() =>
-    this.items().reduce((sum, i) => sum + (i.priceKobo * i.quantity), 0)
-  );
+  subtotal = computed(() => {
+    const items = this.items();
+    return Array.isArray(items) ? items.reduce((sum, i) => sum + (i.priceKobo * i.quantity), 0) : 0;
+  });
   vat = computed(() => Math.round(this.subtotal() * 0.075));
   total = computed(() => this.subtotal() + this.vat());
 

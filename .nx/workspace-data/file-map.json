@@ -80,7 +80,7 @@
       },
       {
         "file": "libs/shared/data-access/src/index.ts",
-        "hash": "7554553618057699437"
+        "hash": "7257343451890585287"
       },
       {
         "file": "libs/shared/data-access/src/lib/api/api-error.ts",
@@ -96,11 +96,11 @@
       },
       {
         "file": "libs/shared/data-access/src/lib/api/auth.service.ts",
-        "hash": "15858050674343264738"
+        "hash": "8889957954093097713"
       },
       {
         "file": "libs/shared/data-access/src/lib/api/base-api.service.ts",
-        "hash": "14077026531210943855"
+        "hash": "5186569975289284313"
       },
       {
         "file": "libs/shared/data-access/src/lib/api/bills-api.service.ts",
@@ -136,7 +136,7 @@
       },
       {
         "file": "libs/shared/data-access/src/lib/api/upload-api.service.ts",
-        "hash": "829762323936091411"
+        "hash": "10594127296972939852"
       },
       {
         "file": "libs/shared/data-access/src/lib/api/user-api.service.ts",
@@ -164,7 +164,7 @@
       },
       {
         "file": "libs/shared/models/src/lib/models.ts",
-        "hash": "8131564348202065564"
+        "hash": "16431728791840116863"
       },
       {
         "file": "list-all-screens.json",
@@ -248,17 +248,17 @@
       }
     ],
     "projectFileMap": {
-      "admin-e2e": [
+      "waiter-e2e": [
         {
-          "file": "apps/admin-e2e/eslint.config.mjs",
-          "hash": "9406519109376614868",
+          "file": "apps/waiter-e2e/eslint.config.mjs",
+          "hash": "1172734138943286526",
           "deps": [
             "npm:eslint-plugin-playwright"
           ]
         },
         {
-          "file": "apps/admin-e2e/playwright.config.ts",
-          "hash": "7432757985344820213",
+          "file": "apps/waiter-e2e/playwright.config.ts",
+          "hash": "15472624936646410989",
           "deps": [
             "npm:@playwright/test",
             "npm:@nx/playwright",
@@ -266,19 +266,19 @@
           ]
         },
         {
-          "file": "apps/admin-e2e/project.json",
-          "hash": "10664730796060910305"
+          "file": "apps/waiter-e2e/project.json",
+          "hash": "16168583750183648768"
         },
         {
-          "file": "apps/admin-e2e/src/example.spec.ts",
+          "file": "apps/waiter-e2e/src/example.spec.ts",
           "hash": "16019101014373124625",
           "deps": [
             "npm:@playwright/test"
           ]
         },
         {
-          "file": "apps/admin-e2e/tsconfig.json",
-          "hash": "2249461092017240593"
+          "file": "apps/waiter-e2e/tsconfig.json",
+          "hash": "15726545290547512047"
         }
       ],
       "waiter": [
@@ -524,7 +524,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/tab-detail/tab-detail.component.ts",
-          "hash": "13942356251007690901",
+          "hash": "5800719553245577816",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -542,7 +542,7 @@
         },
         {
           "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.ts",
-          "hash": "1348320976028467714",
+          "hash": "16199956191686777876",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -600,17 +600,17 @@
           "hash": "13919890687900665478"
         }
       ],
-      "waiter-e2e": [
+      "admin-e2e": [
         {
-          "file": "apps/waiter-e2e/eslint.config.mjs",
-          "hash": "1172734138943286526",
+          "file": "apps/admin-e2e/eslint.config.mjs",
+          "hash": "9406519109376614868",
           "deps": [
             "npm:eslint-plugin-playwright"
           ]
         },
         {
-          "file": "apps/waiter-e2e/playwright.config.ts",
-          "hash": "15472624936646410989",
+          "file": "apps/admin-e2e/playwright.config.ts",
+          "hash": "7432757985344820213",
           "deps": [
             "npm:@playwright/test",
             "npm:@nx/playwright",
@@ -618,19 +618,19 @@
           ]
         },
         {
-          "file": "apps/waiter-e2e/project.json",
-          "hash": "16168583750183648768"
+          "file": "apps/admin-e2e/project.json",
+          "hash": "10664730796060910305"
         },
         {
-          "file": "apps/waiter-e2e/src/example.spec.ts",
+          "file": "apps/admin-e2e/src/example.spec.ts",
           "hash": "16019101014373124625",
           "deps": [
             "npm:@playwright/test"
           ]
         },
         {
-          "file": "apps/waiter-e2e/tsconfig.json",
-          "hash": "15726545290547512047"
+          "file": "apps/admin-e2e/tsconfig.json",
+          "hash": "2249461092017240593"
         }
       ],
       "admin": [
@@ -750,7 +750,7 @@
         },
         {
           "file": "apps/admin/src/app/dashboard/dashboard.component.ts",
-          "hash": "1714172073231229278",
+          "hash": "10095835882822988734",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -795,7 +795,7 @@
         },
         {
           "file": "apps/admin/src/app/menu/menu-management.component.ts",
-          "hash": "15664806094487939395",
+          "hash": "9198183557359556384",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -835,10 +835,6 @@
         {
           "file": "apps/admin/src/app/models/tab.interface.ts",
           "hash": "9674583795016149066"
-        },
-        {
-          "file": "apps/admin/src/app/models/table.interface.ts",
-          "hash": "915567920924937005"
         },
         {
           "file": "apps/admin/src/app/models/waiter-login-response.interface.ts",
@@ -918,7 +914,7 @@
         },
         {
           "file": "apps/admin/src/app/staff/waiter-management.component.ts",
-          "hash": "12556479934867299146",
+          "hash": "3755144994363408904",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -932,7 +928,7 @@
         },
         {
           "file": "apps/admin/src/app/tables/table-detail.component.ts",
-          "hash": "4274268704768035205",
+          "hash": "4528809781287418930",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",
@@ -941,7 +937,7 @@
         },
         {
           "file": "apps/admin/src/app/tables/tables-management.component.html",
-          "hash": "15831185569664564360"
+          "hash": "14204773625009803548"
         },
         {
           "file": "apps/admin/src/app/tables/tables-management.component.scss",
@@ -949,7 +945,7 @@
         },
         {
           "file": "apps/admin/src/app/tables/tables-management.component.ts",
-          "hash": "10701621575113933494",
+          "hash": "3887844460302216815",
           "deps": [
             "npm:@angular/core",
             "npm:@angular/common",

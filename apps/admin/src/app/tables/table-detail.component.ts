@@ -654,7 +654,10 @@ export class TableDetailComponent implements OnInit {
     }
   ]);
 
-  subtotal = computed(() => this.orderItems().reduce((acc, item) => acc + (item.qty * item.unitPrice), 0));
+  subtotal = computed(() => {
+    const items = this.orderItems();
+    return Array.isArray(items) ? items.reduce((acc, item) => acc + (item.qty * item.unitPrice), 0) : 0;
+  });
   vat = computed(() => this.subtotal() * 0.075);
   serviceCharge = signal(0);
   totalAmount = computed(() => this.subtotal() + this.vat() + this.serviceCharge());
