@@ -19,4 +19,8 @@ export class StaffService {
   resetPin(id: string): Observable<any> {
     return this.http.patch<any>(`${this.baseUrl}/user/waiters/${id}/reset-pin`, {});
   }
+
+  deleteWaiter(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/user/waiters/${id}`);
+  }
 }

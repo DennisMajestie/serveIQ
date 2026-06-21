@@ -115,6 +115,27 @@ export class WaiterManagementComponent implements OnInit {
     });
   }
 
+  deleteWaiter(id: string) {
+    Swal.fire({
+      title: 'Delete Waiter',
+      text: 'Are you sure you want to remove this waiter?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#F97316',
+      confirmButtonText: 'Yes, delete'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.staffService.deleteWaiter(id).subscribe({
+          next: () => {
+            this.waiters.update(ws => ws.filter(w => w.id !== id));
+            Swal.fire({ icon: 'success', title: 'Waiter removed', timer: 2000, showConfirmButton: false });
+          },
+          error: () => Swal.fire({ icon: 'error', title: 'Failed to delete waiter' })
+        });
+      }
+    });
+  }
+
   onSearch() {}
   toggleFilters() {}
   toggleStatus(waiter: Waiter) {}
