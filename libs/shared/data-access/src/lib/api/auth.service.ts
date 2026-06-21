@@ -53,9 +53,24 @@ export class AuthService {
         const token = response.data?.access_token;
         if (token) {
           localStorage.setItem('token', token);
-          if (response.data.branch?.id || response.data.branchId) {
-            localStorage.setItem('branchId', response.data.branch?.id || response.data.branchId);
+          
+          const branchId = response.data.branch?.id || 
+                           response.data.branchId || 
+                           response.data.user?.branch?.id || 
+                           response.data.user?.branch;
+          
+          const businessId = response.data.business?.id || 
+                             response.data.businessId || 
+                             response.data.user?.business?.id || 
+                             response.data.user?.business;
+
+          if (branchId && branchId !== 'default-branch') {
+            localStorage.setItem('branchId', branchId);
           }
+          if (businessId) {
+            localStorage.setItem('businessId', businessId);
+          }
+
           this.tokenSubject.next(token);
         }
       })
@@ -70,11 +85,14 @@ export class AuthService {
       tap(response => {
         const token = response.data?.access_token;
         if (token) {
-          localStorage.setItem('businessId', response.data.businessId || response.data.business?.id || '');
-          localStorage.setItem('businessName', response.data.businessName || response.data.business?.name || '');
-          if (response.data.branch?.id || response.data.branchId) {
-            localStorage.setItem('branchId', response.data.branch?.id || response.data.branchId);
-          }
+          const businessId = response.data.businessId || response.data.business?.id || response.data.user?.business;
+          const businessName = response.data.businessName || response.data.business?.name || '';
+          const branchId = response.data.branch?.id || response.data.branchId || response.data.user?.branch;
+
+          if (businessId) localStorage.setItem('businessId', businessId);
+          if (businessName) localStorage.setItem('businessName', businessName);
+          if (branchId && branchId !== 'default-branch') localStorage.setItem('branchId', branchId);
+          
           localStorage.setItem('token', token);
           this.tokenSubject.next(token);
         }
