@@ -18,20 +18,20 @@ function getBusinessBranchIds(businessId: string): string[] {
 // POST /api/v1/tabs/open
 router.post('/open', (req: AuthRequest, res: Response) => {
   const branchIds = getBusinessBranchIds(req.user!.businessId);
-  const { table_id, party_size, customer_name, notes } = req.body;
+  const { tableId, partySize, customerName, notes } = req.body;
 
-  if (!table_id || party_size === undefined) {
+  if (!tableId || partySize === undefined) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
-  const table = db.tables.get(table_id);
+  const table = db.tables.get(tableId);
   if (!table || !branchIds.includes(table.branchId)) {
     return res.sendStatus(404);
   }
 
   // Check if table is already occupied
   const existingOpenTab = Array.from(db.tabs.values()).find(tab =>
-    tab.tableId === table_id && tab.status === 'open'
+    tab.tableId === tableId && tab.status === 'open'
   );
   if (existingOpenTab) {
     return res.status(409).json({ message: 'Table already has an open tab' });
@@ -41,9 +41,9 @@ router.post('/open', (req: AuthRequest, res: Response) => {
   const tab = {
     id,
     branchId: table.branchId,
-    tableId: table_id,
-    partySize: Number(party_size),
-    customerName: customer_name,
+    tableId,
+    partySize: Number(partySize),
+    customerName: customerName,
     notes,
     status: 'open' as const,
     openedAt: new Date()

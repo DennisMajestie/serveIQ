@@ -18,7 +18,7 @@ function getBusinessBranchIds(businessId: string): string[] {
 // POST /api/v1/orders/tab/:tabId
 router.post('/tab/:tabId', (req: AuthRequest, res: Response) => {
   const branchIds = getBusinessBranchIds(req.user!.businessId);
-  const items = req.body as Array<{ menu_item_id: string; quantity: number; notes?: string }>;
+  const items = req.body as Array<{ menuItemId: string; quantity: number; notes?: string }>;
 
   const tab = db.tabs.get(req.params.tabId);
   if (!tab || !branchIds.includes(tab.branchId)) {
@@ -30,16 +30,16 @@ router.post('/tab/:tabId', (req: AuthRequest, res: Response) => {
 
   const createdItems: any[] = [];
   for (const item of items) {
-    const menuItem = db.menuItems.get(item.menu_item_id);
+    const menuItem = db.menuItems.get(item.menuItemId);
     if (!menuItem) {
-      return res.status(404).json({ message: `Menu item ${item.menu_item_id} not found` });
+      return res.status(404).json({ message: `Menu item ${item.menuItemId} not found` });
     }
 
     const id = uuidv4();
     const orderItem = {
       id,
       tabId: req.params.tabId,
-      menuItemId: item.menu_item_id,
+      menuItemId: item.menuItemId,
       menuItemName: menuItem.name,
       priceKobo: menuItem.priceKobo,
       quantity: Number(item.quantity),

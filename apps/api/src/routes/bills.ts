@@ -18,7 +18,7 @@ function getBusinessBranchIds(businessId: string): string[] {
 // POST /api/v1/bills/tab/:tabId/generate
 router.post('/tab/:tabId/generate', (req: AuthRequest, res: Response) => {
   const branchIds = getBusinessBranchIds(req.user!.businessId);
-  const { service_charge_percent = 0, discount_kobo = 0 } = req.body;
+  const { serviceChargePercent = 0, discountKobo: inputDiscountKobo = 0 } = req.body;
 
   const tab = db.tabs.get(req.params.tabId);
   if (!tab || !branchIds.includes(tab.branchId)) {
@@ -34,9 +34,8 @@ router.post('/tab/:tabId/generate', (req: AuthRequest, res: Response) => {
   const subtotalKobo = orderItems.reduce((sum, item) =>
     sum + (item.priceKobo * item.quantity), 0);
 
-  const serviceChargePercent = Number(service_charge_percent);
-  const serviceChargeKobo = Math.floor(subtotalKobo * (serviceChargePercent / 100));
-  const discountKobo = Number(discount_kobo);
+  const serviceChargeKobo = Math.floor(subtotalKobo * (Number(serviceChargePercent) / 100));
+  const discountKobo = Number(inputDiscountKobo);
   const totalKobo = subtotalKobo + serviceChargeKobo - discountKobo;
 
   const id = uuidv4();
@@ -45,7 +44,7 @@ router.post('/tab/:tabId/generate', (req: AuthRequest, res: Response) => {
     tabId: req.params.tabId,
     branchId: tab.branchId,
     subtotalKobo,
-    serviceChargePercent: serviceChargePercent,
+    serviceChargePercent: Number(serviceChargePercent),
     discountKobo,
     totalKobo,
     createdAt: new Date()
