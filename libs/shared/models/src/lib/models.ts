@@ -129,6 +129,8 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   business: Business;
   owner: User;
+  branch?: Branch;
+  branchId?: string;
   access_token?: string;
 }
 

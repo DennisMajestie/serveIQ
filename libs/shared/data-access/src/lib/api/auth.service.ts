@@ -9,10 +9,17 @@ export interface AuthResponse {
   data: {
     access_token: string;
     user?: any;
-    business?: any;
-    branch?: any;
+    business?: {
+      id: string;
+      name: string;
+    };
+    branch?: {
+      id: string;
+      name: string;
+    };
     businessId?: string;
     businessName?: string;
+    branchId?: string;
   };
 }
 
