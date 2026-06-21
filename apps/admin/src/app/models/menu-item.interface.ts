@@ -2,10 +2,10 @@ export interface MenuItem {
   id: string;
   name: string;
   category: string;
-  price_kobo: number;
+  priceKobo: number;
   unit?: string;
   sku?: string;
   barcode?: string;
-  image_url?: string;
-  is_available: boolean;
+  imageUrl?: string;
+  isAvailable: boolean;
 }

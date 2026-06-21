@@ -26,9 +26,13 @@ router.get('/', (req: AuthRequest, res: Response) => {
 // POST /api/v1/menu
 router.post('/', (req: AuthRequest, res: Response) => {
   const branchIds = getBusinessBranchIds(req.user!.businessId);
-  const { name, category, price_kobo, unit, sku, barcode, image_url, is_available } = req.body;
+  const { name, category, priceKobo, price_kobo, unit, sku, barcode, imageUrl, image_url, isAvailable, is_available } = req.body;
+  
+  const finalPriceKobo = priceKobo !== undefined ? priceKobo : price_kobo;
+  const finalImageUrl = imageUrl || image_url;
+  const finalIsAvailable = isAvailable !== undefined ? isAvailable : (is_available !== undefined ? is_available : true);
 
-  if (!name || !category || price_kobo === undefined) {
+  if (!name || !category || finalPriceKobo === undefined) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
@@ -38,12 +42,12 @@ router.post('/', (req: AuthRequest, res: Response) => {
     branchId: branchIds[0], // Default to first branch
     name,
     category,
-    priceKobo: Number(price_kobo),
+    priceKobo: Number(finalPriceKobo),
     unit,
     sku,
     barcode,
-    imageUrl: image_url,
-    isAvailable: is_available !== false
+    imageUrl: finalImageUrl,
+    isAvailable: finalIsAvailable !== false
   };
 
   db.menuItems.set(id, menuItem);
@@ -68,15 +72,20 @@ router.put('/:id', (req: AuthRequest, res: Response) => {
     return res.sendStatus(404);
   }
 
-  const { name, category, price_kobo, unit, sku, barcode, image_url, is_available } = req.body;
-  menuItem.name = name;
-  menuItem.category = category;
-  menuItem.priceKobo = Number(price_kobo);
-  menuItem.unit = unit;
-  menuItem.sku = sku;
-  menuItem.barcode = barcode;
-  menuItem.imageUrl = image_url;
-  menuItem.isAvailable = is_available !== false;
+  const { name, category, priceKobo, price_kobo, unit, sku, barcode, imageUrl, image_url, isAvailable, is_available } = req.body;
+  
+  if (name) menuItem.name = name;
+  if (category) menuItem.category = category;
+  if (priceKobo !== undefined || price_kobo !== undefined) {
+    menuItem.priceKobo = Number(priceKobo !== undefined ? priceKobo : price_kobo);
+  }
+  if (unit !== undefined) menuItem.unit = unit;
+  if (sku !== undefined) menuItem.sku = sku;
+  if (barcode !== undefined) menuItem.barcode = barcode;
+  if (imageUrl || image_url) menuItem.imageUrl = imageUrl || image_url;
+  if (isAvailable !== undefined || is_available !== undefined) {
+    menuItem.isAvailable = (isAvailable !== undefined ? isAvailable : is_available) !== false;
+  }
 
   return res.json(menuItem);
 });

@@ -1,6 +1,7 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { MenuService } from '../services/menu.service';
 import { UploadService } from '../services/upload.service';
 import { MenuItem } from '../models';
@@ -46,7 +47,7 @@ export class MenuManagementComponent implements OnInit {
   selectCategory(name: string) { this.selectedCategory.set(name); }
 
   toggleAvailability(item: MenuItem) {
-    this.menuService.updateMenuItem(item.id, { is_available: !item.is_available }).subscribe(updated =>
+    this.menuService.updateMenuItem(item.id, { isAvailable: !item.isAvailable }).subscribe(updated =>
       this.allItems.update(items => items.map(i => i.id === updated.id ? updated : i))
     );
   }
@@ -87,8 +88,10 @@ export class MenuManagementComponent implements OnInit {
           const file = e.target.files[0];
           if (file) {
             try {
-              const result = await this.uploadService.uploadFile(file).toPromise();
-              imageUrl = result.url;
+              const res = await firstValueFrom(this.uploadService.uploadFile(file));
+              if (res && res.url) {
+                imageUrl = res.url;
+              }
               Swal.getPopup()?.querySelector('#mi-is-available')?.setAttribute('disabled', 'disabled');
             } catch (error) {
               console.error('Upload failed:', error);
@@ -102,10 +105,10 @@ export class MenuManagementComponent implements OnInit {
             resolve({
               name,
               category,
-              price_kobo: Math.round(priceNaira * 100),
+              priceKobo: Math.round(priceNaira * 100),
               unit,
-              is_available: isAvailable,
-              image_url: imageUrl
+              isAvailable: isAvailable,
+              imageUrl: imageUrl
             });
           }, 100);
         });
