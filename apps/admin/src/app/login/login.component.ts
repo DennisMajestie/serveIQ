@@ -64,12 +64,21 @@ export class LoginComponent {
       },
       error: (err) => {
         this.isLoading.set(false);
-        Swal.fire({
-          icon: 'error',
-          title: 'Authentication Failed',
-          text: err.error?.message || 'Please check your credentials and try again.',
-          confirmButtonColor: '#F97316'
-        });
+        if (err.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Authentication Failed',
+            text: 'Invalid email or password',
+            confirmButtonColor: '#F97316'
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Authentication Failed',
+            text: err.error?.message || 'Please check your credentials and try again.',
+            confirmButtonColor: '#F97316'
+          });
+        }
       }
     });
   }

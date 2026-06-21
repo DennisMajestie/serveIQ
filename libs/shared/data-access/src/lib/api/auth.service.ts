@@ -25,7 +25,7 @@ export interface RegisterResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenSubject = new BehaviorSubject<string | null>(
-    localStorage.getItem('token') || localStorage.getItem('accessToken')
+    localStorage.getItem('token')
   );
   token$ = this.tokenSubject.asObservable();
 
@@ -35,7 +35,7 @@ export class AuthService {
   ) {}
 
   get isAuthenticated(): boolean {
-    return !!localStorage.getItem('token') || !!localStorage.getItem('accessToken');
+    return !!localStorage.getItem('token');
   }
 
   private get apiUrl(): string {
@@ -91,7 +91,6 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
-    localStorage.removeItem('accessToken');
     this.tokenSubject.next(null);
   }
 }

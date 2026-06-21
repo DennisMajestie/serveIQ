@@ -2,7 +2,7 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '@serveiq/shared/data-access';
+import { AuthService } from '../services/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -55,39 +55,43 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  onPinSubmit() {
+    const businessId = localStorage.getItem('businessId');
+    if (!businessId) return;
+
+    this.authService.waiterLogin(this.pin(), businessId).subscribe({
+      next: () => {
+        this.router.navigate(['/tables']);
+      },
+      error: (err) => {
+        this.pinError.set(true);
+        
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'Invalid PIN',
+          showConfirmButton: false,
+          timer: 2000,
+          background: '#1e293b',
+          color: '#ef4444'
+        });
+
+        setTimeout(() => {
+          this.pin.set('');
+          this.pinError.set(false);
+        }, 800);
+      }
+    });
+  }
+
   onDigit(digit: string) {
     if (this.pin().length < 6) {
       this.pin.set(this.pin() + digit);
       this.pinError.set(false);
 
       if (this.pin().length === 6) {
-        const businessId = localStorage.getItem('businessId');
-        if (!businessId) return;
-
-        this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
-          next: () => {
-            this.router.navigate(['/tables']);
-          },
-          error: (err) => {
-            this.pinError.set(true);
-            
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'error',
-              title: err.error?.message || 'Incorrect PIN',
-              showConfirmButton: false,
-              timer: 2000,
-              background: '#1e293b',
-              color: '#ef4444'
-            });
-
-            setTimeout(() => {
-              this.pin.set('');
-              this.pinError.set(false);
-            }, 800);
-          }
-        });
+        this.onPinSubmit();
       }
     }
   }

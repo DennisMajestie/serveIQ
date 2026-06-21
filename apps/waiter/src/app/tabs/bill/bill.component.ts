@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BillsApiService } from '@serveiq/shared/data-access';
-import { Bill } from '@serveiq/shared/models';
+import { BillService, TableService } from '../services';
+import { Bill } from '../models';
 
 @Component({
   selector: 'app-bill',
@@ -14,7 +14,8 @@ import { Bill } from '@serveiq/shared/models';
 export class BillComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private billsApi = inject(BillsApiService);
+  private billService = inject(BillService);
+  private tableService = inject(TableService);
 
   tabId = signal('');
   bill = signal<Bill | null>(null);
@@ -23,12 +24,12 @@ export class BillComponent implements OnInit {
   waiterName = signal('Waiter');
   time = signal(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
-  subtotalNaira = computed(() => (this.bill()?.subtotalKobo ?? 0) / 100);
+  subtotalNaira = computed(() => (this.bill()?.total_kobo ?? 0) / 100);
   serviceChargeNaira = computed(() =>
-    ((this.bill()?.subtotalKobo ?? 0) * (this.bill()?.serviceChargePercent ?? 0)) / 100 / 100
+    ((this.bill()?.total_kobo ?? 0) * (this.bill()?.service_charge_percent ?? 0)) / 10000
   );
-  discountNaira = computed(() => (this.bill()?.discountKobo ?? 0) / 100);
-  totalNaira = computed(() => (this.bill()?.totalKobo ?? 0) / 100);
+  discountNaira = computed(() => (this.bill()?.discount_kobo ?? 0) / 100);
+  totalNaira = computed(() => (this.bill()?.total_kobo ?? 0) / 100);
 
   items = computed(() => this.bill()?.orderItems ?? []);
 
@@ -48,7 +49,7 @@ export class BillComponent implements OnInit {
   }
 
   generateBill(tabId: string) {
-    this.billsApi.generate(tabId, { service_charge_percent: 5 }).subscribe({
+    this.billService.generateBill(tabId, { service_charge_percent: 5 }).subscribe({
       next: (bill) => { this.bill.set(bill); this.isLoading.set(false); },
       error: (err) => {
         this.error.set('Could not generate bill. Please try again.');

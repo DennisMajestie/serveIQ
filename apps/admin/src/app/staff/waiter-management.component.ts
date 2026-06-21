@@ -2,8 +2,8 @@ import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { inject } from '@angular/core';
-import { UserApiService } from '@serveiq/shared/data-access';
-import { User } from '@serveiq/shared/models';
+import { StaffService } from '../services/staff.service';
+import { Waiter } from '../models';
 import Swal from 'sweetalert2';
 
 
@@ -16,16 +16,16 @@ import Swal from 'sweetalert2';
   styleUrls: ['./waiter-management.component.scss']
 })
 export class WaiterManagementComponent implements OnInit {
-  private userApi = inject(UserApiService);
+  private staffService = inject(StaffService);
   searchQuery = signal('');
 
-  waiters = signal<User[]>([]);
+  waiters = signal<Waiter[]>([]);
   isLoading = signal(true);
 
   filteredWaiters = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
     return q ? this.waiters().filter(w =>
-      w.fullName.toLowerCase().includes(q) || w.email.toLowerCase().includes(q)
+      w.fullName.toLowerCase().includes(q) || w.email?.toLowerCase().includes(q)
     ) : this.waiters();
   });
 
@@ -37,7 +37,7 @@ export class WaiterManagementComponent implements OnInit {
   ]);
 
   ngOnInit() {
-    this.userApi.listWaiters().subscribe({
+    this.staffService.getWaiters().subscribe({
       next: (w) => { this.waiters.set(w); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
     });
@@ -50,7 +50,7 @@ export class WaiterManagementComponent implements OnInit {
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <input id="sw-name" class="swal2-input" placeholder="Full Name" style="margin: 0;">
           <input id="sw-email" class="swal2-input" placeholder="Email (Optional)" type="email" style="margin: 0;">
-          <input id="sw-pin" class="swal2-input" placeholder="6-Digit PIN" type="text" maxlength="6" style="margin: 0;">
+          <input id="sw-phone" class="swal2-input" placeholder="Phone (Optional)" type="tel" style="margin: 0;">
         </div>
       `,
       confirmButtonText: 'Create Waiter',
@@ -59,21 +59,28 @@ export class WaiterManagementComponent implements OnInit {
       preConfirm: () => {
         const fullName = (document.getElementById('sw-name') as HTMLInputElement).value;
         const email = (document.getElementById('sw-email') as HTMLInputElement).value;
-        const pin = (document.getElementById('sw-pin') as HTMLInputElement).value;
+        const phone = (document.getElementById('sw-phone') as HTMLInputElement).value;
         
-        if (!fullName || !pin || pin.length !== 6) {
-          Swal.showValidationMessage('Full name and a 6-digit PIN are required');
+        if (!fullName) {
+          Swal.showValidationMessage('Full name is required');
           return null;
         }
         
-        return { fullName, email, pin };
+        const branchId = localStorage.getItem('businessId') || 'default-branch';
+        return { fullName, email, phone, branchId };
       }
     }).then(result => {
       if (result.isConfirmed && result.value?.fullName) {
-        this.userApi.createWaiter(result.value).subscribe({
+        this.staffService.createWaiter(result.value).subscribe({
           next: (w) => {
             this.waiters.update(ws => [...ws, w]);
-            Swal.fire({ icon: 'success', title: 'Waiter Created', timer: 1500, showConfirmButton: false });
+            Swal.fire({
+              icon: 'success',
+              title: 'Waiter Created',
+              html: `New waiter created successfully!<br><strong>PIN: ${w.pin}</strong><br><small>Share this PIN with the waiter</small>`,
+              timer: 3000,
+              showConfirmButton: true
+            });
           },
           error: () => Swal.fire({ icon: 'error', title: 'Failed to create waiter' })
         });
@@ -81,24 +88,38 @@ export class WaiterManagementComponent implements OnInit {
     });
   }
 
-  deleteWaiter(id: string) {
+  resetPin(id: string) {
     Swal.fire({
-      title: 'Remove Waiter?', icon: 'warning',
-      showCancelButton: true, confirmButtonColor: '#EF4444', confirmButtonText: 'Delete'
-    }).then(r => {
-      if (r.isConfirmed) {
-        this.userApi.deleteWaiter(id).subscribe(() =>
-          this.waiters.update(ws => ws.filter(w => w.id !== id))
-        );
+      title: 'Reset PIN',
+      text: `Reset PIN for this waiter? A new PIN will be generated and displayed.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#F97316',
+      confirmButtonText: 'Reset PIN'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.staffService.resetPin(id).subscribe({
+          next: (response) => {
+            this.waiters.update(ws => ws.map(w => w.id === id ? { ...w, pin: response.pin } : w));
+            Swal.fire({
+              icon: 'success',
+              title: 'PIN Reset',
+              html: `New PIN generated!<br><strong>${response.pin}</strong><br><small>Share this PIN with the waiter</small>`,
+              timer: 3000,
+              showConfirmButton: true
+            });
+          },
+          error: () => Swal.fire({ icon: 'error', title: 'Failed to reset PIN' })
+        });
       }
     });
   }
 
   onSearch() {}
   toggleFilters() {}
-  toggleStatus(waiter: User) {}
+  toggleStatus(waiter: Waiter) {}
   clearFilters() { this.searchQuery.set(''); }
-  trackById(index: number, w: User) { return w.id; }
+  trackById(index: number, w: Waiter) { return w.id; }
   getInitials(name: string): string { return name.split(' ').map(n => n[0]).join('').toUpperCase(); }
   roleFilterLabel = computed(() => 'All Waiters');
 }

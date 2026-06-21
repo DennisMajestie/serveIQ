@@ -2,8 +2,8 @@ import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-import { TablesApiService } from '@serveiq/shared/data-access';
-import { Table } from '@serveiq/shared/models';
+import { TableService } from '../services/table.service';
+import { Table } from '../models';
 import Swal from 'sweetalert2';
 
 
@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./tables-management.component.scss']
 })
 export class TablesManagementComponent implements OnInit {
-  private tablesApi = inject(TablesApiService);
+  private tableService = inject(TableService);
   isFloorPlan = signal(false);
   isLoading = signal(true);
 
@@ -37,7 +37,7 @@ export class TablesManagementComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.tablesApi.getAllTables().subscribe({
+    this.tableService.getTables().subscribe({
       next: (tables) => { this.tables.set(tables); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
     });
@@ -55,20 +55,15 @@ export class TablesManagementComponent implements OnInit {
       confirmButtonColor: '#F97316',
       showCancelButton: true,
       preConfirm: () => ({
-        tableNumber: (document.getElementById('swal-number') as HTMLInputElement).value,
+        table_number: (document.getElementById('swal-number') as HTMLInputElement).value,
         capacity: (document.getElementById('swal-capacity') as HTMLInputElement).value
       })
     }).then(result => {
       if (result.isConfirmed && result.value) {
-        this.tablesApi.getAllTables().subscribe(tables => {
-          const branchId = tables[0]?.branchId;
-          if (!branchId) return;
-          this.tablesApi.createTable({
-            branchId,
-            tableNumber: result.value.tableNumber,
-            capacity: Number(result.value.capacity)
-          }).subscribe(t => this.tables.update(ts => [...ts, t]));
-        });
+        this.tableService.createTable({
+          table_number: result.value.table_number,
+          capacity: Number(result.value.capacity)
+        }).subscribe(t => this.tables.update(ts => [...ts, t]));
       }
     });
   }
@@ -83,8 +78,21 @@ export class TablesManagementComponent implements OnInit {
       showCancelButton: true
     }).then(result => {
       if (result.isConfirmed) {
-        this.tablesApi.updateTable(table.id, { capacity: Number(result.value) })
+        this.tableService.updateTable(table.id, { capacity: Number(result.value) })
           .subscribe(updated => this.tables.update(ts => ts.map(t => t.id === updated.id ? updated : t)));
+      }
+    });
+  }
+
+  updateTableStatus(table: Table, newStatus: 'available' | 'occupied' | 'reserved') {
+    const originalStatus = table.status;
+    table.status = newStatus;
+    this.tables.set([...this.tables()]);
+
+    this.tableService.updateTableStatus(table.id, newStatus).subscribe({
+      error: () => {
+        table.status = originalStatus;
+        this.tables.set([...this.tables()]);
       }
     });
   }
@@ -99,7 +107,7 @@ export class TablesManagementComponent implements OnInit {
       confirmButtonText: 'Delete'
     }).then(result => {
       if (result.isConfirmed) {
-        this.tablesApi.updateTable(table.id, { status: 'available' }).subscribe();
+        this.tableService.updateTableStatus(table.id, 'available').subscribe();
         this.tables.update(ts => ts.filter(t => t.id !== table.id));
       }
     });

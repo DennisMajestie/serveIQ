@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService } from '@serveiq/shared/data-access';
-import { Tab, OrderItem } from '@serveiq/shared/models';
+import { TabService, OrderService, MenuService } from '../services';
+import { Tab, OrderItem, MenuItem } from '../models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,13 +15,15 @@ import Swal from 'sweetalert2';
 export class TabDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private tabsApi = inject(TabsApiService);
-  private ordersApi = inject(OrdersApiService);
+  private tabService = inject(TabService);
+  private orderService = inject(OrderService);
+  private menuService = inject(MenuService);
 
   tabId = signal('');
   tab = signal<Tab | null>(null);
   items = signal<OrderItem[]>([]);
   isLoading = signal(true);
+  menuItems: MenuItem[] = [];
 
   subtotal = computed(() =>
     this.items().reduce((sum, i) => sum + (i.priceKobo * i.quantity), 0)
@@ -40,7 +42,7 @@ export class TabDetailComponent implements OnInit {
   }
 
   loadTab(id: string) {
-    this.tabsApi.getTab(id).subscribe({
+    this.tabService.getTab(id).subscribe({
       next: (tab) => {
         this.tab.set(tab);
         this.loadOrders(id);
@@ -53,7 +55,7 @@ export class TabDetailComponent implements OnInit {
   }
 
   loadOrders(tabId: string) {
-    this.ordersApi.getByTab(tabId).subscribe({
+    this.orderService.getOrdersByTab(tabId).subscribe({
       next: (items) => { this.items.set(items); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
     });
@@ -69,7 +71,7 @@ export class TabDetailComponent implements OnInit {
       confirmButtonText: 'Remove'
     }).then(result => {
       if (result.isConfirmed) {
-        this.ordersApi.deleteItem(item.id).subscribe(() =>
+        this.orderService.deleteOrder(item.id).subscribe(()
           this.items.update(is => is.filter(i => i.id !== item.id))
         );
       }
@@ -77,7 +79,69 @@ export class TabDetailComponent implements OnInit {
   }
 
   addItem() {
-    this.router.navigate(['/menu'], { queryParams: { tabId: this.tabId() } });
+    this.menuService.getMenuItems().subscribe({
+      next: (items) => {
+        this.menuItems = items;
+        this.openAddOrderDialog();
+      },
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load menu items'
+        });
+      }
+    });
+  }
+
+  openAddOrderDialog() {
+    Swal.fire({
+      title: 'Add Order Item',
+      html: `
+        <select id="swal-menu-item" class="swal2-input">
+          <option value="">Select menu item</option>
+        </select>
+        <input id="swal-quantity" class="swal2-input" type="number" min="1" value="1" placeholder="Quantity">
+        <input id="swal-notes" class="swal2-input" placeholder="Notes (optional)">
+      `,
+      confirmButtonText: 'Add Item',
+      confirmButtonColor: '#F97316',
+      showCancelButton: true,
+      preConfirm: () => {
+        const menuItemId = (document.getElementById('swal-menu-item') as HTMLSelectElement).value;
+        const quantity = Number((document.getElementById('swal-quantity') as HTMLInputElement).value);
+        const notes = (document.getElementById('swal-notes') as HTMLInputElement).value;
+
+        if (!menuItemId) {
+          Swal.showValidationMessage('Please select a menu item');
+          return;
+        }
+
+        return { menuItemId, quantity, notes };
+      }
+    }).then(result => {
+      if (result.isConfirmed && result.value) {
+        this.orderService.addOrders(this.tabId(), [result.value]).subscribe({
+          next: () => {
+            this.loadOrders(this.tabId());
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Order item added successfully',
+              timer: 1500,
+              showConfirmButton: false
+            });
+          },
+          error: () => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to add order item'
+            });
+          }
+        });
+      }
+    });
   }
 
   goBack() {
@@ -86,6 +150,31 @@ export class TabDetailComponent implements OnInit {
 
   viewBill() {
     this.router.navigate(['/tabs/bill', this.tabId()]);
+  }
+
+  closeTab() {
+    Swal.fire({
+      title: 'Close Tab?',
+      text: `Are you sure you want to close this tab? This will generate a bill.`,      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#F97316',
+      confirmButtonText: 'Close Tab'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.tabService.closeTab(this.tabId()).subscribe({
+          next: () => {
+            this.router.navigate(['/tabs/bill', this.tabId()]);
+          },
+          error: () => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to close tab'
+            });
+          }
+        });
+      }
+    });
   }
 
   formatKobo(kobo: number): string {

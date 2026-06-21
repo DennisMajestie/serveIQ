@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { BranchesApiService, TabsApiService } from '@serveiq/shared/data-access';
-import { DashboardStats } from '@serveiq/shared/models';
+import { BranchService } from '../services/branch.service';
+import { DashboardStats } from '../models';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +14,17 @@ import { DashboardStats } from '@serveiq/shared/models';
     <div class="dashboard-page">
       <!-- KPI Cards Grid -->
       <section class="kpi-grid" aria-label="Key Performance Indicators">
+        <div class="kpi-header-row">
+          <h2 class="kpi-title space-font">Dashboard Stats</h2>
+          <button class="refresh-btn inter-font" (click)="loadStats()" [disabled]="isLoading()">
+            <mat-icon>refresh</mat-icon>
+            Refresh
+          </button>
+        </div>
+        <div class="error-message" *ngIf="errorMessage()">
+          <mat-icon>error_outline</mat-icon>
+          {{ errorMessage() }}
+        </div>
         <ng-container *ngIf="!isLoading(); else kpiSkeletons">
           <article class="kpi-card" *ngFor="let kpi of kpiCards()">
             <div class="kpi-icon-wrapper" [style.background]="kpi.iconBg + '15'">
@@ -152,6 +163,25 @@ import { DashboardStats } from '@serveiq/shared/models';
     .dashboard-page { padding-bottom: 40px; }
 
     .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 40px; }
+    .kpi-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .kpi-title { font-size: 1.5rem; color: var(--on-surface); margin: 0; }
+    .refresh-btn { 
+      display: flex; align-items: center; gap: 8px; 
+      background: white; border: 1px solid #e2e8f0; border-radius: 8px; 
+      padding: 8px 16px; cursor: pointer; font-size: 0.875rem;
+      color: var(--on-surface-muted); transition: all 0.2s;
+    }
+    .refresh-btn:hover:not(:disabled) { 
+      background: #f8f9ff; color: var(--on-surface); 
+    }
+    .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .refresh-btn mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    .error-message {
+      display: flex; align-items: center; gap: 8px;
+      background: #fef2f2; border: 1px solid #fee2e2; border-radius: 8px;
+      padding: 12px 16px; margin: 0 40px 24px; color: #b91c1c;
+    }
+    .error-message mat-icon { font-size: 18px; width: 18px; height: 18px; }
     .kpi-card {
       background: white; border-radius: 20px; padding: 24px;
       display: flex; flex-direction: column; gap: 16px; box-shadow: 0 8px 32px rgba(11, 28, 48, 0.04);
@@ -214,26 +244,39 @@ import { DashboardStats } from '@serveiq/shared/models';
   `]
 })
 export class DashboardComponent implements OnInit {
-  private branchesApi = inject(BranchesApiService);
-  private tabsApi = inject(TabsApiService);
+  private branchService = inject(BranchService);
 
   isLoading = signal(true);
   stats = signal<DashboardStats>({ totalBranches: 0, totalTables: 0, openTabs: 0, totalOrders: 0 });
+  errorMessage = signal<string | null>(null);
 
   ngOnInit() {
-    this.branchesApi.getStats().subscribe({
+    this.loadStats();
+  }
+
+  loadStats() {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    this.branchService.getDashboardStats().subscribe({
       next: (s) => { this.stats.set(s); this.isLoading.set(false); },
-      error: () => this.isLoading.set(false)
+      error: (error) => {
+        this.isLoading.set(false);
+        if (error.status === 401) {
+          this.errorMessage.set('Unauthorized. Please login again.');
+        } else {
+          this.errorMessage.set('Failed to load dashboard stats. Please try again.');
+        }
+      }
     });
   }
   
   kpiCards = computed(() => {
     const s = this.stats();
     return [
-      { label: 'Total Branches', value: s.totalBranches.toString(), subValue: 'Locations', icon: 'store', iconBg: '#FF7043' },
-      { label: 'Active Tabs', value: s.openTabs.toString(), subValue: 'Current', icon: 'table_bar', iconBg: '#0059bb' },
-      { label: 'Total Tables', value: s.totalTables.toString(), subValue: 'Configured', icon: 'analytics', iconBg: '#8b5cf6' },
-      { label: 'Total Orders', value: s.totalOrders.toString(), subValue: 'Today', icon: 'receipt', iconBg: '#00D166' }
+      { label: 'Total Branches', value: s.totalBranches?.toString() || '0', subValue: 'Locations', icon: 'store', iconBg: '#FF7043' },
+      { label: 'Active Tabs', value: s.openTabs?.toString() || '0', subValue: 'Current', icon: 'table_bar', iconBg: '#0059bb' },
+      { label: 'Total Tables', value: s.totalTables?.toString() || '0', subValue: 'Configured', icon: 'analytics', iconBg: '#8b5cf6' },
+      { label: 'Total Orders', value: s.totalOrders?.toString() || '0', subValue: 'Today', icon: 'receipt', iconBg: '#00D166' }
     ];
   });
 

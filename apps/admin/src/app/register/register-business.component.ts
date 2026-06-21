@@ -2,7 +2,8 @@ import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '@serveiq/shared/data-access';
+import { AuthService } from '../services/auth.service';
+import { UploadService } from '../services/upload.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -115,7 +116,7 @@ export class RegisterBusinessComponent {
     this.isUploadingLogo.set(true);
     this.logoUploadProgress.set(0);
 
-    this.authService.uploadFile(file).subscribe({
+    this.uploadService.uploadFile(file).subscribe({
       next: (response) => {
         console.log('[Upload] Logo success response:', response);
         const url = response.url;
@@ -149,7 +150,7 @@ export class RegisterBusinessComponent {
     this.isUploadingCac.set(true);
     this.cacUploadProgress.set(0);
 
-    this.authService.uploadFile(file).subscribe({
+    this.uploadService.uploadFile(file).subscribe({
       next: (response) => {
         console.log('[Upload] CAC success response:', response);
         const url = response.url;
@@ -244,13 +245,31 @@ export class RegisterBusinessComponent {
       error: (err) => {
         console.error('[Register] Failed:', err);
         this.isLoading.set(false);
-        const errorMsg = err.error?.message || 'Registration failed. Check your internet connection or try different credentials.';
-        Swal.fire({
-          icon: 'error',
-          title: 'Registration Failed',
-          text: errorMsg,
-          confirmButtonColor: '#F97316'
-        });
+        
+        if (err.status === 409) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Registration Failed',
+            text: 'This email is already registered',
+            confirmButtonColor: '#F97316'
+          });
+        } else if (err.status === 400) {
+          const errorMsg = err.error?.message || 'Invalid registration data';
+          Swal.fire({
+            icon: 'error',
+            title: 'Registration Failed',
+            text: errorMsg,
+            confirmButtonColor: '#F97316'
+          });
+        } else {
+          const errorMsg = err.error?.message || 'Registration failed. Check your internet connection or try different credentials.';
+          Swal.fire({
+            icon: 'error',
+            title: 'Registration Failed',
+            text: errorMsg,
+            confirmButtonColor: '#F97316'
+          });
+        }
       }
     });
   }
