@@ -15,6 +15,9 @@ export * from './lib/api/auth.interceptor';
 export * from './lib/auth.guard';
 export * from './lib/no-auth.guard';
 
+// Models
+export * from '@serveiq/shared/models';
+
 // Domain Services
 export * from './lib/api/branches-api.service';
 export * from './lib/api/menu-api.service';
