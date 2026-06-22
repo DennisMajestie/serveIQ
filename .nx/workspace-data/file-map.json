@@ -281,6 +281,383 @@
           "hash": "15726545290547512047"
         }
       ],
+      "admin": [
+        {
+          "file": "apps/admin/eslint.config.mjs",
+          "hash": "2510882000555660052",
+          "deps": [
+            "npm:@nx/eslint-plugin"
+          ]
+        },
+        {
+          "file": "apps/admin/project.json",
+          "hash": "11561514249396871026"
+        },
+        {
+          "file": "apps/admin/proxy.conf.js",
+          "hash": "1854258960051862024"
+        },
+        {
+          "file": "apps/admin/proxy.conf.json",
+          "hash": "13914642037936964353"
+        },
+        {
+          "file": "apps/admin/public/assets/food/chapman.png",
+          "hash": "18362922518720095239"
+        },
+        {
+          "file": "apps/admin/public/assets/food/jollof.png",
+          "hash": "6006248387544840918"
+        },
+        {
+          "file": "apps/admin/public/assets/food/suya.png",
+          "hash": "6090352908510264721"
+        },
+        {
+          "file": "apps/admin/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/admin/src/app/analytics/analytics.component.html",
+          "hash": "5401815789561403498"
+        },
+        {
+          "file": "apps/admin/src/app/analytics/analytics.component.scss",
+          "hash": "12881783720408634213"
+        },
+        {
+          "file": "apps/admin/src/app/analytics/analytics.component.ts",
+          "hash": "11145238968877536983",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/material",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/app.config.ts",
+          "hash": "2256512354299205095",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/router",
+            "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/app.html",
+          "hash": "11987652264972370457"
+        },
+        {
+          "file": "apps/admin/src/app/app.routes.ts",
+          "hash": "3362767042676086978",
+          "deps": [
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/app.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/admin/src/app/app.spec.ts",
+          "hash": "6381103560101793851",
+          "deps": [
+            "npm:@angular/core"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/app.ts",
+          "hash": "4612928217693853007",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/bills/bills.component.ts",
+          "hash": "13940906151692061433",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/core/auth.guard.ts",
+          "hash": "6092451255349552906",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/dashboard/dashboard.component.scss",
+          "hash": "7571766626848469182"
+        },
+        {
+          "file": "apps/admin/src/app/dashboard/dashboard.component.ts",
+          "hash": "10095835882822988734",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router",
+            "npm:@angular/forms",
+            "npm:@angular/material"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/interceptors/auth.interceptor.ts",
+          "hash": "4324082172931730139",
+          "deps": [
+            "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/login/login.component.html",
+          "hash": "873710583523434535"
+        },
+        {
+          "file": "apps/admin/src/app/login/login.component.scss",
+          "hash": "12670886215614091967"
+        },
+        {
+          "file": "apps/admin/src/app/login/login.component.ts",
+          "hash": "6857652711679201124",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router",
+            "npm:@angular/forms",
+            "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/menu/menu-management.component.html",
+          "hash": "14142358992816847934"
+        },
+        {
+          "file": "apps/admin/src/app/menu/menu-management.component.scss",
+          "hash": "14397919253061611999"
+        },
+        {
+          "file": "apps/admin/src/app/menu/menu-management.component.ts",
+          "hash": "9198183557359556384",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/forms",
+            "npm:rxjs",
+            "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/models/bill.interface.ts",
+          "hash": "16395828308057946095"
+        },
+        {
+          "file": "apps/admin/src/app/models/branch.interface.ts",
+          "hash": "962212152184677059"
+        },
+        {
+          "file": "apps/admin/src/app/models/dashboard-stats.interface.ts",
+          "hash": "11545210619009380006"
+        },
+        {
+          "file": "apps/admin/src/app/models/index.ts",
+          "hash": "15249787297809305396"
+        },
+        {
+          "file": "apps/admin/src/app/models/login-response.interface.ts",
+          "hash": "13263649952213707744"
+        },
+        {
+          "file": "apps/admin/src/app/models/menu-item.interface.ts",
+          "hash": "10719904579222700424"
+        },
+        {
+          "file": "apps/admin/src/app/models/order-item.interface.ts",
+          "hash": "1820791416716799950"
+        },
+        {
+          "file": "apps/admin/src/app/models/tab.interface.ts",
+          "hash": "9674583795016149066"
+        },
+        {
+          "file": "apps/admin/src/app/models/waiter-login-response.interface.ts",
+          "hash": "4154113258428417638"
+        },
+        {
+          "file": "apps/admin/src/app/models/waiter.interface.ts",
+          "hash": "3495513053609730248"
+        },
+        {
+          "file": "apps/admin/src/app/nx-welcome.ts",
+          "hash": "406302163340504242",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/pipes/kobo.pipe.ts",
+          "hash": "16104313348629920953",
+          "deps": [
+            "npm:@angular/core"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/register/register-business.component.html",
+          "hash": "794919463955100769"
+        },
+        {
+          "file": "apps/admin/src/app/register/register-business.component.scss",
+          "hash": "2032252657522813724"
+        },
+        {
+          "file": "apps/admin/src/app/register/register-business.component.ts",
+          "hash": "13214260927932341924",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router",
+            "npm:@angular/forms",
+            "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/settings/settings.component.html",
+          "hash": "14666252172144577765"
+        },
+        {
+          "file": "apps/admin/src/app/settings/settings.component.scss",
+          "hash": "15047195420838049918"
+        },
+        {
+          "file": "apps/admin/src/app/settings/settings.component.ts",
+          "hash": "10744254458713054728",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/forms"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/shell/admin-shell.component.ts",
+          "hash": "1186813325458908024",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/staff/waiter-management.component.html",
+          "hash": "10804451110147904703"
+        },
+        {
+          "file": "apps/admin/src/app/staff/waiter-management.component.scss",
+          "hash": "14809471205651320959"
+        },
+        {
+          "file": "apps/admin/src/app/staff/waiter-management.component.ts",
+          "hash": "3755144994363408904",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/forms",
+            "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/tables/table-detail.component.html",
+          "hash": "2259847474608789390"
+        },
+        {
+          "file": "apps/admin/src/app/tables/table-detail.component.ts",
+          "hash": "4528809781287418930",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/tables/tables-management.component.html",
+          "hash": "14204773625009803548"
+        },
+        {
+          "file": "apps/admin/src/app/tables/tables-management.component.scss",
+          "hash": "7113871254909605689"
+        },
+        {
+          "file": "apps/admin/src/app/tables/tables-management.component.ts",
+          "hash": "3887844460302216815",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/material",
+            "npm:@angular/router",
+            "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/admin/src/app/tabs/tab-detail-view.component.html",
+          "hash": "13513470227802846678"
+        },
+        {
+          "file": "apps/admin/src/app/tabs/tab-detail-view.component.scss",
+          "hash": "12794606937645326810"
+        },
+        {
+          "file": "apps/admin/src/app/tabs/tab-detail-view.component.ts",
+          "hash": "15383341755931887180",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/admin/src/assets/images/venue-status.png",
+          "hash": "15631654261418044369"
+        },
+        {
+          "file": "apps/admin/src/environments/environment.prod.ts",
+          "hash": "11646791496715210418"
+        },
+        {
+          "file": "apps/admin/src/environments/environment.ts",
+          "hash": "17746319558019462800"
+        },
+        {
+          "file": "apps/admin/src/index.html",
+          "hash": "15351660311735267514"
+        },
+        {
+          "file": "apps/admin/src/main.ts",
+          "hash": "3314327030169821486",
+          "deps": [
+            "npm:@angular/platform-browser"
+          ]
+        },
+        {
+          "file": "apps/admin/src/styles.scss",
+          "hash": "3818667046542095471"
+        },
+        {
+          "file": "apps/admin/tsconfig.app.json",
+          "hash": "18236407445202082987"
+        },
+        {
+          "file": "apps/admin/tsconfig.json",
+          "hash": "16004134237605501702"
+        },
+        {
+          "file": "apps/admin/tsconfig.spec.json",
+          "hash": "17724542442325471187"
+        }
+      ],
       "waiter": [
         {
           "file": "apps/waiter/eslint.config.mjs",
@@ -631,383 +1008,6 @@
         {
           "file": "apps/admin-e2e/tsconfig.json",
           "hash": "2249461092017240593"
-        }
-      ],
-      "admin": [
-        {
-          "file": "apps/admin/eslint.config.mjs",
-          "hash": "2510882000555660052",
-          "deps": [
-            "npm:@nx/eslint-plugin"
-          ]
-        },
-        {
-          "file": "apps/admin/project.json",
-          "hash": "11561514249396871026"
-        },
-        {
-          "file": "apps/admin/proxy.conf.js",
-          "hash": "1854258960051862024"
-        },
-        {
-          "file": "apps/admin/proxy.conf.json",
-          "hash": "13914642037936964353"
-        },
-        {
-          "file": "apps/admin/public/assets/food/chapman.png",
-          "hash": "18362922518720095239"
-        },
-        {
-          "file": "apps/admin/public/assets/food/jollof.png",
-          "hash": "6006248387544840918"
-        },
-        {
-          "file": "apps/admin/public/assets/food/suya.png",
-          "hash": "6090352908510264721"
-        },
-        {
-          "file": "apps/admin/public/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/admin/src/app/analytics/analytics.component.html",
-          "hash": "5401815789561403498"
-        },
-        {
-          "file": "apps/admin/src/app/analytics/analytics.component.scss",
-          "hash": "12881783720408634213"
-        },
-        {
-          "file": "apps/admin/src/app/analytics/analytics.component.ts",
-          "hash": "11145238968877536983",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/material",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/app.config.ts",
-          "hash": "2256512354299205095",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/router",
-            "npm:@angular/common"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/app.html",
-          "hash": "11987652264972370457"
-        },
-        {
-          "file": "apps/admin/src/app/app.routes.ts",
-          "hash": "3362767042676086978",
-          "deps": [
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/app.scss",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/admin/src/app/app.spec.ts",
-          "hash": "6381103560101793851",
-          "deps": [
-            "npm:@angular/core"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/app.ts",
-          "hash": "4612928217693853007",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/bills/bills.component.ts",
-          "hash": "13940906151692061433",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/core/auth.guard.ts",
-          "hash": "6092451255349552906",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/dashboard/dashboard.component.scss",
-          "hash": "7571766626848469182"
-        },
-        {
-          "file": "apps/admin/src/app/dashboard/dashboard.component.ts",
-          "hash": "10095835882822988734",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router",
-            "npm:@angular/forms",
-            "npm:@angular/material"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/interceptors/auth.interceptor.ts",
-          "hash": "4324082172931730139",
-          "deps": [
-            "npm:@angular/common"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/login/login.component.html",
-          "hash": "873710583523434535"
-        },
-        {
-          "file": "apps/admin/src/app/login/login.component.scss",
-          "hash": "12670886215614091967"
-        },
-        {
-          "file": "apps/admin/src/app/login/login.component.ts",
-          "hash": "6857652711679201124",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router",
-            "npm:@angular/forms",
-            "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/menu/menu-management.component.html",
-          "hash": "14142358992816847934"
-        },
-        {
-          "file": "apps/admin/src/app/menu/menu-management.component.scss",
-          "hash": "14397919253061611999"
-        },
-        {
-          "file": "apps/admin/src/app/menu/menu-management.component.ts",
-          "hash": "9198183557359556384",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/forms",
-            "npm:rxjs",
-            "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/models/bill.interface.ts",
-          "hash": "16395828308057946095"
-        },
-        {
-          "file": "apps/admin/src/app/models/branch.interface.ts",
-          "hash": "962212152184677059"
-        },
-        {
-          "file": "apps/admin/src/app/models/dashboard-stats.interface.ts",
-          "hash": "11545210619009380006"
-        },
-        {
-          "file": "apps/admin/src/app/models/index.ts",
-          "hash": "11005358220631690110"
-        },
-        {
-          "file": "apps/admin/src/app/models/login-response.interface.ts",
-          "hash": "13263649952213707744"
-        },
-        {
-          "file": "apps/admin/src/app/models/menu-item.interface.ts",
-          "hash": "10719904579222700424"
-        },
-        {
-          "file": "apps/admin/src/app/models/order-item.interface.ts",
-          "hash": "1820791416716799950"
-        },
-        {
-          "file": "apps/admin/src/app/models/tab.interface.ts",
-          "hash": "9674583795016149066"
-        },
-        {
-          "file": "apps/admin/src/app/models/waiter-login-response.interface.ts",
-          "hash": "4154113258428417638"
-        },
-        {
-          "file": "apps/admin/src/app/models/waiter.interface.ts",
-          "hash": "3495513053609730248"
-        },
-        {
-          "file": "apps/admin/src/app/nx-welcome.ts",
-          "hash": "406302163340504242",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/pipes/kobo.pipe.ts",
-          "hash": "16104313348629920953",
-          "deps": [
-            "npm:@angular/core"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/register/register-business.component.html",
-          "hash": "794919463955100769"
-        },
-        {
-          "file": "apps/admin/src/app/register/register-business.component.scss",
-          "hash": "2032252657522813724"
-        },
-        {
-          "file": "apps/admin/src/app/register/register-business.component.ts",
-          "hash": "13214260927932341924",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router",
-            "npm:@angular/forms",
-            "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/settings/settings.component.html",
-          "hash": "14666252172144577765"
-        },
-        {
-          "file": "apps/admin/src/app/settings/settings.component.scss",
-          "hash": "15047195420838049918"
-        },
-        {
-          "file": "apps/admin/src/app/settings/settings.component.ts",
-          "hash": "10744254458713054728",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/forms"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/shell/admin-shell.component.ts",
-          "hash": "1186813325458908024",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/staff/waiter-management.component.html",
-          "hash": "10804451110147904703"
-        },
-        {
-          "file": "apps/admin/src/app/staff/waiter-management.component.scss",
-          "hash": "14809471205651320959"
-        },
-        {
-          "file": "apps/admin/src/app/staff/waiter-management.component.ts",
-          "hash": "3755144994363408904",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/forms",
-            "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/tables/table-detail.component.html",
-          "hash": "2259847474608789390"
-        },
-        {
-          "file": "apps/admin/src/app/tables/table-detail.component.ts",
-          "hash": "4528809781287418930",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/tables/tables-management.component.html",
-          "hash": "14204773625009803548"
-        },
-        {
-          "file": "apps/admin/src/app/tables/tables-management.component.scss",
-          "hash": "7113871254909605689"
-        },
-        {
-          "file": "apps/admin/src/app/tables/tables-management.component.ts",
-          "hash": "3887844460302216815",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/material",
-            "npm:@angular/router",
-            "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/admin/src/app/tabs/tab-detail-view.component.html",
-          "hash": "13513470227802846678"
-        },
-        {
-          "file": "apps/admin/src/app/tabs/tab-detail-view.component.scss",
-          "hash": "12794606937645326810"
-        },
-        {
-          "file": "apps/admin/src/app/tabs/tab-detail-view.component.ts",
-          "hash": "15383341755931887180",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common"
-          ]
-        },
-        {
-          "file": "apps/admin/src/assets/images/venue-status.png",
-          "hash": "15631654261418044369"
-        },
-        {
-          "file": "apps/admin/src/environments/environment.prod.ts",
-          "hash": "11646791496715210418"
-        },
-        {
-          "file": "apps/admin/src/environments/environment.ts",
-          "hash": "17746319558019462800"
-        },
-        {
-          "file": "apps/admin/src/index.html",
-          "hash": "15351660311735267514"
-        },
-        {
-          "file": "apps/admin/src/main.ts",
-          "hash": "3314327030169821486",
-          "deps": [
-            "npm:@angular/platform-browser"
-          ]
-        },
-        {
-          "file": "apps/admin/src/styles.scss",
-          "hash": "3818667046542095471"
-        },
-        {
-          "file": "apps/admin/tsconfig.app.json",
-          "hash": "18236407445202082987"
-        },
-        {
-          "file": "apps/admin/tsconfig.json",
-          "hash": "16004134237605501702"
-        },
-        {
-          "file": "apps/admin/tsconfig.spec.json",
-          "hash": "17724542442325471187"
         }
       ],
       "api": [

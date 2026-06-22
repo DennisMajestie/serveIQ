@@ -30,8 +30,10 @@ export class TabHistoryComponent implements OnInit {
 
   currentDate = new Date().toLocaleDateString('en-NG', { month: 'long', day: 'numeric' });
 
-  transactions = computed<Transaction[]>(() =>
-    this.closedTabs().map(t => ({
+  transactions = computed<Transaction[]>(() => {
+    const tabs = this.closedTabs();
+    if (!Array.isArray(tabs)) return [];
+    return tabs.map(t => ({
       id: t.id,
       table: t.tableId ?? '—',
       customer: t.customerName ?? 'Walk-in',
@@ -39,14 +41,15 @@ export class TabHistoryComponent implements OnInit {
       statusIcon: t.status === 'paid' ? 'check_circle' : t.status === 'voided' ? 'cancel' : 'help',
       amount: (t as any).totalKobo ?? 0,
       method: (t as any).paymentMethod ?? 'Cash'
-    }))
-  );
+    }));
+  });
 
   transactionsCount = computed(() => this.transactions().length);
 
-  shiftTotal = computed(() =>
-    this.transactions().reduce((sum, t) => sum + t.amount, 0) / 100
-  );
+  shiftTotal = computed(() => {
+    const txns = this.transactions();
+    return Array.isArray(txns) ? txns.reduce((sum, t) => sum + t.amount, 0) / 100 : 0;
+  });
 
   ngOnInit() {
     this.tabsApi.getAllTabs().subscribe({

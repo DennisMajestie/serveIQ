@@ -50,7 +50,11 @@ export class MenuComponent implements OnInit {
     this.tabId = this.route.snapshot.queryParamMap.get('tabId');
 
     this.menuApi.getAllItems().subscribe({
-      next: (items: MenuItem[]) => {
+      next: (items: any) => {
+        if (!Array.isArray(items)) {
+          this.isLoading.set(false);
+          return;
+        }
         this.menuItems = items.map(i => ({
           id: i.id,
           name: i.name,
@@ -74,6 +78,7 @@ export class MenuComponent implements OnInit {
   }
 
   get selectionTotal(): number {
+    if (!Array.isArray(this.selectedItems)) return 0;
     return this.selectedItems.reduce((sum, item) => {
       const price = item.portionPrice ?? item.price;
       return sum + (price * item.qty);

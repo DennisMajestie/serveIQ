@@ -1,8 +1,8 @@
 {
   "run": {
-    "command": "nx build admin --configuration=production --skip-nx-cache",
-    "startTime": "2026-06-21T15:22:03.067Z",
-    "endTime": "2026-06-21T15:22:27.722Z",
+    "command": "nx build admin --configuration=production",
+    "startTime": "2026-06-22T11:12:20.677Z",
+    "endTime": "2026-06-22T11:14:31.828Z",
     "inner": false
   },
   "tasks": [
@@ -11,8 +11,8 @@
       "target": "build",
       "projectName": "admin",
       "hash": "18106629510965433362",
-      "startTime": "2026-06-21T15:22:03.148Z",
-      "endTime": "2026-06-21T15:22:27.702Z",
+      "startTime": "2026-06-22T11:12:21.305Z",
+      "endTime": "2026-06-22T11:14:29.806Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0

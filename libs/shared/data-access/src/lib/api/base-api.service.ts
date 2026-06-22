@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { buildUrl } from './api.config';
 import { handleApiError } from './api-error';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
@@ -25,32 +25,44 @@ export class BaseApiService {
   protected get<T>(url: string, params?: Record<string, string | number>): Observable<T> {
     const fullUrl = this.buildFullUrl(url, params);
     return this.http
-      .get<T>(fullUrl, { headers: this.defaultHeaders })
-      .pipe(catchError(handleApiError));
+      .get<any>(fullUrl, { headers: this.defaultHeaders })
+      .pipe(
+        map(res => res?.data !== undefined ? res.data : res),
+        catchError(handleApiError)
+      );
   }
 
   // POST Request
   protected post<T>(url: string, body?: any): Observable<T> {
     const fullUrl = this.buildFullUrl(url);
     return this.http
-      .post<T>(fullUrl, body, { headers: this.defaultHeaders })
-      .pipe(catchError(handleApiError));
+      .post<any>(fullUrl, body, { headers: this.defaultHeaders })
+      .pipe(
+        map(res => res?.data !== undefined ? res.data : res),
+        catchError(handleApiError)
+      );
   }
 
   // PUT Request
   protected put<T>(url: string, body: any): Observable<T> {
     const fullUrl = this.buildFullUrl(url);
     return this.http
-      .put<T>(fullUrl, body, { headers: this.defaultHeaders })
-      .pipe(catchError(handleApiError));
+      .put<any>(fullUrl, body, { headers: this.defaultHeaders })
+      .pipe(
+        map(res => res?.data !== undefined ? res.data : res),
+        catchError(handleApiError)
+      );
   }
 
   // PATCH Request
   protected patch<T>(url: string, body: any): Observable<T> {
     const fullUrl = this.buildFullUrl(url);
     return this.http
-      .patch<T>(fullUrl, body, { headers: this.defaultHeaders })
-      .pipe(catchError(handleApiError));
+      .patch<any>(fullUrl, body, { headers: this.defaultHeaders })
+      .pipe(
+        map(res => res?.data !== undefined ? res.data : res),
+        catchError(handleApiError)
+      );
   }
 
   // DELETE Request
