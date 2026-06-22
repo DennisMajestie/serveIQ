@@ -20,15 +20,20 @@ router.get('/', (req: AuthRequest, res: Response) => {
   const branchIds = getBusinessBranchIds(req.user!.businessId);
   const tables = Array.from(db.tables.values())
     .filter(table => branchIds.includes(table.branchId));
-  return res.json(tables);
+  const mappedTables = tables.map(table => ({
+    ...table,
+    table_number: table.tableNumber
+  }));
+  return res.json(mappedTables);
 });
 
 // POST /api/v1/tables
 router.post('/', (req: AuthRequest, res: Response) => {
   const branchIds = getBusinessBranchIds(req.user!.businessId);
-  const { table_number, capacity, label } = req.body;
+  const { table_number, tableNumber, capacity, label } = req.body;
+  const finalTableNumber = tableNumber || table_number;
 
-  if (!table_number || capacity === undefined) {
+  if (!finalTableNumber || capacity === undefined) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
@@ -36,14 +41,17 @@ router.post('/', (req: AuthRequest, res: Response) => {
   const table = {
     id,
     branchId: branchIds[0],
-    tableNumber: table_number,
+    tableNumber: finalTableNumber,
     capacity: Number(capacity),
     label,
     status: 'available' as const
   };
 
   db.tables.set(id, table);
-  return res.status(201).json(table);
+  return res.status(201).json({
+    ...table,
+    table_number: table.tableNumber
+  });
 });
 
 // GET /api/v1/tables/:id
@@ -53,7 +61,10 @@ router.get('/:id', (req: AuthRequest, res: Response) => {
   if (!table || !branchIds.includes(table.branchId)) {
     return res.sendStatus(404);
   }
-  return res.json(table);
+  return res.json({
+    ...table,
+    table_number: table.tableNumber
+  });
 });
 
 // PUT /api/v1/tables/:id
@@ -64,12 +75,17 @@ router.put('/:id', (req: AuthRequest, res: Response) => {
     return res.sendStatus(404);
   }
 
-  const { table_number, capacity, label } = req.body;
-  table.tableNumber = table_number;
+  const { table_number, tableNumber, capacity, label } = req.body;
+  const finalTableNumber = tableNumber || table_number;
+
+  if (finalTableNumber) table.tableNumber = finalTableNumber;
   table.capacity = Number(capacity);
   table.label = label;
 
-  return res.json(table);
+  return res.json({
+    ...table,
+    table_number: table.tableNumber
+  });
 });
 
 // PUT /api/v1/tables/:id/status
@@ -86,7 +102,10 @@ router.put('/:id/status', (req: AuthRequest, res: Response) => {
   }
 
   table.status = status;
-  return res.json(table);
+  return res.json({
+    ...table,
+    table_number: table.tableNumber
+  });
 });
 
 export default router;

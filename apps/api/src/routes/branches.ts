@@ -34,14 +34,56 @@ router.post('/', (req: AuthRequest, res: Response) => {
 router.get('/dashboard/stats', (req: AuthRequest, res: Response) => {
   const businessId = req.user!.businessId;
   const branches = Array.from(db.branches.values()).filter(b => b.businessId === businessId);
-  const tables = Array.from(db.tables.values()).filter(t => branches.some(b => b.id === t.branchId));
-  const tabs = Array.from(db.tabs.values()).filter(tab => branches.some(b => b.id === tab.branchId));
+  const branchIds = branches.map(b => b.id);
+
+  const tables = Array.from(db.tables.values()).filter(t => branchIds.includes(t.branchId));
+  const tabs = Array.from(db.tabs.values()).filter(tab => branchIds.includes(tab.branchId));
+  const bills = Array.from(db.bills.values()).filter(bill => branchIds.includes(bill.branchId));
+  const orderItems = Array.from(db.orderItems.values()).filter(order => {
+    const tab = db.tabs.get(order.tabId);
+    return tab && branchIds.includes(tab.branchId);
+  });
+
+  // 1. Real-time sales (total paid amount in kobo)
+  const real_time_sales = bills.reduce((sum, bill) => sum + bill.totalKobo, 0);
+
+  // 2. Active tables (occupied)
+  const active_tables = tables.filter(t => t.status === 'occupied').length;
+
+  // 3. Waiter performance
+  const performanceMap = new Map<string, { revenue: number; tabCount: number; name: string }>();
+  tabs.forEach(tab => {
+    if (!tab.staffId) return;
+    const staff = db.users.get(tab.staffId);
+    if (!staff) return;
+
+    const stats = performanceMap.get(tab.staffId) || { revenue: 0, tabCount: 0, name: staff.fullName };
+    stats.tabCount++;
+    
+    // Add bill total if tab is billed/paid
+    const bill = bills.find(b => b.tabId === tab.id);
+    if (bill) {
+      stats.revenue += bill.totalKobo;
+    }
+    
+    performanceMap.set(tab.staffId, stats);
+  });
+
+  const waiter_performance = Array.from(performanceMap.entries()).map(([id, stats]) => ({
+    waiterId: id,
+    ...stats
+  }));
+
+  // 4. Recent orders (last 20)
+  const recent_orders = orderItems
+    .slice(-20)
+    .reverse();
 
   return res.json({
-    totalBranches: branches.length,
-    totalTables: tables.length,
-    openTabs: tabs.filter(t => t.status === 'open').length,
-    totalOrders: Array.from(db.orderItems.values()).length
+    real_time_sales,
+    active_tables,
+    waiter_performance,
+    recent_orders
   });
 });
 

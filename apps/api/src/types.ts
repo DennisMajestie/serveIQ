@@ -12,6 +12,7 @@ export interface User {
   passwordHash: string;
   role: 'owner' | 'waiter';
   pin?: string;
+  branchId?: string;
 }
 
 export interface Business {
@@ -65,6 +66,7 @@ export interface Tab {
   status: TabStatus;
   openedAt: Date;
   closedAt?: Date;
+  staffId?: string;
 }
 
 export interface OrderItem {

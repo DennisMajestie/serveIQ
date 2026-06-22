@@ -79,7 +79,23 @@ router.post('/login', async (req: Request, res: Response) => {
       role: user.role
     });
 
-    return res.json({ accessToken });
+    const branchIds = Array.from(db.branches.values())
+      .filter(b => b.businessId === user.businessId)
+      .map(b => b.id);
+
+    return res.json({ 
+      data: { 
+        access_token: accessToken,
+        user: { 
+          id: user.id, 
+          fullName: user.fullName, 
+          email: user.email, 
+          role: user.role, 
+          businessId: user.businessId,
+          branch_id: branchIds[0] || null
+        }
+      } 
+    });
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({ message: 'Internal server error' });
@@ -106,10 +122,17 @@ router.post('/activate', async (req: Request, res: Response) => {
     const business = db.businesses.get(user.businessId);
     const accessToken = generateToken({ userId: user.id, businessId: user.businessId, role: user.role });
 
+    const branchIds = Array.from(db.branches.values())
+      .filter(b => b.businessId === user.businessId)
+      .map(b => b.id);
+
     return res.json({
-      businessId: business?.id,
-      businessName: business?.name,
-      accessToken
+      data: {
+        businessId: business?.id,
+        businessName: business?.name,
+        branch_id: branchIds[0] || null,
+        access_token: accessToken
+      }
     });
   } catch (error) {
     return res.status(500).json({ message: 'Activation error' });
@@ -139,8 +162,16 @@ router.post('/staff-login', async (req: Request, res: Response) => {
     });
 
     return res.json({
-      user: { id: staff.id, fullName: staff.fullName, role: staff.role },
-      accessToken
+      data: {
+        user: { 
+          id: staff.id, 
+          fullName: staff.fullName, 
+          role: staff.role, 
+          businessId: staff.businessId,
+          branch_id: staff.branchId
+        },
+        access_token: accessToken
+      }
     });
   } catch (error) {
     return res.status(500).json({ message: 'Staff login error' });

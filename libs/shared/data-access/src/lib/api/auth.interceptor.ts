@@ -9,10 +9,15 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    const staffToken = localStorage.getItem('staffToken');
     const token = localStorage.getItem('token');
-    if (token) {
+    
+    // Prioritize staff token for waiter operations, then fallback to admin/terminal token
+    const activeToken = staffToken || token;
+
+    if (activeToken) {
       request = request.clone({
-        setHeaders: { Authorization: `Bearer ${token}` }
+        setHeaders: { Authorization: `Bearer ${activeToken}` }
       });
     }
 

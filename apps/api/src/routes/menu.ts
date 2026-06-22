@@ -20,7 +20,13 @@ router.get('/', (req: AuthRequest, res: Response) => {
   const branchIds = getBusinessBranchIds(req.user!.businessId);
   const menuItems = Array.from(db.menuItems.values())
     .filter(item => branchIds.includes(item.branchId));
-  return res.json(menuItems);
+  const mappedMenuItems = menuItems.map(item => ({
+    ...item,
+    price_kobo: item.priceKobo,
+    is_available: item.isAvailable,
+    image_url: item.imageUrl
+  }));
+  return res.json(mappedMenuItems);
 });
 
 // POST /api/v1/menu
@@ -51,7 +57,12 @@ router.post('/', (req: AuthRequest, res: Response) => {
   };
 
   db.menuItems.set(id, menuItem);
-  return res.status(201).json(menuItem);
+  return res.status(201).json({
+    ...menuItem,
+    price_kobo: menuItem.priceKobo,
+    is_available: menuItem.isAvailable,
+    image_url: menuItem.imageUrl
+  });
 });
 
 // GET /api/v1/menu/:id
@@ -61,7 +72,12 @@ router.get('/:id', (req: AuthRequest, res: Response) => {
   if (!menuItem || !branchIds.includes(menuItem.branchId)) {
     return res.sendStatus(404);
   }
-  return res.json(menuItem);
+  return res.json({
+    ...menuItem,
+    price_kobo: menuItem.priceKobo,
+    is_available: menuItem.isAvailable,
+    image_url: menuItem.imageUrl
+  });
 });
 
 // PUT /api/v1/menu/:id
@@ -87,7 +103,12 @@ router.put('/:id', (req: AuthRequest, res: Response) => {
     menuItem.isAvailable = (isAvailable !== undefined ? isAvailable : is_available) !== false;
   }
 
-  return res.json(menuItem);
+  return res.json({
+    ...menuItem,
+    price_kobo: menuItem.priceKobo,
+    is_available: menuItem.isAvailable,
+    image_url: menuItem.imageUrl
+  });
 });
 
 export default router;

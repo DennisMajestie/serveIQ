@@ -1,18 +1,18 @@
 {
   "run": {
-    "command": "nx build admin --configuration=production",
-    "startTime": "2026-06-22T11:12:20.677Z",
-    "endTime": "2026-06-22T11:14:31.828Z",
+    "command": "nx build waiter --configuration=production",
+    "startTime": "2026-06-22T11:51:30.973Z",
+    "endTime": "2026-06-22T11:52:27.167Z",
     "inner": false
   },
   "tasks": [
     {
-      "taskId": "admin:build:production",
+      "taskId": "waiter:build:production",
       "target": "build",
-      "projectName": "admin",
-      "hash": "18106629510965433362",
-      "startTime": "2026-06-22T11:12:21.305Z",
-      "endTime": "2026-06-22T11:14:29.806Z",
+      "projectName": "waiter",
+      "hash": "6892496805642389296",
+      "startTime": "2026-06-22T11:51:31.098Z",
+      "endTime": "2026-06-22T11:52:26.700Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0

@@ -2,7 +2,7 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -42,9 +42,9 @@ export class LoginComponent implements OnInit {
     
     this.isActivating.set(true);
     this.authService.activateTerminal(this.adminEmail, this.adminPassword).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.isActivated.set(true);
-        this.businessName.set(res.businessName);
+        this.businessName.set(res.data?.businessName || 'ServeIQ Business');
         this.isActivating.set(false);
         Swal.fire({ icon: 'success', title: 'Terminal Activated', timer: 1500, showConfirmButton: false });
       },
@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
     const businessId = localStorage.getItem('businessId');
     if (!businessId) return;
 
-    this.authService.waiterLogin(this.pin(), businessId).subscribe({
+    this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
       next: () => {
         this.router.navigate(['/tables']);
       },
