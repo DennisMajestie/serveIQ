@@ -19,235 +19,351 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "15714102834279233425"
-      },
-      {
-        "file": ".prettierignore",
-        "hash": "5407418692668764289"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
-      },
-      {
-        "file": "DESIGN.md",
-        "hash": "7343598625284131304"
-      },
-      {
-        "file": "DESIGN_PRD.md",
-        "hash": "6988088705392247899"
-      },
-      {
-        "file": "README.md",
-        "hash": "2375592829385214498"
-      },
-      {
-        "file": "all-screens-list.json",
-        "hash": "1142427051664513398"
-      },
-      {
-        "file": "check-screens.json",
-        "hash": "3412442812599912981"
-      },
-      {
-        "file": "download-waiter-screens.ps1",
-        "hash": "2283411919401608520"
-      },
-      {
         "file": "eslint.config.mjs",
         "hash": "12926286793420397906"
-      },
-      {
-        "file": "get-payment-screen.json",
-        "hash": "15566985286082720122"
-      },
-      {
-        "file": "get-tables-overview.json",
-        "hash": "9931247920132416658"
-      },
-      {
-        "file": "get-waiter-login-luminous.json",
-        "hash": "7161272614349447168"
-      },
-      {
-        "file": "graph.json",
-        "hash": "17506520209123636365"
-      },
-      {
-        "file": "libs/shared/data-access/src/index.ts",
-        "hash": "7257343451890585287"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/api-error.ts",
-        "hash": "5487371263600252314"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/api.config.ts",
-        "hash": "3088526630368362128"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/auth.interceptor.ts",
-        "hash": "14880099261035267365"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/auth.service.ts",
-        "hash": "8889957954093097713"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/base-api.service.ts",
-        "hash": "5186569975289284313"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/bills-api.service.ts",
-        "hash": "15612817117456271726"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/branches-api.service.ts",
-        "hash": "2156022596993929763"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/business-api.service.ts",
-        "hash": "3225054759845664092"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/environment.token.ts",
-        "hash": "15307048961140630495"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/menu-api.service.ts",
-        "hash": "4923875894704306406"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/orders-api.service.ts",
-        "hash": "3082313739759624490"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/tables-api.service.ts",
-        "hash": "11764998009318632219"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/tabs-api.service.ts",
-        "hash": "15675881791877208465"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/upload-api.service.ts",
-        "hash": "10594127296972939852"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/api/user-api.service.ts",
-        "hash": "5544622473484499149"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/auth.guard.ts",
-        "hash": "12940097199880033461"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/no-auth.guard.ts",
-        "hash": "8626497035140010774"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/offline-sync.engine.ts",
-        "hash": "14355522972485572853"
-      },
-      {
-        "file": "libs/shared/data-access/src/lib/sync.store.ts",
-        "hash": "8688726736201151320"
-      },
-      {
-        "file": "libs/shared/models/src/index.ts",
-        "hash": "5783204083390380591"
-      },
-      {
-        "file": "libs/shared/models/src/lib/models.ts",
-        "hash": "16431728791840116863"
-      },
-      {
-        "file": "list-all-screens.json",
-        "hash": "6886557894809545775"
-      },
-      {
-        "file": "nx.json",
-        "hash": "17099836163847712162"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "12429645109642640886"
-      },
-      {
-        "file": "package.json",
-        "hash": "5927556847431979844"
-      },
-      {
-        "file": "payment-screen.json",
-        "hash": "13978899730367308447"
-      },
-      {
-        "file": "run-api-simple.js",
-        "hash": "782183296305903703"
-      },
-      {
-        "file": "stitch-assets/admin-tab-detail-screenshot.png",
-        "hash": "8371036794754529773"
-      },
-      {
-        "file": "stitch-assets/admin-tab-detail.html",
-        "hash": "7070132059337927552"
       },
       {
         "file": "stitch-assets/waiter-login-luminous-screenshot.png",
         "hash": "9121690744031845746"
       },
       {
-        "file": "stitch-assets/waiter-login-luminous.html",
-        "hash": "7712969720425212771"
+        "file": ".prettierignore",
+        "hash": "5407418692668764289"
+      },
+      {
+        "file": "DESIGN_PRD.md",
+        "hash": "6988088705392247899"
+      },
+      {
+        "file": "get-waiter-login-luminous.json",
+        "hash": "7161272614349447168"
+      },
+      {
+        "file": "get-payment-screen.json",
+        "hash": "15566985286082720122"
+      },
+      {
+        "file": "package.json",
+        "hash": "5927556847431979844"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "14335499908446745023"
       },
       {
         "file": "stitch-assets/waiter-payment-processing-screenshot.png",
         "hash": "8038594768386327849"
       },
       {
-        "file": "stitch-assets/waiter-payment-processing.html",
-        "hash": "8795678845720682127"
+        "file": "graph.json",
+        "hash": "17506520209123636365"
       },
       {
-        "file": "stitch-assets/waiter-tables-overview-screenshot.png",
-        "hash": "3936373967813791194"
-      },
-      {
-        "file": "stitch-assets/waiter-tables-overview.html",
-        "hash": "5700752494219249124"
+        "file": "payment-screen.json",
+        "hash": "13978899730367308447"
       },
       {
         "file": "stitch-tools-list.json",
         "hash": "13700480287998061921"
       },
       {
-        "file": "tables-overview-screen.json",
-        "hash": "6690980964967746057"
+        "file": "all-screens-list.json",
+        "hash": "1142427051664513398"
+      },
+      {
+        "file": "list-all-screens.json",
+        "hash": "6886557894809545775"
+      },
+      {
+        "file": "README.md",
+        "hash": "2375592829385214498"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "12429645109642640886"
+      },
+      {
+        "file": "stitch-assets/waiter-tables-overview.html",
+        "hash": "5700752494219249124"
       },
       {
         "file": "tools/agent-logs.json",
         "hash": "7712447724200102864"
       },
       {
+        "file": "get-tables-overview.json",
+        "hash": "9931247920132416658"
+      },
+      {
         "file": "tools/test-file.txt",
         "hash": "14017865338531813990"
       },
       {
-        "file": "tsconfig.base.json",
-        "hash": "8986843797959579273"
+        "file": ".gitignore",
+        "hash": "15714102834279233425"
+      },
+      {
+        "file": "stitch-assets/waiter-payment-processing.html",
+        "hash": "8795678845720682127"
       },
       {
         "file": "waiter-login-luminous-screen.json",
         "hash": "1533892044672814806"
+      },
+      {
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": "check-screens.json",
+        "hash": "3412442812599912981"
+      },
+      {
+        "file": "stitch-assets/admin-tab-detail.html",
+        "hash": "7070132059337927552"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
+      },
+      {
+        "file": "download-waiter-screens.ps1",
+        "hash": "2283411919401608520"
+      },
+      {
+        "file": "DESIGN.md",
+        "hash": "7343598625284131304"
+      },
+      {
+        "file": "run-api-simple.js",
+        "hash": "782183296305903703"
+      },
+      {
+        "file": "nx.json",
+        "hash": "17099836163847712162"
+      },
+      {
+        "file": "stitch-assets/admin-tab-detail-screenshot.png",
+        "hash": "8371036794754529773"
+      },
+      {
+        "file": "stitch-assets/waiter-login-luminous.html",
+        "hash": "7712969720425212771"
+      },
+      {
+        "file": "tables-overview-screen.json",
+        "hash": "6690980964967746057"
+      },
+      {
+        "file": "stitch-assets/waiter-tables-overview-screenshot.png",
+        "hash": "3936373967813791194"
       }
     ],
     "projectFileMap": {
+      "shared-models": [
+        {
+          "file": "libs/shared/models/project.json",
+          "hash": "2711855287955965623"
+        },
+        {
+          "file": "libs/shared/models/src/index.ts",
+          "hash": "5783204083390380591"
+        },
+        {
+          "file": "libs/shared/models/src/lib/models.ts",
+          "hash": "16431728791840116863"
+        },
+        {
+          "file": "libs/shared/models/tsconfig.json",
+          "hash": "6692079354203362033"
+        }
+      ],
+      "shared-data-access": [
+        {
+          "file": "libs/shared/data-access/project.json",
+          "hash": "14839387096054205904"
+        },
+        {
+          "file": "libs/shared/data-access/src/index.ts",
+          "hash": "7257343451890585287",
+          "deps": [
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/api-error.ts",
+          "hash": "5487371263600252314",
+          "deps": [
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/api.config.ts",
+          "hash": "7468625103066330226"
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/auth.interceptor.ts",
+          "hash": "10002352819404304050",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/auth.service.ts",
+          "hash": "8889957954093097713",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/base-api.service.ts",
+          "hash": "16063218492223413510",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/bills-api.service.ts",
+          "hash": "15612817117456271726",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/branches-api.service.ts",
+          "hash": "2156022596993929763",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/business-api.service.ts",
+          "hash": "3225054759845664092",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/environment.token.ts",
+          "hash": "15307048961140630495",
+          "deps": [
+            "npm:@angular/core"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/menu-api.service.ts",
+          "hash": "4923875894704306406",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/orders-api.service.ts",
+          "hash": "3082313739759624490",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/tables-api.service.ts",
+          "hash": "11764998009318632219",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/tabs-api.service.ts",
+          "hash": "15675881791877208465",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/upload-api.service.ts",
+          "hash": "10594127296972939852",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/api/user-api.service.ts",
+          "hash": "5544622473484499149",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:rxjs",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/auth.guard.ts",
+          "hash": "12940097199880033461",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/router",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/no-auth.guard.ts",
+          "hash": "8626497035140010774",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/router",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/offline-sync.engine.ts",
+          "hash": "14355522972485572853",
+          "deps": [
+            "npm:@angular/core"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/src/lib/sync.store.ts",
+          "hash": "8688726736201151320",
+          "deps": [
+            "npm:@angular/core",
+            "shared-models"
+          ]
+        },
+        {
+          "file": "libs/shared/data-access/tsconfig.json",
+          "hash": "6692079354203362033"
+        }
+      ],
       "waiter-e2e": [
         {
           "file": "apps/waiter-e2e/eslint.config.mjs",
@@ -279,6 +395,315 @@
         {
           "file": "apps/waiter-e2e/tsconfig.json",
           "hash": "15726545290547512047"
+        }
+      ],
+      "waiter": [
+        {
+          "file": "apps/waiter/eslint.config.mjs",
+          "hash": "11999635802406141026",
+          "deps": [
+            "npm:@nx/eslint-plugin"
+          ]
+        },
+        {
+          "file": "apps/waiter/project.json",
+          "hash": "15293114174853700232"
+        },
+        {
+          "file": "apps/waiter/public/assets/food/chapman.png",
+          "hash": "18362922518720095239"
+        },
+        {
+          "file": "apps/waiter/public/assets/food/jollof.png",
+          "hash": "6006248387544840918"
+        },
+        {
+          "file": "apps/waiter/public/assets/food/suya.png",
+          "hash": "6090352908510264721"
+        },
+        {
+          "file": "apps/waiter/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/waiter/src/app/app.config.server.ts",
+          "hash": "16664769899172877666",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/ssr"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/app.config.ts",
+          "hash": "2281410089221207813",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/router",
+            "npm:@angular/platform-browser",
+            "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/app.html",
+          "hash": "7656184926127037072"
+        },
+        {
+          "file": "apps/waiter/src/app/app.routes.server.ts",
+          "hash": "16960858348243221237",
+          "deps": [
+            "npm:@angular/ssr"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/app.routes.ts",
+          "hash": "14058502659410535082",
+          "deps": [
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/app.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/waiter/src/app/app.spec.ts",
+          "hash": "7169013476984916224",
+          "deps": [
+            "npm:@angular/core"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/app.ts",
+          "hash": "6905337026260719649",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/router",
+            "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/core/auth.guard.ts",
+          "hash": "4456420807022876369",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/login/login.component.html",
+          "hash": "10736542746473745885"
+        },
+        {
+          "file": "apps/waiter/src/app/login/login.component.scss",
+          "hash": "2321401934615234738"
+        },
+        {
+          "file": "apps/waiter/src/app/login/login.component.ts",
+          "hash": "2353940770754326441",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router",
+            "npm:@angular/forms",
+            "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/menu/menu.component.html",
+          "hash": "10433817528065749727"
+        },
+        {
+          "file": "apps/waiter/src/app/menu/menu.component.scss",
+          "hash": "17521400306040453570"
+        },
+        {
+          "file": "apps/waiter/src/app/menu/menu.component.ts",
+          "hash": "13672898677824738279",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/nx-welcome.ts",
+          "hash": "14225403212603787521",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/tables/open-tab/open-tab.component.html",
+          "hash": "478152025413258025"
+        },
+        {
+          "file": "apps/waiter/src/app/tables/open-tab/open-tab.component.scss",
+          "hash": "15702637092775390136"
+        },
+        {
+          "file": "apps/waiter/src/app/tables/open-tab/open-tab.component.ts",
+          "hash": "13839045913311144639",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/forms",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/tables/tables.component.html",
+          "hash": "532298268675134467"
+        },
+        {
+          "file": "apps/waiter/src/app/tables/tables.component.scss",
+          "hash": "4181583977520754640"
+        },
+        {
+          "file": "apps/waiter/src/app/tables/tables.component.ts",
+          "hash": "3166530115787543922",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router",
+            "npm:rxjs"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/bill/bill.component.html",
+          "hash": "1070640974718741158"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/bill/bill.component.scss",
+          "hash": "12140252027606982549"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/bill/bill.component.ts",
+          "hash": "5794258876203017291",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/payment/payment.component.html",
+          "hash": "13792477784059063161"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/payment/payment.component.scss",
+          "hash": "6355114261437877006"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/payment/payment.component.ts",
+          "hash": "14042669866126926526",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/receipt/receipt.component.html",
+          "hash": "8066627094976435662"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/receipt/receipt.component.scss",
+          "hash": "568394360082506968"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/receipt/receipt.component.ts",
+          "hash": "13601284949691844369",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/tab-detail/tab-detail.component.html",
+          "hash": "15939529283244043172"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/tab-detail/tab-detail.component.scss",
+          "hash": "17072749257267331156"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/tab-detail/tab-detail.component.ts",
+          "hash": "5800719553245577816",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router",
+            "npm:sweetalert2"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.html",
+          "hash": "13028247454330210742"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.scss",
+          "hash": "7815755524155805212"
+        },
+        {
+          "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.ts",
+          "hash": "2329434740061982146",
+          "deps": [
+            "npm:@angular/core",
+            "npm:@angular/common",
+            "npm:@angular/router"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/environments/environment.prod.ts",
+          "hash": "11646791496715210418"
+        },
+        {
+          "file": "apps/waiter/src/environments/environment.ts",
+          "hash": "17746319558019462800"
+        },
+        {
+          "file": "apps/waiter/src/index.html",
+          "hash": "14057904538509709070"
+        },
+        {
+          "file": "apps/waiter/src/main.server.ts",
+          "hash": "2790221776171602446",
+          "deps": [
+            "npm:@angular/platform-browser"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/main.ts",
+          "hash": "3314327030169821486",
+          "deps": [
+            "npm:@angular/platform-browser"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/server.ts",
+          "hash": "4501044531871950503",
+          "deps": [
+            "npm:@angular/ssr",
+            "npm:express"
+          ]
+        },
+        {
+          "file": "apps/waiter/src/styles.scss",
+          "hash": "16080193603728151374"
+        },
+        {
+          "file": "apps/waiter/tsconfig.app.json",
+          "hash": "2438757114263802077"
+        },
+        {
+          "file": "apps/waiter/tsconfig.json",
+          "hash": "16004134237605501702"
+        },
+        {
+          "file": "apps/waiter/tsconfig.spec.json",
+          "hash": "13919890687900665478"
         }
       ],
       "admin": [
@@ -658,358 +1083,6 @@
           "hash": "17724542442325471187"
         }
       ],
-      "waiter": [
-        {
-          "file": "apps/waiter/eslint.config.mjs",
-          "hash": "11999635802406141026",
-          "deps": [
-            "npm:@nx/eslint-plugin"
-          ]
-        },
-        {
-          "file": "apps/waiter/project.json",
-          "hash": "15293114174853700232"
-        },
-        {
-          "file": "apps/waiter/public/assets/food/chapman.png",
-          "hash": "18362922518720095239"
-        },
-        {
-          "file": "apps/waiter/public/assets/food/jollof.png",
-          "hash": "6006248387544840918"
-        },
-        {
-          "file": "apps/waiter/public/assets/food/suya.png",
-          "hash": "6090352908510264721"
-        },
-        {
-          "file": "apps/waiter/public/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/waiter/src/app/app.config.server.ts",
-          "hash": "16664769899172877666",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/ssr"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/app.config.ts",
-          "hash": "2281410089221207813",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/router",
-            "npm:@angular/platform-browser",
-            "npm:@angular/common"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/app.html",
-          "hash": "7656184926127037072"
-        },
-        {
-          "file": "apps/waiter/src/app/app.routes.server.ts",
-          "hash": "16960858348243221237",
-          "deps": [
-            "npm:@angular/ssr"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/app.routes.ts",
-          "hash": "14058502659410535082",
-          "deps": [
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/app.scss",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/waiter/src/app/app.spec.ts",
-          "hash": "7169013476984916224",
-          "deps": [
-            "npm:@angular/core"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/app.ts",
-          "hash": "6905337026260719649",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/router",
-            "npm:@angular/common"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/core/auth.guard.ts",
-          "hash": "4456420807022876369",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/login/login.component.html",
-          "hash": "10736542746473745885"
-        },
-        {
-          "file": "apps/waiter/src/app/login/login.component.scss",
-          "hash": "2321401934615234738"
-        },
-        {
-          "file": "apps/waiter/src/app/login/login.component.ts",
-          "hash": "11143908836793600627",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router",
-            "npm:@angular/forms",
-            "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/menu/menu.component.html",
-          "hash": "10433817528065749727"
-        },
-        {
-          "file": "apps/waiter/src/app/menu/menu.component.scss",
-          "hash": "17521400306040453570"
-        },
-        {
-          "file": "apps/waiter/src/app/menu/menu.component.ts",
-          "hash": "4636219338369334760",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/nx-welcome.ts",
-          "hash": "14225403212603787521",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/services/auth.service.ts",
-          "hash": "10575277160986212578",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:rxjs",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/tables/open-tab/open-tab.component.html",
-          "hash": "478152025413258025"
-        },
-        {
-          "file": "apps/waiter/src/app/tables/open-tab/open-tab.component.scss",
-          "hash": "15702637092775390136"
-        },
-        {
-          "file": "apps/waiter/src/app/tables/open-tab/open-tab.component.ts",
-          "hash": "13839045913311144639",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/forms",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/tables/tables.component.html",
-          "hash": "532298268675134467"
-        },
-        {
-          "file": "apps/waiter/src/app/tables/tables.component.scss",
-          "hash": "4181583977520754640"
-        },
-        {
-          "file": "apps/waiter/src/app/tables/tables.component.ts",
-          "hash": "3166530115787543922",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router",
-            "npm:rxjs"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/bill/bill.component.html",
-          "hash": "1070640974718741158"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/bill/bill.component.scss",
-          "hash": "12140252027606982549"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/bill/bill.component.ts",
-          "hash": "5794258876203017291",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/payment/payment.component.html",
-          "hash": "13792477784059063161"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/payment/payment.component.scss",
-          "hash": "6355114261437877006"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/payment/payment.component.ts",
-          "hash": "14042669866126926526",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/receipt/receipt.component.html",
-          "hash": "8066627094976435662"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/receipt/receipt.component.scss",
-          "hash": "568394360082506968"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/receipt/receipt.component.ts",
-          "hash": "13601284949691844369",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/tab-detail/tab-detail.component.html",
-          "hash": "15939529283244043172"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/tab-detail/tab-detail.component.scss",
-          "hash": "17072749257267331156"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/tab-detail/tab-detail.component.ts",
-          "hash": "5800719553245577816",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router",
-            "npm:sweetalert2"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.html",
-          "hash": "13028247454330210742"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.scss",
-          "hash": "7815755524155805212"
-        },
-        {
-          "file": "apps/waiter/src/app/tabs/tab-history/tab-history.component.ts",
-          "hash": "16199956191686777876",
-          "deps": [
-            "npm:@angular/core",
-            "npm:@angular/common",
-            "npm:@angular/router"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/environments/environment.prod.ts",
-          "hash": "11646791496715210418"
-        },
-        {
-          "file": "apps/waiter/src/environments/environment.ts",
-          "hash": "17746319558019462800"
-        },
-        {
-          "file": "apps/waiter/src/index.html",
-          "hash": "14057904538509709070"
-        },
-        {
-          "file": "apps/waiter/src/main.server.ts",
-          "hash": "2790221776171602446",
-          "deps": [
-            "npm:@angular/platform-browser"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/main.ts",
-          "hash": "3314327030169821486",
-          "deps": [
-            "npm:@angular/platform-browser"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/server.ts",
-          "hash": "4501044531871950503",
-          "deps": [
-            "npm:@angular/ssr",
-            "npm:express"
-          ]
-        },
-        {
-          "file": "apps/waiter/src/styles.scss",
-          "hash": "16080193603728151374"
-        },
-        {
-          "file": "apps/waiter/tsconfig.app.json",
-          "hash": "2438757114263802077"
-        },
-        {
-          "file": "apps/waiter/tsconfig.json",
-          "hash": "16004134237605501702"
-        },
-        {
-          "file": "apps/waiter/tsconfig.spec.json",
-          "hash": "13919890687900665478"
-        }
-      ],
-      "admin-e2e": [
-        {
-          "file": "apps/admin-e2e/eslint.config.mjs",
-          "hash": "9406519109376614868",
-          "deps": [
-            "npm:eslint-plugin-playwright"
-          ]
-        },
-        {
-          "file": "apps/admin-e2e/playwright.config.ts",
-          "hash": "7432757985344820213",
-          "deps": [
-            "npm:@playwright/test",
-            "npm:@nx/playwright",
-            "npm:@nx/devkit"
-          ]
-        },
-        {
-          "file": "apps/admin-e2e/project.json",
-          "hash": "10664730796060910305"
-        },
-        {
-          "file": "apps/admin-e2e/src/example.spec.ts",
-          "hash": "16019101014373124625",
-          "deps": [
-            "npm:@playwright/test"
-          ]
-        },
-        {
-          "file": "apps/admin-e2e/tsconfig.json",
-          "hash": "2249461092017240593"
-        }
-      ],
       "api": [
         {
           "file": "apps/api/eslint.config.mjs",
@@ -1077,7 +1150,7 @@
         },
         {
           "file": "apps/api/src/routes/auth.ts",
-          "hash": "18050448527431207593",
+          "hash": "13036893904141486706",
           "deps": [
             "npm:express",
             "npm:bcryptjs",
@@ -1094,7 +1167,7 @@
         },
         {
           "file": "apps/api/src/routes/branches.ts",
-          "hash": "5163614245641058530",
+          "hash": "5073983991780041464",
           "deps": [
             "npm:express",
             "npm:uuid"
@@ -1109,7 +1182,7 @@
         },
         {
           "file": "apps/api/src/routes/menu.ts",
-          "hash": "7890714379501830420",
+          "hash": "14131809592234598714",
           "deps": [
             "npm:express",
             "npm:uuid"
@@ -1125,7 +1198,7 @@
         },
         {
           "file": "apps/api/src/routes/tables.ts",
-          "hash": "13946551595098612373",
+          "hash": "2264226116387894151",
           "deps": [
             "npm:express",
             "npm:uuid"
@@ -1158,7 +1231,7 @@
         },
         {
           "file": "apps/api/src/types.ts",
-          "hash": "6240308285440693404",
+          "hash": "7571412602463575265",
           "deps": [
             "npm:express"
           ]
@@ -1181,6 +1254,39 @@
         {
           "file": "apps/api/tsconfig.spec.json",
           "hash": "917194442815265437"
+        }
+      ],
+      "admin-e2e": [
+        {
+          "file": "apps/admin-e2e/eslint.config.mjs",
+          "hash": "9406519109376614868",
+          "deps": [
+            "npm:eslint-plugin-playwright"
+          ]
+        },
+        {
+          "file": "apps/admin-e2e/playwright.config.ts",
+          "hash": "7432757985344820213",
+          "deps": [
+            "npm:@playwright/test",
+            "npm:@nx/playwright",
+            "npm:@nx/devkit"
+          ]
+        },
+        {
+          "file": "apps/admin-e2e/project.json",
+          "hash": "10664730796060910305"
+        },
+        {
+          "file": "apps/admin-e2e/src/example.spec.ts",
+          "hash": "16019101014373124625",
+          "deps": [
+            "npm:@playwright/test"
+          ]
+        },
+        {
+          "file": "apps/admin-e2e/tsconfig.json",
+          "hash": "2249461092017240593"
         }
       ]
     }

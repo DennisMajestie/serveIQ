@@ -1,5 +1,65 @@
 {
   "nodes": {
+    "shared-data-access": {
+      "name": "shared-data-access",
+      "type": "lib",
+      "data": {
+        "root": "libs/shared/data-access",
+        "name": "shared-data-access",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "library",
+        "sourceRoot": "libs/shared/data-access/src",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true,
+            "cache": true,
+            "inputs": [
+              "default",
+              "^default",
+              "{workspaceRoot}/.eslintrc.json",
+              "{workspaceRoot}/.eslintignore",
+              "{workspaceRoot}/eslint.config.mjs",
+              "{workspaceRoot}/tools/eslint-rules/**/*"
+            ]
+          }
+        },
+        "implicitDependencies": [],
+        "tags": []
+      }
+    },
+    "shared-models": {
+      "name": "shared-models",
+      "type": "lib",
+      "data": {
+        "root": "libs/shared/models",
+        "name": "shared-models",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "library",
+        "sourceRoot": "libs/shared/models/src",
+        "targets": {
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true,
+            "cache": true,
+            "inputs": [
+              "default",
+              "^default",
+              "{workspaceRoot}/.eslintrc.json",
+              "{workspaceRoot}/.eslintignore",
+              "{workspaceRoot}/eslint.config.mjs",
+              "{workspaceRoot}/tools/eslint-rules/**/*"
+            ]
+          }
+        },
+        "implicitDependencies": [],
+        "tags": []
+      }
+    },
     "waiter-e2e": {
       "name": "waiter-e2e",
       "type": "e2e",
@@ -16410,6 +16470,34 @@
     }
   },
   "dependencies": {
+    "shared-data-access": [
+      {
+        "source": "shared-data-access",
+        "target": "shared-models",
+        "type": "static"
+      },
+      {
+        "source": "shared-data-access",
+        "target": "npm:@angular/common",
+        "type": "static"
+      },
+      {
+        "source": "shared-data-access",
+        "target": "npm:rxjs",
+        "type": "static"
+      },
+      {
+        "source": "shared-data-access",
+        "target": "npm:@angular/core",
+        "type": "static"
+      },
+      {
+        "source": "shared-data-access",
+        "target": "npm:@angular/router",
+        "type": "static"
+      }
+    ],
+    "shared-models": [],
     "waiter-e2e": [
       {
         "source": "waiter-e2e",
@@ -40631,5 +40719,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1782126733329
+  "computedAt": 1782134631586
 }
