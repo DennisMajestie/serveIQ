@@ -27,7 +27,7 @@ export class BaseApiService {
     return this.http
       .get<any>(fullUrl, { headers: this.defaultHeaders })
       .pipe(
-        map(res => res?.data !== undefined ? res.data : res),
+        map(res => res && typeof res === 'object' && 'data' in res ? res.data : res),
         catchError(handleApiError)
       );
   }
@@ -38,7 +38,7 @@ export class BaseApiService {
     return this.http
       .post<any>(fullUrl, body, { headers: this.defaultHeaders })
       .pipe(
-        map(res => res?.data !== undefined ? res.data : res),
+        map(res => res && typeof res === 'object' && 'data' in res ? res.data : res),
         catchError(handleApiError)
       );
   }
@@ -49,7 +49,7 @@ export class BaseApiService {
     return this.http
       .put<any>(fullUrl, body, { headers: this.defaultHeaders })
       .pipe(
-        map(res => res?.data !== undefined ? res.data : res),
+        map(res => res && typeof res === 'object' && 'data' in res ? res.data : res),
         catchError(handleApiError)
       );
   }
@@ -60,7 +60,7 @@ export class BaseApiService {
     return this.http
       .patch<any>(fullUrl, body, { headers: this.defaultHeaders })
       .pipe(
-        map(res => res?.data !== undefined ? res.data : res),
+        map(res => res && typeof res === 'object' && 'data' in res ? res.data : res),
         catchError(handleApiError)
       );
   }

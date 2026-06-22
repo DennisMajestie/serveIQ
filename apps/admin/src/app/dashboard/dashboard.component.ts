@@ -272,10 +272,10 @@ export class DashboardComponent implements OnInit {
   kpiCards = computed(() => {
     const s = this.stats();
     return [
-      { label: 'Total Branches', value: s.totalBranches?.toString() || '0', subValue: 'Locations', icon: 'store', iconBg: '#FF7043' },
-      { label: 'Active Tabs', value: s.openTabs?.toString() || '0', subValue: 'Current', icon: 'table_bar', iconBg: '#0059bb' },
-      { label: 'Total Tables', value: s.totalTables?.toString() || '0', subValue: 'Configured', icon: 'analytics', iconBg: '#8b5cf6' },
-      { label: 'Total Orders', value: s.totalOrders?.toString() || '0', subValue: 'Today', icon: 'receipt', iconBg: '#00D166' }
+      { label: 'Total Branches', value: s.totalBranches != null ? s.totalBranches.toString() : '0', subValue: 'Locations', icon: 'store', iconBg: '#FF7043' },
+      { label: 'Active Tabs', value: s.openTabs != null ? s.openTabs.toString() : '0', subValue: 'Current', icon: 'table_bar', iconBg: '#0059bb' },
+      { label: 'Total Tables', value: s.totalTables != null ? s.totalTables.toString() : '0', subValue: 'Configured', icon: 'analytics', iconBg: '#8b5cf6' },
+      { label: 'Total Orders', value: s.totalOrders != null ? s.totalOrders.toString() : '0', subValue: 'Today', icon: 'receipt', iconBg: '#00D166' }
     ];
   });
 

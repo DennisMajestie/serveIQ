@@ -76,10 +76,20 @@ router.post('/waiters', async (req: AuthRequest, res: Response) => {
     return res.sendStatus(403);
   }
 
-  const { fullName, email, pin } = req.body;
-  if (!fullName || !pin) {
-    return res.status(400).json({ message: 'fullName and pin are required' });
+  const { fullName, email, pin, branchId: bodyBranchId } = req.body;
+  if (!fullName) {
+    return res.status(400).json({ message: 'fullName is required' });
   }
+
+  // Generate a random 4-digit PIN if not provided
+  const finalPin = pin || Math.floor(1000 + Math.random() * 9000).toString();
+  
+  // Use provided branchId or fallback to business first branch
+  const branchIds = Array.from(db.branches.values())
+    .filter(b => b.businessId === req.user!.businessId)
+    .map(b => b.id);
+  
+  const finalBranchId = bodyBranchId || branchIds[0] || 'default-branch';
 
   const id = uuidv4();
   const waiter = {
@@ -88,8 +98,9 @@ router.post('/waiters', async (req: AuthRequest, res: Response) => {
     fullName,
     email: email || `${id}@serveiq.com`,
     passwordHash: '',
-    pin,
+    pin: finalPin,
     role: 'waiter' as const,
+    branchId: finalBranchId
   };
 
   db.users.set(id, waiter);

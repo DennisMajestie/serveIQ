@@ -67,9 +67,11 @@ export class TablesManagementComponent implements OnInit {
       })
     }).then(result => {
       if (result.isConfirmed && result.value) {
+        const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || 'default-branch';
         this.tableService.createTable({
           tableNumber: result.value.tableNumber,
-          capacity: Number(result.value.capacity)
+          capacity: Number(result.value.capacity),
+          branchId
         }).subscribe(t => this.tables.update(ts => [...ts, t]));
       }
     });

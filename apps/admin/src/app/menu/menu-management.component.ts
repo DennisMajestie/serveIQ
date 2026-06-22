@@ -22,13 +22,16 @@ export class MenuManagementComponent implements OnInit {
 
   menuItems = computed(() => {
     const cat = this.selectedCategory();
+    const items = this.items();
+    if (!Array.isArray(items)) return [];
     return cat === 'All'
-      ? this.items()
-      : this.items().filter(i => i.category === cat);
+      ? items
+      : items.filter(i => i.category === cat);
   });
 
   categories = computed(() => {
     const items = this.items();
+    if (!Array.isArray(items)) return [{ name: 'All', count: 0 }];
     const cats = ['All', ...new Set(items.map(i => i.category))];
     return cats.map(c => ({ 
       name: c, 

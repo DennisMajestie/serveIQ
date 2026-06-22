@@ -23,17 +23,25 @@ export class WaiterManagementComponent implements OnInit {
 
   filteredWaiters = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
-    return q ? this.waiters().filter(w =>
-      w.fullName.toLowerCase().includes(q) || w.email?.toLowerCase().includes(q)
-    ) : this.waiters();
+    const data = this.waiters();
+    if (!Array.isArray(data)) return [];
+    return q ? data.filter(w => {
+      const name = (w.fullName || (w as any).full_name || '').toLowerCase();
+      const email = (w.email || '').toLowerCase();
+      return name.includes(q) || email.includes(q);
+    }) : data;
   });
 
-  summaryStats = computed(() => [
-    { label: 'Total Waiters', value: this.waiters().length.toString(), icon: 'users', color: 'orange' },
-    { label: 'Active Staff', value: this.waiters().length.toString(), icon: 'check', color: 'blue' },
-    { label: 'On Leave', value: '0', icon: 'assignment', color: 'purple' },
-    { label: 'Branches', value: '1', icon: 'store', color: 'brown' }
-  ]);
+  summaryStats = computed(() => {
+    const data = this.waiters();
+    const count = Array.isArray(data) ? data.length : 0;
+    return [
+      { label: 'Total Waiters', value: count.toString(), icon: 'users', color: 'orange' },
+      { label: 'Active Staff', value: count.toString(), icon: 'check', color: 'blue' },
+      { label: 'On Leave', value: '0', icon: 'assignment', color: 'purple' },
+      { label: 'Branches', value: '1', icon: 'store', color: 'brown' }
+    ];
+  });
 
   ngOnInit() {
     this.staffService.listWaiters().subscribe({
@@ -141,6 +149,9 @@ export class WaiterManagementComponent implements OnInit {
   toggleStatus(waiter: Waiter) {}
   clearFilters() { this.searchQuery.set(''); }
   trackById(index: number, w: Waiter) { return w.id; }
-  getInitials(name: string): string { return name.split(' ').map(n => n[0]).join('').toUpperCase(); }
+  getInitials(name: string | undefined | null): string { 
+    if (!name) return '?';
+    return name.split(' ').filter(n => !!n).map(n => n[0]).join('').toUpperCase(); 
+  }
   roleFilterLabel = computed(() => 'All Waiters');
 }

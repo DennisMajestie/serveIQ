@@ -29,18 +29,24 @@ router.get('/', (req: AuthRequest, res: Response) => {
 
 // POST /api/v1/tables
 router.post('/', (req: AuthRequest, res: Response) => {
-  const branchIds = getBusinessBranchIds(req.user!.businessId);
-  const { table_number, tableNumber, capacity, label } = req.body;
-  const finalTableNumber = tableNumber || table_number;
-
+  const { table_number, tableNumber, capacity, label, branchId: bodyBranchId } = req.body;
+  const finalTableNumber = String(tableNumber || table_number || '').trim();
+  
   if (!finalTableNumber || capacity === undefined) {
-    return res.status(400).json({ message: 'Missing required fields' });
+    return res.status(400).json({ message: 'Table number and capacity are required' });
   }
+
+  // Use provided branchId or fallback to business first branch
+  const branchIds = Array.from(db.branches.values())
+    .filter(b => b.businessId === req.user!.businessId)
+    .map(b => b.id);
+  
+  const finalBranchId = bodyBranchId || branchIds[0] || 'default-branch';
 
   const id = uuidv4();
   const table = {
     id,
-    branchId: branchIds[0],
+    branchId: finalBranchId,
     tableNumber: finalTableNumber,
     capacity: Number(capacity),
     label,

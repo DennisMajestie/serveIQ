@@ -10,6 +10,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
     return next(authReq);
+  } else {
+    console.warn('[AuthInterceptor] No token found in localStorage');
   }
   
   return next(req);
