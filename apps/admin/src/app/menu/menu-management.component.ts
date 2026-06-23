@@ -20,6 +20,17 @@ export class MenuManagementComponent implements OnInit {
   isLoading = signal(true);
   items = signal<MenuItem[]>([]);
 
+  // Add Item Modal state
+  showAddModal = signal(false);
+  isSubmitting = signal(false);
+  imagePreview = signal<string | null>(null);
+  selectedFile = signal<File | null>(null);
+  formName = signal('');
+  formCategory = signal('');
+  formPrice = signal<number | null>(null);
+  formUnit = signal('');
+  formIsAvailable = signal(true);
+
   menuItems = computed(() => {
     const cat = this.selectedCategory();
     const items = this.items();
@@ -66,49 +77,67 @@ export class MenuManagementComponent implements OnInit {
   }
 
   addItem() {
-    Swal.fire({
-      title: 'Add Menu Item',
-      html: `
-        <input id="mi-name" class="swal2-input" placeholder="Item name">
-        <input id="mi-cat" class="swal2-input" placeholder="Category">
-        <input id="mi-price" class="swal2-input" placeholder="Price (in Naira)" type="number" step="0.01">
-        <input id="mi-unit" class="swal2-input" placeholder="Unit (optional)">
-        <select id="mi-is-available" class="swal2-input">
-          <option value="true">Available</option>
-          <option value="false">Unavailable</option>
-        </select>
-      `,
-      confirmButtonText: 'Add Item',
-      confirmButtonColor: '#F97316',
-      showCancelButton: true,
-      preConfirm: async () => {
-        const name = (document.getElementById('mi-name') as HTMLInputElement).value;
-        const category = (document.getElementById('mi-cat') as HTMLInputElement).value;
-        const priceNaira = Number((document.getElementById('mi-price') as HTMLInputElement).value);
-        const unit = (document.getElementById('mi-unit') as HTMLInputElement).value;
-        const isAvailable = (document.getElementById('mi-is-available') as HTMLSelectElement).value === 'true';
+    this.resetForm();
+    this.showAddModal.set(true);
+  }
 
-        if (!name || !category || !priceNaira) {
-          Swal.showValidationMessage('Please fill in all required fields');
-          return;
-        }
+  closeModal() {
+    this.showAddModal.set(false);
+  }
 
-        return {
-          name,
-          category,
-          price_kobo: Math.round(priceNaira * 100),
-          unit,
-          is_available: isAvailable
-        };
-      }
-    }).then(result => {
-      if (result.isConfirmed && result.value?.name) {
-        this.menuService.createItem(result.value).subscribe(item => {
-          this.items.update(is => [...is, item as any]);
-          Swal.fire({ icon: 'success', title: 'Item Added', timer: 1500, showConfirmButton: false });
-        });
-      }
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.selectedFile.set(file);
+    const reader = new FileReader();
+    reader.onload = (e) => this.imagePreview.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  async submitItem() {
+    const name = this.formName().trim();
+    const category = this.formCategory().trim();
+    const priceNaira = this.formPrice();
+
+    if (!name || !category || !priceNaira) return;
+
+    this.isSubmitting.set(true);
+    let imageUrl: string | undefined;
+
+    if (this.selectedFile()) {
+      try {
+        const uploaded = await this.uploadService.uploadFile(this.selectedFile()!).toPromise();
+        imageUrl = uploaded?.url;
+      } catch { /* image upload failed silently — item still created */ }
+    }
+
+    const payload: any = {
+      name,
+      category,
+      price_kobo: Math.round(priceNaira * 100),
+      unit: this.formUnit().trim() || undefined,
+      is_available: this.formIsAvailable(),
+      ...(imageUrl ? { image_url: imageUrl } : {})
+    };
+
+    this.menuService.createItem(payload).subscribe({
+      next: (item) => {
+        this.items.update(is => [...is, item as any]);
+        this.isSubmitting.set(false);
+        this.closeModal();
+      },
+      error: () => this.isSubmitting.set(false)
     });
+  }
+
+  private resetForm() {
+    this.formName.set('');
+    this.formCategory.set('');
+    this.formPrice.set(null);
+    this.formUnit.set('');
+    this.formIsAvailable.set(true);
+    this.imagePreview.set(null);
+    this.selectedFile.set(null);
   }
 
   trackById(_: number, item: MenuItem) {

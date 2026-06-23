@@ -130,3 +130,72 @@
     © 2024 ServeIQ Management Systems. Confidential Administrative View.
   </footer>
 </div>
+
+<!-- Add Waiter Modal -->
+<div class="modal-backdrop" *ngIf="showAddModal()" (click)="closeModal()"></div>
+<div class="modal-panel" [class.modal-open]="showAddModal()">
+  <div class="modal-header">
+    <div class="modal-header-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+    <div>
+      <h2 class="modal-title">Add New Waiter</h2>
+      <p class="modal-subtitle">Create a staff account. A PIN will be generated automatically.</p>
+    </div>
+    <button class="modal-close-btn" (click)="closeModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Avatar Upload -->
+    <div class="avatar-upload-zone">
+      <input type="file" id="sw-file" accept="image/jpeg,image/png,image/webp" class="file-input-hidden" (change)="onAvatarSelected($event)">
+      <div class="avatar-preview-wrap">
+        <div class="avatar-circle" *ngIf="!avatarPreview()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <img [src]="avatarPreview()!" class="avatar-img" alt="Preview" *ngIf="avatarPreview()">
+        <label for="sw-file" class="avatar-upload-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </label>
+      </div>
+      <div>
+        <p class="avatar-label">Profile Photo</p>
+        <p class="avatar-hint">Optional · JPG, PNG, WebP</p>
+      </div>
+    </div>
+
+    <!-- Form Fields -->
+    <div class="form-grid">
+      <div class="form-field full-width">
+        <label class="field-label">Full Name <span class="required">*</span></label>
+        <input class="field-input" type="text" placeholder="e.g. Amaka Johnson" [ngModel]="formFullName()" (ngModelChange)="formFullName.set($event)">
+      </div>
+      <div class="form-field">
+        <label class="field-label">Email <span class="optional">(optional)</span></label>
+        <input class="field-input" type="email" placeholder="staff@restaurant.com" [ngModel]="formEmail()" (ngModelChange)="formEmail.set($event)">
+      </div>
+      <div class="form-field">
+        <label class="field-label">Phone <span class="optional">(optional)</span></label>
+        <input class="field-input" type="tel" placeholder="+234 800 000 0000" [ngModel]="formPhone()" (ngModelChange)="formPhone.set($event)">
+      </div>
+    </div>
+
+    <div class="pin-info-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <p>A unique <strong>4-digit PIN</strong> will be generated and shown after creation. The waiter uses this PIN to log in on the waiter app.</p>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+    <button class="btn-submit" (click)="submitWaiter()" [disabled]="isSubmitting() || !formFullName()">
+      <span *ngIf="!isSubmitting()">Create Waiter</span>
+      <span *ngIf="isSubmitting()" class="spinner-wrap">
+        <svg class="spinner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+        Creating…
+      </span>
+    </button>
+  </div>
+</div>

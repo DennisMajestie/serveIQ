@@ -2,7 +2,7 @@ import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { inject } from '@angular/core';
-import { UserApiService, User, Waiter } from '@serveiq/shared/data-access';
+import { UserApiService, UploadApiService, User, Waiter } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 
@@ -16,10 +16,20 @@ import Swal from 'sweetalert2';
 })
 export class WaiterManagementComponent implements OnInit {
   private staffService = inject(UserApiService);
+  private uploadService = inject(UploadApiService);
   searchQuery = signal('');
 
   waiters = signal<Waiter[]>([]);
   isLoading = signal(true);
+
+  // Add Waiter Modal state
+  showAddModal = signal(false);
+  isSubmitting = signal(false);
+  avatarPreview = signal<string | null>(null);
+  selectedFile = signal<File | null>(null);
+  formFullName = signal('');
+  formEmail = signal('');
+  formPhone = signal('');
 
   filteredWaiters = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
@@ -58,48 +68,68 @@ export class WaiterManagementComponent implements OnInit {
   }
 
   openAddStaffModal() {
-    Swal.fire({
-      title: 'Add New Waiter',
-      html: `
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <input id="sw-name" class="swal2-input" placeholder="Full Name" style="margin: 0;">
-          <input id="sw-email" class="swal2-input" placeholder="Email (Optional)" type="email" style="margin: 0;">
-          <input id="sw-phone" class="swal2-input" placeholder="Phone (Optional)" type="tel" style="margin: 0;">
-        </div>
-      `,
-      confirmButtonText: 'Create Waiter',
-      confirmButtonColor: '#F97316',
-      showCancelButton: true,
-      preConfirm: () => {
-        const fullName = (document.getElementById('sw-name') as HTMLInputElement).value;
-        const email = (document.getElementById('sw-email') as HTMLInputElement).value;
-        const phone = (document.getElementById('sw-phone') as HTMLInputElement).value;
-        
-        if (!fullName) {
-          Swal.showValidationMessage('Full name is required');
-          return null;
-        }
-        
-        const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || 'default-branch';
-        return { fullName, email, phone, branchId };
-      }
-    }).then(result => {
-      if (result.isConfirmed && result.value?.fullName) {
-        this.staffService.createWaiter(result.value).subscribe({
-          next: (w: any) => {
-            this.waiters.update(ws => [...ws, w]);
-            Swal.fire({
-              icon: 'success',
-              title: 'Waiter Created',
-              html: `New waiter created successfully!<br><strong>PIN: ${w.pin}</strong><br><small>Share this PIN with the waiter</small>`,
-              timer: 3000,
-              showConfirmButton: true
-            });
-          },
-          error: () => Swal.fire({ icon: 'error', title: 'Failed to create waiter' })
+    this.resetWaiterForm();
+    this.showAddModal.set(true);
+  }
+
+  closeModal() { this.showAddModal.set(false); }
+
+  onAvatarSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.selectedFile.set(file);
+    const reader = new FileReader();
+    reader.onload = (e) => this.avatarPreview.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  async submitWaiter() {
+    const fullName = this.formFullName().trim();
+    if (!fullName) return;
+    this.isSubmitting.set(true);
+
+    let avatarUrl: string | undefined;
+    if (this.selectedFile()) {
+      try {
+        const uploaded = await this.uploadService.uploadFile(this.selectedFile()!).toPromise();
+        avatarUrl = uploaded?.url;
+      } catch { /* silently skip photo */ }
+    }
+
+    const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || 'default-branch';
+    const payload: any = {
+      fullName,
+      email: this.formEmail().trim(),
+      phone: this.formPhone().trim(),
+      branchId,
+      ...(avatarUrl ? { avatarUrl } : {})
+    };
+
+    this.staffService.createWaiter(payload).subscribe({
+      next: (w: any) => {
+        this.waiters.update(ws => [...ws, w]);
+        this.isSubmitting.set(false);
+        this.closeModal();
+        Swal.fire({
+          icon: 'success',
+          title: 'Waiter Created',
+          html: `Waiter added successfully!<br><strong style="font-size:22px;letter-spacing:4px">${w.pin}</strong><br><small>Share this PIN with the waiter to log in.</small>`,
+          confirmButtonColor: '#F97316'
         });
+      },
+      error: () => {
+        this.isSubmitting.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to create waiter', confirmButtonColor: '#F97316' });
       }
     });
+  }
+
+  private resetWaiterForm() {
+    this.formFullName.set('');
+    this.formEmail.set('');
+    this.formPhone.set('');
+    this.avatarPreview.set(null);
+    this.selectedFile.set(null);
   }
 
   resetPin(id: string) {

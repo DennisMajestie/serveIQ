@@ -16,7 +16,9 @@ export class UploadApiService extends BaseApiService {
   uploadFile(file: File): Observable<{ url: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.post<{ url: string }>('/api/v1/upload', formData);
+    // Do NOT set Content-Type header — browser sets multipart/form-data with boundary automatically
+    const fullUrl = `${this.apiUrl}/api/v1/upload`;
+    return this.http.post<{ url: string }>(fullUrl, formData);
   }
 }
 
