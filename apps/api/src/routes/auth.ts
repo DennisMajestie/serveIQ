@@ -109,6 +109,14 @@ router.post('/login', async (req: Request, res: Response) => {
 router.post('/activate', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+
+    console.log(`[Activate] Request body keys: ${Object.keys(req.body || {}).join(', ')}`);
+    console.log(`[Activate] email="${email}" password=${password ? '***' : 'MISSING'}`);
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
     const userId = db.emails.get(email);
     const user = userId ? db.users.get(userId) : null;
 
@@ -135,6 +143,7 @@ router.post('/activate', async (req: Request, res: Response) => {
       }
     });
   } catch (error) {
+    console.error('[Activate] Error:', error);
     return res.status(500).json({ message: 'Activation error' });
   }
 });
