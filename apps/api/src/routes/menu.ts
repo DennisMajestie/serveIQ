@@ -80,6 +80,38 @@ router.get('/:id', (req: AuthRequest, res: Response) => {
   });
 });
 
+// PATCH /api/v1/menu/:id — partial update (e.g. toggle availability)
+router.patch('/:id', (req: AuthRequest, res: Response) => {
+  const branchIds = getBusinessBranchIds(req.user!.businessId);
+  const menuItem = db.menuItems.get(req.params.id);
+  if (!menuItem || !branchIds.includes(menuItem.branchId)) {
+    return res.sendStatus(404);
+  }
+
+  const { name, category, priceKobo, price_kobo, unit, sku, barcode, imageUrl, image_url, isAvailable, is_available } = req.body;
+
+  if (name !== undefined) menuItem.name = name;
+  if (category !== undefined) menuItem.category = category;
+  if (priceKobo !== undefined || price_kobo !== undefined) {
+    menuItem.priceKobo = Number(priceKobo !== undefined ? priceKobo : price_kobo);
+  }
+  if (unit !== undefined) menuItem.unit = unit;
+  if (sku !== undefined) menuItem.sku = sku;
+  if (barcode !== undefined) menuItem.barcode = barcode;
+  if (imageUrl !== undefined || image_url !== undefined) menuItem.imageUrl = imageUrl || image_url;
+  if (isAvailable !== undefined || is_available !== undefined) {
+    menuItem.isAvailable = (isAvailable !== undefined ? isAvailable : is_available) !== false;
+  }
+
+  db.menuItems.set(menuItem.id, menuItem);
+  return res.json({
+    ...menuItem,
+    price_kobo: menuItem.priceKobo,
+    is_available: menuItem.isAvailable,
+    image_url: menuItem.imageUrl
+  });
+});
+
 // PUT /api/v1/menu/:id
 router.put('/:id', (req: AuthRequest, res: Response) => {
   const branchIds = getBusinessBranchIds(req.user!.businessId);
