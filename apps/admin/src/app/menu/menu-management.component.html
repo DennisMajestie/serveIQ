@@ -105,7 +105,7 @@
                   </span>
                 </td>
                 <td class="cell-price">
-                  <span class="price-value">₦{{ (item.priceKobo / 100) | number:'1.0-0' }}</span>
+                  <span class="price-value">₦{{ ((item.priceKobo || item.price_kobo || 0) / 100) | number:'1.0-0' }}</span>
                 </td>
                 <td class="cell-availability">
                   <button class="toggle-switch"

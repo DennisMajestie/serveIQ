@@ -34,6 +34,7 @@ export interface MenuItem {
   name: string;
   category: string;
   priceKobo: number;
+  price_kobo?: number;
   unit?: string;
   sku?: string;
   barcode?: string;
