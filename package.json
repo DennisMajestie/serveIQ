@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "build": "nx build admin",
     "serve:api": "cd apps/api && npm run start",
     "install:api": "cd apps/api && npm install",
     "serve:waiter": "nx serve waiter",
