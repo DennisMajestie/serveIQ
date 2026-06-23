@@ -84,11 +84,11 @@ export class AuthService {
     );
   }
 
-  /** Activate a terminal device and link it to a business (Admin only) */
-  activateTerminal(email: string, password: string): Observable<AuthResponse> {
+  /** Activate a terminal device using activation token from email */
+  activateTerminal(token: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(
       `${this.apiUrl}/api/v1/auth/activate`,
-      { email, password },
+      { token },
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(
       tap(response => {
