@@ -18,6 +18,7 @@ export class RegisterBusinessComponent {
   fullName = signal('');
   email = signal('');
   password = signal('');
+  showPassword = signal(false);
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 

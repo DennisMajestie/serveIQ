@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 export class LoginComponent {
   email = signal('');
   password = signal('');
+  showPassword = signal(false);
   isLoading = signal(false);
 
   private authService = inject(AuthService);
