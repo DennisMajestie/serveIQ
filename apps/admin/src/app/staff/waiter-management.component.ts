@@ -26,7 +26,7 @@ export class WaiterManagementComponent implements OnInit {
     const data = this.waiters();
     if (!Array.isArray(data)) return [];
     return q ? data.filter(w => {
-      const name = (w.fullName || (w as any).full_name || '').toLowerCase();
+      const name = (w.fullName || '').toLowerCase();
       const email = (w.email || '').toLowerCase();
       return name.includes(q) || email.includes(q);
     }) : data;
@@ -45,7 +45,14 @@ export class WaiterManagementComponent implements OnInit {
 
   ngOnInit() {
     this.staffService.listWaiters().subscribe({
-      next: (w) => { this.waiters.set(w as any); this.isLoading.set(false); },
+      next: (w) => {
+        const mapped = (w as any[]).map(item => ({
+          ...item,
+          fullName: item.fullName || item.full_name || ''
+        }));
+        this.waiters.set(mapped);
+        this.isLoading.set(false);
+      },
       error: () => this.isLoading.set(false)
     });
   }
