@@ -1,0 +1,6 @@
+.vercel
+.vercel/output
+node_modules
+dist
+*.log
+dist/apps/waiter/browser/.vercel
