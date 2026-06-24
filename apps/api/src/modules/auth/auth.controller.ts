@@ -43,10 +43,10 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Post('waiter-login')
+  @Post(['waiter-login', 'staff-login'])
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Waiter PIN login',
+    summary: 'Waiter/Staff PIN login',
     description:
       'Authenticates a waiter using their 4-digit PIN and branch ID or business ID.',
   })

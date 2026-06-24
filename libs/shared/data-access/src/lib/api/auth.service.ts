@@ -84,24 +84,28 @@ export class AuthService {
     );
   }
 
-  /** Activate a terminal device using PIN and branch ID */
-  activateTerminal(pin: string, branchId: string): Observable<AuthResponse> {
+  /** Activate a terminal device using Admin credentials */
+  activateTerminal(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(
       `${this.apiUrl}/api/v1/auth/activate`,
-      { pin, branchId },
+      { email, password },
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(
       tap(response => {
         const token = response.data?.access_token;
-        if (token) {
-          const businessId = response.data.businessId || response.data.business?.id || response.data.user?.business;
-          const businessName = response.data.businessName || response.data.business?.name || '';
-          const branchId = response.data.branch?.id || response.data.branchId || response.data.user?.branch;
+        // In the new NestJS API, the structure is { success: true, business: {...}, branch: {...}, user: {...} }
+        // or for staff login it's { access_token: "...", user: {...} }
+        
+        const resData = response.data as any;
+        const businessId = resData.business?.id || resData.businessId || resData.user?.business;
+        const businessName = resData.business?.name || resData.businessName || '';
+        const branchId = resData.branch?.id || resData.branchId || resData.user?.branch;
 
-          if (businessId) localStorage.setItem('businessId', businessId);
-          if (businessName) localStorage.setItem('businessName', businessName);
-          if (branchId && branchId !== 'default-branch') localStorage.setItem('branchId', branchId);
-          
+        if (businessId) localStorage.setItem('businessId', businessId);
+        if (businessName) localStorage.setItem('businessName', businessName);
+        if (branchId && branchId !== 'default-branch') localStorage.setItem('branchId', branchId);
+        
+        if (token) {
           localStorage.setItem('token', token);
           this.tokenSubject.next(token);
         }
