@@ -22,6 +22,7 @@
           }
         ],
         "styles": ["apps/admin/src/styles.scss"],
+        "allowedCommonJsDependencies": ["sweetalert2"],
         "fileReplacements": [
           {
             "replace": "apps/admin/src/environments/environment.ts",
