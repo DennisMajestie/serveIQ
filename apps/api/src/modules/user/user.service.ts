@@ -80,6 +80,7 @@ export class UserService {
         full_name: dto.fullName,
         email,
         phone: dto.phone,
+        avatar_url: dto.avatar_url,
         password_hash: randomPassword,
         pin_hash: pinHash,
         role: UserRole.WAITER,
@@ -94,6 +95,7 @@ export class UserService {
           full_name: savedUser.full_name,
           email: savedUser.email,
           phone: savedUser.phone,
+          avatar_url: savedUser.avatar_url,
           role: savedUser.role,
           branch_id: savedUser.branch_id,
         },
@@ -120,7 +122,7 @@ export class UserService {
   async findAllWaiters(branchId: string) {
     return this.userRepository.find({
       where: { branch_id: branchId, role: UserRole.WAITER },
-      select: { id: true, full_name: true, email: true, phone: true, is_active: true, created_at: true },
+      select: { id: true, full_name: true, email: true, phone: true, avatar_url: true, is_active: true, created_at: true },
     });
   }
 

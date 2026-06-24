@@ -68,7 +68,8 @@
           <tr class="data-row" *ngFor="let waiter of filteredWaiters(); trackBy: trackById">
             <td class="cell-name">
               <div class="staff-avatar">
-                <span class="avatar-initials">{{ getInitials(waiter.fullName) }}</span>
+                <img *ngIf="waiter.avatar_url" [src]="waiter.avatar_url" alt="{{ waiter.fullName }}" class="avatar-img" />
+                <span *ngIf="!waiter.avatar_url" class="avatar-initials">{{ getInitials(waiter.fullName) }}</span>
               </div>
               <div class="staff-info">
                 <span class="staff-name">{{ waiter.fullName }}</span>
