@@ -121,15 +121,24 @@ export class AuthService {
 
   async activate(dto: LoginDto) {
     const user = await this.dataSource.getRepository(User).findOne({
-      where: { email: dto.email, role: UserRole.OWNER },
+      where: [
+        { email: dto.email, role: UserRole.OWNER },
+        { email: dto.email, role: UserRole.SUPER_ADMIN }
+      ],
       relations: { business: true },
     });
 
     if (user && (await bcrypt.compare(dto.password, user.password_hash))) {
-      // Find the first branch for this business
-      const branch = await this.dataSource.getRepository(Branch).findOne({
-        where: { business_id: user.business_id },
+      // Find the first branch for this business - either via user.branch_id or just find one
+      let branch = await this.dataSource.getRepository(Branch).findOne({
+        where: { id: user.branch_id }
       });
+      
+      if (!branch && user.business_id) {
+        branch = await this.dataSource.getRepository(Branch).findOne({
+          where: { business_id: user.business_id },
+        });
+      }
 
       return {
         success: true,
@@ -142,7 +151,7 @@ export class AuthService {
         }
       };
     }
-    throw new UnauthorizedException('Invalid admin credentials or not an owner');
+    throw new UnauthorizedException('Invalid admin credentials or not an owner/admin');
   }
 
   private generateTokens(user: User) {
