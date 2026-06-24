@@ -1,5 +1,6 @@
 import { Database } from './types';
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcryptjs';
 
 // In-memory database
 export const db: Database = {
@@ -31,7 +32,7 @@ export function seedDatabase() {
     businessId,
     fullName: "Demo User",
     email: "demo@serveiq.com",
-    passwordHash: "$2a$10$X4s9f5e4d3c2b1a0z9y8x7w6v5u4t3s2r1q0p9o8n7m6l5k4j3i2h1", // "password"
+    passwordHash: bcrypt.hashSync("password", 10),
     role: "owner"
   });
   db.emails.set("demo@serveiq.com", userId);
