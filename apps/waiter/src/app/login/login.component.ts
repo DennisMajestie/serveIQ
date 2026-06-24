@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   isActivated = signal<boolean>(false);
   businessName = signal<string>('');
   
-  // Activation Form
+  // Login Form
   adminEmail = '';
   adminPassword = '';
   isActivating = signal(false);
@@ -41,16 +41,17 @@ export class LoginComponent implements OnInit {
     if (!this.adminEmail || !this.adminPassword) return;
     
     this.isActivating.set(true);
-    this.authService.activateTerminal(this.adminEmail, this.adminPassword).subscribe({
+    this.authService.login(this.adminEmail, this.adminPassword).subscribe({
       next: (res: any) => {
         this.isActivated.set(true);
-        this.businessName.set(res.data?.businessName || 'ServeIQ Business');
+        this.businessName.set(res.data?.businessName || res.data?.business?.name || 'ServeIQ Business');
         this.isActivating.set(false);
-        Swal.fire({ icon: 'success', title: 'Terminal Activated', timer: 1500, showConfirmButton: false });
+        Swal.fire({ icon: 'success', title: 'Terminal Linked', timer: 1500, showConfirmButton: false });
       },
-      error: () => {
+      error: (err) => {
         this.isActivating.set(false);
-        Swal.fire({ icon: 'error', title: 'Activation Failed', text: 'Invalid admin credentials.' });
+        const msg = err.error?.meta?.message?.[0] || 'Invalid credentials';
+        Swal.fire({ icon: 'error', title: 'Login Failed', text: msg });
       }
     });
   }
