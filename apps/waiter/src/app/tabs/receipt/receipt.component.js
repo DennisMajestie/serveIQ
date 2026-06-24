@@ -1,0 +1,104 @@
+import { __decorate } from "tslib";
+import { Component, inject, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BillsApiService } from "../../../../../../libs/shared/data-access/src/index.ts";
+let ReceiptComponent = class ReceiptComponent {
+    route = inject(ActivatedRoute);
+    router = inject(Router);
+    billsApi = inject(BillsApiService);
+    tabId = signal('');
+    receipt = signal(null);
+    isLoading = signal(true);
+    amountPaid = computed(() => (this.receipt()?.bill.paymentAmountKobo ?? 0) / 100);
+    total = computed(() => (this.receipt()?.bill.totalKobo ?? 0) / 100);
+    receiptNumber = computed(() => this.receipt()?.receiptNumber ?? '—');
+    date = computed(() => this.receipt()?.bill.paidAt ? new Date(this.receipt().bill.paidAt).toLocaleString() : '—');
+    tableNumber = computed(() => this.receipt()?.tab.tableId ?? '—');
+    transactionId = computed(() => this.receipt()?.bill.id ?? '—');
+    canvas = null;
+    ctx = null;
+    particles = [];
+    animationId = null;
+    colors = ['#f97316', '#22c55e', '#ef4444', '#3b82f6', '#a855f7', '#facc15'];
+    ngOnInit() {
+        this.route.paramMap.subscribe(params => {
+            const id = params.get('id');
+            if (id) {
+                this.tabId.set(id);
+                this.billsApi.getReceipt(id).subscribe({
+                    next: (r) => { this.receipt.set(r); this.isLoading.set(false); },
+                    error: () => this.isLoading.set(false)
+                });
+            }
+        });
+    }
+    ngAfterViewInit() { this.initConfetti(); }
+    ngOnDestroy() { this.stopConfetti(); }
+    goToTables() { this.router.navigate(['/tables']); }
+    printReceipt() { window.print(); }
+    whatsAppReceipt() {
+        const text = `ServeIQ Receipt #${this.receiptNumber}\nTotal: ₦${this.total.toLocaleString()}\nDate: ${this.date}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+    initConfetti() {
+        this.canvas = document.getElementById('confettiCanvas');
+        if (!this.canvas)
+            return;
+        this.ctx = this.canvas.getContext('2d');
+        if (!this.ctx)
+            return;
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
+        this.launchConfetti();
+    }
+    resizeCanvas() {
+        if (!this.canvas)
+            return;
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+    launchConfetti() {
+        if (!this.canvas)
+            return;
+        for (let i = 0; i < 200; i++) {
+            this.particles.push({ x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height - this.canvas.height, r: Math.random() * 8 + 4, color: this.colors[Math.floor(Math.random() * this.colors.length)], d: Math.random() * 10 + 5, tilt: Math.random() * 10 - 5, tiltAngle: 0 });
+        }
+        this.animate();
+        setTimeout(() => this.stopConfetti(), 5000);
+    }
+    animate() {
+        if (!this.ctx || !this.canvas)
+            return;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (const p of this.particles) {
+            p.tiltAngle += 0.1;
+            p.y += p.d;
+            p.tilt = Math.sin(p.tiltAngle) * 15;
+            this.ctx.beginPath();
+            this.ctx.lineWidth = p.r;
+            this.ctx.strokeStyle = p.color;
+            this.ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+            this.ctx.lineTo(p.x + p.tilt - p.r / 2, p.y + p.tilt + p.r / 2);
+            this.ctx.stroke();
+        }
+        this.animationId = requestAnimationFrame(() => this.animate());
+    }
+    stopConfetti() {
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
+    }
+};
+ReceiptComponent = __decorate([
+    Component({
+        selector: 'app-receipt',
+        standalone: true,
+        imports: [CommonModule],
+        templateUrl: './receipt.component.html',
+        styleUrls: ['./receipt.component.scss']
+    })
+], ReceiptComponent);
+export { ReceiptComponent };
+//# sourceMappingURL=receipt.component.js.map

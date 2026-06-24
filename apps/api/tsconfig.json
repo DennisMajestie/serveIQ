@@ -23,5 +23,7 @@
     "paths": {
       "@hospitality/shared": ["../../libs/shared/index.ts"]
     }
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

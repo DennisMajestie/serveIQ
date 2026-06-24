@@ -1,0 +1,42 @@
+import { __decorate } from "tslib";
+import { Module } from '@nestjs/common';
+import { getDataSourceToken } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './strategies/jwt.strategy';
+let AuthModule = class AuthModule {
+};
+AuthModule = __decorate([
+    Module({
+        imports: [
+            ConfigModule,
+            PassportModule,
+            JwtModule.registerAsync({
+                imports: [ConfigModule],
+                inject: [ConfigService],
+                useFactory: (configService) => ({
+                    secret: configService.get('JWT_SECRET') || 'serveiq-secret-2024',
+                    signOptions: {
+                        expiresIn: configService.get('JWT_EXPIRES_IN', '24h'),
+                    },
+                }),
+            }),
+        ],
+        providers: [
+            AuthService,
+            JwtStrategy,
+            {
+                provide: DataSource,
+                useExisting: getDataSourceToken(),
+            },
+        ],
+        controllers: [AuthController],
+        exports: [AuthService],
+    })
+], AuthModule);
+export { AuthModule };
+//# sourceMappingURL=auth.module.js.map

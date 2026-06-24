@@ -7,7 +7,7 @@
     "build:api": "nx build api",
     "build:admin": "nx build admin",
     "build:all": "nx build api && nx build admin",
-    "start:api": "node dist/apps/api/main.js",
+    "start:api": "node dist/apps/api/src/main.js",
     "serve:api": "cd apps/api && npm run start",
     "install:api": "cd apps/api && npm install",
     "serve:waiter": "nx serve waiter",
