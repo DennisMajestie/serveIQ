@@ -88,9 +88,16 @@ export class AuthService {
     throw new UnauthorizedException('Invalid credentials');
   }
 
+  async logger(context: string, data: any) {
+    console.log(`[AuthService:${context}]`, JSON.stringify(data, null, 2));
+  }
+
   async waiterLogin(dto: WaiterLoginDto) {
+    await this.logger('waiterLogin', dto);
+    
     if (!dto.pin) {
-      throw new BadRequestException('PIN or passcode is required');
+      // Just return a generic unauthorized instead of bad request to avoid confusing the frontend
+      throw new UnauthorizedException('Staff PIN is required');
     }
 
     const whereClause: any = {
@@ -120,6 +127,7 @@ export class AuthService {
   }
 
   async activate(dto: LoginDto) {
+    await this.logger('activate', dto);
     const user = await this.dataSource.getRepository(User).findOne({
       where: [
         { email: dto.email, role: UserRole.OWNER },

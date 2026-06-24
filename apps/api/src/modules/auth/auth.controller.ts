@@ -43,10 +43,10 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Post(['waiter-login', 'staff-login'])
+  @Post('waiter-login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Waiter/Staff PIN login',
+    summary: 'Waiter PIN login',
     description:
       'Authenticates a waiter using their 4-digit PIN and branch ID or business ID.',
   })
@@ -57,6 +57,17 @@ export class AuthController {
     dto.businessId = payload.businessId || payload.business_id || '';
     
     return this.authService.waiterLogin(dto);
+  }
+
+  @Post('staff-login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Staff PIN login (Legacy/Alias)',
+    description:
+      'Authenticates a staff member using their 4-digit PIN and branch ID or business ID.',
+  })
+  async staffLogin(@Body() payload: any) {
+    return this.waiterLogin(payload);
   }
 
   @Post('activate')
