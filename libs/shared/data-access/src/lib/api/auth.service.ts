@@ -116,7 +116,7 @@ export class AuthService {
   /** Verify a staff member's PIN for an activated terminal */
   verifyStaffPin(pin: string, businessId: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(
-      `${this.apiUrl}/api/v1/auth/staff-login`, { pin, businessId }
+      `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, businessId }
     ).pipe(
       tap(response => {
         const token = response.data?.access_token;
