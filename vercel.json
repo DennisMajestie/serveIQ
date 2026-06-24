@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npx nx build waiter",
+  "outputDirectory": "dist/apps/waiter/browser",
+  "framework": "angular",
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

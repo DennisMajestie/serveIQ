@@ -17,11 +17,22 @@ export class SettingsComponent implements OnInit {
   private branchesApi = inject(BranchesApiService);
   branches = signal<Branch[]>([]);
   isLoading = signal(true);
+  copiedBranchId = signal<string | null>(null);
 
   ngOnInit() {
     this.branchesApi.list().subscribe({
       next: (b) => { this.branches.set(b); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
     });
+  }
+
+  copyBranchId(branchId: string) {
+    navigator.clipboard.writeText(branchId);
+    this.copiedBranchId.set(branchId);
+    setTimeout(() => this.copiedBranchId.set(null), 2000);
+  }
+
+  isCopied(branchId: string): boolean {
+    return this.copiedBranchId() === branchId;
   }
 }

@@ -23,8 +23,12 @@
 
     <div class="activation-form" style="width: 100%; display: flex; flex-direction: column; gap: 16px;">
       <div class="form-group">
-        <label style="font-size: 12px; color: var(--on-surface-variant); font-weight: 600;">ACTIVATION TOKEN</label>
-        <input type="text" [(ngModel)]="activationToken" class="numpad-input" placeholder="Enter token from email" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; color: white; text-transform: uppercase;">
+        <label style="font-size: 12px; color: var(--on-surface-variant); font-weight: 600;">ADMIN PIN</label>
+        <input type="text" [(ngModel)]="activationPin" class="numpad-input" placeholder="Enter admin PIN" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; color: white;">
+      </div>
+      <div class="form-group">
+        <label style="font-size: 12px; color: var(--on-surface-variant); font-weight: 600;">BRANCH ID</label>
+        <input type="text" [(ngModel)]="activationBranchId" class="numpad-input" placeholder="Enter branch ID" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; color: white;">
       </div>
       
       <button class="activate-btn" (click)="onActivateTerminal()" [disabled]="isActivating()" style="width: 100%; padding: 16px; background: var(--primary); color: #002109; border: none; border-radius: 16px; font-weight: 700; cursor: pointer; margin-top: 8px;">

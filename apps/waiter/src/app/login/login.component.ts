@@ -20,7 +20,8 @@ export class LoginComponent implements OnInit {
   businessName = signal<string>('');
   
   // Activation Form
-  activationToken = '';
+  activationPin = '';
+  activationBranchId = '';
   isActivating = signal(false);
 
   private authService = inject(AuthService);
@@ -37,10 +38,10 @@ export class LoginComponent implements OnInit {
   }
 
   onActivateTerminal() {
-    if (!this.activationToken) return;
+    if (!this.activationPin || !this.activationBranchId) return;
     
     this.isActivating.set(true);
-    this.authService.activateTerminal(this.activationToken).subscribe({
+    this.authService.activateTerminal(this.activationPin, this.activationBranchId).subscribe({
       next: (res: any) => {
         this.isActivated.set(true);
         this.businessName.set(res.data?.businessName || 'ServeIQ Business');
