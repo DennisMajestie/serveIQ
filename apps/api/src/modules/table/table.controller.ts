@@ -1,0 +1,91 @@
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request } from '@nestjs/common';
+import { TableService } from './table.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { CreateTableDto } from './dto/create-table.dto';
+import { UpdateTableDto } from './dto/update-table.dto';
+import { UpdateTableStatusDto } from './dto/update-table-status.dto';
+import { Table } from './entities/table.entity';
+
+@ApiTags('Tables')
+@ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
+@Controller('tables')
+export class TableController {
+  constructor(private readonly tableService: TableService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Get all tables for the branch' })
+  @ApiResponse({ status: 200, description: 'List of tables with statuses.', type: [Table] })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async findAll(@Request() req: any) {
+    return this.tableService.findAllByBranch(req.user.branchId);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a table by ID' })
+  @ApiParam({ name: 'id', description: 'Table UUID' })
+  @ApiResponse({ status: 200, description: 'Table details.', type: Table })
+  @ApiResponse({ status: 404, description: 'Table not found.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async findOne(@Param('id') id: string, @Request() req: any) {
+    return this.tableService.findOne(id, req.user.branchId);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new table' })
+  @ApiResponse({ status: 201, description: 'Table created.', type: Table })
+  @ApiResponse({ status: 400, description: 'Validation error.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async create(@Request() req: any, @Body() createDto: any) {
+    const data = { ...createDto };
+    
+    // Defensive mapping for Waiter app or other clients that might send different field names
+    if (!data.table_number) {
+      data.table_number = data.tableName || data.name || data.tableNumber || `T-${Math.floor(Math.random() * 1000)}`;
+    }
+    
+    return this.tableService.create({
+      ...data,
+      branch_id: req.user.branchId,
+    });
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a table' })
+  @ApiParam({ name: 'id', description: 'Table UUID' })
+  @ApiResponse({ status: 200, description: 'Table updated.' })
+  @ApiResponse({ status: 404, description: 'Table not found.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async update(
+    @Param('id') id: string,
+    @Request() req: any,
+    @Body() updateDto: any,
+  ) {
+    return this.tableService.update(id, req.user.branchId, updateDto);
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Update table status (available/occupied/reserved)' })
+  @ApiParam({ name: 'id', description: 'Table UUID' })
+  @ApiResponse({ status: 200, description: 'Table status updated.' })
+  @ApiResponse({ status: 404, description: 'Table not found.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async updateStatus(
+    @Param('id') id: string,
+    @Request() req: any,
+    @Body() statusDto: UpdateTableStatusDto,
+  ) {
+    return this.tableService.updateStatus(id, req.user.branchId, statusDto.status);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a table' })
+  @ApiParam({ name: 'id', description: 'Table UUID' })
+  @ApiResponse({ status: 200, description: 'Table deleted.' })
+  @ApiResponse({ status: 404, description: 'Table not found.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async remove(@Param('id') id: string, @Request() req: any) {
+    return this.tableService.remove(id, req.user.branchId);
+  }
+}

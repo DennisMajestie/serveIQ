@@ -1,0 +1,32 @@
+export enum UserRole {
+  OWNER = 'owner',
+  MANAGER = 'manager',
+  WAITER = 'waiter',
+  CASHIER = 'cashier',
+}
+
+export enum TabStatus {
+  OPEN = 'open',
+  BILLED = 'billed',
+  PAID = 'paid',
+  VOIDED = 'voided',
+}
+
+export enum TableStatus {
+  AVAILABLE = 'available',
+  OCCUPIED = 'occupied',
+  RESERVED = 'reserved',
+}
+
+export enum PaymentMethod {
+  CASH = 'cash',
+  TRANSFER = 'transfer',
+  POS = 'pos',
+  CARD = 'card',
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  meta?: any;
+}

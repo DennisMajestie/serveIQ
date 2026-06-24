@@ -25,8 +25,8 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/api",
-        "main": "apps/api/src/index.ts",
-        "tsConfig": "apps/api/tsconfig.app.json",
+        "main": "apps/api/src/main.ts",
+        "tsConfig": "apps/api/tsconfig.json",
         "assets": ["apps/api/src/assets"]
       },
       "configurations": {
