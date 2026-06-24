@@ -96,11 +96,16 @@ export class TabDetailComponent implements OnInit {
   }
 
   openAddOrderDialog() {
+    const menuOptions = this.menuItems.map(item => 
+      `<option value="${item.id}">${item.name} - ₦${(item.priceKobo / 100).toFixed(2)}</option>`
+    ).join('');
+    
     Swal.fire({
       title: 'Add Order Item',
       html: `
         <select id="swal-menu-item" class="swal2-input">
           <option value="">Select menu item</option>
+          ${menuOptions}
         </select>
         <input id="swal-quantity" class="swal2-input" type="number" min="1" value="1" placeholder="Quantity">
         <input id="swal-notes" class="swal2-input" placeholder="Notes (optional)">
