@@ -120,8 +120,13 @@ export class AuthService {
     ).pipe(
       tap(response => {
         const token = response.data?.access_token;
+        const resData = response.data as any;
+        const branchId = resData.user?.branch || resData.branchId || resData.branch?.id;
         if (token) {
           localStorage.setItem('staffToken', token);
+        }
+        if (branchId && branchId !== 'default-branch') {
+          localStorage.setItem('branchId', branchId);
         }
       })
     );
