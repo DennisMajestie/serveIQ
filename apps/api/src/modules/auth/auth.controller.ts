@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { WaiterLoginDto } from './dto/waiter-login.dto';
+import { ActivateDto } from './dto/activate.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('Authentication')
@@ -73,11 +74,12 @@ export class AuthController {
   @Post('activate')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Device activation with admin credentials',
+    summary: 'Admin terminal activation v2',
     description:
-      'Authenticates an admin user and returns business and branch information for terminal linkage.',
+      'Authenticates an OWNER or SUPER_ADMIN and returns business/branch info for linking a terminal.',
   })
-  async activate(@Body() loginDto: LoginDto) {
+  async activate(@Body() dto: ActivateDto) {
+    const loginDto: LoginDto = { email: dto.email, password: dto.password };
     return this.authService.activate(loginDto);
   }
 }
