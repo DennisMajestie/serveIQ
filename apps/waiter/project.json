@@ -22,7 +22,6 @@
           }
         ],
         "styles": ["apps/waiter/src/styles.scss"],
-        "outputMode": "static",
         "fileReplacements": [
           {
             "replace": "apps/waiter/src/environments/environment.ts",
