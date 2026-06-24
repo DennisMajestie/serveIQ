@@ -1,9 +1,0 @@
-{
-  "buildCommand": "npx nx build admin",
-  "outputDirectory": "dist/apps/admin/browser",
-  "framework": "angular",
-  "installCommand": "npm install",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
