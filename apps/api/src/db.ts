@@ -73,6 +73,21 @@ export function seedDatabase() {
     });
   }
 
+  // Add a default waiter
+  const waiterId = uuidv4();
+  db.users.set(waiterId, {
+    id: waiterId,
+    businessId,
+    fullName: "John Waiter",
+    email: "waiter@serveiq.com",
+    passwordHash: "",
+    pin: "1234",
+    role: "waiter",
+    branchId
+  });
+  db.emails.set("waiter@serveiq.com", waiterId);
+
   console.log("Database seeded!");
-  console.log("Demo login: demo@serveiq.com / password");
+  console.log("Admin login: demo@serveiq.com / password");
+  console.log("Waiter PIN: 1234");
 }
