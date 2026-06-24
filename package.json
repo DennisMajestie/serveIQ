@@ -15,6 +15,10 @@
     "serve:all": "npm run serve:api & npm run serve:waiter"
   },
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
   "dependencies": {
     "@angular-devkit/build-angular": "~21.2.0",
     "@angular/animations": "~21.2.0",
