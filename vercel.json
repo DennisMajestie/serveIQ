@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npx nx build waiter",
-  "outputDirectory": "dist/apps/waiter/browser",
+  "buildCommand": "npx nx build admin",
+  "outputDirectory": "dist/apps/admin/browser",
   "framework": "angular",
   "installCommand": "npm install",
   "rewrites": [
