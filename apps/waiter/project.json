@@ -19,6 +19,10 @@
           {
             "glob": "**/*",
             "input": "apps/waiter/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/waiter/src/assets"
           }
         ],
         "styles": ["apps/waiter/src/styles.scss"],
