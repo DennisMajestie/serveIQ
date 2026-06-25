@@ -1,0 +1,99 @@
+@if (isOpen) {
+  <div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h2>Add Order Item</h2>
+        <button class="close-btn" (click)="onClose()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        @if (isLoading()) {
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading menu...</p>
+          </div>
+        } @else if (error()) {
+          <div class="error-state">
+            <span class="material-symbols-outlined">error</span>
+            <p>{{ error() }}</p>
+            <button class="retry-btn" (click)="loadMenuItems()">Retry</button>
+          </div>
+        } @else {
+          <div class="menu-grid">
+            @for (item of menuItems(); track item.id) {
+              <button
+                class="menu-item-card"
+                [class.selected]="isItemSelected(item.id)"
+                (click)="selectItem(item.id)"
+                type="button"
+              >
+                @if (item.imageUrl) {
+                  <div class="item-image">
+                    <img [src]="item.imageUrl" [alt]="item.name" loading="lazy">
+                  </div>
+                } @else {
+                  <div class="item-image placeholder">
+                    <span class="material-symbols-outlined">restaurant</span>
+                  </div>
+                }
+                <div class="item-info">
+                  <h3 class="item-name">{{ item.name }}</h3>
+                  <span class="item-category">{{ item.category }}</span>
+                  <div class="item-price">₦{{ formatPrice(item.priceKobo) }}</div>
+                </div>
+                @if (isItemSelected(item.id)) {
+                  <span class="selection-indicator">
+                    <span class="material-symbols-outlined">check_circle</span>
+                  </span>
+                }
+              </button>
+            }
+          </div>
+
+          @if (selectedItemId()) {
+            <div class="selected-item-summary">
+              <div class="summary-label">Selected Item</div>
+              <div class="summary-content">
+                <div class="summary-item-info">
+                  <span class="summary-item-name">{{ getSelectedItem()?.name }}</span>
+                  <span class="summary-item-price">₦{{ formatPrice(getSelectedItem()?.priceKobo || 0) }}</span>
+                </div>
+                <div class="quantity-control">
+                  <button class="qty-btn" (click)="decrementQuantity()" [disabled]="quantity() <= 1" type="button">
+                    <span class="material-symbols-outlined">remove</span>
+                  </button>
+                  <span class="qty-value">{{ quantity() }}</span>
+                  <button class="qty-btn" (click)="incrementQuantity()" type="button">
+                    <span class="material-symbols-outlined">add</span>
+                  </button>
+                </div>
+              </div>
+              <div class="notes-input-wrapper">
+                <label for="notes">Notes (optional)</label>
+                <textarea
+                  id="notes"
+                  [(ngModel)]="notes"
+                  placeholder="Special instructions, allergies, etc."
+                  rows="2"
+                ></textarea>
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <footer class="modal-footer">
+        <button class="btn-secondary" (click)="onClose()">Cancel</button>
+        <button
+          class="btn-primary"
+          (click)="onConfirm()"
+          [disabled]="!selectedItemId()"
+        >
+          Add Item
+        </button>
+      </footer>
+    </div>
+  </div>
+}

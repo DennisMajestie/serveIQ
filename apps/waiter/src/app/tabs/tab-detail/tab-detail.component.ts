@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, MenuApiService } from '@serveiq/shared/data-access';
-import { Tab, OrderItem, MenuItem } from '@serveiq/shared/models';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { TabsApiService, OrdersApiService } from '@serveiq/shared/data-access';
+import { Tab, OrderItem } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,13 +17,11 @@ export class TabDetailComponent implements OnInit {
   private router = inject(Router);
   private tabService = inject(TabsApiService);
   private orderService = inject(OrdersApiService);
-  private menuService = inject(MenuApiService);
 
   tabId = signal('');
   tab = signal<Tab | null>(null);
   items = signal<OrderItem[]>([]);
   isLoading = signal(true);
-  menuItems: MenuItem[] = [];
 
   subtotal = computed(() => {
     const items = this.items();
@@ -40,6 +38,12 @@ export class TabDetailComponent implements OnInit {
         this.loadTab(id);
       }
     });
+
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state as { orderItems?: Array<{ menuItemId: string; quantity: number; notes: string }> } | undefined;
+    if (state?.orderItems?.length) {
+      this.addItemsFromBrowser(state.orderItems);
+    }
   }
 
   loadTab(id: string) {
@@ -49,7 +53,6 @@ export class TabDetailComponent implements OnInit {
         this.loadOrders(id);
       },
       error: () => {
-        // If no existing tab, treat id as tableId and load orders empty
         this.isLoading.set(false);
       }
     });
@@ -80,71 +83,28 @@ export class TabDetailComponent implements OnInit {
   }
 
   addItem() {
-    this.menuService.getAllItems().subscribe({
-      next: (items) => {
-        this.menuItems = items;
-        this.openAddOrderDialog();
+    this.router.navigate(['/menu-browser'], {
+      queryParams: { tabId: this.tabId() }
+    });
+  }
+
+  private addItemsFromBrowser(orderItems: Array<{ menuItemId: string; quantity: number; notes: string }>) {
+    this.orderService.addItems(this.tabId(), orderItems).subscribe({
+      next: () => {
+        this.loadOrders(this.tabId());
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: `${orderItems.length} item${orderItems.length > 1 ? 's' : ''} added to order`,
+          timer: 1500,
+          showConfirmButton: false
+        });
       },
       error: () => {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Failed to load menu items'
-        });
-      }
-    });
-  }
-
-  openAddOrderDialog() {
-    const menuOptions = this.menuItems.map(item => 
-      `<option value="${item.id}">${item.name} - ₦${(item.priceKobo / 100).toFixed(2)}</option>`
-    ).join('');
-    
-    Swal.fire({
-      title: 'Add Order Item',
-      html: `
-        <select id="swal-menu-item" class="swal2-input">
-          <option value="">Select menu item</option>
-          ${menuOptions}
-        </select>
-        <input id="swal-quantity" class="swal2-input" type="number" min="1" value="1" placeholder="Quantity">
-        <input id="swal-notes" class="swal2-input" placeholder="Notes (optional)">
-      `,
-      confirmButtonText: 'Add Item',
-      confirmButtonColor: '#F97316',
-      showCancelButton: true,
-      preConfirm: () => {
-        const menuItemId = (document.getElementById('swal-menu-item') as HTMLSelectElement).value;
-        const quantity = Number((document.getElementById('swal-quantity') as HTMLInputElement).value);
-        const notes = (document.getElementById('swal-notes') as HTMLInputElement).value;
-
-        if (!menuItemId) {
-          Swal.showValidationMessage('Please select a menu item');
-          return;
-        }
-
-        return { menuItemId, quantity, notes };
-      }
-    }).then(result => {
-      if (result.isConfirmed && result.value) {
-        this.orderService.addItems(this.tabId(), [result.value]).subscribe({
-          next: () => {
-            this.loadOrders(this.tabId());
-            Swal.fire({
-              icon: 'success',
-              title: 'Success',
-              text: 'Order item added successfully',
-              timer: 1500,
-              showConfirmButton: false
-            });
-          },
-          error: () => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'Failed to add order item'
-            });
-          }
+          text: 'Failed to add order items'
         });
       }
     });
@@ -161,7 +121,8 @@ export class TabDetailComponent implements OnInit {
   closeTab() {
     Swal.fire({
       title: 'Close Tab?',
-      text: `Are you sure you want to close this tab? This will generate a bill.`,      icon: 'warning',
+      text: `Are you sure you want to close this tab? This will generate a bill.`,
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#F97316',
       confirmButtonText: 'Close Tab'
