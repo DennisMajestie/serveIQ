@@ -7,7 +7,7 @@ import { BillComponent } from './tabs/bill/bill.component';
 import { PaymentComponent } from './tabs/payment/payment.component';
 import { ReceiptComponent } from './tabs/receipt/receipt.component';
 import { TabHistoryComponent } from './tabs/tab-history/tab-history.component';
-import { MenuBrowserComponent } from './menu-browser/menu-browser.component';
+
 import { authGuard } from './core/auth.guard';
 
 export const appRoutes: Route[] = [
@@ -19,6 +19,5 @@ export const appRoutes: Route[] = [
   { path: 'tabs/receipt/:id', component: ReceiptComponent, canActivate: [authGuard] },
   { path: 'tabs/history', component: TabHistoryComponent, canActivate: [authGuard] },
   { path: 'menu', component: MenuComponent, canActivate: [authGuard] },
-  { path: 'menu-browser', component: MenuBrowserComponent, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

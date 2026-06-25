@@ -40,9 +40,9 @@ export class TabDetailComponent implements OnInit {
     });
 
     const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras?.state as { orderItems?: Array<{ menuItemId: string; quantity: number; notes: string }> } | undefined;
-    if (state?.orderItems?.length) {
-      this.addItemsFromBrowser(state.orderItems);
+    const state = navigation?.extras?.state as { selectedItems?: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
+    if (state?.selectedItems?.length) {
+      this.addItemsFromMenu(state.selectedItems);
     }
   }
 
@@ -83,19 +83,24 @@ export class TabDetailComponent implements OnInit {
   }
 
   addItem() {
-    this.router.navigate(['/menu-browser'], {
+    this.router.navigate(['/menu'], {
       queryParams: { tabId: this.tabId() }
     });
   }
 
-  private addItemsFromBrowser(orderItems: Array<{ menuItemId: string; quantity: number; notes: string }>) {
+  private addItemsFromMenu(selectedItems: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }>) {
+    const orderItems = selectedItems.map(item => ({
+      menuItemId: item.id,
+      quantity: item.qty,
+      notes: item.portionName ? `Portion: ${item.portionName}` : ''
+    }));
     this.orderService.addItems(this.tabId(), orderItems).subscribe({
       next: () => {
         this.loadOrders(this.tabId());
         Swal.fire({
           icon: 'success',
           title: 'Success',
-          text: `${orderItems.length} item${orderItems.length > 1 ? 's' : ''} added to order`,
+          text: `${selectedItems.length} item${selectedItems.length > 1 ? 's' : ''} added to order`,
           timer: 1500,
           showConfirmButton: false
         });
