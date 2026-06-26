@@ -167,10 +167,10 @@ export interface CreateTableRequest {
 }
 
 export interface OpenTabRequest {
-  tableId: string;
-  partySize: number;
-  branchId?: string;
-  customerName?: string;
+  table_id: string;
+  party_size: number;
+  branch_id?: string;
+  customer_name?: string;
   notes?: string;
 }
 

@@ -108,9 +108,9 @@ export class TablesComponent implements OnInit, OnDestroy {
       if (!partySize) return;
 
       const request: OpenTabRequest = {
-        tableId: table.id,
-        partySize: +partySize,
-        branchId: getBranchId() || undefined
+        table_id: table.id,
+        party_size: +partySize,
+        branch_id: getBranchId() || undefined
       };
 
       try {
@@ -139,7 +139,7 @@ export class TablesComponent implements OnInit, OnDestroy {
           confirmButtonText: 'Open Tab',
         });
         if (!partySize) return;
-        const request: OpenTabRequest = { tableId: table.id, partySize: +partySize, branchId: getBranchId() || undefined };
+        const request: OpenTabRequest = { table_id: table.id, party_size: +partySize, branch_id: getBranchId() || undefined };
         try {
           const newTab = await this.tabsApi.createTab(request).toPromise();
           if (newTab?.id) {
