@@ -1,10 +1,9 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, TablesApiService } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tab-detail',
@@ -26,6 +25,8 @@ export class TabDetailComponent implements OnInit {
   items = signal<OrderItem[]>([]);
   isLoading = signal(true);
 
+  private orderPosted = false;
+
   subtotal = computed(() => {
     const items = this.items();
     return Array.isArray(items) ? items.reduce((sum, i) => sum + (i.priceKobo * i.quantity), 0) : 0;
@@ -42,20 +43,17 @@ export class TabDetailComponent implements OnInit {
       }
     });
 
-    this.handleRouterState();
-
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.handleRouterState();
-    });
+    this.readRouterStateOnce();
   }
 
-  private handleRouterState() {
+  private readRouterStateOnce() {
+    if (this.orderPosted) return;
+    
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state as { selectedItems?: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
     if (state?.selectedItems?.length) {
-      console.log('[TabDetail] Received selectedItems from router state:', state.selectedItems);
+      console.log('[TabDetail] Received selectedItems from router state (once):', state.selectedItems);
+      this.orderPosted = true;
       this.addItemsFromMenu(state.selectedItems);
     }
   }
