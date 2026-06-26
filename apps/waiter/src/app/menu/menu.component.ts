@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MenuApiService } from '@serveiq/shared/data-access';
-import { MenuItem } from '@serveiq/shared/models';
+import { MenuApiService, TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
+import { MenuItem, Table, Tab } from '@serveiq/shared/models';
 
 interface Portion { id: string; name: string; price: number; }
 
@@ -34,11 +34,14 @@ export class MenuComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly menuApi = inject(MenuApiService);
+  private readonly tabsApi = inject(TabsApiService);
+  private readonly tablesApi = inject(TablesApiService);
 
   selectedCategory = 'All';
   categories = signal<string[]>(['All']);
   tableId: string | null = null;
   tabId: string | null = null;
+  tableNumber: string | null = null;
   isLoading = signal(true);
 
   menuItems: LocalMenuItem[] = [];
@@ -46,8 +49,13 @@ export class MenuComponent implements OnInit {
   selectedPortions: Map<string, string> = new Map();
 
   ngOnInit() {
-    this.tableId = this.route.snapshot.queryParamMap.get('tableId');
-    this.tabId = this.route.snapshot.queryParamMap.get('tabId');
+    this.route.queryParamMap.subscribe(params => {
+      this.tableId = params.get('tableId');
+      this.tabId = params.get('tabId');
+      if (this.tabId) {
+        this.loadTabInfo(this.tabId);
+      }
+    });
 
     this.menuApi.getAllItems().subscribe({
       next: (items: any) => {
@@ -60,7 +68,7 @@ export class MenuComponent implements OnInit {
           name: i.name,
           category: i.category,
           image: i.imageUrl || '/assets/food/placeholder.png',
-          price: i.priceKobo / 100
+          price: (i.priceKobo ?? i.price_kobo ?? 0) / 100
         }));
         const cats = ['All', ...new Set(items.map(i => i.category))];
         this.categories.set(cats);
@@ -68,6 +76,20 @@ export class MenuComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
+    });
+  }
+
+  loadTabInfo(tabId: string) {
+    this.tabsApi.getTab(tabId).subscribe({
+      next: (tab: Tab) => {
+        if (tab.tableId) {
+          this.tablesApi.getTable(tab.tableId).subscribe({
+            next: (table: Table) => {
+              this.tableNumber = table.tableNumber;
+            }
+          });
+        }
+      }
     });
   }
 
