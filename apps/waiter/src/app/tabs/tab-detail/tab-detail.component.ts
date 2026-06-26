@@ -113,7 +113,7 @@ export class TabDetailComponent implements OnInit {
 
   private addItemsFromMenu(selectedItems: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }>) {
     const orderItems = selectedItems.map(item => ({
-      menuItemId: item.id,
+      menu_item_id: item.id,
       quantity: item.qty,
       notes: item.portionName ? `Portion: ${item.portionName}` : ''
     }));

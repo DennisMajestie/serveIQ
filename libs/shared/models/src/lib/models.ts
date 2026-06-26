@@ -175,7 +175,7 @@ export interface OpenTabRequest {
 }
 
 export interface AddOrderItemsRequest {
-  menuItemId: string;
+  menu_item_id: string;
   quantity: number;
   notes?: string;
 }
