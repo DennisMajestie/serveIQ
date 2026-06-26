@@ -80,7 +80,18 @@ export class TabDetailComponent implements OnInit {
 
   loadOrders(tabId: string) {
     this.orderService.getByTab(tabId).subscribe({
-      next: (items) => { this.items.set(items); this.isLoading.set(false); },
+      next: (items) => { 
+        console.log('[TabDetail] Raw orders API response:', items);
+        // Normalize field names (backend may return snake_case)
+        const normalized = (items || []).map((item: any) => ({
+          ...item,
+          menuItemName: item.menuItemName ?? item.menu_item_name ?? '',
+          priceKobo: item.priceKobo ?? item.price_kobo ?? 0,
+          quantity: item.quantity ?? item.qty ?? 1
+        }));
+        this.items.set(normalized); 
+        this.isLoading.set(false); 
+      },
       error: (err) => {
         console.error('[TabDetail] Failed to load orders:', err);
         this.isLoading.set(false);
@@ -119,8 +130,16 @@ export class TabDetailComponent implements OnInit {
     }));
     console.log('[TabDetail] Posting orderItems to API:', orderItems);
     this.orderService.addItems(this.tabId(), orderItems).subscribe({
-      next: () => {
-        this.loadOrders(this.tabId());
+      next: (response) => {
+        console.log('[TabDetail] Add items response:', response);
+        // Normalize and reload
+        const normalized = (response || []).map((item: any) => ({
+          ...item,
+          menuItemName: item.menuItemName ?? item.menu_item_name ?? '',
+          priceKobo: item.priceKobo ?? item.price_kobo ?? 0,
+          quantity: item.quantity ?? item.qty ?? 1
+        }));
+        this.items.update(current => [...current, ...normalized]);
         Swal.fire({
           icon: 'success',
           title: 'Success',

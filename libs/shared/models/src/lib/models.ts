@@ -72,10 +72,15 @@ export interface Tab {
 export interface OrderItem {
   id: string;
   tabId: string;
+  tab_id?: string;
   menuItemId: string;
+  menu_item_id?: string;
   menuItemName: string;
+  menu_item_name?: string;
   priceKobo: number;
+  price_kobo?: number;
   quantity: number;
+  qty?: number;
   notes?: string;
 }
 
