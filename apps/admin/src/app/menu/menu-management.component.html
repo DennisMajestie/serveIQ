@@ -186,13 +186,19 @@
 
     <!-- Form Grid -->
     <div class="form-grid">
-      <div class="form-field">
-        <label class="field-label">Item Name <span class="required">*</span></label>
-        <input class="field-input" type="text" placeholder="e.g. Jollof Rice" [ngModel]="formName()" (ngModelChange)="formName.set($event)">
+<div class="form-field">
+        <label class="field-label">Category <span class="required">*</span></label>
+        <select class="field-input" [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)">
+          <option value="">Select category</option>
+          <option *ngFor="let opt of categoryOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
       </div>
       <div class="form-field">
         <label class="field-label">Category <span class="required">*</span></label>
-        <input class="field-input" type="text" placeholder="e.g. Main Course" [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)">
+        <select class="field-input" [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)">
+          <option value="" disabled>Select category</option>
+          <option *ngFor="let opt of categoryOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
       </div>
       <div class="form-field">
         <label class="field-label">Price (₦) <span class="required">*</span></label>
@@ -204,7 +210,10 @@
       </div>
       <div class="form-field">
         <label class="field-label">Unit <span class="optional">(optional)</span></label>
-        <input class="field-input" type="text" placeholder="e.g. per plate" [ngModel]="formUnit()" (ngModelChange)="formUnit.set($event)">
+        <select class="field-input" [ngModel]="formUnit()" (ngModelChange)="formUnit.set($event)">
+          <option value="" disabled>Select unit</option>
+          <option *ngFor="let opt of unitOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
       </div>
       <div class="form-field full-width">
         <label class="field-label">Availability</label>

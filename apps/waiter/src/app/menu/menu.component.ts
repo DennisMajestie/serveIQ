@@ -156,8 +156,10 @@ export class MenuComponent implements OnInit {
   confirmSelection() {
     const targetId = this.tabId || this.tableId;
     if (targetId) {
+      console.log('[Menu] Navigating to tab detail with selectedItems:', this.selectedItems);
       this.router.navigate(['/tabs/detail', targetId], { state: { selectedItems: this.selectedItems } });
     } else {
+      console.warn('[Menu] No tabId or tableId available, cannot add items');
       this.router.navigate(['/tables']);
     }
   }

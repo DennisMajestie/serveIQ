@@ -9,6 +9,7 @@ export interface User {
   email: string;
   role: 'owner' | 'waiter';
   pin?: string;
+  avatar_url?: string;
 }
 
 export interface Waiter extends User {}

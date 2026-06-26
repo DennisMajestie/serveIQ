@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { TabsApiService, OrdersApiService, TablesApiService } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tab-detail',
@@ -41,9 +42,20 @@ export class TabDetailComponent implements OnInit {
       }
     });
 
+    this.handleRouterState();
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.handleRouterState();
+    });
+  }
+
+  private handleRouterState() {
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state as { selectedItems?: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
     if (state?.selectedItems?.length) {
+      console.log('[TabDetail] Received selectedItems from router state:', state.selectedItems);
       this.addItemsFromMenu(state.selectedItems);
     }
   }
@@ -59,7 +71,8 @@ export class TabDetailComponent implements OnInit {
           });
         }
       },
-      error: () => {
+      error: (err) => {
+        console.error('[TabDetail] Failed to load tab:', err);
         this.isLoading.set(false);
       }
     });
@@ -68,7 +81,10 @@ export class TabDetailComponent implements OnInit {
   loadOrders(tabId: string) {
     this.orderService.getByTab(tabId).subscribe({
       next: (items) => { this.items.set(items); this.isLoading.set(false); },
-      error: () => this.isLoading.set(false)
+      error: (err) => {
+        console.error('[TabDetail] Failed to load orders:', err);
+        this.isLoading.set(false);
+      }
     });
   }
 
@@ -101,6 +117,7 @@ export class TabDetailComponent implements OnInit {
       quantity: item.qty,
       notes: item.portionName ? `Portion: ${item.portionName}` : ''
     }));
+    console.log('[TabDetail] Posting orderItems to API:', orderItems);
     this.orderService.addItems(this.tabId(), orderItems).subscribe({
       next: () => {
         this.loadOrders(this.tabId());
@@ -112,7 +129,8 @@ export class TabDetailComponent implements OnInit {
           showConfirmButton: false
         });
       },
-      error: () => {
+      error: (err) => {
+        console.error('[TabDetail] Failed to add order items:', err);
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -145,6 +163,7 @@ export class TabDetailComponent implements OnInit {
             this.router.navigate(['/tabs/bill', this.tabId()]);
           },
           error: (err: any) => {
+            console.error('[TabDetail] Failed to close tab:', err);
             Swal.fire({
               icon: 'error',
               title: 'Error',

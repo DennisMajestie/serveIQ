@@ -20,6 +20,34 @@ export class MenuManagementComponent implements OnInit {
   isLoading = signal(true);
   items = signal<MenuItem[]>([]);
 
+  // Category dropdown options
+  categoryOptions = [
+    { label: 'Starter', value: 'starter' },
+    { label: 'Main Course', value: 'main-course' },
+    { label: 'Fruit Juice', value: 'fruit-juice' },
+    { label: 'Beer', value: 'beer' },
+    { label: 'Wine', value: 'wine' },
+    { label: 'Tea & Coffee', value: 'tea-coffee' },
+    { label: 'Dessert', value: 'dessert' },
+    { label: 'Sides', value: 'sides' },
+    { label: 'Water & Soft Drinks', value: 'water-soft-drinks' },
+  ];
+
+  // Unit dropdown options
+  unitOptions = [
+    { label: 'Plate', value: 'plate' },
+    { label: 'Bowl', value: 'bowl' },
+    { label: 'Cup', value: 'cup' },
+    { label: 'Glass', value: 'glass' },
+    { label: 'Bottle', value: 'bottle' },
+    { label: 'Can', value: 'can' },
+    { label: 'Piece', value: 'piece' },
+    { label: 'Portion', value: 'portion' },
+    { label: 'Serving', value: 'serving' },
+    { label: 'Half Portion', value: 'half-portion' },
+    { label: 'Full Portion', value: 'full-portion' },
+  ];
+
   // Add Item Modal state
   showAddModal = signal(false);
   isSubmitting = signal(false);
