@@ -7,6 +7,10 @@ import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
+function getBranchId(): string | null {
+  return localStorage.getItem('branchId');
+}
+
 @Component({
   selector: 'app-tables',
   standalone: true,
@@ -105,7 +109,8 @@ export class TablesComponent implements OnInit, OnDestroy {
 
       const request: OpenTabRequest = {
         tableId: table.id,
-        partySize: +partySize
+        partySize: +partySize,
+        branchId: getBranchId() || undefined
       };
 
       try {
@@ -134,7 +139,7 @@ export class TablesComponent implements OnInit, OnDestroy {
           confirmButtonText: 'Open Tab',
         });
         if (!partySize) return;
-        const request: OpenTabRequest = { tableId: table.id, partySize: +partySize };
+        const request: OpenTabRequest = { tableId: table.id, partySize: +partySize, branchId: getBranchId() || undefined };
         try {
           const newTab = await this.tabsApi.createTab(request).toPromise();
           if (newTab?.id) {
