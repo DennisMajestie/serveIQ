@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BillsApiService, TablesApiService } from '@serveiq/shared/data-access';
-import { Bill } from '@serveiq/shared/models';
+import { BillsApiService, TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
+import { Bill, Tab, Table } from '@serveiq/shared/models';
 
 @Component({
   selector: 'app-bill',
@@ -16,9 +16,11 @@ export class BillComponent implements OnInit {
   private router = inject(Router);
   private billService = inject(BillsApiService);
   private tableService = inject(TablesApiService);
+  private tabService = inject(TabsApiService);
 
   tabId = signal('');
   bill = signal<Bill | null>(null);
+  table = signal<Table | null>(null);
   isLoading = signal(true);
   error = signal('');
   waiterName = signal('Waiter');
@@ -43,7 +45,23 @@ export class BillComponent implements OnInit {
       const id = params.get('id');
       if (id) {
         this.tabId.set(id);
-        this.generateBill(id);
+        this.loadTabAndGenerateBill(id);
+      }
+    });
+  }
+
+  loadTabAndGenerateBill(tabId: string) {
+    this.tabService.getTab(tabId).subscribe({
+      next: (tab: Tab) => {
+        if (tab.tableId) {
+          this.tableService.getTable(tab.tableId).subscribe({
+            next: (table) => this.table.set(table)
+          });
+        }
+        this.generateBill(tabId);
+      },
+      error: () => {
+        this.generateBill(tabId); // still try to generate bill even if tab load fails
       }
     });
   }

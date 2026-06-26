@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { TabsApiService, OrdersApiService } from '@serveiq/shared/data-access';
-import { Tab, OrderItem } from '@serveiq/shared/models';
+import { TabsApiService, OrdersApiService, TablesApiService } from '@serveiq/shared/data-access';
+import { Tab, OrderItem, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,9 +17,11 @@ export class TabDetailComponent implements OnInit {
   private router = inject(Router);
   private tabService = inject(TabsApiService);
   private orderService = inject(OrdersApiService);
+  private tableService = inject(TablesApiService);
 
   tabId = signal('');
   tab = signal<Tab | null>(null);
+  table = signal<Table | null>(null);
   items = signal<OrderItem[]>([]);
   isLoading = signal(true);
 
@@ -51,6 +53,11 @@ export class TabDetailComponent implements OnInit {
       next: (tab) => {
         this.tab.set(tab);
         this.loadOrders(id);
+        if (tab.tableId) {
+          this.tableService.getTable(tab.tableId).subscribe({
+            next: (table) => this.table.set(table)
+          });
+        }
       },
       error: () => {
         this.isLoading.set(false);

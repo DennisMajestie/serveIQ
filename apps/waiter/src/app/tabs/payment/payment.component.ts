@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BillsApiService } from '@serveiq/shared/data-access';
+import { BillsApiService, TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
+import { Tab, Table } from '@serveiq/shared/models';
 
 @Component({
   selector: 'app-payment',
@@ -14,8 +15,11 @@ export class PaymentComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private billsApi = inject(BillsApiService);
+  private tabService = inject(TabsApiService);
+  private tableService = inject(TablesApiService);
 
   tabId = signal('');
+  table = signal<Table | null>(null);
   selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' = 'cash';
   currentAmount = signal('0');
   isEditingAmount = false;
@@ -25,7 +29,22 @@ export class PaymentComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      if (id) this.tabId.set(id);
+      if (id) {
+        this.tabId.set(id);
+        this.loadTableInfo(id);
+      }
+    });
+  }
+
+  loadTableInfo(tabId: string) {
+    this.tabService.getTab(tabId).subscribe({
+      next: (tab: Tab) => {
+        if (tab.tableId) {
+          this.tableService.getTable(tab.tableId).subscribe({
+            next: (table) => this.table.set(table)
+          });
+        }
+      }
     });
   }
 

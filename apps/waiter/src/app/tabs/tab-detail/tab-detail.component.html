@@ -4,7 +4,7 @@
     <button class="back-btn" (click)="goBack()">
       <span class="material-symbols-outlined">arrow_back</span>
     </button>
-    <h1 class="nav-title">Table {{ tab()?.tableId }}</h1>
+    <h1 class="nav-title">Table {{ table()?.tableNumber || tab()?.tableId }}</h1>
     <div class="nav-avatar">
       <span class="material-symbols-outlined">person</span>
     </div>

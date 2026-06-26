@@ -18,6 +18,7 @@
     <div class="bill-paper">
       <div class="bill-header">
         <p class="waiter-info">Waiter: {{ waiterName() }} • {{ time() }}</p>
+        <p class="table-info">Table {{ table()?.tableNumber || '—' }}</p>
         <h2>ServeIQ</h2>
         <div class="premium-tag">PREMIUM SERVICE</div>
         <div class="divider"></div>

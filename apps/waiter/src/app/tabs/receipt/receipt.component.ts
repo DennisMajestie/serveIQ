@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BillsApiService } from '@serveiq/shared/data-access';
-import { Receipt } from '@serveiq/shared/models';
+import { BillsApiService, TablesApiService } from '@serveiq/shared/data-access';
+import { Receipt, Table } from '@serveiq/shared/models';
 
 interface ConfettiParticle { x: number; y: number; r: number; color: string; d: number; tilt: number; tiltAngle: number; }
 
@@ -17,16 +17,18 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private billsApi = inject(BillsApiService);
+  private tableService = inject(TablesApiService);
 
   tabId = signal('');
   receipt = signal<Receipt | null>(null);
+  table = signal<Table | null>(null);
   isLoading = signal(true);
 
   amountPaid = computed(() => (this.receipt()?.bill.paymentAmountKobo ?? 0) / 100);
   total = computed(() => (this.receipt()?.bill.totalKobo ?? 0) / 100);
   receiptNumber = computed(() => this.receipt()?.receiptNumber ?? '—');
   date = computed(() => this.receipt()?.bill.paidAt ? new Date(this.receipt()!.bill.paidAt!).toLocaleString() : '—');
-  tableNumber = computed(() => this.receipt()?.tab.tableId ?? '—');
+  tableNumber = computed(() => this.table()?.tableNumber ?? this.receipt()?.tab.tableId ?? '—');
   transactionId = computed(() => this.receipt()?.bill.id ?? '—');
 
   private canvas: HTMLCanvasElement | null = null;
@@ -41,7 +43,15 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
       if (id) {
         this.tabId.set(id);
         this.billsApi.getReceipt(id).subscribe({
-          next: (r) => { this.receipt.set(r); this.isLoading.set(false); },
+          next: (r) => { 
+            this.receipt.set(r); 
+            this.isLoading.set(false);
+            if (r.tab?.tableId) {
+              this.tableService.getTable(r.tab.tableId).subscribe({
+                next: (table) => this.table.set(table)
+              });
+            }
+          },
           error: () => this.isLoading.set(false)
         });
       }
