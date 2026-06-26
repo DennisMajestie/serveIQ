@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
-import { Table, Tab } from '@serveiq/shared/models';
+import { Table, Tab, OpenTabRequest } from '@serveiq/shared/models';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-tables',
@@ -38,6 +39,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadTables();
+    this.loadOpenTabs();
     // Poll every 5 seconds for live updates
     this.pollSub = interval(5000).pipe(
       switchMap(() => this.tablesApi.getAllTables())
@@ -62,6 +64,14 @@ export class TablesComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadOpenTabs() {
+    this.tabsApi.getAllTabs().subscribe({
+      next: (tabs) => {
+        this.openTabs.set(tabs.filter(t => t.status === 'open'));
+      }
+    });
+  }
+
   getStatusColor(status: string): string {
     switch (status) {
       case 'occupied': return '#EF4444';
@@ -77,20 +87,69 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   async onTableClick(table: Table) {
     if (table.status === 'available') {
-      // Navigate to open a new tab
-      await this.router.navigate(['/tabs/detail', table.id]);
+      // Prompt for party size then open a new tab
+      const { value: partySize } = await Swal.fire({
+        title: 'Open New Tab',
+        text: `How many guests for Table ${table.tableNumber}?`,
+        input: 'number',
+        inputAttributes: { min: '1', max: '20', step: '1' },
+        inputValue: 1,
+        showCancelButton: true,
+        confirmButtonText: 'Open Tab',
+        inputValidator: (value: string) => {
+          if (!value || +value < 1) return 'Party size must be at least 1';
+          return undefined;
+        }
+      });
+      if (!partySize) return;
+
+      const request: OpenTabRequest = {
+        tableId: table.id,
+        partySize: +partySize
+      };
+
+      try {
+        const newTab = await this.tabsApi.createTab(request).toPromise();
+        if (newTab?.id) {
+          await this.router.navigate(['/tabs/detail', newTab.id]);
+        }
+      } catch (err) {
+        console.error('Failed to open tab:', err);
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to open tab' });
+      }
     } else {
       // Navigate to existing tab
       const openTab = this.openTabs().find(t => t.tableId === table.id);
       if (openTab) {
         await this.router.navigate(['/tabs/detail', openTab.id]);
       } else {
-        await this.router.navigate(['/tabs/detail', table.id]);
+        // Fallback: create tab if somehow no open tab found
+        const { value: partySize } = await Swal.fire({
+          title: 'Open New Tab',
+          text: `How many guests for Table ${table.tableNumber}?`,
+          input: 'number',
+          inputAttributes: { min: '1', max: '20', step: '1' },
+          inputValue: 1,
+          showCancelButton: true,
+          confirmButtonText: 'Open Tab',
+        });
+        if (!partySize) return;
+        const request: OpenTabRequest = { tableId: table.id, partySize: +partySize };
+        try {
+          const newTab = await this.tabsApi.createTab(request).toPromise();
+          if (newTab?.id) {
+            await this.router.navigate(['/tabs/detail', newTab.id]);
+          }
+        } catch (err) {
+          console.error('Failed to open tab:', err);
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to open tab' });
+        }
       }
     }
   }
 
   async onSeatTable(table: Table) {
-    await this.router.navigate(['/tabs/detail', table.id]);
+    // Same logic as onTableClick
+    await this.onTableClick(table);
   }
 }
