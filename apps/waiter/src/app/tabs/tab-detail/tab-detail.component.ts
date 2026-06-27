@@ -73,16 +73,17 @@ export class TabDetailComponent implements OnInit {
   }
 
   getItemName(item: OrderItem): string {
-    // Try to get name from order item, then from menu items
     const directName = item.menuItemName ?? (item as any).menu_item_name ?? '';
     if (directName) return directName;
-    
-    const menuItem = this.getMenuItem(item.menuItemId);
+
+    const menuItemId = item.menuItemId ?? (item as any).menu_item_id ?? '';
+    const menuItem = this.getMenuItem(menuItemId);
     return menuItem?.name ?? '';
   }
 
   getItemImage(item: OrderItem): string {
-    const menuItem = this.getMenuItem(item.menuItemId);
+    const menuItemId = item.menuItemId ?? (item as any).menu_item_id ?? '';
+    const menuItem = this.getMenuItem(menuItemId);
     return menuItem?.imageUrl ?? '/assets/food/placeholder.png';
   }
 
@@ -112,6 +113,7 @@ export class TabDetailComponent implements OnInit {
         const normalized = (items || []).map((item: any) => ({
           ...item,
           menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
+          menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
@@ -162,6 +164,7 @@ export class TabDetailComponent implements OnInit {
         const normalized = (response || []).map((item: any) => ({
           ...item,
           menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
+          menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
