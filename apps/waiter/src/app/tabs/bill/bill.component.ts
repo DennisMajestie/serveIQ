@@ -70,6 +70,8 @@ export class BillComponent implements OnInit {
     this.billService.generate(tabId, { serviceChargePercent: 5 }).subscribe({
       next: (bill) => { this.bill.set(bill); this.isLoading.set(false); },
       error: (err) => {
+        console.error('[Bill] Generate bill error:', err);
+        console.error('[Bill] Error response:', err.error);
         this.error.set('Could not generate bill. Please try again.');
         this.isLoading.set(false);
       }
