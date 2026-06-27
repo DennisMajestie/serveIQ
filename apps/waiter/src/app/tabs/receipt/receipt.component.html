@@ -17,21 +17,84 @@
 
     <!-- Receipt Card -->
     <div class="receipt-card">
+      <div class="receipt-header">
+        <h2 class="business-name">{{ businessName() }}</h2>
+        <p class="branch-name" *ngIf="branchName()">{{ branchName() }}</p>
+        <p class="receipt-num">Receipt #{{ receiptNumber() }}</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="info-row">
+        <span class="info-label">Waiter</span>
+        <span class="info-value">{{ waiterName() }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Table</span>
+        <span class="info-value">Table {{ tableNumber() }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Date</span>
+        <span class="info-value">{{ date() }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Payment Method</span>
+        <span class="info-value">{{ paymentMethod() }}</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="items-header">
+        <span class="item-col-qty">Qty</span>
+        <span class="item-col-name">Item</span>
+        <span class="item-col-price">Amount</span>
+      </div>
+
+      @for (item of items(); track item.id) {
+        <div class="item-row">
+          <span class="item-col-qty">{{ item.quantity }}x</span>
+          <span class="item-col-name">{{ item.menuItemName }}</span>
+          <span class="item-col-price">₦{{ ((item.priceKobo * item.quantity) / 100).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+      }
+
+      <div class="divider"></div>
+
+      <div class="totals">
+        <div class="total-line">
+          <span>Subtotal</span>
+          <span>₦{{ subtotalNaira().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+        <div class="total-line">
+          <span>VAT (7.5%)</span>
+          <span>₦{{ vatNaira().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+        <div class="total-line">
+          <span>Service Charge</span>
+          <span>₦{{ serviceChargeNaira().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+        @if (discountNaira() > 0) {
+          <div class="total-line discount">
+            <span>Discount</span>
+            <span>-₦{{ discountNaira().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+          </div>
+        }
+        <div class="divider"></div>
+        <div class="total-line final">
+          <span>TOTAL</span>
+          <span>₦{{ total().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
       <div class="detail-row">
         <span class="label">Amount Paid</span>
-        <span class="value">₦{{ amountPaid().toLocaleString('en-US', {minimumFractionDigits: 2})}}</span>
-      </div>
-      <div class="detail-row">
-        <span class="label">Date</span>
-        <span class="value">{{ date() }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="label">Table Number</span>
-        <span class="value">Table {{ tableNumber() }}</span>
+        <span class="value">₦{{ amountPaid().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
       </div>
       <div class="detail-row">
         <span class="label">Transaction ID</span>
-        <span class="value">{{ transactionId() }}</span>
+        <span class="value tid">{{ transactionId() }}</span>
       </div>
     </div>
 

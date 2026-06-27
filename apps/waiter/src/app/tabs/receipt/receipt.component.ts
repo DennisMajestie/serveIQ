@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject, signal, computed, AfterViewInit }
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillsApiService, TablesApiService } from '@serveiq/shared/data-access';
-import { Receipt, Table } from '@serveiq/shared/models';
+import { OrderItem, Table } from '@serveiq/shared/models';
 
 interface ConfettiParticle { x: number; y: number; r: number; color: string; d: number; tilt: number; tiltAngle: number; }
 
@@ -20,16 +20,37 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   private tableService = inject(TablesApiService);
 
   tabId = signal('');
-  receipt = signal<Receipt | null>(null);
+  receipt = signal<any>(null);
   table = signal<Table | null>(null);
   isLoading = signal(true);
 
-  amountPaid = computed(() => (this.receipt()?.bill.paymentAmountKobo ?? 0) / 100);
-  total = computed(() => (this.receipt()?.bill.totalKobo ?? 0) / 100);
+  businessName = computed(() => this.receipt()?.business?.name ?? 'ServeIQ');
+  branchName = computed(() => this.receipt()?.branch?.name ?? '');
+  waiterName = computed(() => this.receipt()?.waiter?.fullName ?? this.receipt()?.waiter?.fullName ?? 'Waiter');
+  paymentMethod = computed(() => {
+    const method = this.receipt()?.bill?.paymentMethod ?? '';
+    return method ? method.charAt(0).toUpperCase() + method.slice(1) : '—';
+  });
+  amountPaid = computed(() => (this.receipt()?.bill?.totalKobo ?? 0) / 100);
+  subtotalNaira = computed(() => (this.receipt()?.bill?.subtotalKobo ?? 0) / 100);
+  serviceChargeNaira = computed(() => (this.receipt()?.bill?.serviceChargeKobo ?? 0) / 100);
+  discountNaira = computed(() => (this.receipt()?.bill?.discountKobo ?? 0) / 100);
+  total = computed(() => (this.receipt()?.bill?.totalKobo ?? 0) / 100);
+  vatNaira = computed(() => Math.round((this.receipt()?.bill?.subtotalKobo ?? 0) * 0.075) / 100);
   receiptNumber = computed(() => this.receipt()?.receiptNumber ?? '—');
-  date = computed(() => this.receipt()?.bill.paidAt ? new Date(this.receipt()!.bill.paidAt!).toLocaleString() : '—');
-  tableNumber = computed(() => this.table()?.tableNumber ?? this.receipt()?.tab.tableId ?? '—');
-  transactionId = computed(() => this.receipt()?.bill.id ?? '—');
+  date = computed(() => this.receipt()?.bill?.paidAt ? new Date(this.receipt()!.bill!.paidAt!).toLocaleString() : new Date().toLocaleString());
+  tableNumber = computed(() => this.table()?.tableNumber ?? this.receipt()?.tab?.tableId ?? '—');
+  transactionId = computed(() => this.receipt()?.bill?.id ?? '—');
+
+  items = computed<OrderItem[]>(() => {
+    const orders = this.receipt()?.orders ?? [];
+    return orders.map((o: any) => ({
+      ...o,
+      menuItemName: o.menuItemName || o.menuItem?.name || '',
+      priceKobo: o.priceKobo || o.unitPriceKobo || 0,
+      quantity: o.quantity || o.qty || 1,
+    }));
+  });
 
   private canvas: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
@@ -46,7 +67,7 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
           next: (r) => { 
             this.receipt.set(r); 
             this.isLoading.set(false);
-            if (r.tab?.tableId) {
+            if (r?.tab?.tableId) {
               this.tableService.getTable(r.tab.tableId).subscribe({
                 next: (table) => this.table.set(table)
               });
@@ -64,7 +85,7 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   goToTables() { this.router.navigate(['/tables']); }
   printReceipt() { window.print(); }
   whatsAppReceipt() {
-    const text = `ServeIQ Receipt #${this.receiptNumber}\nTotal: ₦${this.total.toLocaleString()}\nDate: ${this.date}`;
+    const text = `ServeIQ Receipt #${this.receiptNumber()}\nTotal: ₦${this.total().toLocaleString()}\nDate: ${this.date()}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   }
 
