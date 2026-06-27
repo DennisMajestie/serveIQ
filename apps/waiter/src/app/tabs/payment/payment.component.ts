@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BillsApiService, TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
-import { Tab, Table } from '@serveiq/shared/models';
+import { Bill, Tab, Table } from '@serveiq/shared/models';
 
 @Component({
   selector: 'app-payment',
@@ -20,6 +20,7 @@ export class PaymentComponent implements OnInit {
 
   tabId = signal('');
   table = signal<Table | null>(null);
+  bill = signal<Bill | null>(null);
   selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' = 'cash';
   currentAmount = signal('0');
   isEditingAmount = false;
@@ -32,6 +33,7 @@ export class PaymentComponent implements OnInit {
       if (id) {
         this.tabId.set(id);
         this.loadTableInfo(id);
+        this.loadBill(id);
       }
     });
   }
@@ -46,6 +48,21 @@ export class PaymentComponent implements OnInit {
         }
       }
     });
+  }
+
+  private loadBill(tabId: string) {
+    this.billsApi.getReceipt(tabId).subscribe({
+      next: (receipt: any) => {
+        const b = receipt.bill as Bill;
+        this.bill.set(b);
+        this.currentAmount.set((b.totalKobo / 100).toFixed(2));
+      }
+    });
+  }
+
+  get totalDueNaira(): string {
+    const total = this.bill()?.totalKobo ?? 0;
+    return (total / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
   }
 
   get formattedAmount(): string {
