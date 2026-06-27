@@ -49,10 +49,10 @@ export class TabDetailComponent implements OnInit {
   private readRouterStateOnce() {
     if (this.orderPosted) return;
     
-    const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras?.state as { selectedItems?: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
+    // Use history.state which persists after navigation
+    const state = history.state as { selectedItems?: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
     if (state?.selectedItems?.length) {
-      console.log('[TabDetail] Received selectedItems from router state (once):', state.selectedItems);
+      console.log('[TabDetail] Received selectedItems from history.state:', state.selectedItems);
       this.orderPosted = true;
       this.addItemsFromMenu(state.selectedItems);
     }
