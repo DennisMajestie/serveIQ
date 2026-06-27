@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { buildUrl } from './api.config';
 import { handleApiError } from './api-error';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
+import { snakeToCamel } from '@serveiq/shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class BaseApiService {
@@ -27,7 +28,10 @@ export class BaseApiService {
     return this.http
       .get<any>(fullUrl, { headers: this.defaultHeaders })
       .pipe(
-        map(res => res && typeof res === 'object' && 'data' in res ? res.data : res),
+        map(res => {
+          const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+          return snakeToCamel<T>(data);
+        }),
         catchError(handleApiError)
       );
   }
@@ -38,7 +42,10 @@ export class BaseApiService {
     return this.http
       .post<any>(fullUrl, body, { headers: this.defaultHeaders })
       .pipe(
-        map(res => res && typeof res === 'object' && 'data' in res ? res.data : res),
+        map(res => {
+          const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+          return snakeToCamel<T>(data);
+        }),
         catchError(handleApiError)
       );
   }
@@ -49,7 +56,10 @@ export class BaseApiService {
     return this.http
       .put<any>(fullUrl, body, { headers: this.defaultHeaders })
       .pipe(
-        map(res => res && typeof res === 'object' && 'data' in res ? res.data : res),
+        map(res => {
+          const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+          return snakeToCamel<T>(data);
+        }),
         catchError(handleApiError)
       );
   }
@@ -60,7 +70,10 @@ export class BaseApiService {
     return this.http
       .patch<any>(fullUrl, body, { headers: this.defaultHeaders })
       .pipe(
-        map(res => res && typeof res === 'object' && 'data' in res ? res.data : res),
+        map(res => {
+          const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+          return snakeToCamel<T>(data);
+        }),
         catchError(handleApiError)
       );
   }

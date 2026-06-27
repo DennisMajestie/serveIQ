@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillsApiService, TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
-import { Bill, Tab, Table, snakeToCamel } from '@serveiq/shared/models';
+import { Bill, Tab, Table } from '@serveiq/shared/models';
 import { catchError, of, switchMap } from 'rxjs';
 
 @Component({
@@ -79,11 +79,10 @@ export class BillComponent implements OnInit {
         this.isLoading.set(false);
         return;
       }
-      const normalized = snakeToCamel<any>(result);
-      const bill: any = normalized.bill || {};
+      const bill: any = result.bill || {};
       bill.branchId = bill.branchId || '';
       bill.serviceChargePercent = bill.serviceChargePercent ?? 10;
-      bill.orderItems = (normalized.orders || []).map((o: any) => ({
+      bill.orderItems = (result.orders || []).map((o: any) => ({
         ...o,
         menuItemName: o.menuItemName || o.menuItem?.name || '',
         menuItemId: o.menuItemId || o.menuItem?.id || '',
