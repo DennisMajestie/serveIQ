@@ -2,7 +2,8 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillsApiService, TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
-import { Bill, Tab, Table } from '@serveiq/shared/models';
+import { Bill, Tab, Table, snakeToCamel } from '@serveiq/shared/models';
+import { catchError, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-bill',
@@ -58,23 +59,39 @@ export class BillComponent implements OnInit {
             next: (table) => this.table.set(table)
           });
         }
-        this.generateBill(tabId);
+        this.loadBill(tabId);
       },
       error: () => {
-        this.generateBill(tabId); // still try to generate bill even if tab load fails
+        this.loadBill(tabId);
       }
     });
   }
 
-  generateBill(tabId: string) {
-    this.billService.generate(tabId, { serviceChargePercent: 5 }).subscribe({
-      next: (bill) => { this.bill.set(bill); this.isLoading.set(false); },
-      error: (err) => {
-        console.error('[Bill] Generate bill error:', err);
-        console.error('[Bill] Error response:', err.error);
+  private loadBill(tabId: string) {
+    this.billService.getReceipt(tabId).pipe(
+      catchError(() =>
+        this.billService.generate(tabId, { serviceChargePercent: 5 }).pipe(
+          switchMap(() => this.billService.getReceipt(tabId)),
+          catchError(() => of(null))
+        )
+      )
+    ).subscribe((result: any) => {
+      if (!result) {
         this.error.set('Could not generate bill. Please try again.');
         this.isLoading.set(false);
+        return;
       }
+      const normalized = snakeToCamel<any>(result);
+      const bill: any = normalized.bill || {};
+      bill.branchId = bill.branchId || bill.branchId || '';
+      bill.serviceChargePercent = bill.serviceChargePercent ?? 10;
+      bill.orderItems = (normalized.orders || []).map((o: any) => ({
+        ...o,
+        menuItemName: o.menuItemName || o.menuItem?.name || '',
+        menuItemId: o.menuItemId || o.menuItem?.id || o.menuItemId || '',
+      }));
+      this.bill.set(bill as Bill);
+      this.isLoading.set(false);
     });
   }
 
