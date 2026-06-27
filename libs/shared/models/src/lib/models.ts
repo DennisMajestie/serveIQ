@@ -79,6 +79,7 @@ export interface OrderItem {
   menu_item_name?: string;
   priceKobo: number;
   price_kobo?: number;
+  unit_price_kobo?: number;
   quantity: number;
   qty?: number;
   notes?: string;

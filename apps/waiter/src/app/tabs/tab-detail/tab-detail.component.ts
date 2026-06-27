@@ -83,8 +83,8 @@ export class TabDetailComponent implements OnInit {
         // Normalize field names (backend may return snake_case)
         const normalized = (items || []).map((item: any) => ({
           ...item,
-          menuItemName: item.menuItemName ?? item.menu_item_name ?? '',
-          priceKobo: item.priceKobo ?? item.price_kobo ?? 0,
+          menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
+          priceKobo: item.priceKobo ?? item.price_kobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
         this.items.set(normalized); 
@@ -133,8 +133,8 @@ export class TabDetailComponent implements OnInit {
         // Normalize and reload
         const normalized = (response || []).map((item: any) => ({
           ...item,
-          menuItemName: item.menuItemName ?? item.menu_item_name ?? '',
-          priceKobo: item.priceKobo ?? item.price_kobo ?? 0,
+          menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
+          priceKobo: item.priceKobo ?? item.price_kobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
         this.items.update(current => [...current, ...normalized]);
