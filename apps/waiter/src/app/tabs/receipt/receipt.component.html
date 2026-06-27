@@ -19,7 +19,9 @@
     <div class="receipt-card">
       <div class="receipt-header">
         <h2 class="business-name">{{ businessName() }}</h2>
-        <p class="branch-name" *ngIf="branchName()">{{ branchName() }}</p>
+        @if (branchName()) {
+          <p class="branch-name">{{ branchName() }}</p>
+        }
         <p class="receipt-num">Receipt #{{ receiptNumber() }}</p>
       </div>
 
