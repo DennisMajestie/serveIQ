@@ -90,6 +90,7 @@ export interface Bill {
   tabId: string;
   branchId: string;
   subtotalKobo: number;
+  serviceChargeKobo: number;
   serviceChargePercent: number;
   discountKobo: number;
   totalKobo: number;

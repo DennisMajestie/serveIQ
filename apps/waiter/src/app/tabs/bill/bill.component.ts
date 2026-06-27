@@ -28,9 +28,7 @@ export class BillComponent implements OnInit {
   time = signal(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
   subtotalNaira = computed(() => (this.bill()?.subtotalKobo ?? 0) / 100);
-  serviceChargeNaira = computed(() =>
-    ((this.bill()?.subtotalKobo ?? 0) * (this.bill()?.serviceChargePercent ?? 0)) / 10000
-  );
+  serviceChargeNaira = computed(() => (this.bill()?.serviceChargeKobo ?? 0) / 100);
   discountNaira = computed(() => (this.bill()?.discountKobo ?? 0) / 100);
   totalNaira = computed(() => (this.bill()?.totalKobo ?? 0) / 100);
 
@@ -83,12 +81,13 @@ export class BillComponent implements OnInit {
       }
       const normalized = snakeToCamel<any>(result);
       const bill: any = normalized.bill || {};
-      bill.branchId = bill.branchId || bill.branchId || '';
+      bill.branchId = bill.branchId || '';
       bill.serviceChargePercent = bill.serviceChargePercent ?? 10;
       bill.orderItems = (normalized.orders || []).map((o: any) => ({
         ...o,
         menuItemName: o.menuItemName || o.menuItem?.name || '',
-        menuItemId: o.menuItemId || o.menuItem?.id || o.menuItemId || '',
+        menuItemId: o.menuItemId || o.menuItem?.id || '',
+        priceKobo: o.priceKobo || o.unitPriceKobo || 0,
       }));
       this.bill.set(bill as Bill);
       this.isLoading.set(false);
