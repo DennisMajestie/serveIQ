@@ -114,7 +114,7 @@ export class TabDetailComponent implements OnInit {
           ...item,
           menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
           menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
-          priceKobo: item.priceKobo ?? item.price_kobo ?? item.unit_price_kobo ?? 0,
+          priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
         this.items.set(normalized); 
@@ -165,7 +165,7 @@ export class TabDetailComponent implements OnInit {
           ...item,
           menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
           menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
-          priceKobo: item.priceKobo ?? item.price_kobo ?? item.unit_price_kobo ?? 0,
+          priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
         this.items.update(current => [...current, ...normalized]);
