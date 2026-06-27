@@ -23,12 +23,17 @@
         <div class="item-card">
           <div class="qty-badge">{{ item.quantity }}x</div>
           <div class="item-details">
-            <div class="item-name">
-              {{ item.menuItemName }}
+            <div class="item-image">
+              <img [src]="getItemImage(item)" [alt]="getItemName(item)" class="item-thumb" />
             </div>
-            @if (item.notes) {
-              <div class="item-description">{{ item.notes }}</div>
-            }
+            <div class="item-info">
+              <div class="item-name">
+                {{ getItemName(item) }}
+              </div>
+              @if (item.notes) {
+                <div class="item-description">{{ item.notes }}</div>
+              }
+            </div>
           </div>
           <div class="item-price">
             <span class="current-price">₦{{ formatKobo(item.priceKobo * item.quantity) }}</span>

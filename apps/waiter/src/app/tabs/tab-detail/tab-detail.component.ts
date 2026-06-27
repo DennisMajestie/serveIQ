@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, TablesApiService } from '@serveiq/shared/data-access';
-import { Tab, OrderItem, Table } from '@serveiq/shared/models';
+import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService } from '@serveiq/shared/data-access';
+import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -18,11 +18,13 @@ export class TabDetailComponent implements OnInit {
   private tabService = inject(TabsApiService);
   private orderService = inject(OrdersApiService);
   private tableService = inject(TablesApiService);
+  private menuService = inject(MenuApiService);
 
   tabId = signal('');
   tab = signal<Tab | null>(null);
   table = signal<Table | null>(null);
   items = signal<OrderItem[]>([]);
+  menuItems = signal<MenuItem[]>([]);
   isLoading = signal(true);
 
   private orderPosted = false;
@@ -40,6 +42,7 @@ export class TabDetailComponent implements OnInit {
       if (id) {
         this.tabId.set(id);
         this.loadTab(id);
+        this.loadMenuItems();
       }
     });
 
@@ -56,6 +59,31 @@ export class TabDetailComponent implements OnInit {
       this.orderPosted = true;
       this.addItemsFromMenu(state.selectedItems);
     }
+  }
+
+  loadMenuItems() {
+    this.menuService.getAllItems().subscribe({
+      next: (items) => this.menuItems.set(items || []),
+      error: () => {}
+    });
+  }
+
+  getMenuItem(menuItemId: string): MenuItem | undefined {
+    return this.menuItems().find(m => m.id === menuItemId);
+  }
+
+  getItemName(item: OrderItem): string {
+    // Try to get name from order item, then from menu items
+    const directName = item.menuItemName ?? (item as any).menu_item_name ?? '';
+    if (directName) return directName;
+    
+    const menuItem = this.getMenuItem(item.menuItemId);
+    return menuItem?.name ?? '';
+  }
+
+  getItemImage(item: OrderItem): string {
+    const menuItem = this.getMenuItem(item.menuItemId);
+    return menuItem?.imageUrl ?? '/assets/food/placeholder.png';
   }
 
   loadTab(id: string) {
