@@ -4,38 +4,11 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { join } from 'path';
-import { createReadStream, existsSync, mkdirSync } from 'fs';
-import { Request, Response, NextFunction } from 'express';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Setup configurable uploads directory
-  const uploadsDir = process.env.UPLOADS_DIR || join(process.cwd(), 'uploads');
-  if (!existsSync(uploadsDir)) {
-    try {
-      mkdirSync(uploadsDir, { recursive: true });
-      console.log(`Created uploads directory at: ${uploadsDir}`);
-    } catch (err) {
-      console.error(`Failed to create uploads directory at ${uploadsDir}:`, err);
-    }
-  }
-
-  // Serve uploaded files statically
-  app.use('/uploads', (req: Request, res: Response, next: NextFunction) => {
-    const filename = req.path.replace(/^\//, '');
-    if (!filename || filename.includes('..')) {
-      next();
-      return;
-    }
-    const filePath = join(uploadsDir, filename);
-    if (!existsSync(filePath)) {
-      next();
-      return;
-    }
-    res.sendFile(filePath);
-  });
 
   // Global Prefix
   app.setGlobalPrefix('api');

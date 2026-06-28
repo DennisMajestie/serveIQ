@@ -1,30 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname, join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import { memoryStorage } from 'multer';
+import { extname } from 'path';
 import { UploadController } from './upload.controller';
-
-const uploadsDir = process.env.UPLOADS_DIR || join(process.cwd(), 'uploads');
-if (!existsSync(uploadsDir)) {
-  try {
-    mkdirSync(uploadsDir, { recursive: true });
-    console.log(`Created uploads directory at: ${uploadsDir}`);
-  } catch (err) {
-    console.error(`Failed to create uploads directory at ${uploadsDir}:`, err);
-  }
-}
 
 @Module({
   imports: [
     MulterModule.register({
-      storage: diskStorage({
-        destination: uploadsDir,
-        filename: (_req: any, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
-          const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
+      storage: memoryStorage(), // No disk — files go to Cloudinary
       limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max
       fileFilter: (_req: any, file: Express.Multer.File, cb: (error: Error | null, acceptFile: boolean) => void) => {
         const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
