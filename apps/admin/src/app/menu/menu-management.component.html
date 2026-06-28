@@ -192,16 +192,14 @@
     <!-- Form Grid -->
     <div class="form-grid">
 <div class="form-field">
-        <label class="field-label">Category <span class="required">*</span></label>
-        <select class="field-input" [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)">
-          <option value="">Select category</option>
-          <option *ngFor="let opt of categoryOptions" [value]="opt.value">{{ opt.label }}</option>
-        </select>
+        <label class="field-label">Item Name <span class="required">*</span></label>
+        <input class="field-input" type="text" placeholder="Enter dish name"
+          [ngModel]="formName()" (ngModelChange)="formName.set($event)">
       </div>
       <div class="form-field">
         <label class="field-label">Category <span class="required">*</span></label>
         <select class="field-input" [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)">
-          <option value="" disabled>Select category</option>
+          <option value="">Select category</option>
           <option *ngFor="let opt of categoryOptions" [value]="opt.value">{{ opt.label }}</option>
         </select>
       </div>
