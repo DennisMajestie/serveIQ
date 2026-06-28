@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MenuApiService, TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
-import { MenuItem, Table, Tab } from '@serveiq/shared/models';
+import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
+import { MenuItem, Table, Tab, resolveImageUrl } from '@serveiq/shared/models';
 
 interface Portion { id: string; name: string; price: number; }
 
@@ -36,6 +36,7 @@ export class MenuComponent implements OnInit {
   private readonly menuApi = inject(MenuApiService);
   private readonly tabsApi = inject(TabsApiService);
   private readonly tablesApi = inject(TablesApiService);
+  private readonly env = inject(ENVIRONMENT_CONFIG);
 
   selectedCategory = 'All';
   categories = signal<string[]>(['All']);
@@ -67,7 +68,7 @@ export class MenuComponent implements OnInit {
           id: i.id,
           name: i.name,
           category: i.category,
-          image: i.imageUrl || '/assets/food/placeholder.png',
+          image: resolveImageUrl(i.imageUrl, this.env.apiUrl),
           price: (i.priceKobo ?? i.price_kobo ?? 0) / 100
         }));
         const cats = ['All', ...new Set(items.map(i => i.category))];

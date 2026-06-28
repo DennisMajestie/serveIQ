@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService } from '@serveiq/shared/data-access';
-import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
+import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
+import { Tab, OrderItem, Table, MenuItem, resolveImageUrl } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -19,6 +19,7 @@ export class TabDetailComponent implements OnInit {
   private orderService = inject(OrdersApiService);
   private tableService = inject(TablesApiService);
   private menuService = inject(MenuApiService);
+  private env = inject(ENVIRONMENT_CONFIG);
 
   tabId = signal('');
   tab = signal<Tab | null>(null);
@@ -84,7 +85,7 @@ export class TabDetailComponent implements OnInit {
   getItemImage(item: OrderItem): string {
     const menuItemId = item.menuItemId ?? (item as any).menu_item_id ?? '';
     const menuItem = this.getMenuItem(menuItemId);
-    return menuItem?.imageUrl ?? '/assets/food/placeholder.png';
+    return resolveImageUrl(menuItem?.imageUrl, this.env.apiUrl);
   }
 
   loadTab(id: string) {

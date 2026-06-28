@@ -1,8 +1,9 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { MenuApiService, UploadApiService, MenuItem } from '@serveiq/shared/data-access';
+import { MenuApiService, UploadApiService, MenuItem, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
+import { resolveImageUrl } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,6 +16,7 @@ import Swal from 'sweetalert2';
 export class MenuManagementComponent implements OnInit {
   private menuService = inject(MenuApiService);
   private uploadService = inject(UploadApiService);
+  private env = inject(ENVIRONMENT_CONFIG);
   
   selectedCategory = signal('All');
   isLoading = signal(true);
@@ -188,6 +190,10 @@ export class MenuManagementComponent implements OnInit {
     this.formIsAvailable.set(true);
     this.imagePreview.set(null);
     this.selectedFile.set(null);
+  }
+
+  getImageSrc(item: MenuItem): string {
+    return resolveImageUrl(item.imageUrl, this.env.apiUrl);
   }
 
   trackById(_: number, item: MenuItem) {

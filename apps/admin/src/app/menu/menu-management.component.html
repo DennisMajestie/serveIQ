@@ -93,7 +93,7 @@
               <tr class="data-row" *ngFor="let item of menuItems(); trackBy: trackById">
                 <td class="cell-photo">
                   <div class="photo-thumb">
-                    <img [src]="item.imageUrl || '/assets/food/placeholder.png'" [alt]="item.name" />
+                    <img [src]="getImageSrc(item)" [alt]="item.name" />
                   </div>
                 </td>
                 <td class="cell-name">

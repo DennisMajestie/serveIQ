@@ -4,9 +4,14 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Serve uploaded files statically
+  app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
 
   // Global Prefix
   app.setGlobalPrefix('api');
