@@ -5,13 +5,22 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
-import * as express from 'express';
+import { createReadStream, existsSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Serve uploaded files statically
-  app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+  // Serve uploaded files via Express route (outside global prefix)
+  const httpAdapter = app.getHttpAdapter();
+  httpAdapter.get('/uploads/:filename', (req: any, res: any) => {
+    const filename = req.params.filename;
+    const filePath = join(process.cwd(), 'uploads', filename);
+    if (filename.includes('..') || !existsSync(filePath)) {
+      res.status(404).json({ statusCode: 404, message: 'File not found' });
+      return;
+    }
+    createReadStream(filePath).pipe(res);
+  });
 
   // Global Prefix
   app.setGlobalPrefix('api');
