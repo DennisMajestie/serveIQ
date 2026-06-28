@@ -113,11 +113,12 @@ export class TabDetailComponent implements OnInit {
         // Normalize field names (backend may return snake_case)
         const normalized = (items || []).map((item: any) => ({
           ...item,
-          menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
+          menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? item.name ?? item.itemName ?? item.details?.name ?? '',
           menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
+        console.log('[TabDetail] Normalized ordered items:', normalized);
         this.items.set(normalized); 
         this.isLoading.set(false); 
       },

@@ -166,30 +166,34 @@
 
 .item-card {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
-  padding: 16px;
+  padding: 12px;
   margin-bottom: 12px;
   background-color: var(--surface);
   border-radius: 12px;
   border: 1px solid rgba(64, 71, 88, 0.2);
 }
 
+.item-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .qty-badge {
-  min-width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  font-weight: 600;
-  color: var(--on-surface);
-  font-size: 15px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--secondary);
 }
 
 .item-details {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .item-name {
@@ -197,11 +201,7 @@
   line-height: 24px;
   font-weight: 600;
   color: var(--on-surface);
-  margin: 0 0 4px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  margin: 0;
 }
 
 .portion-tag {
@@ -231,6 +231,21 @@
   line-height: 24px;
   font-weight: 600;
   color: var(--on-surface);
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #EF4444;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn .material-symbols-outlined {
+  font-size: 1.2rem;
 }
 
 .totals-section {

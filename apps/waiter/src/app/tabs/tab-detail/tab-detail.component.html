@@ -21,25 +21,19 @@
 
       @for (item of items(); track item.id) {
         <div class="item-card">
-          <div class="qty-badge">{{ item.quantity }}x</div>
+          <img [src]="getItemImage(item)" [alt]="getItemName(item)" class="item-thumb" />
           <div class="item-details">
-            <div class="item-image">
-              <img [src]="getItemImage(item)" [alt]="getItemName(item)" class="item-thumb" />
-            </div>
-            <div class="item-info">
-              <div class="item-name">
-                {{ getItemName(item) }}
-              </div>
-              @if (item.notes) {
-                <div class="item-description">{{ item.notes }}</div>
-              }
-            </div>
+            <div class="item-name">{{ getItemName(item) || 'Unknown Item' }}</div>
+            <span class="qty-badge">{{ item.quantity }}x</span>
+            @if (item.notes) {
+              <div class="item-description">{{ item.notes }}</div>
+            }
           </div>
           <div class="item-price">
             <span class="current-price">₦{{ formatKobo(item.priceKobo * item.quantity) }}</span>
           </div>
-          <button (click)="removeItem(item)" style="background: none; border: none; color: #EF4444; margin-left: 10px; cursor: pointer;">
-            <span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span>
+          <button class="delete-btn" (click)="removeItem(item)">
+            <span class="material-symbols-outlined">delete</span>
           </button>
         </div>
       }
