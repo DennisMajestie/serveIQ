@@ -23,6 +23,6 @@ export class BusinessApiService extends BaseApiService {
 
   /** Update business name or type. */
   updateBusiness(data: Partial<Business>): Observable<Business> {
-    return this.put<Business>(API_CONFIG.endpoints.business.update, data);
+    return this.patch<Business>(API_CONFIG.endpoints.business.update, data);
   }
 }

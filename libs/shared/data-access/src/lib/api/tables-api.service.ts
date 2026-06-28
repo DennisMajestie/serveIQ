@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
-import { API_CONFIG } from './api.config';
+import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 import { Table, TableStatus } from '@serveiq/shared/models';
 
@@ -32,11 +32,16 @@ export class TablesApiService extends BaseApiService {
 
   // Update a table
   updateTable(id: string, updates: Partial<Table>): Observable<Table> {
-    return this.put<Table>(API_CONFIG.endpoints.tables.update, { id, ...updates });
+    return this.patch<Table>(buildUrl(API_CONFIG.endpoints.tables.update, { id }), updates);
   }
 
   // Update table status
   updateTableStatus(id: string, status: TableStatus): Observable<Table> {
-    return this.updateTable(id, { status });
+    return this.patch<Table>(buildUrl(API_CONFIG.endpoints.tables.updateStatus, { id }), { status });
+  }
+
+  // Delete a table
+  deleteTable(id: string): Observable<void> {
+    return this.delete<void>(buildUrl(API_CONFIG.endpoints.tables.delete, { id }));
   }
 }

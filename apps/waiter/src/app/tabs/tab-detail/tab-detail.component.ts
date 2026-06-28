@@ -129,6 +129,37 @@ export class TabDetailComponent implements OnInit {
     });
   }
 
+  viewItemDetail(item: OrderItem) {
+    Swal.fire({
+      title: getItemName(item),
+      html: `
+        <div style="text-align: left;">
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+            <span style="color: #888;">Quantity</span>
+            <span style="font-weight: 600;">${item.quantity}x</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+            <span style="color: #888;">Unit Price</span>
+            <span style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">₦${this.formatKobo(item.priceKobo)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+            <span style="color: #888;">Line Total</span>
+            <span style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">₦${this.formatKobo(item.priceKobo * item.quantity)}</span>
+          </div>
+          ${item.notes ? `
+          <div style="padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.06);">
+            <div style="color: #888; margin-bottom: 4px;">Notes</div>
+            <div style="color: #fff;">${item.notes}</div>
+          </div>` : ''}
+        </div>
+      `,
+      confirmButtonText: 'Close',
+      confirmButtonColor: '#f97316',
+      background: '#1A1A1A',
+      color: '#fff',
+    });
+  }
+
   removeItem(item: OrderItem) {
     Swal.fire({
       title: 'Remove item?',

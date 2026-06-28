@@ -99,13 +99,13 @@
 
   <!-- Help Section -->
   <div class="help-section">
-    <div class="help-card glass-card">
+    <div class="help-card glass-card" (click)="callManager()">
       <div class="help-icon-wrapper help-icon-secondary">
         <span class="material-symbols-outlined help-icon">support_agent</span>
       </div>
       <span class="help-text">Manager Call</span>
     </div>
-    <div class="help-card glass-card">
+    <div class="help-card glass-card" (click)="viewRoster()">
       <div class="help-icon-wrapper help-icon-primary">
         <span class="material-symbols-outlined help-icon">schedule</span>
       </div>

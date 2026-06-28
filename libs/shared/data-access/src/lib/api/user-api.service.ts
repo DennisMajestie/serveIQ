@@ -23,7 +23,12 @@ export class UserApiService extends BaseApiService {
 
   /** Update the authenticated user's name/email. */
   updateMe(data: Partial<Pick<User, 'fullName' | 'email'>>): Observable<User> {
-    return this.put<User>(API_CONFIG.endpoints.users.me, data);
+    return this.patch<User>(API_CONFIG.endpoints.users.me, data);
+  }
+
+  /** Update any user by ID (owner only). */
+  updateUser(id: string, data: Partial<User>): Observable<User> {
+    return this.patch<User>(buildUrl(API_CONFIG.endpoints.users.update, { id }), data);
   }
 
   /** List all waiters for the business. */

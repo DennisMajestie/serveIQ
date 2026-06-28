@@ -49,16 +49,29 @@
           <span>Service Charge</span>
           <span>₦{{ getServiceCharge().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
         </div>
+        @if (hasDiscount) {
+          <div class="summary-line discount">
+            <span>Discount</span>
+            <span>-₦{{ discountNaira().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+          </div>
+        }
         <div class="summary-line total">
           <span>TOTAL AMOUNT</span>
           <span>₦{{ getTotal().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
         </div>
       </div>
 
-      <button class="discount-btn">
-        <span class="material-symbols-outlined">local_offer</span>
-        Apply Discount
-      </button>
+      @if (hasDiscount) {
+        <button class="discount-btn applied" (click)="removeDiscount()">
+          <span class="material-symbols-outlined">local_offer</span>
+          Remove Discount (₦{{ discountNaira().toLocaleString('en-US', {minimumFractionDigits: 2}) }})
+        </button>
+      } @else {
+        <button class="discount-btn" (click)="applyDiscount()">
+          <span class="material-symbols-outlined">local_offer</span>
+          Apply Discount
+        </button>
+      }
 
       <p class="split-info">
         <span class="material-symbols-outlined">info</span>

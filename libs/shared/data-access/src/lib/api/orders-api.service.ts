@@ -26,9 +26,14 @@ export class OrdersApiService extends BaseApiService {
     return this.post<OrderItem[]>(buildUrl(API_CONFIG.endpoints.orders.byTab, { tabId }), items);
   }
 
+  /** Get a single order item by ID. */
+  getOrder(id: string): Observable<OrderItem> {
+    return this.get<OrderItem>(buildUrl(API_CONFIG.endpoints.orders.get, { id }));
+  }
+
   /** Update a single order item (quantity / notes). */
   updateItem(id: string, updates: Partial<Pick<OrderItem, 'quantity' | 'notes'>>): Observable<OrderItem> {
-    return this.put<OrderItem>(buildUrl(API_CONFIG.endpoints.orders.update, { id }), updates);
+    return this.patch<OrderItem>(buildUrl(API_CONFIG.endpoints.orders.update, { id }), updates);
   }
 
   /** Remove a single order item. */

@@ -167,5 +167,5 @@ export class MenuComponent implements OnInit {
 
   goToTables() { this.router.navigate(['/tables']); }
   goToHistory() { this.router.navigate(['/tabs/history']); }
-  goToProfile() { /* future */ }
+  goToProfile() { this.router.navigate(['/profile']); }
 }

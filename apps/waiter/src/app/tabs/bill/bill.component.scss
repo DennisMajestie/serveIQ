@@ -248,6 +248,21 @@
   color: var(--on-surface);
 }
 
+.summary-line.discount span:first-child {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--error);
+}
+
+.summary-line.discount span:last-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--error);
+}
+
 .summary-line.total span:first-child {
   font-size: 16px;
   line-height: 24px;
@@ -286,6 +301,12 @@
 .discount-btn:active {
   transform: scale(0.98);
   opacity: 0.8;
+}
+
+.discount-btn.applied {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #EF4444;
 }
 
 /* Split Info */

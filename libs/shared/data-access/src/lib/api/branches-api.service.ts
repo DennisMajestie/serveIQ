@@ -40,4 +40,9 @@ export class BranchesApiService extends BaseApiService {
   getStats(): Observable<DashboardStats> {
     return this.get<DashboardStats>(API_CONFIG.endpoints.branches.stats);
   }
+
+  /** Delete a branch. */
+  removeBranch(id: string): Observable<void> {
+    return this.delete<void>(buildUrl(API_CONFIG.endpoints.branches.delete, { id }));
+  }
 }

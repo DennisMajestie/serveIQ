@@ -2,7 +2,7 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -25,6 +25,7 @@ export class LoginComponent implements OnInit {
   isActivating = signal(false);
 
   private authService = inject(AuthService);
+  private userService = inject(UserApiService);
   private router = inject(Router);
 
   ngOnInit() {
@@ -105,5 +106,59 @@ export class LoginComponent implements OnInit {
     localStorage.removeItem('businessId');
     localStorage.removeItem('businessName');
     this.isActivated.set(false);
+  }
+
+  callManager() {
+    Swal.fire({
+      title: 'Manager Called',
+      html: `
+        <div style="margin: 16px 0;">
+          <span class="material-symbols-outlined" style="font-size: 48px; color: #4be277;">support_agent</span>
+        </div>
+        <p style="color: #aaa; margin: 0; font-size: 14px;">
+          A manager has been notified. Please wait at your station.
+        </p>
+      `,
+      timer: 3000,
+      showConfirmButton: false,
+      background: '#1e293b',
+      color: '#fff',
+      customClass: { popup: 'swal-glass' }
+    });
+  }
+
+  viewRoster() {
+    this.userService.listWaiters().subscribe({
+      next: (waiters) => {
+        const rows = waiters.map(w => `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+            <div>
+              <div style="font-weight: 600; font-size: 14px; color: #fff;">${w.fullName || 'Unknown'}</div>
+              <div style="font-size: 12px; color: #888; margin-top: 2px;">${w.email || ''}</div>
+            </div>
+            <span style="font-size: 12px; font-weight: 500; color: #4be277; text-transform: uppercase; letter-spacing: 0.05em;">${w.role || 'staff'}</span>
+          </div>
+        `).join('');
+
+        Swal.fire({
+          title: 'Staff Roster',
+          html: `<div style="max-height: 320px; overflow-y: auto;">${rows || '<div style="color: #888; text-align: center; padding: 16px;">No staff found</div>'}</div>`,
+          confirmButtonText: 'Close',
+          confirmButtonColor: '#4be277',
+          background: '#1e293b',
+          color: '#fff',
+        });
+      },
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to Load',
+          text: 'Could not load staff roster. Please try again.',
+          confirmButtonColor: '#4be277',
+          background: '#1e293b',
+          color: '#fff',
+        });
+      }
+    });
   }
 }

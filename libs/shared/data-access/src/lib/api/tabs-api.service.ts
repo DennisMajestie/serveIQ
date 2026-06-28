@@ -30,13 +30,18 @@ export class TabsApiService extends BaseApiService {
     return this.post<Tab>(API_CONFIG.endpoints.tabs.open, tab);
   }
 
-  // Update a tab (uses close endpoint with partial payload)
+  // Update a tab
   updateTab(id: string, updates: Partial<Tab>): Observable<Tab> {
-    return this.patch<Tab>(buildUrl(API_CONFIG.endpoints.tabs.close, { id }), updates);
+    return this.patch<Tab>(buildUrl(API_CONFIG.endpoints.tabs.get, { id }), updates);
   }
 
   // Close a tab
   closeTab(id: string): Observable<Tab> {
     return this.post<Tab>(API_CONFIG.endpoints.tabs.close, { id });
+  }
+
+  // Delete a tab
+  deleteTab(id: string): Observable<void> {
+    return this.delete<void>(buildUrl(API_CONFIG.endpoints.tabs.delete, { id }));
   }
 }

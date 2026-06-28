@@ -18,12 +18,13 @@ export const API_CONFIG = {
       me: '/api/v1/user/me',
       waiters: '/api/v1/user/waiters',
       resetPin: '/api/v1/user/waiters/:id/reset-pin',
+      update: '/api/v1/user/:id',
       delete: '/api/v1/user/:id',
     },
     // Business
     business: {
-      get: '/api/v1/business',
-      update: '/api/v1/business',
+      get: '/api/v1/businesses/me',
+      update: '/api/v1/businesses/me',
     },
     // Branches
     branches: {
@@ -31,6 +32,7 @@ export const API_CONFIG = {
       get: '/api/v1/branches/:id',
       create: '/api/v1/branches',
       update: '/api/v1/branches/:id',
+      delete: '/api/v1/branches/:id',
       stats: '/api/v1/branches/dashboard/stats',
     },
     // Menu
@@ -48,6 +50,7 @@ export const API_CONFIG = {
       create: '/api/v1/tables',
       update: '/api/v1/tables/:id',
       delete: '/api/v1/tables/:id',
+      updateStatus: '/api/v1/tables/:id/status',
     },
     // Tabs
     tabs: {
@@ -55,6 +58,7 @@ export const API_CONFIG = {
       get: '/api/v1/tabs/:id',
       open: '/api/v1/tabs/open',
       close: '/api/v1/tabs/:id/close',
+      delete: '/api/v1/tabs/:id',
     },
     // Orders
     orders: {

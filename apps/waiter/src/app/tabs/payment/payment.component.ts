@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BillsApiService, TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-payment',
@@ -26,6 +27,10 @@ export class PaymentComponent implements OnInit {
   isEditingAmount = false;
   isProcessing = signal(false);
   isSuccess = signal(false);
+
+  isSplit = signal(false);
+  splitCount = signal(2);
+  splitAmounts = signal<number[]>([]);
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -89,6 +94,81 @@ export class PaymentComponent implements OnInit {
     let clean = this.currentAmount().replace(/,/g, '').slice(0, -1);
     this.currentAmount.set(clean || '0');
     if (!clean) this.isEditingAmount = false;
+  }
+
+  toggleSplit() {
+    this.isSplit.set(!this.isSplit());
+    if (this.isSplit()) {
+      this.distributeEqually();
+    }
+  }
+
+  changeSplitCount(delta: number) {
+    const newCount = Math.max(2, Math.min(10, this.splitCount() + delta));
+    this.splitCount.set(newCount);
+    this.distributeEqually();
+  }
+
+  private distributeEqually() {
+    const total = this.bill()?.totalKobo ?? 0;
+    const count = this.splitCount();
+    const each = Math.floor(total / count);
+    const remainder = total - each * count;
+    const amounts = Array(count).fill(each);
+    amounts[amounts.length - 1] += remainder;
+    this.splitAmounts.set(amounts);
+  }
+
+  getSplitNaira(index: number): string {
+    return ((this.splitAmounts()[index] ?? 0) / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+  }
+
+  getRemainingKobo(): number {
+    const total = this.bill()?.totalKobo ?? 0;
+    const allocated = this.splitAmounts().reduce((sum, a) => sum + a, 0);
+    return total - allocated;
+  }
+
+  get isSplitValid(): boolean {
+    return this.getRemainingKobo() === 0;
+  }
+
+  customizeSplit(index: number) {
+    const currentNaira = (this.splitAmounts()[index] ?? 0) / 100;
+    Swal.fire({
+      title: `Guest ${index + 1} Amount`,
+      html: `
+        <div style="margin-bottom: 12px; color: #a0a0a0; font-size: 14px;">Enter amount in Naira (₦)</div>
+        <input id="split-amount" type="number" step="0.01" value="${currentNaira}"
+          style="width: 100%; padding: 14px; border-radius: 10px; border: 2px solid rgba(249,115,22,0.3); background: #1A1A1A; color: #fff; font-size: 24px; font-weight: 700; text-align: center; font-family: 'JetBrains Mono', monospace; outline: none; box-sizing: border-box;" />
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Set',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f97316',
+      didOpen: () => {
+        const input = document.getElementById('split-amount') as HTMLInputElement;
+        if (input) { input.focus(); input.select(); }
+      },
+      preConfirm: () => {
+        const val = parseFloat((document.getElementById('split-amount') as HTMLInputElement)?.value);
+        if (isNaN(val) || val < 0) {
+          Swal.showValidationMessage('Enter a valid amount');
+          return false;
+        }
+        if (val * 100 > (this.bill()?.totalKobo ?? 0)) {
+          Swal.showValidationMessage('Amount cannot exceed total');
+          return false;
+        }
+        return Math.round(val * 100);
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        const amounts = [...this.splitAmounts()];
+        amounts[index] = result.value;
+        this.splitAmounts.set(amounts);
+      }
+    });
   }
 
   confirmPayment() {

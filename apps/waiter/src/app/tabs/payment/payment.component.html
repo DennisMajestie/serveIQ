@@ -18,6 +18,48 @@
       <h2 class="total-amount">₦{{ totalDueNaira }}</h2>
     </section>
 
+    <!-- Split Bill Toggle + Config -->
+    <section class="split-section">
+      <button class="split-toggle" [class.active]="isSplit()" (click)="toggleSplit()">
+        <span class="material-symbols-outlined">call_split</span>
+        <span>Split Bill</span>
+        <span class="material-symbols-outlined toggle-chevron">{{ isSplit() ? 'expand_less' : 'expand_more' }}</span>
+      </button>
+
+      @if (isSplit()) {
+        <div class="split-config">
+          <div class="split-guests">
+            <span class="split-label">Guests</span>
+            <div class="split-stepper">
+              <button class="stepper-btn" (click)="changeSplitCount(-1)">—</button>
+              <span class="stepper-value">{{ splitCount() }}</span>
+              <button class="stepper-btn" (click)="changeSplitCount(1)">+</button>
+            </div>
+          </div>
+
+          <div class="split-list">
+            @for (guest of splitAmounts(); track $index) {
+              <div class="split-guest-row" (click)="customizeSplit($index)">
+                <span class="guest-label">Guest {{ $index + 1 }}</span>
+                <span class="guest-amount">₦{{ getSplitNaira($index) }}</span>
+                <span class="material-symbols-outlined edit-icon">edit</span>
+              </div>
+            }
+          </div>
+
+          <div class="split-summary" [class.valid]="isSplitValid">
+            <span>{{ isSplitValid ? 'Fully allocated' : 'Remaining' }}</span>
+            <span class="summary-amount">
+              @if (isSplitValid) {
+                <span class="material-symbols-outlined">check_circle</span>
+              }
+              ₦{{ (getRemainingKobo() / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 }) }}
+            </span>
+          </div>
+        </div>
+      }
+    </section>
+
     <!-- Payment Methods Grid -->
     <section class="methods-section">
       <p class="methods-label">Method</p>

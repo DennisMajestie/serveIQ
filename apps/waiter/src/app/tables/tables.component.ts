@@ -2,14 +2,9 @@ import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
-import { Table, Tab, OpenTabRequest } from '@serveiq/shared/models';
+import { Table, Tab } from '@serveiq/shared/models';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import Swal from 'sweetalert2';
-
-function getBranchId(): string | null {
-  return localStorage.getItem('branchId');
-}
 
 @Component({
   selector: 'app-tables',
@@ -50,6 +45,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     ).subscribe(tables => {
       this.tables.set(tables);
       this.isSynced.set(true);
+      this.loadOpenTabs();
     });
   }
 
@@ -91,64 +87,14 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   async onTableClick(table: Table) {
     if (table.status === 'available') {
-      // Prompt for party size then open a new tab
-      const { value: partySize } = await Swal.fire({
-        title: 'Open New Tab',
-        text: `How many guests for Table ${table.tableNumber}?`,
-        input: 'number',
-        inputAttributes: { min: '1', max: '20', step: '1' },
-        inputValue: 1,
-        showCancelButton: true,
-        confirmButtonText: 'Open Tab',
-        inputValidator: (value: string) => {
-          if (!value || +value < 1) return 'Party size must be at least 1';
-          return undefined;
-        }
-      });
-      if (!partySize) return;
-
-      const request: OpenTabRequest = {
-        table_id: table.id,
-        party_size: +partySize,
-        branch_id: getBranchId() || undefined
-      };
-
-      try {
-        const newTab = await this.tabsApi.createTab(request).toPromise();
-        if (newTab?.id) {
-          await this.router.navigate(['/tabs/detail', newTab.id]);
-        }
-      } catch (err) {
-        console.error('Failed to open tab:', err);
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to open tab' });
-      }
+      await this.router.navigate(['/tabs/create', table.id]);
     } else {
-      // Navigate to existing tab
-      const openTab = this.openTabs().find(t => t.tableId === table.id);
+      const tabs = await this.tabsApi.getAllTabs().toPromise();
+      const openTab = (tabs || []).find(t => t.tableId === table.id && t.status === 'open');
       if (openTab) {
         await this.router.navigate(['/tabs/detail', openTab.id]);
       } else {
-        // Fallback: create tab if somehow no open tab found
-        const { value: partySize } = await Swal.fire({
-          title: 'Open New Tab',
-          text: `How many guests for Table ${table.tableNumber}?`,
-          input: 'number',
-          inputAttributes: { min: '1', max: '20', step: '1' },
-          inputValue: 1,
-          showCancelButton: true,
-          confirmButtonText: 'Open Tab',
-        });
-        if (!partySize) return;
-        const request: OpenTabRequest = { table_id: table.id, party_size: +partySize, branch_id: getBranchId() || undefined };
-        try {
-          const newTab = await this.tabsApi.createTab(request).toPromise();
-          if (newTab?.id) {
-            await this.router.navigate(['/tabs/detail', newTab.id]);
-          }
-        } catch (err) {
-          console.error('Failed to open tab:', err);
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to open tab' });
-        }
+        await this.router.navigate(['/tabs/create', table.id]);
       }
     }
   }
