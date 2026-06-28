@@ -158,9 +158,14 @@ export class MenuManagementComponent implements OnInit {
 
     if (this.selectedFile()) {
       try {
+        console.log('[MenuMgmt] Starting upload...');
         const uploaded = await this.uploadService.uploadFile(this.selectedFile()!).toPromise();
+        console.log('[MenuMgmt] Upload response:', uploaded);
         imageUrl = uploaded?.url;
-      } catch { /* image upload failed silently — item still created */ }
+        console.log('[MenuMgmt] imageUrl:', imageUrl);
+      } catch (e) {
+        console.error('[MenuMgmt] Upload failed:', e);
+      }
     }
 
     const payload: any = {
@@ -178,7 +183,10 @@ export class MenuManagementComponent implements OnInit {
         this.isSubmitting.set(false);
         this.closeModal();
       },
-      error: () => this.isSubmitting.set(false)
+      error: (err) => {
+        console.error('[MenuMgmt] Create item failed:', err);
+        this.isSubmitting.set(false);
+      }
     });
   }
 
