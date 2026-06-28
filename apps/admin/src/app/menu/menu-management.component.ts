@@ -104,6 +104,28 @@ export class MenuManagementComponent implements OnInit {
       });
   }
 
+  deleteItem(item: MenuItem) {
+    Swal.fire({
+      title: 'Delete item?',
+      text: `Remove "${item.name}" from the menu?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF4444',
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.menuService.deleteItem(item.id).subscribe({
+          next: () => {
+            this.items.update(is => is.filter(i => i.id !== item.id));
+            Swal.fire({ title: 'Deleted!', text: 'Menu item has been removed.', icon: 'success', timer: 1500, showConfirmButton: false });
+          },
+          error: () => Swal.fire({ title: 'Error', text: 'Failed to delete item.', icon: 'error' })
+        });
+      }
+    });
+  }
+
   addItem() {
     this.resetForm();
     this.showAddModal.set(true);
