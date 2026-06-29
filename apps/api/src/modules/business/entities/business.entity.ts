@@ -38,6 +38,12 @@ export class Business {
   @Column({ default: 'NGN' })
   currency: string;
 
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  tax_rate: number;
+
+  @Column({ nullable: true })
+  timezone: string;
+
   @Column({ default: 'free_trial' })
   subscription_plan: string;
 

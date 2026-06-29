@@ -18,7 +18,18 @@ export interface Waiter extends User {}
 export interface Business {
   id: string;
   name: string;
+  slug?: string;
   type: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  currency: string;
+  taxRate?: number;
+  timezone?: string;
+  subscriptionPlan?: string;
+  logoUrl?: string;
+  isActive?: boolean;
+  branches?: Branch[];
 }
 
 export interface Branch {

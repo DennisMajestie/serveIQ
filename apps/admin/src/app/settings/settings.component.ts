@@ -1,8 +1,8 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BranchesApiService, AuthService, UserApiService } from '@serveiq/shared/data-access';
-import { Branch, User, CreateBranchRequest } from '@serveiq/shared/models';
+import { BranchesApiService, AuthService, UserApiService, BusinessApiService } from '@serveiq/shared/data-access';
+import { Branch, User, CreateBranchRequest, Business } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 
@@ -18,6 +18,7 @@ export class SettingsComponent implements OnInit {
   private branchesApi = inject(BranchesApiService);
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
+  private businessApi = inject(BusinessApiService);
   branches = signal<Branch[]>([]);
   isLoading = signal(true);
   copiedBranchId = signal<string | null>(null);
@@ -35,12 +36,47 @@ export class SettingsComponent implements OnInit {
   branchFormPhone = signal('');
   branchFormLocation = signal('');
   isSavingBranch = signal(false);
+  businessSettings = signal<Business | null>(null);
+  taxRate = signal<number | null>(null);
+  currency = signal('NGN');
+  timezone = signal('Africa/Lagos');
+  isSavingSettings = signal(false);
 
   ngOnInit() {
     this.loadProfile();
     this.branchesApi.list().subscribe({
       next: (b) => { this.branches.set(Array.isArray(b) ? b : []); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
+    });
+    this.loadBusinessSettings();
+  }
+
+  loadBusinessSettings() {
+    this.businessApi.getBusiness().subscribe({
+      next: (b) => {
+        this.businessSettings.set(b);
+        this.taxRate.set(b.taxRate ?? null);
+        this.currency.set(b.currency || 'NGN');
+        this.timezone.set(b.timezone || 'Africa/Lagos');
+      }
+    });
+  }
+
+  saveBusinessSettings() {
+    this.isSavingSettings.set(true);
+    this.businessApi.updateBusiness({
+      taxRate: this.taxRate(),
+      currency: this.currency(),
+      timezone: this.timezone(),
+    } as any).subscribe({
+      next: () => {
+        this.isSavingSettings.set(false);
+        Swal.fire({ icon: 'success', title: 'Settings Saved', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+      },
+      error: () => {
+        this.isSavingSettings.set(false);
+        Swal.fire({ icon: 'error', title: 'Save Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      }
     });
   }
 
