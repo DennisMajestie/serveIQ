@@ -63,7 +63,7 @@
             <input type="checkbox" class="form-checkbox">
             <span class="checkbox-label">Remember me</span>
           </label>
-          <a href="#" class="forgot-link">Forgot password?</a>
+          <button type="button" class="forgot-link" (click)="forgotPassword()">Forgot password?</button>
         </div>
 
         <button type="submit" class="btn-primary space-font" [disabled]="isLoading()">

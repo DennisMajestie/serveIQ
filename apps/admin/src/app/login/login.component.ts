@@ -21,6 +21,40 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  forgotPassword() {
+    Swal.fire({
+      title: 'Reset Password',
+      input: 'email',
+      inputLabel: 'Enter your email address',
+      inputPlaceholder: 'name@business.com',
+      showCancelButton: true,
+      confirmButtonColor: '#F97316',
+      confirmButtonText: 'Send Reset Link',
+      cancelButtonText: 'Cancel',
+      background: '#1e293b',
+      color: '#fff',
+      inputAttributes: { autocapitalize: 'off' },
+      preConfirm: (email) => {
+        if (!email) {
+          Swal.showValidationMessage('Please enter your email');
+          return;
+        }
+        return this.authService.forgotPassword({ email }).toPromise();
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Reset Link Sent',
+          text: 'Check your email for the password reset link.',
+          confirmButtonColor: '#F97316',
+          background: '#1e293b',
+          color: '#fff',
+        });
+      }
+    });
+  }
+
   onSubmit() {
     if (!this.email() || !this.password()) {
       Swal.fire({
