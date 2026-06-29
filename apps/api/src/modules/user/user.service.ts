@@ -120,8 +120,11 @@ export class UserService {
     }
   }
 
-  async findAllWaiters(branchId: string, page?: number, perPage?: number) {
-    const where = { branch_id: branchId, role: UserRole.WAITER };
+  async findAllWaiters(businessId: string, branchId?: string, page?: number, perPage?: number) {
+    const where: any = { business_id: businessId, role: UserRole.WAITER };
+    if (branchId) {
+      where.branch_id = branchId;
+    }
     const select = { id: true, full_name: true, email: true, phone: true, avatar_url: true, is_active: true, created_at: true } as const;
 
     if (page || perPage) {

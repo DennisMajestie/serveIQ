@@ -57,16 +57,23 @@ export class UserController {
   @Get('waiters')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'List all waiters in the branch' })
+  @ApiOperation({ summary: 'List all waiters in the business' })
+  @ApiQuery({ name: 'branch_id', required: false, type: String })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'per_page', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'List of waiters.', type: [User] })
   async getWaiters(
-    @Request() req: { user: { branchId: string } },
+    @Request() req: { user: { businessId: string; branchId: string } },
+    @Query('branch_id') branchId?: string,
     @Query('page') page?: number,
     @Query('per_page') perPage?: number,
   ) {
-    return this.userService.findAllWaiters(req.user.branchId, page, perPage);
+    return this.userService.findAllWaiters(
+      req.user.businessId,
+      branchId || req.user.branchId,
+      page,
+      perPage,
+    );
   }
 
   @Patch('waiters/:id/reset-pin')
