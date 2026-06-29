@@ -56,9 +56,10 @@ export class WaiterManagementComponent implements OnInit {
   ngOnInit() {
     this.staffService.listWaiters().subscribe({
       next: (w) => {
-        const mapped = (w as any[]).map(item => ({
+        const arr = Array.isArray(w) ? w : [];
+        const mapped = arr.map(item => ({
           ...item,
-          fullName: item.fullName || item.full_name || ''
+          fullName: item.fullName || ''
         }));
         this.waiters.set(mapped);
         this.isLoading.set(false);

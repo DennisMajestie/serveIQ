@@ -130,7 +130,8 @@ export class LoginComponent implements OnInit {
   viewRoster() {
     this.userService.listWaiters().subscribe({
       next: (waiters) => {
-        const rows = waiters.map(w => `
+        const arr = Array.isArray(waiters) ? waiters : [];
+        const rows = arr.map(w => `
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
             <div>
               <div style="font-weight: 600; font-size: 14px; color: #fff;">${w.fullName || 'Unknown'}</div>
