@@ -62,6 +62,12 @@
           <h1 class="page-title space-font">Branch Setup</h1>
           <p class="page-subtitle inter-font">Manage your restaurant locations, addresses, and operational status.</p>
         </div>
+        <button class="btn-add-branch inter-font" (click)="showCreateBranch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-add-icon">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Branch
+        </button>
       </header>
 
       <!-- Profile Section -->
@@ -157,6 +163,14 @@
                 </td>
                 <td class="text-right">
                    <span class="status-indicator" style="background: #ea580c"></span>
+                   <div class="branch-actions">
+                     <button class="btn-action btn-edit" (click)="showEditBranch(branch)" title="Edit Branch">
+                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                     </button>
+                     <button class="btn-action btn-delete" (click)="deleteBranch(branch)" title="Delete Branch">
+                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                     </button>
+                   </div>
                 </td>
               </tr>
             </tbody>
@@ -237,5 +251,49 @@
       </div>
 
     </main>
+  </div>
+
+  <!-- Branch Modal -->
+  <div class="modal-overlay" *ngIf="showBranchModal()" (click)="showBranchModal.set(false)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title space-font">{{ editingBranch() ? 'Edit Branch' : 'Create Branch' }}</h3>
+        <button class="modal-close" (click)="showBranchModal.set(false)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="config-label">BRANCH NAME</label>
+          <div class="input-wrapper">
+            <input type="text" [ngModel]="branchFormName()" (ngModelChange)="branchFormName.set($event)" class="config-input" placeholder="e.g. Victoria Island">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="config-label">ADDRESS</label>
+          <div class="input-wrapper">
+            <input type="text" [ngModel]="branchFormAddress()" (ngModelChange)="branchFormAddress.set($event)" class="config-input" placeholder="e.g. 123 Marina Street">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="config-label">PHONE NUMBER</label>
+          <div class="input-wrapper">
+            <input type="text" [ngModel]="branchFormPhone()" (ngModelChange)="branchFormPhone.set($event)" class="config-input" placeholder="e.g. +234 800 000 0000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="config-label">LOCATION</label>
+          <div class="input-wrapper">
+            <input type="text" [ngModel]="branchFormLocation()" (ngModelChange)="branchFormLocation.set($event)" class="config-input" placeholder="e.g. Lagos, Nigeria">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel inter-font" (click)="showBranchModal.set(false)">Cancel</button>
+        <button class="btn-save inter-font" (click)="saveBranch()" [disabled]="isSavingBranch() || !branchFormName()">
+          {{ isSavingBranch() ? 'Saving...' : editingBranch() ? 'Update Branch' : 'Create Branch' }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

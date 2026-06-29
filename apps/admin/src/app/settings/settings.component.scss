@@ -150,3 +150,53 @@
   &:disabled { opacity: 0.5; cursor: not-allowed; }
   &:hover:not(:disabled) { opacity: 0.9; }
 }
+
+.content-header { display: flex; justify-content: space-between; align-items: flex-start; }
+
+.btn-add-branch {
+  display: flex; align-items: center; gap: 8px; padding: 12px 24px;
+  background: #0b1c30; color: white; border: none; border-radius: 12px;
+  font-weight: 600; font-size: 0.875rem; cursor: pointer;
+  transition: background 0.2s;
+  &:hover { background: #1e293b; }
+}
+.btn-add-icon { width: 18px; height: 18px; }
+
+.branch-actions { display: inline-flex; gap: 8px; margin-left: 16px; }
+.btn-action {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border: none; border-radius: 8px;
+  cursor: pointer; transition: all 0.15s;
+  svg { width: 16px; height: 16px; }
+}
+.btn-edit { background: #f1f5f9; color: #475569; &:hover { background: #e2e8f0; color: #0b1c30; } }
+.btn-delete { background: #fef2f2; color: #dc2626; &:hover { background: #fee2e2; } }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-content {
+  background: white; border-radius: 20px; width: 480px; max-width: 90vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 32px 0;
+}
+.modal-title { margin: 0; font-weight: 700; font-size: 1.25rem; color: #0b1c30; }
+.modal-close {
+  background: none; border: none; color: #94a3b8; cursor: pointer;
+  svg { width: 20px; height: 20px; }
+  &:hover { color: #475569; }
+}
+.modal-body { padding: 24px 32px; display: flex; flex-direction: column; gap: 16px; }
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 12px; padding: 0 32px 24px;
+}
+.btn-cancel {
+  padding: 10px 24px; background: #f1f5f9; color: #475569;
+  border: none; border-radius: 10px; font-weight: 600; font-size: 0.875rem; cursor: pointer;
+  &:hover { background: #e2e8f0; }
+}

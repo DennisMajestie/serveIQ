@@ -2,7 +2,7 @@ import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BranchesApiService, AuthService, UserApiService } from '@serveiq/shared/data-access';
-import { Branch, User } from '@serveiq/shared/models';
+import { Branch, User, CreateBranchRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 
@@ -28,6 +28,13 @@ export class SettingsComponent implements OnInit {
   profileName = signal('');
   profileEmail = signal('');
   isUpdatingProfile = signal(false);
+  showBranchModal = signal(false);
+  editingBranch = signal<Branch | null>(null);
+  branchFormName = signal('');
+  branchFormAddress = signal('');
+  branchFormPhone = signal('');
+  branchFormLocation = signal('');
+  isSavingBranch = signal(false);
 
   ngOnInit() {
     this.loadProfile();
@@ -57,6 +64,74 @@ export class SettingsComponent implements OnInit {
       error: () => {
         this.isUpdatingProfile.set(false);
         Swal.fire({ icon: 'error', title: 'Update Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      }
+    });
+  }
+
+  showCreateBranch() {
+    this.editingBranch.set(null);
+    this.branchFormName.set('');
+    this.branchFormAddress.set('');
+    this.branchFormPhone.set('');
+    this.branchFormLocation.set('');
+    this.showBranchModal.set(true);
+  }
+
+  showEditBranch(branch: Branch) {
+    this.editingBranch.set(branch);
+    this.branchFormName.set(branch.name);
+    this.branchFormAddress.set(branch.address);
+    this.branchFormPhone.set(branch.phoneNumber);
+    this.branchFormLocation.set(branch.location || '');
+    this.showBranchModal.set(true);
+  }
+
+  saveBranch() {
+    if (!this.branchFormName()) return;
+    this.isSavingBranch.set(true);
+    const payload = {
+      name: this.branchFormName(),
+      address: this.branchFormAddress(),
+      phone_number: this.branchFormPhone(),
+      location: this.branchFormLocation(),
+    };
+    const request = this.editingBranch()
+      ? this.branchesApi.update(this.editingBranch()!.id, payload)
+      : this.branchesApi.create(payload);
+    request.subscribe({
+      next: () => {
+        this.isSavingBranch.set(false);
+        this.showBranchModal.set(false);
+        Swal.fire({ icon: 'success', title: this.editingBranch() ? 'Branch Updated' : 'Branch Created', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        this.branchesApi.list().subscribe(b => this.branches.set(b));
+      },
+      error: () => {
+        this.isSavingBranch.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      }
+    });
+  }
+
+  deleteBranch(branch: Branch) {
+    Swal.fire({
+      title: 'Delete Branch?',
+      text: `Permanently delete ${branch.name}? This cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      background: '#1e293b',
+      color: '#fff',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.branchesApi.removeBranch(branch.id).subscribe({
+          next: () => {
+            Swal.fire({ icon: 'success', title: 'Branch Deleted', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+            this.branchesApi.list().subscribe(b => this.branches.set(b));
+          },
+          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+        });
       }
     });
   }
