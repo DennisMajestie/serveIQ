@@ -30,3 +30,6 @@ export * from './lib/api/business-api.service';
 export * from './lib/api/upload-api.service';
 export * from './lib/api/reports-api.service';
 export * from './lib/api/admin-api.service';
+export * from './lib/api/suppliers-api.service';
+export * from './lib/api/shifts-api.service';
+export * from './lib/api/inventory-api.service';

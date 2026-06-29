@@ -180,7 +180,9 @@ export interface RegisterResponse {
 
 export interface CreateWaiterRequest {
   fullName: string;
-  email: string;
+  email?: string;
+  phone?: string;
+  branchId: string;
   password?: string;
   pin?: string;
 }
@@ -268,4 +270,91 @@ export interface PeakHoursEntry {
   hour: number;
   order_count: number;
   revenue_kobo: number;
+}
+
+// ===== Suppliers =====
+export interface Supplier {
+  id: string;
+  businessId: string;
+  name: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  note?: string;
+  createdAt: Date;
+}
+
+export interface CreateSupplierRequest {
+  name: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  note?: string;
+}
+
+// ===== Shifts =====
+export interface Shift {
+  id: string;
+  branchId: string;
+  openedAt: Date;
+  closedAt?: Date;
+  startingCashKobo: number;
+  expectedCashKobo?: number;
+  actualCashKobo?: number;
+  varianceKobo?: number;
+  note?: string;
+  status: 'open' | 'closed';
+}
+
+export interface OpenShiftRequest {
+  startingCashKobo: number;
+  note?: string;
+}
+
+export interface CloseShiftRequest {
+  actualCashKobo: number;
+  note?: string;
+}
+
+// ===== Inventory =====
+export interface InventoryItem {
+  id: string;
+  businessId: string;
+  branchId?: string;
+  menuItemId: string;
+  menuItemName?: string;
+  quantityInStock: number;
+  reorderLevel: number;
+  isLowStock: boolean;
+  unit?: string;
+  updatedAt: Date;
+}
+
+export interface CreateInventoryRequest {
+  menuItemId: string;
+  quantityInStock: number;
+  reorderLevel: number;
+}
+
+export interface StockMovement {
+  id: string;
+  inventoryId: string;
+  quantity: number;
+  previousStock: number;
+  newStock: number;
+  notes?: string;
+  createdAt: Date;
+}
+
+export interface AddStockRequest {
+  quantity: number;
+  notes?: string;
+}
+
+export interface BestsellerReport {
+  bestsellers: Array<{ menuItemId: string; name: string; quantitySold: number; revenueKobo: number }>;
+  slowMovers: Array<{ menuItemId: string; name: string; quantitySold: number }>;
+  outOfStock: Array<{ menuItemId: string; name: string }>;
 }

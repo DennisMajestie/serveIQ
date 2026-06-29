@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable()
@@ -24,7 +24,24 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          this.authService.logout();
+          // Try to refresh token before logging out
+          return this.authService.refreshToken().pipe(
+            switchMap(() => {
+              const activeToken = localStorage.getItem('token') || localStorage.getItem('staffToken');
+              if (activeToken) {
+                const retryRequest = request.clone({
+                  setHeaders: { Authorization: `Bearer ${activeToken}` }
+                });
+                return next.handle(retryRequest);
+              }
+              this.authService.logout();
+              return throwError(() => error);
+            }),
+            catchError(() => {
+              this.authService.logout();
+              return throwError(() => error);
+            })
+          );
         }
         return throwError(() => error);
       })

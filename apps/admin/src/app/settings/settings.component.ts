@@ -2,11 +2,11 @@ import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService } from '@serveiq/shared/data-access';
-import { Branch, User, CreateBranchRequest, Business } from '@serveiq/shared/models';
+import { Branch, User, Business } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 
-
+type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification';
 
 @Component({
   selector: 'app-settings',
@@ -21,14 +21,11 @@ export class SettingsComponent implements OnInit {
   private userApi = inject(UserApiService);
   private businessApi = inject(BusinessApiService);
   private uploadService = inject(UploadApiService);
-  activeSection = signal<'branch-setup' | 'branding'>('branch-setup');
+  activeSection = signal<Section>('branch-setup');
   branches = signal<Branch[]>([]);
   isLoading = signal(true);
   copiedBranchId = signal<string | null>(null);
   isEmailVerified = signal(false);
-  otp = signal('');
-  showOtpInput = signal(false);
-  isSendingOtp = signal(false);
   profileName = signal('');
   profileEmail = signal('');
   isUpdatingProfile = signal(false);
@@ -51,6 +48,26 @@ export class SettingsComponent implements OnInit {
   brandLogoFile = signal<File | null>(null);
   isSavingBranding = signal(false);
 
+  // Staff Management
+  waiters = signal<User[]>([]);
+  isLoadingWaiters = signal(false);
+  showCreateWaiterModal = signal(false);
+  waiterFormName = signal('');
+  waiterFormEmail = signal('');
+  waiterFormPhone = signal('');
+  waiterFormBranchId = signal('');
+  isSavingWaiter = signal(false);
+
+  // Security
+  newPassword = signal('');
+  confirmPassword = signal('');
+  isUpdatingPassword = signal(false);
+
+  // Email Verification
+  verificationCode = signal('');
+  showCodeInput = signal(false);
+  isSendingCode = signal(false);
+
   ngOnInit() {
     this.loadProfile();
     this.branchesApi.list().subscribe({
@@ -58,6 +75,7 @@ export class SettingsComponent implements OnInit {
       error: () => this.isLoading.set(false)
     });
     this.loadBusinessSettings();
+    this.loadWaiters();
   }
 
   loadBusinessSettings() {
@@ -91,7 +109,7 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  setActiveSection(section: 'branch-setup' | 'branding') {
+  setActiveSection(section: Section) {
     this.activeSection.set(section);
   }
 
@@ -237,32 +255,165 @@ export class SettingsComponent implements OnInit {
     return this.copiedBranchId() === branchId;
   }
 
-  sendVerification() {
-    this.isSendingOtp.set(true);
-    this.authService.sendVerification().subscribe({
-      next: () => {
-        this.isSendingOtp.set(false);
-        this.showOtpInput.set(true);
-        Swal.fire({ icon: 'success', title: 'OTP Sent', text: 'Check your email for the verification code.', timer: 2000, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+  getInitials(name: string | undefined | null): string {
+    if (!name) return '?';
+    return name.split(' ').filter(n => !!n).map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  }
+
+  // ===== Staff Management =====
+
+  loadWaiters() {
+    this.isLoadingWaiters.set(true);
+    this.userApi.listWaiters().subscribe({
+      next: (w) => {
+        this.waiters.set(Array.isArray(w) ? w : []);
+        this.isLoadingWaiters.set(false);
+      },
+      error: () => this.isLoadingWaiters.set(false)
+    });
+  }
+
+  showCreateWaiter() {
+    this.waiterFormName.set('');
+    this.waiterFormEmail.set('');
+    this.waiterFormPhone.set('');
+    this.waiterFormBranchId.set(this.activeBranchId() || this.branches()[0]?.id || '');
+    this.showCreateWaiterModal.set(true);
+  }
+
+  createWaiter() {
+    if (!this.waiterFormName() || !this.waiterFormBranchId()) return;
+    this.isSavingWaiter.set(true);
+    this.userApi.createWaiter({
+      fullName: this.waiterFormName(),
+      email: this.waiterFormEmail() || undefined,
+      phone: this.waiterFormPhone() || undefined,
+      branchId: this.waiterFormBranchId(),
+    }).subscribe({
+      next: (waiter) => {
+        this.isSavingWaiter.set(false);
+        this.showCreateWaiterModal.set(false);
+        Swal.fire({
+          icon: 'success', title: 'Waiter Created',
+          text: waiter.pin ? `PIN: ${waiter.pin}` : undefined,
+          timer: waiter.pin ? 5000 : 1500, showConfirmButton: false,
+          background: '#1e293b', color: '#fff'
+        });
+        this.loadWaiters();
       },
       error: () => {
-        this.isSendingOtp.set(false);
+        this.isSavingWaiter.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to create waiter', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      }
+    });
+  }
+
+  resetWaiterPin(waiter: User) {
+    Swal.fire({
+      title: 'Reset PIN?',
+      text: `Reset PIN for ${waiter.fullName}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Reset',
+      confirmButtonColor: '#F97316',
+      cancelButtonColor: '#6b7280',
+      background: '#1e293b', color: '#fff',
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.userApi.resetStaffPin(waiter.id, '').subscribe({
+        next: (res: any) => {
+          const pin = res?.pin || '0000';
+          Swal.fire({
+            icon: 'success', title: 'PIN Reset',
+            text: `New PIN for ${waiter.fullName}: ${pin}`,
+            timer: 8000, showConfirmButton: false,
+            background: '#1e293b', color: '#fff'
+          });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Reset Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+      });
+    });
+  }
+
+  deactivateWaiter(waiter: User) {
+    const label = waiter.isActive === false ? 'Activate' : 'Deactivate';
+    Swal.fire({
+      title: `${label} ${waiter.fullName}?`,
+      text: waiter.isActive === false ? 'They will regain access.' : 'They will lose access until reactivated.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: label,
+      confirmButtonColor: waiter.isActive === false ? '#22c55e' : '#dc2626',
+      cancelButtonColor: '#6b7280',
+      background: '#1e293b', color: '#fff',
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.userApi.deactivateUser(waiter.id).subscribe({
+        next: () => {
+          Swal.fire({ icon: 'success', title: `${waiter.fullName} ${label}d`, timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+          this.loadWaiters();
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+      });
+    });
+  }
+
+  // ===== Security (Password) =====
+
+  updatePassword() {
+    const pw = this.newPassword();
+    const confirm = this.confirmPassword();
+    if (!pw || pw.length < 8) {
+      Swal.fire({ icon: 'error', title: 'Password must be at least 8 characters', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      return;
+    }
+    if (pw !== confirm) {
+      Swal.fire({ icon: 'error', title: 'Passwords do not match', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      return;
+    }
+    this.isUpdatingPassword.set(true);
+    this.userApi.updateMe({ password: pw } as any).subscribe({
+      next: () => {
+        this.isUpdatingPassword.set(false);
+        this.newPassword.set('');
+        this.confirmPassword.set('');
+        Swal.fire({ icon: 'success', title: 'Password Updated', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+      },
+      error: () => {
+        this.isUpdatingPassword.set(false);
+        Swal.fire({ icon: 'error', title: 'Update Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      }
+    });
+  }
+
+  // ===== Email Verification =====
+
+  sendVerificationCode() {
+    this.isSendingCode.set(true);
+    this.authService.sendVerification().subscribe({
+      next: () => {
+        this.isSendingCode.set(false);
+        this.showCodeInput.set(true);
+        Swal.fire({ icon: 'success', title: 'Code Sent', text: 'Check your email for the verification code.', timer: 2000, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+      },
+      error: () => {
+        this.isSendingCode.set(false);
         Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not send verification email.', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
       }
     });
   }
 
-  verifyOtp() {
-    if (!this.otp()) return;
-    this.authService.verifyEmail({ otp: this.otp() }).subscribe({
+  verifyEmailCode() {
+    if (!this.verificationCode()) return;
+    this.authService.verifyEmail({ otp: this.verificationCode() }).subscribe({
       next: () => {
         this.isEmailVerified.set(true);
-        this.showOtpInput.set(false);
-        this.otp.set('');
+        this.showCodeInput.set(false);
+        this.verificationCode.set('');
         Swal.fire({ icon: 'success', title: 'Email Verified', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
       },
       error: () => {
-        Swal.fire({ icon: 'error', title: 'Verification Failed', text: 'Invalid or expired OTP.', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Verification Failed', text: 'Invalid or expired code.', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
       }
     });
   }

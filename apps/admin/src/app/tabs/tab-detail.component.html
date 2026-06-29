@@ -1,0 +1,176 @@
+<div class="tab-detail-page">
+  <!-- Header -->
+  <header class="tab-header">
+    <button class="back-btn" (click)="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <div class="tab-title-group">
+      <h1 class="tab-title">Tab <code>{{ tab()?.id?.slice(0, 8) }}...</code></h1>
+      <p class="tab-subtitle" *ngIf="tab()">Table: {{ tab()?.tableId || '—' }} | Status: <span class="status-badge" [class]="'status-' + tab()?.status">{{ tab()?.status }}</span></p>
+    </div>
+  </header>
+
+  <!-- Loading Skeleton -->
+  <div *ngIf="isLoading()" class="skeleton-loader">
+    <div class="skeleton-row" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading()" class="tab-content">
+    <!-- Order Items Section -->
+    <section class="orders-section">
+      <div class="section-header">
+        <h2 class="section-title">Orders</h2>
+        <button class="btn-add-items" (click)="openAddItemsModal()" [disabled]="isAddingItems()">
+          + Add Items
+        </button>
+      </div>
+
+      <div *ngIf="orders().length === 0" class="empty-orders">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <p>No items yet. Click + Add Items to start.</p>
+        <button class="btn-primary" (click)="openAddItemsModal()">Add First Item</button>
+      </div>
+
+      <table class="orders-table" *ngIf="orders().length > 0">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Subtotal</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of orders(); trackBy: trackById">
+            <td>
+              <div class="item-info">
+                <span class="item-name">{{ item.menuItemName }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="qty-input-wrapper">
+                <button class="qty-btn" (click)="updateOrderQuantity(item, (item.quantity || 1) - 1)" [disabled]="(item.quantity || 1) <= 1">−</button>
+                <input type="number" [value]="item.quantity || 1" (change)="updateOrderQuantity(item, $event.target.valueAsNumber)" class="qty-input" min="1" style="width: 50px;">
+                <button class="qty-btn" (click)="updateOrderQuantity(item, (item.quantity || 1) + 1)">+</button>
+              </div>
+            </td>
+            <td>₦{{ formatKobo(item.priceKobo || 0) }}</td>
+            <td>₦{{ formatKobo((item.priceKobo || 0) * (item.quantity || 1)) }}</td>
+            <td class="notes-cell">{{ item.notes || '—' }}</td>
+            <td>
+              <button class="action-btn delete" (click)="removeOrderItem(item)" title="Remove Item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Order Summary -->
+    <section class="summary-section">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>₦{{ formatKobo(getTotal()) }}</span>
+      </div>
+      <div class="summary-row">
+        <span>VAT (7.5%)</span>
+        <span>₦{{ formatKobo(getVat()) }}</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span>₦{{ formatKobo(getGrandTotal()) }}</span>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="actions-bar">
+      <button class="btn-secondary" (click)="transferTab()" [disabled]="availableTables().length === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12H5"/></svg>
+        Transfer
+      </button>
+      <button class="btn-warning" (click)="voidTab()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        Void
+      </button>
+      <button class="btn-primary" (click)="closeTab()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="9 21 9 15 15 15 15 21"/></svg>
+        Close Tab
+      </button>
+      <button class="btn-outline" (click)="printBill()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        View Bill
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Items Modal -->
+<div class="modal-overlay" *ngIf="showAddItemsModal()" (click)="closeAddItemsModal()">
+  <div class="modal-content large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Add Items to Tab</h3>
+      <button class="modal-close" (click)="closeAddItemsModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Category Filter -->
+      <div class="category-filter" *ngIf="categories().length > 0">
+        <button *ngFor="let cat of categories()" class="cat-btn" [class.active]="selectedCategory() === cat" (click)="selectedCategory.set(cat)">
+          {{ cat }}
+        </button>
+      </div>
+
+      <!-- Search -->
+      <div class="search-box">
+        <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="Search items..." class="search-input">
+      </div>
+
+      <!-- Menu Items Grid -->
+      <div class="menu-grid" *ngIf="!isLoadingMenu(); else menuSkeleton">
+        <div class="menu-item-card" *ngFor="let item of selectedCategoryItems()">
+          <div class="item-image">
+            <img [src]="item.imageUrl || 'https://ui-avatars.com/api/?name=' + item.name + '&background=9d4300&color=fff'" alt="{{ item.name }}">
+          </div>
+          <div class="item-details">
+            <h4 class="item-name">{{ item.name }}</h4>
+            <span class="item-category">{{ item.category }}</span>
+            <span class="item-price">₦{{ (item.priceKobo || 0) / 100 }}</span>
+            <button class="btn-add-item" (click)="addItemToSelection(item)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add
+            </button>
+          </div>
+        </div>
+        <div class="menu-empty" *ngIf="selectedCategoryItems().length === 0">
+          <p>No items in this category</p>
+        </div>
+      </div>
+      <ng-template #menuSkeleton>
+        <div class="menu-grid">
+          <div class="menu-skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div>
+        </div>
+      </ng-template>
+    </div>
+    <div class="modal-footer" *ngIf="selectedMenuItems().length > 0">
+      <div class="selection-summary">
+        <h4>Selected Items ({{ selectedMenuItems().length }})</h4>
+        <div class="selected-items-list">
+          <div class="selected-item" *ngFor="let s of selectedMenuItems(); let i = index">
+            <span>{{ s.menuItem.name }} × {{ s.quantity }}</span>
+            <button class="remove-selected" (click)="removeItemFromSelection(i)" title="Remove">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" (click)="confirmAddItems()" [disabled]="isAddingItems()">
+        {{ isAddingItems() ? 'Adding...' : 'Add to Tab' }}
+      </button>
+    </div>
+  </div>
+</div>

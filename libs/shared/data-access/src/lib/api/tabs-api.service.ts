@@ -44,4 +44,19 @@ export class TabsApiService extends BaseApiService {
   deleteTab(id: string): Observable<void> {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.tabs.delete, { id }));
   }
+
+  // Alias for convenience
+  getAll(): Observable<Tab[]> {
+    return this.getAllTabs();
+  }
+
+  // Void a tab
+  voidTab(id: string): Observable<Tab> {
+    return this.post<Tab>(buildUrl(API_CONFIG.endpoints.tabs.close, { id }), {});
+  }
+
+  // Transfer a tab to another table
+  transferTab(id: string, targetTableId: string): Observable<Tab> {
+    return this.patch<Tab>(buildUrl(API_CONFIG.endpoints.tabs.get, { id }), { tableId: targetTableId });
+  }
 }

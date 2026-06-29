@@ -80,6 +80,35 @@ export const API_CONFIG = {
       pay: '/api/v1/bills/tab/:tabId/pay',
       receipt: '/api/v1/bills/tab/:tabId/receipt',
     },
+    // Suppliers
+    suppliers: {
+      list: '/api/v1/suppliers',
+      get: '/api/v1/suppliers/:id',
+      create: '/api/v1/suppliers',
+      update: '/api/v1/suppliers/:id',
+      delete: '/api/v1/suppliers/:id',
+    },
+    // Shifts
+    shifts: {
+      open: '/api/v1/shifts/open',
+      current: '/api/v1/shifts/current',
+      close: '/api/v1/shifts/:id/close',
+      list: '/api/v1/shifts',
+      reports: '/api/v1/reports/shifts',
+    },
+    // Inventory
+    inventory: {
+      list: '/api/v1/inventory',
+      get: '/api/v1/inventory/:id',
+      create: '/api/v1/inventory',
+      update: '/api/v1/inventory/:id',
+      delete: '/api/v1/inventory/:id',
+      stock: '/api/v1/inventory/:id/stock',
+      movements: '/api/v1/inventory/:id/movements',
+      alerts: '/api/v1/inventory/alerts',
+      bestsellers: '/api/v1/inventory/bestsellers',
+      stockVariance: '/api/v1/reports/stock-variance',
+    },
     // Reports
     reports: {
       peakHours: '/api/v1/reports/peak-hours',

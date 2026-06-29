@@ -1,0 +1,43 @@
+<div class="tabs-container">
+  <div class="page-header">
+    <div class="title-group">
+      <h1 class="page-title">Tabs</h1>
+      <p class="page-subtitle">View and manage all active and recent tabs.</p>
+    </div>
+    <button class="btn-refresh" (click)="loadTabs()">Refresh</button>
+  </div>
+
+  <!-- Loading skeleton -->
+  <ng-container *ngIf="isLoading()">
+    <div class="skeleton-list">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]">
+        <div class="skeleton-line wide"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="!isLoading() && tabs().length === 0">
+    <p class="empty-text">No tabs found.</p>
+  </div>
+
+  <!-- Tabs list -->
+  <div class="tabs-list" *ngIf="!isLoading() && tabs().length > 0">
+    <div
+      class="tab-card"
+      *ngFor="let tab of tabs(); trackBy: trackById; let i = index"
+      (click)="viewTab(tab)"
+      [style.animation-delay.s]="i * 0.04"
+    >
+      <div class="tab-info">
+        <span class="tab-id">Tab #{{ tab.id.slice(0, 8) }}</span>
+        <span class="tab-table" *ngIf="tab.tableId">Table: {{ tab.tableId }}</span>
+      </div>
+      <div class="tab-meta">
+        <span class="status-badge" [class]="getStatusClass(tab.status)">{{ tab.status }}</span>
+        <span class="tab-date">{{ tab.openedAt | date:'short' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

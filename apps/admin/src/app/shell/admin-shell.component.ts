@@ -49,6 +49,37 @@ interface NavItem {
                 <span>Staff</span>
               </a>
             </li>
+            <li class="nav-section-label">Operations</li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/bills" routerLinkActive="active">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span>Bills</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/analytics" routerLinkActive="active">
+                <span class="material-symbols-outlined">analytics</span>
+                <span>Analytics</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/suppliers" routerLinkActive="active">
+                <span class="material-symbols-outlined">local_shipping</span>
+                <span>Suppliers</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/shifts" routerLinkActive="active">
+                <span class="material-symbols-outlined">schedule</span>
+                <span>Shifts</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/inventory" routerLinkActive="active">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span>Inventory</span>
+              </a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" routerLink="/settings" routerLinkActive="active">
                 <span class="material-symbols-outlined">settings</span>

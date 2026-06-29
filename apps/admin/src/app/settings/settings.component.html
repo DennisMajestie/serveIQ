@@ -12,6 +12,15 @@
           </svg>
           <span>Branch Setup</span>
         </button>
+        <button class="nav-item" [class.active]="activeSection() === 'staff'" (click)="setActiveSection('staff')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Staff</span>
+        </button>
         <button class="nav-item" [class.active]="activeSection() === 'branding'" (click)="setActiveSection('branding')">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
@@ -19,6 +28,20 @@
             <path d="M2 12h20"/>
           </svg>
           <span>Branding</span>
+        </button>
+        <button class="nav-item" [class.active]="activeSection() === 'security'" (click)="setActiveSection('security')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Security</span>
+        </button>
+        <button class="nav-item" [class.active]="activeSection() === 'verification'" (click)="setActiveSection('verification')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 2L11 13"/>
+            <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+          </svg>
+          <span>Email Verification</span>
         </button>
       </nav>
 
@@ -263,6 +286,139 @@
         </div>
       </ng-container>
 
+      <!-- Staff Section -->
+      <ng-container *ngIf="activeSection() === 'staff'">
+        <header class="content-header">
+          <div class="title-group">
+            <h1 class="page-title space-font">Staff Management</h1>
+            <p class="page-subtitle inter-font">Manage waiters, reset PINs, and control staff access.</p>
+          </div>
+          <button class="btn-add-branch inter-font" (click)="showCreateWaiter()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-add-icon">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Waiter
+          </button>
+        </header>
+
+        <div class="settings-card branding-card">
+          <div class="waiter-cards-grid" *ngIf="!isLoadingWaiters(); else waiterSkeleton">
+            <div class="waiter-card" *ngFor="let w of waiters()">
+              <div class="waiter-card-header">
+                <div class="waiter-avatar">{{ getInitials(w.fullName) }}</div>
+                <div class="waiter-info">
+                  <span class="waiter-card-name">{{ w.fullName }}</span>
+                  <span class="waiter-card-role">{{ w.role }}</span>
+                </div>
+                <span class="status-badge" [class.status-active]="w.isActive !== false" [class.status-inactive]="w.isActive === false">
+                  {{ w.isActive === false ? 'Inactive' : 'Active' }}
+                </span>
+              </div>
+              <div class="waiter-card-contact">
+                <span *ngIf="w.email">{{ w.email }}</span>
+              </div>
+              <div class="waiter-card-actions">
+                <button class="btn-action-card btn-reset-pin" (click)="resetWaiterPin(w)">Reset PIN</button>
+                <button class="btn-action-card" [class.btn-deactivate]="w.isActive !== false" [class.btn-activate]="w.isActive === false" (click)="deactivateWaiter(w)">
+                  {{ w.isActive === false ? 'Activate' : 'Deactivate' }}
+                </button>
+              </div>
+            </div>
+            <div class="waiter-empty" *ngIf="waiters().length === 0">
+              <p>No staff members yet. Click + Add Waiter to get started.</p>
+            </div>
+          </div>
+          <ng-template #waiterSkeleton>
+            <div class="waiter-cards-grid">
+              <div class="waiter-card" *ngFor="let i of [1,2,3]">
+                <div class="waiter-card-header">
+                  <div class="skeleton-shimmer" style="width:44px;height:44px;border-radius:12px;"></div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                    <div class="skeleton-shimmer" style="width:120px;height:14px;"></div>
+                    <div class="skeleton-shimmer" style="width:60px;height:12px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </ng-container>
+
+      <!-- Security Section -->
+      <ng-container *ngIf="activeSection() === 'security'">
+        <header class="content-header">
+          <div class="title-group">
+            <h1 class="page-title space-font">Security</h1>
+            <p class="page-subtitle inter-font">Update your account password.</p>
+          </div>
+        </header>
+
+        <div class="settings-card branding-card">
+          <h3 class="config-header inter-font">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" class="config-icon">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Change Password
+          </h3>
+          <div class="security-password-grid">
+            <div class="form-group">
+              <label class="config-label">NEW PASSWORD</label>
+              <div class="input-wrapper">
+                <input type="password" [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" class="config-input" placeholder="Min. 8 characters" minlength="8">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="config-label">CONFIRM PASSWORD</label>
+              <div class="input-wrapper">
+                <input type="password" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" class="config-input" placeholder="Re-enter new password">
+              </div>
+            </div>
+          </div>
+          <button class="btn-save inter-font" (click)="updatePassword()" [disabled]="isUpdatingPassword() || !newPassword() || !confirmPassword()">
+            {{ isUpdatingPassword() ? 'Updating...' : 'Update Password' }}
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Email Verification Section -->
+      <ng-container *ngIf="activeSection() === 'verification'">
+        <header class="content-header">
+          <div class="title-group">
+            <h1 class="page-title space-font">Email Verification</h1>
+            <p class="page-subtitle inter-font">Verify your email address to enable all features.</p>
+          </div>
+        </header>
+
+        <div class="settings-card branding-card">
+          <h3 class="config-header inter-font">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" class="config-icon">
+              <path d="M22 2L11 13"/>
+              <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+            Verify Email
+          </h3>
+          <p class="verification-email inter-font" *ngIf="profileEmail()">We'll send a code to <strong>{{ profileEmail() }}</strong></p>
+          <div class="verification-status" *ngIf="isEmailVerified()">
+            <span class="status-badge status-active">Verified</span>
+          </div>
+          <div class="verification-actions" *ngIf="!isEmailVerified()">
+            <button class="btn-save inter-font" (click)="sendVerificationCode()" [disabled]="isSendingCode() || !profileEmail()">
+              {{ isSendingCode() ? 'Sending...' : 'Send Code' }}
+            </button>
+            <div class="verification-code-row" *ngIf="showCodeInput()">
+              <div class="form-group" style="flex:1;">
+                <label class="config-label">ENTER CODE</label>
+                <div class="input-wrapper">
+                  <input type="text" [ngModel]="verificationCode()" (ngModelChange)="verificationCode.set($event)" class="config-input" placeholder="e.g. 123456">
+                </div>
+              </div>
+              <button class="btn-save inter-font" style="margin-top:24px;" (click)="verifyEmailCode()" [disabled]="!verificationCode()">Verify</button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
     </main>
   </div>
 
@@ -305,6 +461,52 @@
         <button class="btn-cancel inter-font" (click)="showBranchModal.set(false)">Cancel</button>
         <button class="btn-save inter-font" (click)="saveBranch()" [disabled]="isSavingBranch() || !branchFormName()">
           {{ isSavingBranch() ? 'Saving...' : editingBranch() ? 'Update Branch' : 'Create Branch' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Waiter Modal -->
+  <div class="modal-overlay" *ngIf="showCreateWaiterModal()" (click)="showCreateWaiterModal.set(false)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title space-font">Add Waiter</h3>
+        <button class="modal-close" (click)="showCreateWaiterModal.set(false)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="config-label">FULL NAME</label>
+          <div class="input-wrapper">
+            <input type="text" [ngModel]="waiterFormName()" (ngModelChange)="waiterFormName.set($event)" class="config-input" placeholder="e.g. Jane Waiter">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="config-label">EMAIL (optional)</label>
+          <div class="input-wrapper">
+            <input type="email" [ngModel]="waiterFormEmail()" (ngModelChange)="waiterFormEmail.set($event)" class="config-input" placeholder="e.g. jane@bistro.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="config-label">PHONE (optional)</label>
+          <div class="input-wrapper">
+            <input type="text" [ngModel]="waiterFormPhone()" (ngModelChange)="waiterFormPhone.set($event)" class="config-input" placeholder="e.g. +234 800 000 0000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="config-label">BRANCH</label>
+          <div class="input-wrapper">
+            <select class="config-select" [ngModel]="waiterFormBranchId()" (ngModelChange)="waiterFormBranchId.set($event)">
+              <option *ngFor="let b of branches()" [value]="b.id">{{ b.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel inter-font" (click)="showCreateWaiterModal.set(false)">Cancel</button>
+        <button class="btn-save inter-font" (click)="createWaiter()" [disabled]="isSavingWaiter() || !waiterFormName() || !waiterFormBranchId()">
+          {{ isSavingWaiter() ? 'Saving...' : 'Create Waiter' }}
         </button>
       </div>
     </div>

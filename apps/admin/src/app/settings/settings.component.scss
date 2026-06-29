@@ -389,3 +389,162 @@
   border: none; border-radius: 10px; font-weight: 600; font-size: 0.875rem; cursor: pointer;
   &:hover { background: #e2e8f0; }
 }
+
+/* ===== STAFF WAITER CARDS ===== */
+.waiter-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.waiter-card {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.waiter-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.waiter-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #fee7d6;
+  color: #92400e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.waiter-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.waiter-card-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0b1c30;
+}
+
+.waiter-card-role {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: capitalize;
+}
+
+.waiter-card-contact {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.waiter-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-action-card {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-reset-pin {
+  background: #f1f5f9;
+  color: #475569;
+  &:hover { background: #e2e8f0; color: #0b1c30; }
+}
+
+.btn-deactivate {
+  background: #fef2f2;
+  color: #dc2626;
+  &:hover { background: #fee2e2; }
+}
+
+.btn-activate {
+  background: #d1fae5;
+  color: #065f46;
+  &:hover { background: #bbf7d0; }
+}
+
+.waiter-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 24px;
+  color: #9ca3af;
+  font-size: 0.9375rem;
+}
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== SECURITY ===== */
+.security-password-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
+/* ===== VERIFICATION ===== */
+.verification-email {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: -8px 0 16px;
+}
+
+.verification-status {
+  margin-bottom: 16px;
+}
+
+.verification-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.verification-code-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .waiter-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .security-password-grid {
+    grid-template-columns: 1fr;
+  }
+  .verification-code-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

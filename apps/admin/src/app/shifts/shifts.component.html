@@ -1,0 +1,129 @@
+<div class="shifts-container">
+  <div class="page-header">
+    <div class="title-group">
+      <h1 class="page-title">Shifts</h1>
+      <p class="page-subtitle">Manage open/close shifts and cash handling</p>
+    </div>
+    <button class="btn-primary" (click)="showOpenModal.set(true)" *ngIf="!currentShift()">
+      Open New Shift
+    </button>
+  </div>
+
+  <!-- Current Shift -->
+  <div *ngIf="currentShift()" class="current-shift-card">
+    <div class="card-header">
+      <h3 class="card-title">Current Shift</h3>
+      <span class="status-badge status-open">Open</span>
+    </div>
+    <div class="card-body">
+      <div class="stat-grid">
+        <div class="stat">
+          <span class="stat-label">Opened At</span>
+          <span class="stat-value">{{ currentShift()?.openedAt | date:'medium' }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Starting Cash</span>
+          <span class="stat-value">₦{{ formatKobo(currentShift()?.startingCashKobo || 0) }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Expected Cash</span>
+          <span class="stat-value">₦{{ formatKobo(currentShift()?.expectedCashKobo || 0) }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn-primary" (click)="showCloseModal.set(true)">
+        Close Shift
+      </button>
+    </div>
+  </div>
+
+  <!-- Shifts List -->
+  <div class="shifts-list">
+    <h2 class="section-title">Past Shifts</h2>
+    <div *ngIf="isLoading()" class="loading-state">
+      <div class="spinner"></div>
+    </div>
+    <div *ngIf="!isLoading() && shifts().length === 0" class="empty-state">
+      <p>No past shifts found</p>
+    </div>
+    <div *ngIf="!isLoading() && shifts().length > 0" class="shifts-table-container">
+      <table class="shifts-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Starting Cash</th>
+            <th>Expected Cash</th>
+            <th>Actual Cash</th>
+            <th>Variance</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let shift of shifts()">
+            <td>{{ shift.openedAt | date:'mediumDate' }}</td>
+            <td>₦{{ formatKobo(shift.startingCashKobo || 0) }}</td>
+            <td>₦{{ formatKobo(shift.expectedCashKobo || 0) }}</td>
+            <td>₦{{ formatKobo(shift.actualCashKobo || 0) }}</td>
+            <td [style.color]="(shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0) >= 0 ? '#22c55e' : '#dc2626'">
+              {{ (shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0) >= 0 ? '+' : '' }}₦{{ formatKobo((shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0)) }}
+            </td>
+            <td><span class="status-badge" [style.background]="getShiftStatusColor(shift.status)">{{ shift.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Open Shift Modal -->
+<div *ngIf="showOpenModal()" class="modal-overlay" (click)="showOpenModal.set(false)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Open New Shift</h3>
+      <button class="modal-close" (click)="showOpenModal.set(false)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="startingCash">Starting Cash (₦)</label>
+        <input type="number" id="startingCash" class="form-input" [value]="startingCash()" (change)="startingCash.set(($event.target as HTMLInputElement).valueAsNumber)" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="showOpenModal.set(false)">Cancel</button>
+      <button class="btn-primary" (click)="openShift()">Open Shift</button>
+    </div>
+  </div>
+</div>
+
+<!-- Close Shift Modal -->
+<div *ngIf="showCloseModal()" class="modal-overlay" (click)="showCloseModal.set(false)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Close Shift</h3>
+      <button class="modal-close" (click)="showCloseModal.set(false)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Expected Cash</label>
+        <p class="form-value">₦{{ formatKobo(currentShift()?.expectedCashKobo || 0) }}</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="closeCash">Actual Cash (₦)</label>
+        <input type="number" id="closeCash" class="form-input" [value]="closeCash()" (change)="closeCash.set(($event.target as HTMLInputElement).valueAsNumber)" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="closeNote">Notes (Optional)</label>
+        <textarea id="closeNote" class="form-textarea" [value]="closeNote()" (change)="closeNote.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="showCloseModal.set(false)">Cancel</button>
+      <button class="btn-primary" (click)="closeShift(currentShift()!)">Close Shift</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,143 @@
+<div class="suppliers-container">
+  <div class="page-header">
+    <div class="title-group">
+      <h1 class="page-title">Suppliers</h1>
+      <p class="page-subtitle">Manage your suppliers and contact info</p>
+    </div>
+    <button class="btn-primary" (click)="openCreateModal()">
+      Add Supplier
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!isLoading() && suppliers().length === 0" class="empty-state">
+    <p>No suppliers found</p>
+    <button class="btn-primary" (click)="openCreateModal()">Add First Supplier</button>
+  </div>
+
+  <!-- Suppliers Grid -->
+  <div *ngIf="!isLoading() && suppliers().length > 0" class="suppliers-grid">
+    <div class="supplier-card" *ngFor="let supplier of suppliers()">
+      <div class="card-header">
+        <div class="supplier-avatar">
+          <span class="initials">{{ getInitials(supplier.name) }}</span>
+        </div>
+        <div class="supplier-info">
+          <h3 class="supplier-name">{{ supplier.name }}</h3>
+          <span class="supplier-contact" *ngIf="supplier.contactPerson">{{ supplier.contactPerson }}</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="detail" *ngIf="supplier.phone">
+          <span class="label">Phone</span>
+          <span class="value">{{ supplier.phone }}</span>
+        </div>
+        <div class="detail" *ngIf="supplier.email">
+          <span class="label">Email</span>
+          <span class="value">{{ supplier.email }}</span>
+        </div>
+        <div class="detail" *ngIf="supplier.address">
+          <span class="label">Address</span>
+          <span class="value">{{ supplier.address }}</span>
+        </div>
+        <div class="detail" *ngIf="supplier.note">
+          <span class="label">Notes</span>
+          <span class="value">{{ supplier.note }}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn-secondary" (click)="openEditModal(supplier)">Edit</button>
+        <button class="btn-danger" (click)="deleteSupplier(supplier)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Supplier Modal -->
+<div *ngIf="showCreateModal()" class="modal-overlay" (click)="closeModals()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Add New Supplier</h3>
+      <button class="modal-close" (click)="closeModals()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="name">Name *</label>
+        <input type="text" id="name" class="form-input" [value]="formName()" (change)="formName.set(($event.target as HTMLInputElement).value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="contactPerson">Contact Person</label>
+        <input type="text" id="contactPerson" class="form-input" [value]="formContact()" (change)="formContact.set(($event.target as HTMLInputElement).value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="phone">Phone</label>
+        <input type="text" id="phone" class="form-input" [value]="formPhone()" (change)="formPhone.set(($event.target as HTMLInputElement).value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="email" class="form-input" [value]="formEmail()" (change)="formEmail.set(($event.target as HTMLInputElement).value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="address">Address</label>
+        <textarea id="address" class="form-textarea" [value]="formAddress()" (change)="formAddress.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="note">Notes</label>
+        <textarea id="note" class="form-textarea" [value]="formNote()" (change)="formNote.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeModals()">Cancel</button>
+      <button class="btn-primary" (click)="saveSupplier()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Supplier Modal -->
+<div *ngIf="showEditModal()" class="modal-overlay" (click)="closeModals()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit Supplier</h3>
+      <button class="modal-close" (click)="closeModals()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="edit-name">Name *</label>
+        <input type="text" id="edit-name" class="form-input" [value]="formName()" (change)="formName.set(($event.target as HTMLInputElement).value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="edit-contactPerson">Contact Person</label>
+        <input type="text" id="edit-contactPerson" class="form-input" [value]="formContact()" (change)="formContact.set(($event.target as HTMLInputElement).value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="edit-phone">Phone</label>
+        <input type="text" id="edit-phone" class="form-input" [value]="formPhone()" (change)="formPhone.set(($event.target as HTMLInputElement).value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="edit-email">Email</label>
+        <input type="email" id="edit-email" class="form-input" [value]="formEmail()" (change)="formEmail.set(($event.target as HTMLInputElement).value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="edit-address">Address</label>
+        <textarea id="edit-address" class="form-textarea" [value]="formAddress()" (change)="formAddress.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="edit-note">Notes</label>
+        <textarea id="edit-note" class="form-textarea" [value]="formNote()" (change)="formNote.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeModals()">Cancel</button>
+      <button class="btn-primary" (click)="saveSupplier()">Save</button>
+    </div>
+  </div>
+</div>

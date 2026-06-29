@@ -37,6 +37,31 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./staff/waiter-management.component').then(m => m.WaiterManagementComponent)
       },
       {
+        path: 'tabs',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./tabs/tabs-management.component').then(m => m.TabsManagementComponent)
+          },
+          {
+            path: 'detail/:id',
+            loadComponent: () => import('./tabs/tab-detail.component').then(m => m.TabDetailComponent)
+          }
+        ]
+      },
+      {
+        path: 'suppliers',
+        loadComponent: () => import('./suppliers/suppliers.component').then(m => m.SuppliersComponent)
+      },
+      {
+        path: 'shifts',
+        loadComponent: () => import('./shifts/shifts.component').then(m => m.ShiftsComponent)
+      },
+      {
+        path: 'inventory',
+        loadComponent: () => import('./inventory/inventory.component').then(m => m.InventoryComponent)
+      },
+      {
         path: 'bills',
         loadComponent: () => import('./bills/bills.component').then(m => m.BillsComponent)
       },
