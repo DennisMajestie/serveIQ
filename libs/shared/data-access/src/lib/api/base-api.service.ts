@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { buildUrl } from './api.config';
@@ -23,10 +23,16 @@ export class BaseApiService {
   }
 
   // GET Request
-  protected get<T>(url: string, params?: Record<string, string | number>): Observable<T> {
+  protected get<T>(url: string, params?: Record<string, string | number>, queryParams?: Record<string, string>): Observable<T> {
     const fullUrl = this.buildFullUrl(url, params);
+    let httpParams = new HttpParams();
+    if (queryParams) {
+      for (const [key, value] of Object.entries(queryParams)) {
+        httpParams = httpParams.set(key, value);
+      }
+    }
     return this.http
-      .get<any>(fullUrl, { headers: this.defaultHeaders })
+      .get<any>(fullUrl, { headers: this.defaultHeaders, params: httpParams })
       .pipe(
         map(res => {
           const data = res && typeof res === 'object' && 'data' in res ? res.data : res;

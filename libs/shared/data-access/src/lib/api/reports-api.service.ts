@@ -16,9 +16,9 @@ export class ReportsApiService extends BaseApiService {
   }
 
   getPeakHours(branchId: string, dateFrom?: string, dateTo?: string): Observable<PeakHoursEntry[]> {
-    const params: Record<string, string> = { branchId };
-    if (dateFrom) { params['dateFrom'] = dateFrom; }
-    if (dateTo) { params['dateTo'] = dateTo; }
-    return this.get<PeakHoursEntry[]>(API_CONFIG.endpoints.reports.peakHours, params);
+    const queryParams: Record<string, string> = { branchId };
+    if (dateFrom) { queryParams['dateFrom'] = dateFrom; }
+    if (dateTo) { queryParams['dateTo'] = dateTo; }
+    return this.get<PeakHoursEntry[]>(API_CONFIG.endpoints.reports.peakHours, undefined, queryParams);
   }
 }
