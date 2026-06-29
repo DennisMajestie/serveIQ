@@ -93,6 +93,53 @@ export class TabService {
     return enrichTabs(tabs);
   }
 
+  async voidTab(id: string, branchId: string) {
+    const tab = await this.findOne(id, branchId);
+    if (tab.status !== 'open') {
+      throw new NotFoundException('Only open tabs can be voided');
+    }
+    tab.status = 'voided';
+    tab.closed_at = new Date();
+
+    await this.tableRepository.update(tab.table_id, {
+      status: TableStatus.AVAILABLE,
+    });
+
+    return this.tabRepository.save(tab);
+  }
+
+  async transferTab(id: string, targetTableId: string, branchId: string) {
+    const tab = await this.findOne(id, branchId);
+    if (tab.status !== 'open') {
+      throw new NotFoundException('Only open tabs can be transferred');
+    }
+
+    const targetTable = await this.tableRepository.findOne({ where: { id: targetTableId } });
+    if (!targetTable) {
+      throw new NotFoundException('Target table not found');
+    }
+    if (targetTable.branch_id !== branchId) {
+      throw new NotFoundException('Target table must be in the same branch');
+    }
+    if (targetTable.status !== TableStatus.AVAILABLE) {
+      throw new NotFoundException('Target table is not available');
+    }
+
+    // Release old table
+    await this.tableRepository.update(tab.table_id, {
+      status: TableStatus.AVAILABLE,
+    });
+
+    // Occupy target table
+    await this.tableRepository.update(targetTableId, {
+      status: TableStatus.OCCUPIED,
+    });
+
+    // Update tab's table reference
+    tab.table_id = targetTableId;
+    return this.tabRepository.save(tab);
+  }
+
   async closeTab(id: string, branchId: string) {
     const tab = await this.findOne(id, branchId);
     tab.status = 'paid';

@@ -3,6 +3,7 @@ import { TabService } from './tab.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { OpenTabDto } from './dto/open-tab.dto';
+import { TransferTabDto } from './dto/transfer-tab.dto';
 import { Tab } from './entities/tab.entity';
 
 @ApiTags('Tabs')
@@ -59,6 +60,26 @@ export class TabController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async closeTab(@Param('id') id: string, @Request() req: any) {
     return this.tabService.closeTab(id, req.user.branchId);
+  }
+
+  @Post(':id/void')
+  @ApiOperation({ summary: 'Void an open tab and release the table' })
+  @ApiParam({ name: 'id', description: 'Tab UUID' })
+  @ApiResponse({ status: 200, description: 'Tab voided and table released.' })
+  @ApiResponse({ status: 404, description: 'Tab not found or not open.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async voidTab(@Param('id') id: string, @Request() req: any) {
+    return this.tabService.voidTab(id, req.user.branchId);
+  }
+
+  @Post(':id/transfer')
+  @ApiOperation({ summary: 'Transfer an open tab to another table' })
+  @ApiParam({ name: 'id', description: 'Current tab UUID' })
+  @ApiResponse({ status: 200, description: 'Tab transferred to new table.' })
+  @ApiResponse({ status: 404, description: 'Tab not found or target table unavailable.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async transferTab(@Param('id') id: string, @Request() req: any, @Body() dto: TransferTabDto) {
+    return this.tabService.transferTab(id, dto.target_table_id, req.user.branchId);
   }
 
   @Patch(':id')
