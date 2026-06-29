@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MenuItem } from './entities/menu-item.entity';
+import { paginate, getPaginationParams } from '../../common/pagination';
 
 @Injectable()
 export class MenuService {
@@ -15,10 +16,15 @@ export class MenuService {
     return this.menuRepository.save(item);
   }
 
-  async findAllByBranch(branchId: string) {
-    return this.menuRepository.find({
-      where: { branch_id: branchId, is_available: true },
-    });
+  async findAllByBranch(branchId: string, page?: number, perPage?: number) {
+    const where = { branch_id: branchId, is_available: true };
+
+    if (page || perPage) {
+      const params = getPaginationParams(page, perPage);
+      return paginate(this.menuRepository, { where }, params);
+    }
+
+    return this.menuRepository.find({ where });
   }
 
   async findOne(id: string, branchId: string) {

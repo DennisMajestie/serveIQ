@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request, Query } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
 import { MenuItem } from './entities/menu-item.entity';
@@ -15,10 +15,16 @@ export class MenuController {
 
   @Get()
   @ApiOperation({ summary: 'Get all available menu items for the branch' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'per_page', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'List of menu items.', type: [MenuItem] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async findAll(@Request() req: any) {
-    return this.menuService.findAllByBranch(req.user.branchId);
+  async findAll(
+    @Request() req: any,
+    @Query('page') page?: number,
+    @Query('per_page') perPage?: number,
+  ) {
+    return this.menuService.findAllByBranch(req.user.branchId, page, perPage);
   }
 
   @Get(':id')

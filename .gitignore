@@ -28,3 +28,5 @@ npm-debug.log*
 # Ignore typescript compiled JS files in source directories
 apps/api/src/**/*.js
 apps/api/src/**/*.js.map
+
+tmp/

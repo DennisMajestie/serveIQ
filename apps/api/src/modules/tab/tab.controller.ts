@@ -15,10 +15,17 @@ export class TabController {
   @Get()
   @ApiOperation({ summary: 'Get all tabs for the branch (optionally filtered by status)' })
   @ApiQuery({ name: 'status', required: false, enum: ['open', 'billed', 'paid', 'voided'] })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'per_page', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'List of tabs with details.', type: [Tab] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async findAll(@Request() req: any, @Query('status') status?: string) {
-    return this.tabService.findAllByBranch(req.user.branchId, status);
+  async findAll(
+    @Request() req: any,
+    @Query('status') status?: string,
+    @Query('page') page?: number,
+    @Query('per_page') perPage?: number,
+  ) {
+    return this.tabService.findAllByBranch(req.user.branchId, status, page, perPage);
   }
 
   @Post('open')

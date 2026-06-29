@@ -5,6 +5,7 @@ import { Tab } from './entities/tab.entity';
 import { Table, TableStatus } from '../table/entities/table.entity';
 import { User } from '../user/entities/user.entity';
 import { Order } from '../order/entities/order.entity';
+import { paginate, getPaginationParams } from '../../common/pagination';
 
 @Injectable()
 export class TabService {
@@ -60,34 +61,36 @@ export class TabService {
     return tab;
   }
 
-  async findAllByBranch(branchId: string, status?: string) {
+  async findAllByBranch(branchId: string, status?: string, page?: number, perPage?: number) {
     const where: any = { branch_id: branchId };
     if (status) {
       where.status = status;
     }
-    
+
+    const enrichTabs = async (tabs: Tab[]) => {
+      const enriched = [];
+      for (const tab of tabs) {
+        const table = await this.tableRepository.findOne({ where: { id: tab.table_id } });
+        const waiter = await this.userRepository.findOne({ where: { id: tab.waiter_id } });
+        const orders = await this.orderRepository.find({ where: { tab_id: tab.id } });
+        const total = orders.reduce((sum, order) => sum + order.subtotal_kobo, 0);
+        enriched.push({ ...tab, table, waiter, orders, total_kobo: total });
+      }
+      return enriched;
+    };
+
+    if (page || perPage) {
+      const params = getPaginationParams(page, perPage);
+      const result = await paginate(this.tabRepository, { where, order: { opened_at: 'DESC' } }, params);
+      return { ...result, data: await enrichTabs(result.data) };
+    }
+
     const tabs = await this.tabRepository.find({
       where,
       order: { opened_at: 'DESC' },
     });
 
-    const tabsWithDetails = [];
-    for (const tab of tabs) {
-      const table = await this.tableRepository.findOne({ where: { id: tab.table_id } });
-      const waiter = await this.userRepository.findOne({ where: { id: tab.waiter_id } });
-      const orders = await this.orderRepository.find({ where: { tab_id: tab.id } });
-      const total = orders.reduce((sum, order) => sum + order.subtotal_kobo, 0);
-      
-      tabsWithDetails.push({
-        ...tab,
-        table,
-        waiter,
-        orders,
-        total_kobo: total,
-      });
-    }
-
-    return tabsWithDetails;
+    return enrichTabs(tabs);
   }
 
   async closeTab(id: string, branchId: string) {

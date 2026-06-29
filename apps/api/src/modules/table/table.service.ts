@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Table, TableStatus } from './entities/table.entity';
+import { paginate, getPaginationParams } from '../../common/pagination';
 
 @Injectable()
 export class TableService {
@@ -23,10 +24,15 @@ export class TableService {
     return this.tableRepository.save(table);
   }
 
-  async findAllByBranch(branchId: string) {
-    return this.tableRepository.find({
-      where: { branch_id: branchId },
-    });
+  async findAllByBranch(branchId: string, page?: number, perPage?: number) {
+    const where = { branch_id: branchId };
+
+    if (page || perPage) {
+      const params = getPaginationParams(page, perPage);
+      return paginate(this.tableRepository, { where }, params);
+    }
+
+    return this.tableRepository.find({ where });
   }
 
   async findOne(id: string, branchId: string) {

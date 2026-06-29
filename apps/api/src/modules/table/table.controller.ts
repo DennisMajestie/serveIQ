@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request, Query } from '@nestjs/common';
 import { TableService } from './table.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CreateTableDto } from './dto/create-table.dto';
 import { UpdateTableDto } from './dto/update-table.dto';
 import { UpdateTableStatusDto } from './dto/update-table-status.dto';
@@ -16,10 +16,16 @@ export class TableController {
 
   @Get()
   @ApiOperation({ summary: 'Get all tables for the branch' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'per_page', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'List of tables with statuses.', type: [Table] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async findAll(@Request() req: any) {
-    return this.tableService.findAllByBranch(req.user.branchId);
+  async findAll(
+    @Request() req: any,
+    @Query('page') page?: number,
+    @Query('per_page') perPage?: number,
+  ) {
+    return this.tableService.findAllByBranch(req.user.branchId, page, perPage);
   }
 
   @Get(':id')

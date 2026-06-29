@@ -131,7 +131,7 @@ export class TabDetailComponent implements OnInit {
 
   viewItemDetail(item: OrderItem) {
     Swal.fire({
-      title: getItemName(item),
+      title: this.getItemName(item),
       html: `
         <div style="text-align: left;">
           <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">

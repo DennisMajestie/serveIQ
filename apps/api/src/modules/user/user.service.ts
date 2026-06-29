@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { Branch } from '../branch/entities/branch.entity';
 import { UserRole } from '../../common/shared';
 import { CreateWaiterDto } from './dto/create-waiter.dto';
+import { paginate, getPaginationParams } from '../../common/pagination';
 
 @Injectable()
 export class UserService {
@@ -119,11 +120,16 @@ export class UserService {
     }
   }
 
-  async findAllWaiters(branchId: string) {
-    return this.userRepository.find({
-      where: { branch_id: branchId, role: UserRole.WAITER },
-      select: { id: true, full_name: true, email: true, phone: true, avatar_url: true, is_active: true, created_at: true },
-    });
+  async findAllWaiters(branchId: string, page?: number, perPage?: number) {
+    const where = { branch_id: branchId, role: UserRole.WAITER };
+    const select = { id: true, full_name: true, email: true, phone: true, avatar_url: true, is_active: true, created_at: true } as const;
+
+    if (page || perPage) {
+      const params = getPaginationParams(page, perPage);
+      return paginate(this.userRepository, { where, select: select as any }, params);
+    }
+
+    return this.userRepository.find({ where, select: select as any });
   }
 
   async resetWaiterPin(waiterId: string, businessId: string): Promise<{ pin: string }> {
@@ -155,6 +161,35 @@ export class UserService {
       where: { email },
       relations: { business: true, branch: true },
     });
+  }
+
+  async getMe(id: string) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: { business: true, branch: true },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  async updateMe(id: string, dto: { full_name?: string; phone?: string; password?: string }) {
+    const user = await this.findOne(id, id);
+    if (dto.full_name) user.full_name = dto.full_name;
+    if (dto.phone) user.phone = dto.phone;
+    if (dto.password) {
+      const salt = await bcrypt.genSalt();
+      user.password_hash = await bcrypt.hash(dto.password, salt);
+    }
+    return this.userRepository.save(user);
+  }
+
+  async deactivate(id: string, businessId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id, business_id: businessId },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    user.is_active = false;
+    return this.userRepository.save(user);
   }
 
   async update(id: string, branchId: string, updateDto: any) {

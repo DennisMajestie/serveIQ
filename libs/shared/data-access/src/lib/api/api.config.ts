@@ -10,6 +10,10 @@ export const API_CONFIG = {
       register: '/api/v1/auth/register',
       activate: '/api/v1/auth/activate',
       staffLogin: '/api/v1/auth/staff-login',
+      forgotPassword: '/api/v1/auth/forgot-password',
+      resetPassword: '/api/v1/auth/reset-password',
+      sendVerification: '/api/v1/auth/send-verification',
+      verifyEmail: '/api/v1/auth/verify-email',
     },
     // Upload
     upload: '/api/v1/upload',
@@ -20,6 +24,7 @@ export const API_CONFIG = {
       resetPin: '/api/v1/user/waiters/:id/reset-pin',
       update: '/api/v1/user/:id',
       delete: '/api/v1/user/:id',
+      deactivate: '/api/v1/user/:id/deactivate',
     },
     // Business
     business: {

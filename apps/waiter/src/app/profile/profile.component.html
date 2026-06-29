@@ -10,7 +10,14 @@
 
   <main class="profile-main">
     @if (isLoading()) {
-      <div class="loading-state">Loading...</div>
+      <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 16px;">
+        <div class="shimmer-circle" style="width: 80px; height: 80px; margin-bottom: 16px;"></div>
+        <div class="shimmer" style="width: 140px; height: 24px; margin-bottom: 8px; border-radius: 4px;"></div>
+        <div class="shimmer" style="width: 80px; height: 16px; margin-bottom: 24px; border-radius: 4px;"></div>
+        <div class="shimmer" style="width: 100%; height: 80px; margin-bottom: 24px; border-radius: 12px;"></div>
+        <div class="shimmer" style="width: 100%; height: 48px; margin-bottom: 12px; border-radius: 12px;"></div>
+        <div class="shimmer" style="width: 100%; height: 48px; border-radius: 12px;"></div>
+      </div>
     } @else {
       <div class="avatar-section">
         <div class="avatar-circle">{{ getInitials() }}</div>

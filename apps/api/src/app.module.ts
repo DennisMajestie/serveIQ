@@ -23,6 +23,7 @@ import { OrderModule } from './modules/order/order.module';
 import { BillModule } from './modules/bill/bill.module';
 import { AiModule } from './modules/ai/ai.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { AuditModule } from './modules/audit/audit.module';
 import { SeedService } from './database/seed.service';
 
 @Module({
@@ -63,6 +64,7 @@ import { SeedService } from './database/seed.service';
     BillModule,
     AiModule,
     UploadModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [AppService, SeedService],

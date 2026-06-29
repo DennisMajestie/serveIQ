@@ -13,10 +13,17 @@
   <!-- Main Content -->
   <main class="payment-main">
     <!-- Total Amount Display -->
-    <section class="total-section">
-      <p class="total-label">Total Due</p>
-      <h2 class="total-amount">₦{{ totalDueNaira }}</h2>
-    </section>
+    @if (isLoading()) {
+      <div class="shimmer-total-section">
+        <div class="shimmer" style="width: 80px; height: 14px; border-radius: 4px;"></div>
+        <div class="shimmer" style="width: 160px; height: 40px; border-radius: 4px;"></div>
+      </div>
+    } @else {
+      <section class="total-section">
+        <p class="total-label">Total Due</p>
+        <h2 class="total-amount">₦{{ totalDueNaira }}</h2>
+      </section>
+    }
 
     <!-- Split Bill Toggle + Config -->
     <section class="split-section">

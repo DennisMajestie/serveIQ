@@ -22,6 +22,7 @@ export class PaymentComponent implements OnInit {
   tabId = signal('');
   table = signal<Table | null>(null);
   bill = signal<Bill | null>(null);
+  isLoading = signal(true);
   selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' = 'cash';
   currentAmount = signal('0');
   isEditingAmount = false;
@@ -61,7 +62,9 @@ export class PaymentComponent implements OnInit {
         const b = receipt.bill as Bill;
         this.bill.set(b);
         this.currentAmount.set((b.totalKobo / 100).toFixed(2));
-      }
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false)
     });
   }
 

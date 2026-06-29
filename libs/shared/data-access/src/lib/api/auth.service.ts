@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { RegisterRequest, RegisterResponse } from '@serveiq/shared/models';
+import { RegisterRequest, RegisterResponse, ForgotPasswordRequest, ResetPasswordRequest, VerifyEmailRequest } from '@serveiq/shared/models';
 
 export interface AuthResponse {
   success: boolean;
@@ -140,6 +140,22 @@ export class AuthService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<{ url: string }>(`${this.apiUrl}/api/v1/upload`, formData);
+  }
+
+  forgotPassword(data: ForgotPasswordRequest): Observable<{ token: string }> {
+    return this.http.post<{ token: string }>(`${this.apiUrl}/api/v1/auth/forgot-password`, data);
+  }
+
+  resetPassword(data: ResetPasswordRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/api/v1/auth/reset-password`, data);
+  }
+
+  sendVerification(): Observable<{ otp: string }> {
+    return this.http.post<{ otp: string }>(`${this.apiUrl}/api/v1/auth/send-verification`, {});
+  }
+
+  verifyEmail(data: VerifyEmailRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/api/v1/auth/verify-email`, data);
   }
 
   logout() {

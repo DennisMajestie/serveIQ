@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { DataSource } from 'typeorm';
+import * as crypto from 'crypto';
+import { DataSource, MoreThan } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { Business } from '../business/entities/business.entity';
 import { Branch } from '../branch/entities/branch.entity';
@@ -9,6 +10,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { WaiterLoginDto } from './dto/waiter-login.dto';
 import { UserRole } from '../../common/shared';
+import { VerificationToken } from './entities/verification-token.entity';
 
 @Injectable()
 export class AuthService {
@@ -124,6 +126,91 @@ export class AuthService {
     }
 
     throw new UnauthorizedException('Invalid PIN');
+  }
+
+  async forgotPassword(email: string): Promise<{ token: string }> {
+    const user = await this.dataSource.getRepository(User).findOne({
+      where: { email },
+    });
+    if (!user) {
+      throw new NotFoundException('User with this email not found');
+    }
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1);
+
+    await this.dataSource.getRepository(VerificationToken).save({
+      userId: user.id,
+      tokenHash,
+      type: 'password_reset',
+      expiresAt,
+    });
+
+    return { token: rawToken };
+  }
+
+  async resetPassword(token: string, password: string): Promise<void> {
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+    const verificationToken = await this.dataSource.getRepository(VerificationToken).findOne({
+      where: {
+        tokenHash,
+        type: 'password_reset',
+        isUsed: false,
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
+    if (!verificationToken) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    await this.dataSource.getRepository(User).update(verificationToken.userId, { password_hash: passwordHash });
+    await this.dataSource.getRepository(VerificationToken).update(verificationToken.id, { isUsed: true });
+  }
+
+  async sendVerification(userId: string): Promise<{ otp: string }> {
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const tokenHash = crypto.createHash('sha256').update(otp).digest('hex');
+
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 10);
+
+    await this.dataSource.getRepository(VerificationToken).save({
+      userId,
+      tokenHash,
+      type: 'email_verification',
+      expiresAt,
+    });
+
+    return { otp };
+  }
+
+  async verifyEmail(userId: string, otp: string): Promise<void> {
+    const tokenHash = crypto.createHash('sha256').update(otp).digest('hex');
+
+    const verificationToken = await this.dataSource.getRepository(VerificationToken).findOne({
+      where: {
+        tokenHash,
+        userId,
+        type: 'email_verification',
+        isUsed: false,
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
+    if (!verificationToken) {
+      throw new BadRequestException('Invalid or expired OTP');
+    }
+
+    await this.dataSource.getRepository(User).update(userId, { email_verified_at: new Date() });
+    await this.dataSource.getRepository(VerificationToken).update(verificationToken.id, { isUsed: true });
   }
 
   async activate(dto: LoginDto) {

@@ -26,40 +26,55 @@
       </button>
     </nav>
 
-    <!-- Menu Grid -->
-    <div class="menu-grid">
-      <div 
-        *ngFor="let item of filteredItems" 
-        class="menu-item-card card-tap-feedback">
-        <div class="item-image">
-          <img [src]="item.image" [alt]="item.name" />
-        </div>
-        <div class="item-info">
-          <h3 class="item-name">{{ item.name }}</h3>
-          <p class="item-price">₦{{ getDisplayPrice(item).toLocaleString() }}</p>
-        </div>
-        
-        <!-- Portion Selector -->
-        <div *ngIf="item.portions" class="portion-selector">
-          <button 
-            *ngFor="let portion of item.portions" 
-            class="portion-btn"
-            [class.active]="getSelectedPortion(item.id) === portion.id"
-            (click)="$event.stopPropagation(); setSelectedPortion(item.id, portion.id)">
-            {{ portion.name }}
+    @if (isLoading()) {
+      <!-- Shimmer: Menu Grid -->
+      <div class="menu-grid">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="menu-item-card" style="background: var(--surface, #1A1A1A); border-radius: 12px; overflow: hidden; border: 1px solid rgba(64,71,88,0.2);">
+            <div class="shimmer" style="width: 100%; height: 120px; border-radius: 0;"></div>
+            <div style="padding: 12px;">
+              <div class="shimmer" style="width: 70%; height: 16px; margin-bottom: 8px; border-radius: 4px;"></div>
+              <div class="shimmer" style="width: 40%; height: 14px; border-radius: 4px;"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Menu Grid -->
+      <div class="menu-grid">
+        <div 
+          *ngFor="let item of filteredItems" 
+          class="menu-item-card card-tap-feedback">
+          <div class="item-image">
+            <img [src]="item.image" [alt]="item.name" />
+          </div>
+          <div class="item-info">
+            <h3 class="item-name">{{ item.name }}</h3>
+            <p class="item-price">₦{{ getDisplayPrice(item).toLocaleString() }}</p>
+          </div>
+          
+          <!-- Portion Selector -->
+          <div *ngIf="item.portions" class="portion-selector">
+            <button 
+              *ngFor="let portion of item.portions" 
+              class="portion-btn"
+              [class.active]="getSelectedPortion(item.id) === portion.id"
+              (click)="$event.stopPropagation(); setSelectedPortion(item.id, portion.id)">
+              {{ portion.name }}
+            </button>
+          </div>
+          
+          <button *ngIf="getItemQty(item.id) === 0" class="add-button" (click)="addToSelection(item)">
+            <span class="material-symbols-outlined">add</span>
           </button>
-        </div>
-        
-        <button *ngIf="getItemQty(item.id) === 0" class="add-button" (click)="addToSelection(item)">
-          <span class="material-symbols-outlined">add</span>
-        </button>
-        <div *ngIf="getItemQty(item.id) > 0" class="qty-control">
-          <button class="qty-btn minus" (click)="$event.stopPropagation(); removeFromSelection(item.id, getSelectedPortion(item.id))">-</button>
-          <span class="qty-display">{{ getItemQty(item.id) }}</span>
-          <button class="qty-btn plus" (click)="$event.stopPropagation(); addToSelection(item)">+</button>
+          <div *ngIf="getItemQty(item.id) > 0" class="qty-control">
+            <button class="qty-btn minus" (click)="$event.stopPropagation(); removeFromSelection(item.id, getSelectedPortion(item.id))">-</button>
+            <span class="qty-display">{{ getItemQty(item.id) }}</span>
+            <button class="qty-btn plus" (click)="$event.stopPropagation(); addToSelection(item)">+</button>
+          </div>
         </div>
       </div>
-    </div>
+    }
   </main>
 
   <!-- Cart Summary Bar -->

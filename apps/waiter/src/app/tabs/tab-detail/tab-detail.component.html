@@ -12,48 +12,76 @@
 
   <!-- Main Content -->
   <main class="tab-detail-main">
-    <!-- Order Items Section -->
-    <div class="items-section">
+    @if (isLoading()) {
+      <!-- Shimmer: Section Header -->
       <div class="section-header">
-        <span class="section-title">ORDERED ITEMS</span>
-        <span class="item-count">{{ items().length }} Items</span>
+        <div class="shimmer" style="width: 140px; height: 16px; border-radius: 4px;"></div>
+        <div class="shimmer" style="width: 80px; height: 16px; border-radius: 4px;"></div>
       </div>
-
-      @for (item of items(); track item.id) {
-        <div class="item-card" (click)="viewItemDetail(item)">
-          <img [src]="getItemImage(item)" [alt]="getItemName(item)" class="item-thumb" />
-          <div class="item-details">
-            <div class="item-name">{{ getItemName(item) || 'Unknown Item' }}</div>
-            <span class="qty-badge">{{ item.quantity }}x</span>
-            @if (item.notes) {
-              <div class="item-description">{{ item.notes }}</div>
-            }
+      <!-- Shimmer: Item Cards -->
+      @for (i of [1,2,3]; track i) {
+        <div class="shimmer-item-card">
+          <div class="shimmer-thumb"></div>
+          <div style="flex: 1;">
+            <div class="shimmer" style="width: 60%; height: 16px; border-radius: 4px; margin-bottom: 6px;"></div>
+            <div class="shimmer" style="width: 30%; height: 14px; border-radius: 4px;"></div>
           </div>
-          <div class="item-price">
-            <span class="current-price">₦{{ formatKobo(item.priceKobo * item.quantity) }}</span>
-          </div>
-          <button class="delete-btn" (click)="$event.stopPropagation(); removeItem(item)">
-            <span class="material-symbols-outlined">delete</span>
-          </button>
+          <div class="shimmer" style="width: 70px; height: 16px; border-radius: 4px;"></div>
         </div>
       }
-    </div>
+      <!-- Shimmer: Totals -->
+      <div class="totals-section">
+        @for (i of [1,2,3]; track i) {
+          <div class="total-row">
+            <div class="shimmer" style="width: 80px; height: 16px; border-radius: 4px;"></div>
+            <div class="shimmer" style="width: 100px; height: 16px; border-radius: 4px;"></div>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Order Items Section -->
+      <div class="items-section">
+        <div class="section-header">
+          <span class="section-title">ORDERED ITEMS</span>
+          <span class="item-count">{{ items().length }} Items</span>
+        </div>
 
-    <!-- Totals Section -->
-    <div class="totals-section">
-      <div class="total-row">
-        <span class="total-label">Subtotal</span>
-        <span class="total-value">₦{{ formatKobo(subtotal()) }}</span>
+        @for (item of items(); track item.id) {
+          <div class="item-card" (click)="viewItemDetail(item)">
+            <img [src]="getItemImage(item)" [alt]="getItemName(item)" class="item-thumb" />
+            <div class="item-details">
+              <div class="item-name">{{ getItemName(item) || 'Unknown Item' }}</div>
+              <span class="qty-badge">{{ item.quantity }}x</span>
+              @if (item.notes) {
+                <div class="item-description">{{ item.notes }}</div>
+              }
+            </div>
+            <div class="item-price">
+              <span class="current-price">₦{{ formatKobo(item.priceKobo * item.quantity) }}</span>
+            </div>
+            <button class="delete-btn" (click)="$event.stopPropagation(); removeItem(item)">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        }
       </div>
-      <div class="total-row">
-        <span class="total-label">VAT (7.5%)</span>
-        <span class="total-value">₦{{ formatKobo(vat()) }}</span>
+
+      <!-- Totals Section -->
+      <div class="totals-section">
+        <div class="total-row">
+          <span class="total-label">Subtotal</span>
+          <span class="total-value">₦{{ formatKobo(subtotal()) }}</span>
+        </div>
+        <div class="total-row">
+          <span class="total-label">VAT (7.5%)</span>
+          <span class="total-value">₦{{ formatKobo(vat()) }}</span>
+        </div>
+        <div class="total-row final">
+          <span class="total-label">Total</span>
+          <span class="total-value">₦{{ formatKobo(total()) }}</span>
+        </div>
       </div>
-      <div class="total-row final">
-        <span class="total-label">Total</span>
-        <span class="total-value">₦{{ formatKobo(total()) }}</span>
-      </div>
-    </div>
+    }
   </main>
 
   <!-- Bottom Actions -->

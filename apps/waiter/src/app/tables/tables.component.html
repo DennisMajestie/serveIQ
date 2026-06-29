@@ -15,59 +15,83 @@
   </header>
 
   <main class="main-content">
-    <!-- Dashboard Summary -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <p class="stat-label">Total Tables</p>
-        <p class="stat-value total">{{ stats().totalTables }}</p>
+    @if (isLoading()) {
+      <!-- Shimmer: Stats Row -->
+      <div class="stats-row">
+        <div class="shimmer-stat-card"><div class="shimmer-line-sm" style="margin-bottom: 8px;"></div><div class="shimmer-line-lg"></div></div>
+        <div class="shimmer-stat-card"><div class="shimmer-line-sm" style="margin-bottom: 8px;"></div><div class="shimmer-line-lg"></div></div>
+        <div class="shimmer-stat-card"><div class="shimmer-line-sm" style="margin-bottom: 8px;"></div><div class="shimmer-line-lg"></div></div>
       </div>
-      <div class="stat-card">
-        <p class="stat-label">Available</p>
-        <p class="stat-value available">{{ stats().available }}</p>
+      <!-- Shimmer: Section Title -->
+      <div class="page-header">
+        <div class="shimmer" style="width: 160px; height: 24px; border-radius: 4px;"></div>
+        <div class="shimmer" style="width: 60px; height: 20px; border-radius: 4px;"></div>
       </div>
-      <div class="stat-card">
-        <p class="stat-label">Pending Clean</p>
-        <p class="stat-value pending">{{ stats().occupied }}</p>
-      </div>
-    </div>
-
-    <!-- Section Title -->
-    <div class="page-header">
-      <h2 class="page-title">{{ branchName }}</h2>
-      <button class="filter-btn">
-        <span class="material-symbols-outlined text-xs">filter_list</span>
-        Filter
-      </button>
-    </div>
-
-    <!-- Tables Grid -->
-    <div class="tables-grid">
-      @for (table of tables(); track table.id) {
-        <div class="table-card" [class]="getStatusClass(table.status)" (click)="onTableClick(table)">
-          <div class="card-top">
-            <span class="table-name">{{ table.label || table.tableNumber }}</span>
-            <span class="table-status"
-                  [class.status-pulse]="table.status === 'occupied'"
-                  [style.backgroundColor]="getStatusColor(table.status) + '20'"
-                  [style.color]="getStatusColor(table.status)">
-              {{ table.status }}
-            </span>
+      <!-- Shimmer: Tables Grid -->
+      <div class="tables-grid">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="shimmer-table-card">
+            <div class="shimmer" style="width: 60%; height: 32px; border-radius: 4px; margin-bottom: 8px;"></div>
+            <div class="shimmer" style="width: 40%; height: 12px; border-radius: 4px; margin-bottom: 16px;"></div>
+            <div class="shimmer" style="width: 100%; height: 36px; border-radius: 8px;"></div>
           </div>
-          
-          <div class="card-bottom">
-            <div class="capacity-row">
-              <span class="text-on-surface-variant font-label-md text-xs">Capacity: {{ table.capacity }}</span>
-            </div>
-
-            @if (table.status === 'available') {
-              <button class="seat-table-btn" (click)="$event.stopPropagation(); onSeatTable(table)">
-                Seat Table
-              </button>
-            }
-          </div>
+        }
+      </div>
+    } @else {
+      <!-- Dashboard Summary -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <p class="stat-label">Total Tables</p>
+          <p class="stat-value total">{{ stats().totalTables }}</p>
         </div>
-      }
-    </div>
+        <div class="stat-card">
+          <p class="stat-label">Available</p>
+          <p class="stat-value available">{{ stats().available }}</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Pending Clean</p>
+          <p class="stat-value pending">{{ stats().occupied }}</p>
+        </div>
+      </div>
+
+      <!-- Section Title -->
+      <div class="page-header">
+        <h2 class="page-title">{{ branchName }}</h2>
+        <button class="filter-btn">
+          <span class="material-symbols-outlined text-xs">filter_list</span>
+          Filter
+        </button>
+      </div>
+
+      <!-- Tables Grid -->
+      <div class="tables-grid">
+        @for (table of tables(); track table.id) {
+          <div class="table-card" [class]="getStatusClass(table.status)" (click)="onTableClick(table)">
+            <div class="card-top">
+              <span class="table-name">{{ table.label || table.tableNumber }}</span>
+              <span class="table-status"
+                    [class.status-pulse]="table.status === 'occupied'"
+                    [style.backgroundColor]="getStatusColor(table.status) + '20'"
+                    [style.color]="getStatusColor(table.status)">
+                {{ table.status }}
+              </span>
+            </div>
+            
+            <div class="card-bottom">
+              <div class="capacity-row">
+                <span class="text-on-surface-variant font-label-md text-xs">Capacity: {{ table.capacity }}</span>
+              </div>
+
+              @if (table.status === 'available') {
+                <button class="seat-table-btn" (click)="$event.stopPropagation(); onSeatTable(table)">
+                  Seat Table
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
   </main>
 
   <!-- FAB for Quick Order -->

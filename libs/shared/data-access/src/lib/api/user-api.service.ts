@@ -50,4 +50,9 @@ export class UserApiService extends BaseApiService {
   deleteWaiter(id: string): Observable<void> {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.users.delete, { id }));
   }
+
+  /** Deactivate a user (owner only). */
+  deactivateUser(id: string): Observable<User> {
+    return this.patch<User>(buildUrl(API_CONFIG.endpoints.users.deactivate, { id }), {});
+  }
 }
