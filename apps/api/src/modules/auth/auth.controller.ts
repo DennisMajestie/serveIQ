@@ -113,6 +113,26 @@ export class AuthController {
     return this.authService.verifyEmail(req.user.userId, dto.otp);
   }
 
+  @Post('refresh')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh JWT token' })
+  @ApiResponse({ status: 200, description: 'Token refreshed.' })
+  async refresh(@Request() req: any) {
+    return this.authService.refreshToken(req.user.userId);
+  }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Logout and invalidate token' })
+  @ApiResponse({ status: 200, description: 'Logged out.' })
+  async logout(@Request() req: any) {
+    return this.authService.logout(req.user.userId);
+  }
+
   @Post('activate')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({

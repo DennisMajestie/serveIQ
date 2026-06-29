@@ -39,18 +39,16 @@ export class LoginComponent {
           Swal.showValidationMessage('Please enter your email');
           return;
         }
-        return this.authService.forgotPassword({ email }).toPromise();
+        return new Promise((resolve, reject) => {
+          this.authService.forgotPassword({ email }).subscribe({
+            next: (res) => resolve(res),
+            error: (err) => reject(err)
+          });
+        });
       }
     }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Reset Link Sent',
-          text: 'Check your email for the password reset link.',
-          confirmButtonColor: '#F97316',
-          background: '#1e293b',
-          color: '#fff',
-        });
+      if (result.isConfirmed && result.value?.token) {
+        this.router.navigate(['/reset-password'], { queryParams: { token: result.value.token } });
       }
     });
   }

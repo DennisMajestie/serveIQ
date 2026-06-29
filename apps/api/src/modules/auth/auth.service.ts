@@ -213,6 +213,16 @@ export class AuthService {
     await this.dataSource.getRepository(VerificationToken).update(verificationToken.id, { isUsed: true });
   }
 
+  async refreshToken(userId: string) {
+    const user = await this.dataSource.getRepository(User).findOne({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException('User not found');
+    return this.generateTokens(user);
+  }
+
+  async logout(userId: string) {
+    return { success: true, message: 'Logged out successfully' };
+  }
+
   async activate(dto: LoginDto) {
     await this.logger('activate', dto);
     const user = await this.dataSource.getRepository(User).findOne({

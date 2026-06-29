@@ -8,6 +8,8 @@ export const API_CONFIG = {
     auth: {
       login: '/api/v1/auth/login',
       register: '/api/v1/auth/register',
+      refresh: '/api/v1/auth/refresh',
+      logout: '/api/v1/auth/logout',
       activate: '/api/v1/auth/activate',
       staffLogin: '/api/v1/auth/staff-login',
       forgotPassword: '/api/v1/auth/forgot-password',

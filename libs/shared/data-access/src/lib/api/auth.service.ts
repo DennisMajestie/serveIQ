@@ -142,6 +142,22 @@ export class AuthService {
     return this.http.post<{ url: string }>(`${this.apiUrl}/api/v1/upload`, formData);
   }
 
+  refreshToken(): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/refresh`, {}).pipe(
+      tap(response => {
+        const token = response.data?.access_token;
+        if (token) {
+          localStorage.setItem('token', token);
+          this.tokenSubject.next(token);
+        }
+      })
+    );
+  }
+
+  serverLogout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/api/v1/auth/logout`, {});
+  }
+
   forgotPassword(data: ForgotPasswordRequest): Observable<{ token: string }> {
     return this.http.post<{ token: string }>(`${this.apiUrl}/api/v1/auth/forgot-password`, data);
   }
@@ -159,6 +175,7 @@ export class AuthService {
   }
 
   logout() {
+    this.serverLogout().subscribe({ error: () => {} });
     localStorage.removeItem('token');
     localStorage.removeItem('businessId');
     localStorage.removeItem('businessName');
