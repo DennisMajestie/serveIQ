@@ -9,7 +9,7 @@ export interface User {
   email: string;
   role: 'owner' | 'waiter' | 'super_admin';
   pin?: string;
-  avatar_url?: string;
+  avatarUrl?: string;
   isActive?: boolean;
 }
 
