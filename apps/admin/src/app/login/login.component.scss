@@ -70,7 +70,7 @@
 .checkbox-wrapper { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 .form-checkbox { width: 16px; height: 16px; border-radius: 4px; accent-color: #F97316; cursor: pointer; }
 .checkbox-label { font-size: 0.875rem; font-weight: 600; color: #64748b; }
-.forgot-link { font-size: 0.875rem; font-weight: 700; color: #d97706; text-decoration: none; }
+.forgot-link { font-size: 0.875rem; font-weight: 700; color: #d97706; text-decoration: none; border: none; background: none; cursor: pointer; }
 
 .btn-primary {
   width: 100%; padding: 17px;

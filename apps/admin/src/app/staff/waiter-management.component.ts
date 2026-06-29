@@ -113,7 +113,8 @@ export class WaiterManagementComponent implements OnInit {
 
     this.staffService.createWaiter(payload).subscribe({
       next: (w: any) => {
-        this.waiters.update(ws => [...ws, w]);
+        const createdWaiter = w.waiter || w;
+        this.waiters.update(ws => [...ws, createdWaiter]);
         this.isSubmitting.set(false);
         this.closeModal();
         Swal.fire({

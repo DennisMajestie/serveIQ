@@ -129,10 +129,10 @@ export class BranchService {
 
       // Order history
       const recentOrders = await this.orderRepository
-        .createQueryBuilder('order')
-        .innerJoin(Tab, 'tab', 'tab.id::varchar = order.tab_id::varchar')
-        .where('tab.branch_id::varchar = :branchId', { branchId })
-        .orderBy('order.created_at', 'DESC')
+        .createQueryBuilder('o')
+        .innerJoin(Tab, 'tab', '"tab"."id"::varchar = "o"."tab_id"::varchar')
+        .where('"tab"."branch_id"::varchar = :branchId', { branchId })
+        .orderBy('"o"."created_at"', 'DESC')
         .limit(20)
         .getMany();
 
