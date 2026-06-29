@@ -79,7 +79,7 @@
           </svg>
           My Profile
         </h3>
-        <div class="config-form-grid">
+        <div class="profile-form-grid">
           <div class="form-group">
             <label class="config-label">FULL NAME</label>
             <div class="input-wrapper">
@@ -98,95 +98,46 @@
         </button>
       </div>
 
-      <!-- Main Table Card -->
-      <div class="settings-card branch-table-card">
-        <div class="table-wrapper">
-          <table class="branch-table inter-font">
-            <thead>
-              <tr>
-                <th scope="col">Branch Name</th>
-                <th scope="col">Manager</th>
-                <th scope="col">Hours / Sync</th>
-                <th scope="col">Capacity</th>
-                <th scope="col">Performance</th>
-                <th scope="col" class="text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let branch of branches()">
-                <td class="cell-branch-name">
-                  <div class="branch-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    </svg>
-                  </div>
-                  <div class="branch-info">
-                    <span class="branch-title">{{ branch.name }}</span>
-                    <div class="branch-id-row">
-                      <span class="branch-id">ID: {{ branch.id }}</span>
-                      <button class="copy-btn" (click)="copyBranchId(branch.id)" [class.copied]="isCopied(branch.id)" title="Copy Branch ID">
-                        <svg *ngIf="!isCopied(branch.id)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="copy-icon">
-                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                        </svg>
-                        <svg *ngIf="isCopied(branch.id)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="copy-icon copied-icon">
-                          <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </td>
-                <td class="cell-manager">
-                  <div class="manager-layout">
-                    <span class="manager-name">{{ branch.address }}</span>
-                  </div>
-                </td>
-                <td class="cell-hours">
-                  <span class="hours-text">{{ branch.phoneNumber }}</span>
-                  <span class="sync-text">{{ branch.location || 'Nigeria' }}</span>
-                </td>
-                <td class="cell-capacity">
-                  <div class="capacity-bar-layout">
-                    <div class="capacity-track">
-                      <div class="capacity-fill" style="width: 80%"></div>
-                    </div>
-                    <span class="capacity-text">Active</span>
-                  </div>
-                </td>
-                <td class="cell-performance">
-                  <div class="mini-chart">
-                    <div class="chart-bar h-1"></div>
-                    <div class="chart-bar h-3"></div>
-                    <div class="chart-bar h-2"></div>
-                    <div class="chart-bar h-5"></div>
-                  </div>
-                </td>
-                <td class="text-right">
-                   <span class="status-indicator" style="background: #ea580c"></span>
-                   <div class="branch-actions">
-                     <button class="btn-action btn-edit" (click)="showEditBranch(branch)" title="Edit Branch">
-                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                     </button>
-                     <button class="btn-action btn-delete" (click)="deleteBranch(branch)" title="Delete Branch">
-                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                     </button>
-                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Branch List Section -->
+      <div class="settings-card branch-list-card">
+        <div class="branch-list-header">
+          <h3 class="config-header inter-font" style="margin: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" class="config-icon">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            Your Branches
+          </h3>
         </div>
 
-        <footer class="table-footer inter-font">
-          <div class="staff-summary">
-            <div class="staff-avatars">
-              <img src="https://ui-avatars.com/api/?name=E+R&background=0b1c30&color=fff" class="avatar-sm" />
-              <img src="https://ui-avatars.com/api/?name=M+C&background=0b1c30&color=fff" class="avatar-sm" />
-              <span class="avatar-more">+12</span>
+        <ng-template [ngIf]="branches().length > 0" [ngIfElse]="emptyBranches">
+          <div class="branch-cards-grid">
+            <div class="branch-card" *ngFor="let branch of branches()">
+              <div class="branch-card-header">
+                <span class="branch-card-name">{{ branch.name }}</span>
+                <span class="status-badge status-active">Active</span>
+              </div>
+              <div class="branch-card-address">{{ branch.address }}</div>
+              <div class="branch-card-phone">{{ branch.phoneNumber }}</div>
+              <div class="branch-card-actions">
+                <button class="btn-action btn-edit" (click)="showEditBranch(branch)" title="Edit Branch">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                </button>
+                <button class="btn-action btn-delete" (click)="deleteBranch(branch)" title="Delete Branch">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
             </div>
-            <span class="staff-text">15 Total Staff across branches</span>
           </div>
-        </footer>
+        </ng-template>
+
+        <ng-template #emptyBranches>
+          <div class="branch-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="branch-empty-icon">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            <p class="branch-empty-text">No branches yet. Click + Add Branch to get started.</p>
+          </div>
+        </ng-template>
       </div>
 
       <!-- Global Configurations Section -->

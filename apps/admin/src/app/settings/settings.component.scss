@@ -142,7 +142,13 @@
 .text-orange { color: #d97706; }
 .text-blue { color: #0ea5e9; }
 
-.profile-card { margin-bottom: 24px; }
+.profile-card { padding: 32px; }
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
 .btn-save {
   margin-top: 16px; padding: 10px 24px; background: #F97316; color: #fff;
   border: none; border-radius: 10px; font-weight: 600; font-size: 0.875rem;
@@ -151,7 +157,7 @@
   &:hover:not(:disabled) { opacity: 0.9; }
 }
 
-.content-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.content-header { display: flex; justify-content: space-between; align-items: center; }
 
 .btn-add-branch {
   display: flex; align-items: center; gap: 8px; padding: 12px 24px;
@@ -162,7 +168,101 @@
 }
 .btn-add-icon { width: 18px; height: 18px; }
 
-.branch-actions { display: inline-flex; gap: 8px; margin-left: 16px; }
+/* ===== BRANCH CARDS ===== */
+.branch-list-card { padding: 32px; }
+.branch-list-header { margin-bottom: 24px; }
+
+.branch-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.branch-card {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.branch-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.branch-card-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0b1c30;
+}
+
+.branch-card-address {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.branch-card-phone {
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+.branch-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-active {
+  background: #d1fae5;
+  color: #065f46;
+}
+.status-inactive {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Empty State */
+.branch-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+.branch-empty-icon {
+  width: 48px;
+  height: 48px;
+  color: #d1d5db;
+  margin-bottom: 16px;
+}
+.branch-empty-text {
+  font-size: 0.9375rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .branch-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.branch-actions { display: inline-flex; gap: 8px; }
 .btn-action {
   display: inline-flex; align-items: center; justify-content: center;
   width: 32px; height: 32px; border: none; border-radius: 8px;
