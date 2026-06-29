@@ -155,7 +155,8 @@ export class AuthService {
   }
 
   serverLogout(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/api/v1/auth/logout`, {});
+    const refreshToken = localStorage.getItem('token') || '';
+    return this.http.post<void>(`${this.apiUrl}/api/v1/auth/logout`, { refresh_token: refreshToken });
   }
 
   forgotPassword(data: ForgotPasswordRequest): Observable<{ token: string }> {
