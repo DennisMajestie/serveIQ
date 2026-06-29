@@ -70,27 +70,27 @@
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label" for="name">Name *</label>
-        <input type="text" id="name" class="form-input" [value]="formName()" (change)="formName.set(($event.target as HTMLInputElement).value)">
+        <input type="text" id="name" class="form-input" [value]="formName()" (change)="formName.set($any($event.target).value)">
       </div>
       <div class="form-group">
         <label class="form-label" for="contactPerson">Contact Person</label>
-        <input type="text" id="contactPerson" class="form-input" [value]="formContact()" (change)="formContact.set(($event.target as HTMLInputElement).value)">
+        <input type="text" id="contactPerson" class="form-input" [value]="formContact()" (change)="formContact.set($any($event.target).value)">
       </div>
       <div class="form-group">
         <label class="form-label" for="phone">Phone</label>
-        <input type="text" id="phone" class="form-input" [value]="formPhone()" (change)="formPhone.set(($event.target as HTMLInputElement).value)">
+        <input type="text" id="phone" class="form-input" [value]="formPhone()" (change)="formPhone.set($any($event.target).value)">
       </div>
       <div class="form-group">
         <label class="form-label" for="email">Email</label>
-        <input type="email" id="email" class="form-input" [value]="formEmail()" (change)="formEmail.set(($event.target as HTMLInputElement).value)">
+        <input type="email" id="email" class="form-input" [value]="formEmail()" (change)="formEmail.set($any($event.target).value)">
       </div>
       <div class="form-group">
         <label class="form-label" for="address">Address</label>
-        <textarea id="address" class="form-textarea" [value]="formAddress()" (change)="formAddress.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+        <textarea id="address" class="form-textarea" [value]="formAddress()" (change)="formAddress.set($any($event.target).value)"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="note">Notes</label>
-        <textarea id="note" class="form-textarea" [value]="formNote()" (change)="formNote.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+        <textarea id="note" class="form-textarea" [value]="formNote()" (change)="formNote.set($any($event.target).value)"></textarea>
       </div>
     </div>
     <div class="modal-footer">
@@ -112,27 +112,27 @@
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label" for="edit-name">Name *</label>
-        <input type="text" id="edit-name" class="form-input" [value]="formName()" (change)="formName.set(($event.target as HTMLInputElement).value)">
+        <input type="text" id="edit-name" class="form-input" [value]="formName()" (change)="formName.set($any($event.target).value)">
       </div>
       <div class="form-group">
         <label class="form-label" for="edit-contactPerson">Contact Person</label>
-        <input type="text" id="edit-contactPerson" class="form-input" [value]="formContact()" (change)="formContact.set(($event.target as HTMLInputElement).value)">
+        <input type="text" id="edit-contactPerson" class="form-input" [value]="formContact()" (change)="formContact.set($any($event.target).value)">
       </div>
       <div class="form-group">
         <label class="form-label" for="edit-phone">Phone</label>
-        <input type="text" id="edit-phone" class="form-input" [value]="formPhone()" (change)="formPhone.set(($event.target as HTMLInputElement).value)">
+        <input type="text" id="edit-phone" class="form-input" [value]="formPhone()" (change)="formPhone.set($any($event.target).value)">
       </div>
       <div class="form-group">
         <label class="form-label" for="edit-email">Email</label>
-        <input type="email" id="edit-email" class="form-input" [value]="formEmail()" (change)="formEmail.set(($event.target as HTMLInputElement).value)">
+        <input type="email" id="edit-email" class="form-input" [value]="formEmail()" (change)="formEmail.set($any($event.target).value)">
       </div>
       <div class="form-group">
         <label class="form-label" for="edit-address">Address</label>
-        <textarea id="edit-address" class="form-textarea" [value]="formAddress()" (change)="formAddress.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+        <textarea id="edit-address" class="form-textarea" [value]="formAddress()" (change)="formAddress.set($any($event.target).value)"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label" for="edit-note">Notes</label>
-        <textarea id="edit-note" class="form-textarea" [value]="formNote()" (change)="formNote.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+        <textarea id="edit-note" class="form-textarea" [value]="formNote()" (change)="formNote.set($any($event.target).value)"></textarea>
       </div>
     </div>
     <div class="modal-footer">

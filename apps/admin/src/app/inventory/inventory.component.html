@@ -6,7 +6,7 @@
     </div>
     <div class="header-actions">
       <label class="toggle-label">
-        <input type="checkbox" [checked]="lowStockOnly()" (change)="lowStockOnly.set(($event.target as HTMLInputElement).checked)">
+        <input type="checkbox" [checked]="lowStockOnly()" (change)="lowStockOnly.set($any($event.target).checked)">
         Show Low Stock Only
       </label>
       <button class="btn-refresh" (click)="loadInventory()">Refresh</button>
@@ -72,11 +72,11 @@
       </div>
       <div class="form-group">
         <label class="form-label" for="quantity">Quantity to Add</label>
-        <input type="number" id="quantity" class="form-input" [value]="stockQuantity()" (change)="stockQuantity.set(($event.target as HTMLInputElement).valueAsNumber)" min="1">
+        <input type="number" id="quantity" class="form-input" [value]="stockQuantity()" (change)="stockQuantity.set($any($event.target).valueAsNumber)" min="1">
       </div>
       <div class="form-group">
         <label class="form-label" for="notes">Notes (Optional)</label>
-        <textarea id="notes" class="form-textarea" [value]="stockNotes()" (change)="stockNotes.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+        <textarea id="notes" class="form-textarea" [value]="stockNotes()" (change)="stockNotes.set($any($event.target).value)"></textarea>
       </div>
     </div>
     <div class="modal-footer">

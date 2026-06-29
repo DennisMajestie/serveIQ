@@ -88,7 +88,7 @@
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label" for="startingCash">Starting Cash (₦)</label>
-        <input type="number" id="startingCash" class="form-input" [value]="startingCash()" (change)="startingCash.set(($event.target as HTMLInputElement).valueAsNumber)" min="0" step="0.01">
+        <input type="number" id="startingCash" class="form-input" [value]="startingCash()" (change)="startingCash.set($any($event.target).valueAsNumber)" min="0" step="0.01">
       </div>
     </div>
     <div class="modal-footer">
@@ -114,11 +114,11 @@
       </div>
       <div class="form-group">
         <label class="form-label" for="closeCash">Actual Cash (₦)</label>
-        <input type="number" id="closeCash" class="form-input" [value]="closeCash()" (change)="closeCash.set(($event.target as HTMLInputElement).valueAsNumber)" min="0" step="0.01">
+        <input type="number" id="closeCash" class="form-input" [value]="closeCash()" (change)="closeCash.set($any($event.target).valueAsNumber)" min="0" step="0.01">
       </div>
       <div class="form-group">
         <label class="form-label" for="closeNote">Notes (Optional)</label>
-        <textarea id="closeNote" class="form-textarea" [value]="closeNote()" (change)="closeNote.set(($event.target as HTMLTextAreaElement).value)"></textarea>
+        <textarea id="closeNote" class="form-textarea" [value]="closeNote()" (change)="closeNote.set($any($event.target).value)"></textarea>
       </div>
     </div>
     <div class="modal-footer">
