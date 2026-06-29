@@ -1,9 +1,10 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { BranchesApiService, DashboardStats } from '@serveiq/shared/data-access';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -51,60 +52,69 @@ import { BranchesApiService, DashboardStats } from '@serveiq/shared/data-access'
 
       <!-- Main Content Grid -->
       <section class="content-grid" aria-label="Dashboard content">
-        <!-- Hourly Peak Times Chart Card (2/3) -->
-        <article class="content-card chart-card">
+        <!-- Waiter Performance Card -->
+        <article class="content-card waiter-card">
           <div class="card-header">
             <div class="card-title-group">
-              <h2 class="card-title space-font">Hourly Peak Times</h2>
-              <p class="card-subtitle inter-font">Sales volume distribution across business hours</p>
-            </div>
-            <div class="card-filter">
-              <div class="toggle-group">
-                <button class="toggle-btn active inter-font">Today</button>
-                <button class="toggle-btn inter-font">Yesterday</button>
-              </div>
+              <h2 class="card-title space-font">Waiter Performance</h2>
+              <p class="card-subtitle inter-font">Today's tabs and revenue per staff member</p>
             </div>
           </div>
-          <div class="chart-container">
-            <div class="bar-chart" *ngIf="!isLoading(); else chartSkeleton">
-              <div class="bar-group" *ngFor="let bar of peakTimesData()">
-                <div class="bar-wrapper">
-                  <div class="bar-fill" [style.height.%]="bar.value" [class.highlight]="bar.highlight"></div>
-                </div>
-                <span class="bar-label inter-font">{{ bar.label }}</span>
+          <div class="waiter-list" *ngIf="!isLoading(); else waiterSkeleton">
+            <div class="waiter-row" *ngFor="let w of waiterPerformance()">
+              <div class="waiter-avatar">
+                <img [src]="w.waiter.avatarUrl || 'https://ui-avatars.com/api/?name=' + (w.waiter.fullName || 'S') + '&background=0b1c30&color=fff'" alt="">
+              </div>
+              <div class="waiter-info">
+                <span class="waiter-name space-font">{{ w.waiter.fullName }}</span>
+                <span class="waiter-meta inter-font">{{ w.tabsCount }} tab{{ w.tabsCount !== 1 ? 's' : '' }} closed</span>
+              </div>
+              <div class="waiter-revenue">
+                <span class="amount space-font">₦{{ (w.revenueKobo / 100).toLocaleString() }}</span>
               </div>
             </div>
-            <ng-template #chartSkeleton>
-              <div class="bar-chart">
-                <div class="bar-group" *ngFor="let i of [1,2,3,4,5,6,7,8]">
-                  <div class="skeleton-shimmer bar-wrapper" style="height: 100%; border-radius: 6px;"></div>
+            <div class="waiter-empty" *ngIf="waiterPerformance().length === 0">
+              <mat-icon>people_outline</mat-icon>
+              <p>No waiter activity yet today</p>
+            </div>
+          </div>
+          <ng-template #waiterSkeleton>
+            <div class="waiter-list">
+              <div class="waiter-row" *ngFor="let i of [1,2,3]">
+                <div class="skeleton-shimmer" style="width: 44px; height: 44px; border-radius: 50%;"></div>
+                <div class="waiter-info">
+                  <div class="skeleton-shimmer" style="width: 120px; height: 14px; margin-bottom: 4px;"></div>
+                  <div class="skeleton-shimmer" style="width: 80px; height: 12px;"></div>
                 </div>
               </div>
-            </ng-template>
-          </div>
+            </div>
+          </ng-template>
         </article>
 
-        <!-- Recent Transactions Card (1/3) -->
+        <!-- Recent Orders Card -->
         <article class="content-card transactions-card">
           <div class="card-header">
             <div class="card-title-group">
-              <h2 class="card-title space-font">Recent Activity</h2>
-              <p class="card-subtitle inter-font">Latest 5 orders</p>
+              <h2 class="card-title space-font">Recent Orders</h2>
+              <p class="card-subtitle inter-font">Latest orders across all tabs</p>
             </div>
-            <a class="view-all-link inter-font">View All</a>
           </div>
           <div class="transactions-list" *ngIf="!isLoading(); else txnSkeletons">
-            <div class="transaction-row" *ngFor="let txn of recentTransactions()">
+            <div class="transaction-row" *ngFor="let order of recentOrders()">
               <div class="txn-avatar">
-                  <mat-icon [style.color]="txn.status === 'completed' ? '#ff9800' : '#94a3b8'">{{ txn.status === 'completed' ? 'restaurant' : 'history' }}</mat-icon>
+                <mat-icon style="color: #ff9800">restaurant</mat-icon>
               </div>
               <div class="txn-details">
-                <span class="txn-title space-font">{{ txn.table }}</span>
-                <span class="txn-meta inter-font">{{ txn.time }} ago • {{ txn.paymentMethod }}</span>
+                <span class="txn-title space-font">{{ order.menuItemName }}</span>
+                <span class="txn-meta inter-font">x{{ order.quantity }} • {{ order.createdAt | date:'short' }}</span>
               </div>
               <div class="txn-amount">
-                <span class="amount space-font">₦{{ txn.amount.toLocaleString() || '0' }}</span>
+                <span class="amount space-font">₦{{ (order.priceKobo / 100).toLocaleString() }}</span>
               </div>
+            </div>
+            <div class="txn-empty" *ngIf="recentOrders().length === 0">
+              <mat-icon>receipt_long</mat-icon>
+              <p>No orders yet today</p>
             </div>
           </div>
           <ng-template #txnSkeletons>
@@ -124,28 +134,36 @@ import { BranchesApiService, DashboardStats } from '@serveiq/shared/data-access'
       <!-- Bottom Row -->
       <section class="bottom-grid" aria-label="Operational Pulse">
         <article class="content-card venue-status-card">
-          <div class="venue-image-container">
-            <img src="/assets/food/jollof.png" alt="Venue Status">
+          <div class="venue-status-icon">
+            <mat-icon [style.font-size.px]="48" [style.color]="occupancyPercent() >= 80 ? '#ef4444' : '#00D166'">table_restaurant</mat-icon>
           </div>
           <div class="venue-info">
             <div class="venue-header">
-              <h3 class="space-font">Main Dining Room Status</h3>
-              <p class="inter-font">85% Capacity reached. Consider opening the patio section for upcoming reservations.</p>
+              <h3 class="space-font">Table Occupancy</h3>
+              <p class="inter-font">{{ activeTables() }} of {{ totalTables() }} tables are currently occupied ({{ occupancyPercent() }}% capacity).</p>
+            </div>
+            <div class="occupancy-bar">
+              <div class="occupancy-track">
+                <div class="occupancy-fill" [style.width.%]="occupancyPercent()" [style.background]="occupancyPercent() >= 80 ? '#ef4444' : '#00D166'"></div>
+              </div>
+              <span class="occupancy-label inter-font">{{ occupancyPercent() }}%</span>
             </div>
             <div class="venue-chips">
-              <span class="status-chip highlight inter-font">ACTIVE PEAK</span>
-              <span class="status-chip inter-font">PATIO OPEN</span>
+              <span class="status-chip" [class.highlight]="occupancyPercent() >= 80" [class.chip-success]="occupancyPercent() < 80">
+                {{ occupancyPercent() >= 80 ? 'NEAR CAPACITY' : 'ROOM AVAILABLE' }}
+              </span>
+              <span class="status-chip" *ngIf="openTabs() > 0">{{ openTabs() }} open tab{{ openTabs() !== 1 ? 's' : '' }}</span>
             </div>
           </div>
         </article>
 
-        <article class="content-card inventory-card">
-          <div class="inventory-icon-header">
-              <mat-icon class="inv-icon">flare</mat-icon>
-              <h3 class="space-font">Inventory Alert</h3>
+        <article class="content-card revenue-card">
+          <div class="revenue-icon-header">
+            <mat-icon class="rev-icon">payments</mat-icon>
+            <h3 class="space-font">Today's Revenue</h3>
           </div>
-          <p class="inter-font">Premium Ribeye and Sea Bass stock levels are below threshold (15% remaining).</p>
-          <button class="reorder-btn inter-font">Reorder Now</button>
+          <div class="revenue-amount space-font">₦{{ (dailyRevenue() / 100).toLocaleString() }}</div>
+          <p class="inter-font">From {{ todayTabsCount() }} completed tab{{ todayTabsCount() !== 1 ? 's' : '' }}</p>
         </article>
       </section>
     </div>
@@ -196,24 +214,29 @@ import { BranchesApiService, DashboardStats } from '@serveiq/shared/data-access'
     .card-title { font-size: 1.5rem; margin: 0; color: var(--on-surface); }
     .card-subtitle { color: var(--on-surface-muted); font-size: 0.875rem; }
 
-    .card-filter .toggle-group { display: flex; background: #eff4ff; border-radius: 8px; padding: 4px; }
-    .toggle-btn { border: none; background: transparent; padding: 6px 16px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; color: var(--on-surface-muted); cursor: pointer; }
-    .toggle-btn.active { background: white; color: var(--on-surface); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-
-    .chart-container { height: 280px; margin: 24px 0; display: flex; align-items: flex-end; }
-    .bar-chart { display: flex; align-items: flex-end; justify-content: space-between; width: 100%; height: 240px; padding: 0 10px; }
-    .bar-group { display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; }
-    .bar-wrapper { width: 32px; height: 180px; background: #eff4ff; border-radius: 6px; display: flex; align-items: flex-end; overflow: hidden; }
-    .bar-fill { width: 100%; background: #bbdefb; border-radius: 4px; transition: height 0.3s ease; }
-    .bar-fill.highlight { background: #8d4013; }
-    .bar-label { font-size: 0.7rem; color: var(--on-surface-muted); }
+    .waiter-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+    .waiter-row { 
+      display: flex; align-items: center; gap: 16px; padding: 16px; 
+      background: #f8f9ff; border-radius: 16px; transition: transform 0.2s;
+    }
+    .waiter-row:hover { transform: scale(1.02); }
+    .waiter-avatar img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+    .waiter-info { flex: 1; display: flex; flex-direction: column; }
+    .waiter-name { font-size: 0.9375rem; font-weight: 700; color: var(--on-surface); }
+    .waiter-meta { font-size: 0.75rem; color: var(--on-surface-muted); }
+    .waiter-revenue { font-weight: 700; font-size: 0.9375rem; color: var(--on-surface); }
+    .waiter-empty, .txn-empty { 
+      display: flex; flex-direction: column; align-items: center; gap: 8px; 
+      padding: 32px; color: var(--on-surface-muted); text-align: center;
+    }
+    .waiter-empty mat-icon, .txn-empty mat-icon { font-size: 40px; width: 40px; height: 40px; }
 
     .transactions-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
     .transaction-row { 
       display: flex; align-items: center; gap: 16px; padding: 16px; 
-      background: #eff4ff; border-radius: 16px; transition: transform 0.2s;
-      &:hover { transform: scale(1.02); }
+      background: #f8f9ff; border-radius: 16px; transition: transform 0.2s;
     }
+    .transaction-row:hover { transform: scale(1.02); }
     .txn-avatar { 
       width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
       background: white !important; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -221,36 +244,55 @@ import { BranchesApiService, DashboardStats } from '@serveiq/shared/data-access'
     .txn-details { flex: 1; display: flex; flex-direction: column; }
     .txn-title { font-size: 0.9375rem; font-weight: 700; color: var(--on-surface); }
     .txn-meta { font-size: 0.75rem; color: var(--on-surface-muted); }
-    .txn-amount { font-weight: 700; font-size: 0.9375rem; }
+    .txn-amount { font-weight: 700; font-size: 0.9375rem; color: var(--on-surface); }
 
     .bottom-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; padding: 0 40px 40px; }
     .venue-status-card { display: flex; gap: 24px; padding: 24px; align-items: center; background: #eef2ff; border: none; }
-    .venue-image-container { width: 120px; height: 120px; border-radius: 16px; overflow: hidden; flex-shrink: 0; }
-    .venue-image-container img { width: 100%; height: 100%; object-fit: cover; }
+    .venue-status-icon { flex-shrink: 0; }
     .venue-info { flex: 1; display: flex; flex-direction: column; gap: 16px; }
     .venue-header h3 { margin: 0; font-size: 1.125rem; }
     .venue-header p { margin: 4px 0 0; font-size: 0.8125rem; color: var(--on-surface-muted); line-height: 1.4; }
-    .venue-chips { display: flex; gap: 8px; }
+    .occupancy-bar { display: flex; align-items: center; gap: 12px; }
+    .occupancy-track { flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+    .occupancy-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+    .occupancy-label { font-size: 0.8125rem; font-weight: 600; color: var(--on-surface); min-width: 36px; }
+    .venue-chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .status-chip { font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 8px; background: white; color: var(--on-surface-muted); }
     .status-chip.highlight { background: #fee2e2; color: #b91c1c; }
+    .status-chip.chip-success { background: #e8f5e9; color: #2e7d32; }
 
-    .inventory-card { background: #fffcf0; padding: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
-    .inventory-icon-header { display: flex; align-items: center; gap: 12px; color: #854d0e; }
-    .inventory-icon-header h3 { margin: 0; font-size: 1.125rem; }
-    .inv-icon { font-size: 24px; }
-    .inventory-card p { font-size: 0.8125rem; color: #854d0e; line-height: 1.4; margin: 0; }
-    .reorder-btn { background: #8d4013; color: white; border: none; padding: 10px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+    .revenue-card { background: #fffcf0; padding: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .revenue-icon-header { display: flex; align-items: center; gap: 12px; color: #854d0e; }
+    .revenue-icon-header h3 { margin: 0; font-size: 1.125rem; }
+    .rev-icon { font-size: 24px; }
+    .revenue-amount { font-size: 2rem; font-weight: 700; color: #854d0e; }
+    .revenue-card p { font-size: 0.8125rem; color: #854d0e; line-height: 1.4; margin: 0; }
   `]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   private branchService = inject(BranchesApiService);
 
   isLoading = signal(true);
-  stats = signal<DashboardStats>({ totalBranches: 0, totalTables: 0, openTabs: 0, totalOrders: 0 });
+  stats = signal<DashboardStats>({
+    realTimeSales: 0,
+    activeTables: 0,
+    totalTables: 0,
+    openTabs: 0,
+    dailyRevenue: 0,
+    todayTabsCount: 0,
+    waiterPerformance: [],
+    recentOrders: []
+  });
   errorMessage = signal<string | null>(null);
+  private pollingSub?: Subscription;
 
   ngOnInit() {
     this.loadStats();
+    this.pollingSub = interval(30000).subscribe(() => this.loadStats());
+  }
+
+  ngOnDestroy() {
+    this.pollingSub?.unsubscribe();
   }
 
   loadStats() {
@@ -260,43 +302,31 @@ export class DashboardComponent implements OnInit {
       next: (s: DashboardStats) => { this.stats.set(s); this.isLoading.set(false); },
       error: (error: any) => {
         this.isLoading.set(false);
-        if (error.status === 401) {
-          this.errorMessage.set('Unauthorized. Please login again.');
-        } else {
-          this.errorMessage.set('Failed to load dashboard stats. Please try again.');
-        }
+        this.errorMessage.set(error.status === 401 ? 'Unauthorized. Please login again.' : 'Failed to load dashboard stats.');
       }
     });
   }
-  
+
   kpiCards = computed(() => {
     const s = this.stats();
     return [
-      { label: 'Total Branches', value: s.totalBranches != null ? s.totalBranches.toString() : '0', subValue: 'Locations', icon: 'store', iconBg: '#FF7043' },
-      { label: 'Active Tabs', value: s.openTabs != null ? s.openTabs.toString() : '0', subValue: 'Current', icon: 'table_bar', iconBg: '#0059bb' },
-      { label: 'Total Tables', value: s.totalTables != null ? s.totalTables.toString() : '0', subValue: 'Configured', icon: 'analytics', iconBg: '#8b5cf6' },
-      { label: 'Total Orders', value: s.totalOrders != null ? s.totalOrders.toString() : '0', subValue: 'Today', icon: 'receipt', iconBg: '#00D166' }
+      { label: 'Today\'s Revenue', value: `₦${(s.realTimeSales / 100).toLocaleString()}`, subValue: 'Sales', icon: 'payments', iconBg: '#00D166' },
+      { label: 'Active Tables', value: s.activeTables.toString(), subValue: `of ${s.totalTables}`, icon: 'table_restaurant', iconBg: '#FF7043' },
+      { label: 'Open Tabs', value: s.openTabs.toString(), subValue: 'Current', icon: 'receipt_long', iconBg: '#0059bb' },
+      { label: 'Tabs Completed', value: s.todayTabsCount.toString(), subValue: 'Today', icon: 'check_circle', iconBg: '#8b5cf6' }
     ];
   });
 
-  peakTimesData = signal([
-    { label: '12pm', value: 30, highlight: false },
-    { label: '1pm', value: 45, highlight: false },
-    { label: '2pm', value: 75, highlight: true },
-    { label: '3pm', value: 85, highlight: true },
-    { label: '4pm', value: 65, highlight: true },
-    { label: '5pm', value: 45, highlight: false },
-    { label: '6pm', value: 55, highlight: false },
-    { label: '7pm', value: 40, highlight: false },
-    { label: '8pm', value: 35, highlight: false },
-    { label: '10pm', value: 25, highlight: false }
-  ]);
-
-  recentTransactions = signal([
-    { id: '1', table: 'Table 12', amount: 45800, status: 'completed', time: '2m', paymentMethod: 'Card' },
-    { id: '2', table: 'Table 7', amount: 28400, status: 'completed', time: '5m', paymentMethod: 'Cash' },
-    { id: '3', table: 'Table 3', amount: 15600, status: 'pending', time: '8m', paymentMethod: 'Transfer' },
-    { id: '4', table: 'Table 19', amount: 67200, status: 'completed', time: '12m', paymentMethod: 'Card' },
-    { id: '5', table: 'Table 5', amount: 34100, status: 'completed', time: '18m', paymentMethod: 'Cash' }
-  ]);
+  waiterPerformance = computed(() => this.stats().waiterPerformance || []);
+  recentOrders = computed(() => (this.stats().recentOrders || []).slice(0, 10));
+  activeTables = computed(() => this.stats().activeTables);
+  totalTables = computed(() => this.stats().totalTables);
+  openTabs = computed(() => this.stats().openTabs);
+  dailyRevenue = computed(() => this.stats().dailyRevenue);
+  todayTabsCount = computed(() => this.stats().todayTabsCount);
+  occupancyPercent = computed(() => {
+    const total = this.totalTables();
+    if (total === 0) return 0;
+    return Math.round((this.activeTables() / total) * 100);
+  });
 }

@@ -2,6 +2,7 @@ import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { SyncStore } from '@serveiq/data-access';
+import { AuthService } from '@serveiq/shared/data-access';
 
 interface NavItem {
   label: string;
@@ -57,9 +58,9 @@ interface NavItem {
           </ul>
         </nav>
         <div class="sidebar-footer">
-          <button class="new-order-btn">
-            <span class="material-symbols-outlined">add</span>
-            New Order
+          <button class="logout-btn" (click)="logout()">
+            <span class="material-symbols-outlined">logout</span>
+            Logout
           </button>
         </div>
       </aside>
@@ -250,12 +251,12 @@ interface NavItem {
       margin-top: auto;
     }
 
-    .new-order-btn {
+    .logout-btn {
       width: 100%;
       height: 48px;
-      background: var(--primary-container);
-      color: var(--on-primary-container);
-      border: none;
+      background: transparent;
+      color: var(--error);
+      border: 1px solid transparent;
       border-radius: 12px;
       font-size: 14px;
       line-height: 20px;
@@ -267,10 +268,14 @@ interface NavItem {
       justify-content: center;
       gap: 8px;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    .new-order-btn:active {
+    .logout-btn:hover {
+      background: var(--error-container);
+      border-color: var(--error);
+    }
+
+    .logout-btn:active {
       transform: scale(0.95);
     }
 
@@ -422,8 +427,15 @@ interface NavItem {
 })
 export class AdminShellComponent {
   sidebarCollapsed = signal(false);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   toggleSidebar() {
     this.sidebarCollapsed.update(v => !v);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

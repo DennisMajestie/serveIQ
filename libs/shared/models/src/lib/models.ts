@@ -109,11 +109,32 @@ export interface Receipt {
   receiptNumber: string;
 }
 
+export interface WaiterPerformance {
+  waiter: { id: string; fullName: string; email: string; avatarUrl?: string };
+  tabsCount: number;
+  revenueKobo: number;
+}
+
+export interface RecentOrder {
+  id: string;
+  menuItemName: string;
+  menuItemId: string;
+  priceKobo: number;
+  quantity: number;
+  tabId: string;
+  createdAt: Date;
+  tab?: { tableId?: string; table?: { tableNumber?: string } };
+}
+
 export interface DashboardStats {
-  totalBranches: number;
+  realTimeSales: number;
+  activeTables: number;
   totalTables: number;
   openTabs: number;
-  totalOrders: number;
+  dailyRevenue: number;
+  todayTabsCount: number;
+  waiterPerformance: WaiterPerformance[];
+  recentOrders: RecentOrder[];
 }
 
 // ==========================================
