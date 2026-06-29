@@ -1,8 +1,8 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { SyncStore } from '@serveiq/data-access';
-import { AuthService } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService, User } from '@serveiq/shared/data-access';
 
 interface NavItem {
   label: string;
@@ -75,9 +75,9 @@ interface NavItem {
           </div>
           <div class="top-nav-right">
             <div class="top-nav-actions">
-              <button class="icon-btn">
+              <button class="icon-btn" (click)="openNotifications()">
                 <span class="material-symbols-outlined">notifications</span>
-                <span class="notification-dot"></span>
+                <span class="notification-dot" *ngIf="hasNotifications()"></span>
               </button>
               <button class="icon-btn">
                 <span class="material-symbols-outlined">help</span>
@@ -87,10 +87,10 @@ interface NavItem {
             <div class="divider"></div>
             <div class="user-profile">
               <div class="user-info">
-                <p class="user-name">Marcus Cole</p>
-                <p class="user-role">Manager</p>
+                <p class="user-name">{{ profile().fullName || 'Admin' }}</p>
+                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : (profile().role === 'super_admin' ? 'Super Admin' : 'Staff') }}</p>
               </div>
-              <img alt="Admin Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaybusLQmZnunOL2JqdLVUOHNP3YQz-SAlAew7fOiFV3L_wuzBKG5uhzMTAnTwmPJBVAE-tW8LhiM0IfR0R1gDEk19ZAY9ouxL0eNCl4dbbLLL94CsZrtgAkbZ7kjlOPCHuBadffduliQa_BilWO0c6wkLaswj6BKBm7PtpU4x-lWHhyvBYTbX2aWEwxNhfUchW3osXvrPUxWyJq1Ko2kNk7CBujdSeALxFPjFsFribrqzHjloASkDUmQRwq56TpjWROFdrLTeCiN7">
+              <img [src]="profile().avatarUrl || 'https://ui-avatars.com/api/?name=' + (profile().fullName || 'A') + '&background=9d4300&color=fff'" alt="Profile">
             </div>
           </div>
         </header>
@@ -425,10 +425,21 @@ interface NavItem {
     }
   `]
 })
-export class AdminShellComponent {
+export class AdminShellComponent implements OnInit {
   sidebarCollapsed = signal(false);
+  profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: 'owner' });
+  hasNotifications = signal(false);
+
   private authService = inject(AuthService);
+  private userApi = inject(UserApiService);
   private router = inject(Router);
+
+  ngOnInit() {
+    this.userApi.getMe().subscribe({
+      next: (user: any) => this.profile.set({ fullName: user.fullName, role: user.role, avatarUrl: user.avatarUrl || user.avatar_url }),
+      error: () => {}
+    });
+  }
 
   toggleSidebar() {
     this.sidebarCollapsed.update(v => !v);
@@ -437,5 +448,9 @@ export class AdminShellComponent {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  openNotifications() {
+    this.router.navigate(['/settings']);
   }
 }
