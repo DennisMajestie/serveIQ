@@ -80,6 +80,10 @@ export const API_CONFIG = {
       pay: '/api/v1/bills/tab/:tabId/pay',
       receipt: '/api/v1/bills/tab/:tabId/receipt',
     },
+    // Reports
+    reports: {
+      peakHours: '/api/v1/reports/peak-hours',
+    },
     // Nemotron
     nemotron: {
       completions: '/v1/chat/completions',

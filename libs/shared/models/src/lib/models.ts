@@ -250,3 +250,9 @@ export interface UpdateProfileRequest {
   phone?: string;
   password?: string;
 }
+
+export interface PeakHoursEntry {
+  hour: number;
+  order_count: number;
+  revenue_kobo: number;
+}
