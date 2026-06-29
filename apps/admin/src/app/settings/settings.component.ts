@@ -39,7 +39,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.loadProfile();
     this.branchesApi.list().subscribe({
-      next: (b) => { this.branches.set(b); this.isLoading.set(false); },
+      next: (b) => { this.branches.set(Array.isArray(b) ? b : []); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
     });
   }
@@ -103,7 +103,7 @@ export class SettingsComponent implements OnInit {
         this.isSavingBranch.set(false);
         this.showBranchModal.set(false);
         Swal.fire({ icon: 'success', title: this.editingBranch() ? 'Branch Updated' : 'Branch Created', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
-        this.branchesApi.list().subscribe(b => this.branches.set(b));
+        this.branchesApi.list().subscribe(b => this.branches.set(Array.isArray(b) ? b : []));
       },
       error: () => {
         this.isSavingBranch.set(false);
@@ -128,7 +128,7 @@ export class SettingsComponent implements OnInit {
         this.branchesApi.removeBranch(branch.id).subscribe({
           next: () => {
             Swal.fire({ icon: 'success', title: 'Branch Deleted', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
-            this.branchesApi.list().subscribe(b => this.branches.set(b));
+            this.branchesApi.list().subscribe(b => this.branches.set(Array.isArray(b) ? b : []));
           },
           error: () => Swal.fire({ icon: 'error', title: 'Delete Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
         });

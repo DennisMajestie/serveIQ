@@ -45,7 +45,10 @@ export class TablesManagementComponent implements OnInit {
 
   ngOnInit() {
     this.tableService.getAllTables().subscribe({
-      next: (tables: any) => { this.tables.set(tables); this.isLoading.set(false); },
+      next: (tables: any) => {
+        this.tables.set(Array.isArray(tables) ? tables : []);
+        this.isLoading.set(false);
+      },
       error: () => this.isLoading.set(false)
     });
   }
