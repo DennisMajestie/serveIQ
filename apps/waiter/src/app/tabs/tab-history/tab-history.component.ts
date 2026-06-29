@@ -54,9 +54,8 @@ export class TabHistoryComponent implements OnInit {
   ngOnInit() {
     this.tabsApi.getAllTabs().subscribe({
       next: (tabs) => {
-        // Show closed/paid/voided tabs
-        const closed = tabs.filter(t => t.status === 'paid' || t.status === 'voided');
-        this.closedTabs.set(closed);
+        const arr = Array.isArray(tabs) ? tabs : [];
+        this.closedTabs.set(arr.filter(t => t.status === 'paid' || t.status === 'voided'));
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)

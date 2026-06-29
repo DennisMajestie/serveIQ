@@ -27,6 +27,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   stats = computed(() => {
     const t = this.tables();
+    if (!Array.isArray(t)) return { totalTables: 0, available: 0, occupied: 0 };
     return {
       totalTables: t.length,
       available: t.filter(x => x.status === 'available').length,
@@ -43,7 +44,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.pollSub = interval(5000).pipe(
       switchMap(() => this.tablesApi.getAllTables())
     ).subscribe(tables => {
-      this.tables.set(tables);
+      if (Array.isArray(tables)) this.tables.set(tables);
       this.isSynced.set(true);
       this.loadOpenTabs();
     });
@@ -67,7 +68,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   loadOpenTabs() {
     this.tabsApi.getAllTabs().subscribe({
       next: (tabs) => {
-        this.openTabs.set(tabs.filter(t => t.status === 'open'));
+        this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
       }
     });
   }

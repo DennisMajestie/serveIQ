@@ -36,7 +36,7 @@ export class AddOrderItemModalComponent implements OnInit {
     this.error.set(null);
     this.menuService.getAllItems().subscribe({
       next: (items) => {
-        this.menuItems.set(items.filter(i => i.isAvailable));
+        this.menuItems.set(Array.isArray(items) ? items.filter(i => i.isAvailable) : []);
         this.isLoading.set(false);
       },
       error: () => {
