@@ -35,7 +35,10 @@ export class BaseApiService {
       .get<any>(fullUrl, { headers: this.defaultHeaders, params: httpParams })
       .pipe(
         map(res => {
-          const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+          let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+          if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+            data = data.data;
+          }
           return snakeToCamel<T>(data);
         }),
         catchError(handleApiError)
@@ -49,7 +52,10 @@ export class BaseApiService {
       .post<any>(fullUrl, body, { headers: this.defaultHeaders })
       .pipe(
         map(res => {
-          const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+          let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+          if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+            data = data.data;
+          }
           return snakeToCamel<T>(data);
         }),
         catchError(handleApiError)
