@@ -28,6 +28,8 @@ export interface Business {
   timezone?: string;
   subscriptionPlan?: string;
   logoUrl?: string;
+  brandPrimaryColor?: string;
+  brandAccentColor?: string;
   isActive?: boolean;
   branches?: Branch[];
 }

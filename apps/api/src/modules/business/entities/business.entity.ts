@@ -50,6 +50,12 @@ export class Business {
   @Column({ nullable: true })
   logo_url: string;
 
+  @Column({ nullable: true, default: '#F97316' })
+  brand_primary_color: string;
+
+  @Column({ nullable: true, default: '#d97706' })
+  brand_accent_color: string;
+
   @Column({ nullable: true })
   cac_document_url: string;
 

@@ -1,8 +1,9 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BranchesApiService, AuthService, UserApiService, BusinessApiService } from '@serveiq/shared/data-access';
+import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService } from '@serveiq/shared/data-access';
 import { Branch, User, CreateBranchRequest, Business } from '@serveiq/shared/models';
+import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 
 
@@ -19,6 +20,8 @@ export class SettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
   private businessApi = inject(BusinessApiService);
+  private uploadService = inject(UploadApiService);
+  activeSection = signal<'branch-setup' | 'branding'>('branch-setup');
   branches = signal<Branch[]>([]);
   isLoading = signal(true);
   copiedBranchId = signal<string | null>(null);
@@ -41,6 +44,11 @@ export class SettingsComponent implements OnInit {
   currency = signal('NGN');
   timezone = signal('Africa/Lagos');
   isSavingSettings = signal(false);
+  brandPrimaryColor = signal('#F97316');
+  brandAccentColor = signal('#d97706');
+  brandLogoPreview = signal<string | null>(null);
+  brandLogoFile = signal<File | null>(null);
+  isSavingBranding = signal(false);
 
   ngOnInit() {
     this.loadProfile();
@@ -58,6 +66,8 @@ export class SettingsComponent implements OnInit {
         this.taxRate.set(b.taxRate ?? null);
         this.currency.set(b.currency || 'NGN');
         this.timezone.set(b.timezone || 'Africa/Lagos');
+        this.brandPrimaryColor.set(b.brandPrimaryColor || '#F97316');
+        this.brandAccentColor.set(b.brandAccentColor || '#d97706');
       }
     });
   }
@@ -75,6 +85,45 @@ export class SettingsComponent implements OnInit {
       },
       error: () => {
         this.isSavingSettings.set(false);
+        Swal.fire({ icon: 'error', title: 'Save Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      }
+    });
+  }
+
+  setActiveSection(section: 'branch-setup' | 'branding') {
+    this.activeSection.set(section);
+  }
+
+  onBrandLogoSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.brandLogoFile.set(file);
+    const reader = new FileReader();
+    reader.onload = (e) => this.brandLogoPreview.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  async saveBranding() {
+    this.isSavingBranding.set(true);
+    let logoUrl = this.businessSettings()?.logoUrl;
+    if (this.brandLogoFile()) {
+      try {
+        const uploaded = await firstValueFrom(this.uploadService.uploadFile(this.brandLogoFile()!));
+        logoUrl = uploaded?.url;
+      } catch { /* silently skip photo */ }
+    }
+    this.businessApi.updateBusiness({
+      logoUrl,
+      brandPrimaryColor: this.brandPrimaryColor(),
+      brandAccentColor: this.brandAccentColor(),
+    } as any).subscribe({
+      next: () => {
+        this.isSavingBranding.set(false);
+        this.brandLogoFile.set(null);
+        Swal.fire({ icon: 'success', title: 'Branding Saved', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+      },
+      error: () => {
+        this.isSavingBranding.set(false);
         Swal.fire({ icon: 'error', title: 'Save Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
       }
     });
