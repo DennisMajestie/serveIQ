@@ -1,8 +1,8 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BranchesApiService, AuthService } from '@serveiq/shared/data-access';
-import { Branch } from '@serveiq/shared/models';
+import { BranchesApiService, AuthService, UserApiService } from '@serveiq/shared/data-access';
+import { Branch, User } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 
@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 export class SettingsComponent implements OnInit {
   private branchesApi = inject(BranchesApiService);
   private authService = inject(AuthService);
+  private userApi = inject(UserApiService);
   branches = signal<Branch[]>([]);
   isLoading = signal(true);
   copiedBranchId = signal<string | null>(null);
@@ -24,11 +25,39 @@ export class SettingsComponent implements OnInit {
   otp = signal('');
   showOtpInput = signal(false);
   isSendingOtp = signal(false);
+  profileName = signal('');
+  profileEmail = signal('');
+  isUpdatingProfile = signal(false);
 
   ngOnInit() {
+    this.loadProfile();
     this.branchesApi.list().subscribe({
       next: (b) => { this.branches.set(b); this.isLoading.set(false); },
       error: () => this.isLoading.set(false)
+    });
+  }
+
+  loadProfile() {
+    this.userApi.getMe().subscribe({
+      next: (user: any) => {
+        this.profileName.set(user.fullName || '');
+        this.profileEmail.set(user.email || '');
+      }
+    });
+  }
+
+  updateProfile() {
+    if (!this.profileName()) return;
+    this.isUpdatingProfile.set(true);
+    this.userApi.updateMe({ fullName: this.profileName() } as any).subscribe({
+      next: () => {
+        this.isUpdatingProfile.set(false);
+        Swal.fire({ icon: 'success', title: 'Profile Updated', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+      },
+      error: () => {
+        this.isUpdatingProfile.set(false);
+        Swal.fire({ icon: 'error', title: 'Update Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      }
     });
   }
 

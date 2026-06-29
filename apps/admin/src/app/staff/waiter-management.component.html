@@ -89,9 +89,14 @@
               </div>
             </td>
             <td class="cell-actions">
-              <button class="action-icon-btn" aria-label="Edit staff">
+              <button class="action-icon-btn" aria-label="Edit staff" (click)="openEditWaiter(waiter)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                </svg>
+              </button>
+              <button class="action-icon-btn" aria-label="Deactivate staff" (click)="deactivateWaiter(waiter.id)" *ngIf="waiter.isActive !== false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/>
                 </svg>
               </button>
               <button class="action-icon-btn" aria-label="Delete staff" (click)="deleteWaiter(waiter.id)">
@@ -126,6 +131,47 @@
       </button>
     </footer>
   </section>
+
+    <!-- Edit Waiter Modal -->
+  <div class="modal-backdrop" *ngIf="editWaiter()" (click)="closeEditModal()"></div>
+  <div class="modal-panel" [class.modal-open]="!!editWaiter()">
+    <div class="modal-header">
+      <div class="modal-header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+      </div>
+      <div>
+        <h2 class="modal-title">Edit Waiter</h2>
+        <p class="modal-subtitle">Update staff details.</p>
+      </div>
+      <button class="modal-close-btn" (click)="closeEditModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-field full-width">
+          <label class="field-label">Full Name <span class="required">*</span></label>
+          <input class="field-input" type="text" placeholder="Full name" [ngModel]="editFullName()" (ngModelChange)="editFullName.set($event)">
+        </div>
+        <div class="form-field">
+          <label class="field-label">Email</label>
+          <input class="field-input" type="email" placeholder="staff@restaurant.com" [ngModel]="editEmail()" (ngModelChange)="editEmail.set($event)">
+        </div>
+        <div class="form-field">
+          <label class="field-label">Phone</label>
+          <input class="field-input" type="tel" placeholder="+234 800 000 0000" [ngModel]="editPhone()" (ngModelChange)="editPhone.set($event)">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeEditModal()">Cancel</button>
+      <button class="btn-submit" (click)="saveEdit()" [disabled]="isEditing() || !editFullName()">
+        {{ isEditing() ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </div>
 
   <footer class="confidential-footer inter-font">
     © 2024 ServeIQ Management Systems. Confidential Administrative View.

@@ -141,3 +141,12 @@
 .action-card-icon { width: 24px; height: 24px; opacity: 0.8; }
 .text-orange { color: #d97706; }
 .text-blue { color: #0ea5e9; }
+
+.profile-card { margin-bottom: 24px; }
+.btn-save {
+  margin-top: 16px; padding: 10px 24px; background: #F97316; color: #fff;
+  border: none; border-radius: 10px; font-weight: 600; font-size: 0.875rem;
+  cursor: pointer; transition: opacity 0.2s;
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.9; }
+}

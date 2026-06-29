@@ -64,6 +64,34 @@
         </div>
       </header>
 
+      <!-- Profile Section -->
+      <div class="settings-card profile-card">
+        <h3 class="config-header inter-font">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" class="config-icon">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          My Profile
+        </h3>
+        <div class="config-form-grid">
+          <div class="form-group">
+            <label class="config-label">FULL NAME</label>
+            <div class="input-wrapper">
+              <input type="text" [ngModel]="profileName()" (ngModelChange)="profileName.set($event)" class="config-input" placeholder="Your name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="config-label">EMAIL</label>
+            <div class="input-wrapper">
+              <input type="email" [ngModel]="profileEmail()" (ngModelChange)="profileEmail.set($event)" class="config-input" placeholder="email@business.com">
+            </div>
+          </div>
+        </div>
+        <button class="btn-save inter-font" (click)="updateProfile()" [disabled]="isUpdatingProfile()">
+          {{ isUpdatingProfile() ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+
       <!-- Main Table Card -->
       <div class="settings-card branch-table-card">
         <div class="table-wrapper">

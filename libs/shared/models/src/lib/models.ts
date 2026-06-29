@@ -10,6 +10,7 @@ export interface User {
   role: 'owner' | 'waiter';
   pin?: string;
   avatar_url?: string;
+  isActive?: boolean;
 }
 
 export interface Waiter extends User {}
