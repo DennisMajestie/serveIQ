@@ -14,17 +14,19 @@ export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all available menu items for the branch' })
+  @ApiOperation({ summary: 'Get menu items for the business' })
+  @ApiQuery({ name: 'branch_id', required: false, type: String })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'per_page', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'List of menu items.', type: [MenuItem] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async findAll(
     @Request() req: any,
+    @Query('branch_id') branchId?: string,
     @Query('page') page?: number,
     @Query('per_page') perPage?: number,
   ) {
-    return this.menuService.findAllByBranch(req.user.branchId, page, perPage);
+    return this.menuService.findAll(req.user.businessId, branchId || req.user.branchId, page, perPage);
   }
 
   @Get(':id')

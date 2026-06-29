@@ -15,17 +15,19 @@ export class TableController {
   constructor(private readonly tableService: TableService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all tables for the branch' })
+  @ApiOperation({ summary: 'Get all tables for the business' })
+  @ApiQuery({ name: 'branch_id', required: false, type: String })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'per_page', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'List of tables with statuses.', type: [Table] })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async findAll(
     @Request() req: any,
+    @Query('branch_id') branchId?: string,
     @Query('page') page?: number,
     @Query('per_page') perPage?: number,
   ) {
-    return this.tableService.findAllByBranch(req.user.branchId, page, perPage);
+    return this.tableService.findAll(req.user.businessId, branchId || req.user.branchId, page, perPage);
   }
 
   @Get(':id')

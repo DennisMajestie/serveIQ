@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Table, TableStatus } from './entities/table.entity';
+import { Branch } from '../branch/entities/branch.entity';
 import { paginate, getPaginationParams } from '../../common/pagination';
 
 @Injectable()
@@ -9,6 +10,8 @@ export class TableService {
   constructor(
     @InjectRepository(Table)
     private tableRepository: Repository<Table>,
+    @InjectRepository(Branch)
+    private branchRepository: Repository<Branch>,
   ) {}
 
   async create(createDto: any) {
@@ -24,8 +27,14 @@ export class TableService {
     return this.tableRepository.save(table);
   }
 
-  async findAllByBranch(branchId: string, page?: number, perPage?: number) {
-    const where = { branch_id: branchId };
+  async findAll(businessId: string, branchId?: string, page?: number, perPage?: number) {
+    let where: any;
+    if (branchId) {
+      where = { branch_id: branchId };
+    } else {
+      const branches = await this.branchRepository.find({ where: { business_id: businessId } });
+      where = { branch_id: In(branches.map(b => b.id)) };
+    }
 
     if (page || perPage) {
       const params = getPaginationParams(page, perPage);

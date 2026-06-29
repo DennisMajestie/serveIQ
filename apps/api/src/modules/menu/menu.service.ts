@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { MenuItem } from './entities/menu-item.entity';
+import { Branch } from '../branch/entities/branch.entity';
 import { paginate, getPaginationParams } from '../../common/pagination';
 
 @Injectable()
@@ -9,6 +10,8 @@ export class MenuService {
   constructor(
     @InjectRepository(MenuItem)
     private menuRepository: Repository<MenuItem>,
+    @InjectRepository(Branch)
+    private branchRepository: Repository<Branch>,
   ) {}
 
   async create(createDto: any) {
@@ -16,8 +19,14 @@ export class MenuService {
     return this.menuRepository.save(item);
   }
 
-  async findAllByBranch(branchId: string, page?: number, perPage?: number) {
-    const where = { branch_id: branchId, is_available: true };
+  async findAll(businessId: string, branchId?: string, page?: number, perPage?: number) {
+    let where: any;
+    if (branchId) {
+      where = { branch_id: branchId, is_available: true };
+    } else {
+      const branches = await this.branchRepository.find({ where: { business_id: businessId } });
+      where = { branch_id: In(branches.map(b => b.id)), is_available: true };
+    }
 
     if (page || perPage) {
       const params = getPaginationParams(page, perPage);
