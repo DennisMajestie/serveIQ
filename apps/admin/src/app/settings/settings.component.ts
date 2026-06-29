@@ -39,6 +39,7 @@ export class SettingsComponent implements OnInit {
   branchFormPhone = signal('');
   branchFormLocation = signal('');
   isSavingBranch = signal(false);
+  activeBranchId = signal(localStorage.getItem('activeBranchId') || '');
   businessSettings = signal<Business | null>(null);
   taxRate = signal<number | null>(null);
   currency = signal('NGN');
@@ -219,6 +220,11 @@ export class SettingsComponent implements OnInit {
         });
       }
     });
+  }
+
+  setActiveBranch(branchId: string) {
+    this.activeBranchId.set(branchId);
+    localStorage.setItem('activeBranchId', branchId);
   }
 
   copyBranchId(branchId: string) {
