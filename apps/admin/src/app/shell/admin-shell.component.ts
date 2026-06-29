@@ -55,6 +55,13 @@ interface NavItem {
                 <span>Settings</span>
               </a>
             </li>
+            <li class="nav-section-label" *ngIf="profile().role === 'super_admin'">System</li>
+            <li class="nav-item" *ngIf="profile().role === 'super_admin'">
+              <a class="nav-link" routerLink="/admin/businesses" routerLinkActive="active">
+                <span class="material-symbols-outlined">business</span>
+                <span>Businesses</span>
+              </a>
+            </li>
           </ul>
         </nav>
         <div class="sidebar-footer">
@@ -219,6 +226,18 @@ interface NavItem {
 
     .nav-item {
       width: 100%;
+    }
+
+    .nav-section-label {
+      width: 100%;
+      padding: 20px 24px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--secondary);
+      opacity: 0.6;
+      list-style: none;
     }
 
     .nav-link {

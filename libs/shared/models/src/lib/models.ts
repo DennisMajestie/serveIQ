@@ -4,10 +4,10 @@
 
 export interface User {
   id: string;
-  businessId: string;
+  businessId?: string;
   fullName: string;
   email: string;
-  role: 'owner' | 'waiter';
+  role: 'owner' | 'waiter' | 'super_admin';
   pin?: string;
   avatar_url?: string;
   isActive?: boolean;

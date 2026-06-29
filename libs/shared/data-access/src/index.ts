@@ -29,3 +29,4 @@ export * from './lib/api/user-api.service';
 export * from './lib/api/business-api.service';
 export * from './lib/api/upload-api.service';
 export * from './lib/api/reports-api.service';
+export * from './lib/api/admin-api.service';

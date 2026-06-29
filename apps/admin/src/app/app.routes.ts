@@ -45,6 +45,10 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
       },
       {
+        path: 'admin/businesses',
+        loadComponent: () => import('./admin/businesses/businesses.component').then(m => m.BusinessesComponent)
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'

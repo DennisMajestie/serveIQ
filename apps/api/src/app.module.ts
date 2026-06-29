@@ -25,6 +25,7 @@ import { AiModule } from './modules/ai/ai.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { ReportsModule } from './modules/reports/reports.module';
+import { AdminModule } from './modules/admin/admin.module';
 import { SeedService } from './database/seed.service';
 
 @Module({
@@ -67,6 +68,7 @@ import { SeedService } from './database/seed.service';
     UploadModule,
     AuditModule,
     ReportsModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService, SeedService],

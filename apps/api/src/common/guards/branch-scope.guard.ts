@@ -12,7 +12,7 @@ export class BranchScopeGuard implements CanActivate {
 
     // If there's a branchId param, check it matches
     const branchIdFromParam = request.params.branchId || request.params.id;
-    if (branchIdFromParam && branchIdFromParam !== user.branchId && user.role !== 'owner') {
+    if (branchIdFromParam && branchIdFromParam !== user.branchId && user.role !== 'owner' && user.role !== 'super_admin') {
       throw new ForbiddenException('Access to this branch is forbidden');
     }
 

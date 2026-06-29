@@ -88,6 +88,12 @@ export const API_CONFIG = {
     nemotron: {
       completions: '/v1/chat/completions',
     },
+    admin: {
+      businesses: '/api/v1/admin/businesses',
+      business: '/api/v1/admin/businesses/:id',
+      toggleBusinessActive: '/api/v1/admin/businesses/:id/toggle-active',
+      stats: '/api/v1/admin/stats',
+    },
   } as const,
 };
 
