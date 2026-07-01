@@ -38,6 +38,9 @@ export class Bill {
   @Column({ nullable: true })
   payment_reference: string;
 
+  @Column({ type: 'integer', nullable: true })
+  payment_amount_kobo: number;
+
   @Column({ nullable: true })
   paid_at: Date;
 

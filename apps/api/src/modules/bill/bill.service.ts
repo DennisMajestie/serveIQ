@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { TableStatus } from '../../common/shared';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Bill } from './entities/bill.entity';
@@ -66,6 +67,7 @@ export class BillService {
     if (!bill) throw new NotFoundException('Bill not found');
 
     bill.payment_method = paymentDto.method;
+    bill.payment_amount_kobo = paymentDto.amount;
     if (paymentDto.reference) {
       bill.payment_reference = paymentDto.reference;
     }
@@ -75,6 +77,12 @@ export class BillService {
     
     // Update Tab Status
     await this.tabRepository.update(tabId, { status: 'paid', closed_at: new Date() });
+
+    // Reset table status to available
+    const tab = await this.tabRepository.findOne({ where: { id: tabId } });
+    if (tab?.table_id) {
+      await this.tableRepository.update(tab.table_id, { status: TableStatus.AVAILABLE });
+    }
 
     return bill;
   }
