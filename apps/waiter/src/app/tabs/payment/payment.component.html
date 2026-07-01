@@ -105,6 +105,15 @@
       </div>
     </section>
 
+    <!-- POS Terminal Selector -->
+    <section class="terminal-section" *ngIf="selectedMethod === 'card' || selectedMethod === 'pos'">
+      <p class="methods-label">POS Terminal</p>
+      <select [(ngModel)]="selectedTerminalId" class="terminal-select">
+        <option value="" disabled>Select terminal</option>
+        <option *ngFor="let t of terminals()" [value]="t.id">{{ t.label }}</option>
+      </select>
+    </section>
+
     <!-- Amount Entry Field -->
     <section class="amount-section">
       <p class="amount-label">Paying Now</p>

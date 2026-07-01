@@ -66,6 +66,10 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./bills/bills.component').then(m => m.BillsComponent)
       },
       {
+        path: 'pos',
+        loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)
+      },
+      {
         path: 'settings',
         loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
       },

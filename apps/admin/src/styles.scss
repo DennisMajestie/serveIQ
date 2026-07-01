@@ -154,3 +154,20 @@ h1, h2, h3, .metric, .space-font {
   0% { background-position: -600px 0; }
   100% { background-position: 600px 0; }
 }
+
+/* ===== Icon Font FOUC Prevention ===== */
+.material-symbols-outlined,
+.material-icons {
+  visibility: hidden;
+}
+
+body.fonts-loaded {
+  .material-symbols-outlined,
+  .material-icons {
+    visibility: visible;
+  }
+}
+
+body.fonts-loaded mat-icon {
+  visibility: visible;
+}

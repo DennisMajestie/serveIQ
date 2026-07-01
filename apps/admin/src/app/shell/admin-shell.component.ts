@@ -81,6 +81,12 @@ interface NavItem {
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" routerLink="/pos" routerLinkActive="active">
+                <span class="material-symbols-outlined">point_of_sale</span>
+                <span>POS</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" routerLink="/settings" routerLinkActive="active">
                 <span class="material-symbols-outlined">settings</span>
                 <span>Settings</span>

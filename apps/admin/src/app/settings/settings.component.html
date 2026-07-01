@@ -75,117 +75,115 @@
           </button>
         </header>
 
-        <!-- Profile Section -->
-        <div class="settings-card profile-card">
-          <h3 class="config-header inter-font">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" class="config-icon">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-            My Profile
-          </h3>
-          <div class="profile-form-grid">
-            <div class="form-group">
-              <label class="config-label">FULL NAME</label>
-              <div class="input-wrapper">
-                <input type="text" [ngModel]="profileName()" (ngModelChange)="profileName.set($event)" class="config-input" placeholder="Your name">
+        <div class="branch-setup-content">
+
+          <!-- My Profile Card -->
+          <div class="branch-setup-card">
+            <div class="section-header">
+              <div class="section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+              <h3>My Profile</h3>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" [ngModel]="profileName()" (ngModelChange)="profileName.set($event)" class="form-input" placeholder="Your name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" [ngModel]="profileEmail()" (ngModelChange)="profileEmail.set($event)" class="form-input" placeholder="email@business.com">
               </div>
             </div>
-            <div class="form-group">
-              <label class="config-label">EMAIL</label>
-              <div class="input-wrapper">
-                <input type="email" [ngModel]="profileEmail()" (ngModelChange)="profileEmail.set($event)" class="config-input" placeholder="email@business.com">
+            <button class="btn-primary" (click)="updateProfile()" [disabled]="isUpdatingProfile()">
+              {{ isUpdatingProfile() ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+
+          <!-- Active Branch Card -->
+          <div class="branch-setup-card">
+            <div class="section-header">
+              <div class="section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                </svg>
               </div>
+              <h3>Active Branch</h3>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Current Branch</label>
+              <select class="form-select" [ngModel]="activeBranchId()" (ngModelChange)="setActiveBranch($event)">
+                <option value="">All Branches</option>
+                <option *ngFor="let b of branches()" [value]="b.id">{{ b.name }}</option>
+              </select>
             </div>
           </div>
-          <button class="btn-save inter-font" (click)="updateProfile()" [disabled]="isUpdatingProfile()">
-            {{ isUpdatingProfile() ? 'Saving...' : 'Save Changes' }}
-          </button>
-        </div>
 
-        <!-- Active Branch Selector -->
-        <div class="settings-card profile-card">
-          <h3 class="config-header inter-font">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" class="config-icon">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            </svg>
-            Active Branch
-          </h3>
-          <div class="profile-form-grid">
-            <div class="form-group">
-              <label class="config-label">CURRENT BRANCH</label>
-              <div class="input-wrapper">
-                <select class="config-select" [ngModel]="activeBranchId()" (ngModelChange)="setActiveBranch($event)">
-                  <option value="">All Branches</option>
-                  <option *ngFor="let b of branches()" [value]="b.id">{{ b.name }}</option>
-                </select>
+          <!-- Your Branches Card -->
+          <div class="branch-setup-card">
+            <div class="section-header">
+              <div class="section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                </svg>
               </div>
+              <h3>Your Branches</h3>
             </div>
-          </div>
-        </div>
 
-        <!-- Branch List Section -->
-        <div class="settings-card branch-list-card">
-          <div class="branch-list-header">
-            <h3 class="config-header inter-font" style="margin: 0;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" class="config-icon">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              </svg>
-              Your Branches
-            </h3>
-          </div>
-
-          <ng-template [ngIf]="branches().length > 0" [ngIfElse]="emptyBranches">
-            <div class="branch-cards-grid">
-              <div class="branch-card" *ngFor="let branch of branches()">
-                <div class="branch-card-header">
-                  <span class="branch-card-name">{{ branch.name }}</span>
-                  <span class="status-badge status-active">Active</span>
+            <ng-template [ngIf]="branches().length > 0" [ngIfElse]="emptyBranches">
+              <div class="branch-list">
+                <div class="branch-item" *ngFor="let branch of branches()">
+                  <div class="branch-item-info">
+                    <div class="branch-item-name">{{ branch.name }}</div>
+                    <div class="branch-item-address">{{ branch.address }}{{ branch.phoneNumber ? ' · ' + branch.phoneNumber : '' }}</div>
+                  </div>
+                  <div class="branch-item-right">
+                    <span class="badge-active">Active</span>
+                    <div class="branch-item-actions">
+                      <button class="btn-icon" (click)="showEditBranch(branch)" title="Edit Branch">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                      </button>
+                      <button class="btn-icon" (click)="deleteBranch(branch)" title="Delete Branch">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div class="branch-card-address">{{ branch.address }}</div>
-                <div class="branch-card-phone">{{ branch.phoneNumber }}</div>
-                <div class="branch-card-actions">
-                  <button class="btn-action btn-edit" (click)="showEditBranch(branch)" title="Edit Branch">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                  </button>
-                  <button class="btn-action btn-delete" (click)="deleteBranch(branch)" title="Delete Branch">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                  </button>
-                </div>
               </div>
-            </div>
-          </ng-template>
+            </ng-template>
 
-          <ng-template #emptyBranches>
-            <div class="branch-empty">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="branch-empty-icon">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              </svg>
-              <p class="branch-empty-text">No branches yet. Click + Add Branch to get started.</p>
-            </div>
-          </ng-template>
-        </div>
-
-        <!-- Global Configurations Section -->
-        <div class="settings-card configurations-card">
-          <h3 class="config-header inter-font">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" class="config-icon">
-              <circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-            </svg>
-            Global Branch Configurations
-          </h3>
-          
-          <div class="config-form-grid">
-            <div class="form-group">
-              <label class="config-label">DEFAULT TAX RATE (%)</label>
-              <div class="input-wrapper">
-                <input type="number" step="0.01" min="0" max="100" [ngModel]="taxRate()" (ngModelChange)="taxRate.set($event)" class="config-input" placeholder="e.g. 7.5">
+            <ng-template #emptyBranches>
+              <div class="branch-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="branch-empty-icon">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                </svg>
+                <p class="branch-empty-text">No branches yet. Click + Add Branch to get started.</p>
               </div>
+            </ng-template>
+          </div>
+
+          <!-- Global Branch Configurations Card -->
+          <div class="branch-setup-card">
+            <div class="section-header">
+              <div class="section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                </svg>
+              </div>
+              <h3>Global Branch Configurations</h3>
             </div>
-            <div class="form-group">
-              <label class="config-label">BASE CURRENCY</label>
-              <div class="input-wrapper">
-                <select class="config-select" [ngModel]="currency()" (ngModelChange)="currency.set($event)">
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Default Tax Rate (%)</label>
+                <input type="number" step="0.01" min="0" max="100" [ngModel]="taxRate()" (ngModelChange)="taxRate.set($event)" class="form-input" placeholder="e.g. 7.5">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Base Currency</label>
+                <select class="form-select" [ngModel]="currency()" (ngModelChange)="currency.set($event)">
                   <option value="NGN">NGN (₦)</option>
                   <option value="USD">USD ($)</option>
                   <option value="GBP">GBP (£)</option>
@@ -195,11 +193,9 @@
                   <option value="ZAR">ZAR (R)</option>
                 </select>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="config-label">TIMEZONE</label>
-              <div class="input-wrapper">
-                <select class="config-select" [ngModel]="timezone()" (ngModelChange)="timezone.set($event)">
+              <div class="form-group">
+                <label class="form-label">Timezone</label>
+                <select class="form-select" [ngModel]="timezone()" (ngModelChange)="timezone.set($event)">
                   <option value="Africa/Lagos">GMT+1 (West Africa)</option>
                   <option value="Africa/Nairobi">GMT+3 (East Africa)</option>
                   <option value="Africa/Johannesburg">GMT+2 (South Africa)</option>
@@ -215,10 +211,11 @@
                 </select>
               </div>
             </div>
+            <button class="btn-primary" (click)="saveBusinessSettings()" [disabled]="isSavingSettings()">
+              {{ isSavingSettings() ? 'Saving...' : 'Save Settings' }}
+            </button>
           </div>
-          <button class="btn-save inter-font" (click)="saveBusinessSettings()" [disabled]="isSavingSettings()">
-            {{ isSavingSettings() ? 'Saving...' : 'Save Settings' }}
-          </button>
+
         </div>
       </ng-container>
 

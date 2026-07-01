@@ -1,5 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BillsApiService, TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
@@ -8,7 +10,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss']
 })
@@ -18,6 +20,7 @@ export class PaymentComponent implements OnInit {
   private billsApi = inject(BillsApiService);
   private tabService = inject(TabsApiService);
   private tableService = inject(TablesApiService);
+  private http = inject(HttpClient);
 
   tabId = signal('');
   table = signal<Table | null>(null);
@@ -28,6 +31,8 @@ export class PaymentComponent implements OnInit {
   isEditingAmount = false;
   isProcessing = signal(false);
   isSuccess = signal(false);
+  terminals = signal<any[]>([]);
+  selectedTerminalId = signal('');
 
   isSplit = signal(false);
   splitCount = signal(2);
@@ -81,6 +86,15 @@ export class PaymentComponent implements OnInit {
 
   selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd') {
     this.selectedMethod = method;
+    if (method === 'card' || method === 'pos') {
+      this.loadActiveTerminals();
+    }
+  }
+
+  loadActiveTerminals() {
+    this.http.get<any[]>('/api/v1/pos/terminals/active').subscribe({
+      next: (data) => this.terminals.set(Array.isArray(data) ? data : []),
+    });
   }
 
   appendNumber(num: string) {
@@ -181,6 +195,7 @@ export class PaymentComponent implements OnInit {
     this.billsApi.recordPayment(this.tabId(), {
       amount,
       method: this.selectedMethod,
+      terminalId: (this.selectedMethod === 'card' || this.selectedMethod === 'pos') ? this.selectedTerminalId() : undefined,
     }).subscribe({
       next: () => {
         this.isProcessing.set(false);

@@ -231,7 +231,8 @@ export interface GenerateBillRequest {
 
 export interface RecordPaymentRequest {
   amount: number;
-  method: 'cash' | 'card' | 'transfer' | 'ussd';
+  method: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos';
+  terminalId?: string;
   reference?: string;
 }
 

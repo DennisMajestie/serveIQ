@@ -525,3 +525,26 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ===== POS Terminal Selector ===== */
+.terminal-section {
+  padding: 0 24px;
+  margin-bottom: 16px;
+}
+
+.terminal-select {
+  width: 100%;
+  padding: 14px 16px;
+  background: #1A1A1A;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  appearance: none;
+
+  &:focus {
+    border-color: #f97316;
+  }
+}
