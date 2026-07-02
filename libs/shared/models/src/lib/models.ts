@@ -80,6 +80,7 @@ export interface Tab {
   status: TabStatus;
   openedAt: Date;
   closedAt?: Date;
+  waiterId?: string;
   orderItems?: OrderItem[];
 }
 

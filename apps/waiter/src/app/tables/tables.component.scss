@@ -267,9 +267,21 @@
   border-left-color: #22C55E;
 }
 
+.table-card.locked {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-left-color: #EF4444;
+}
+
 .table-card.cleaning,
 .table-card.paying {
   border-left-color: #EAB308;
+}
+
+.table-card.locked {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-left-color: #EF4444;
 }
 
 .card-top {
@@ -372,6 +384,21 @@
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
+}
+
+.lock-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+  padding: 8px;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  color: #EF4444;
+}
+
+.lock-indicator .material-symbols-outlined {
+  font-size: 18px;
 }
 
 /* FAB */

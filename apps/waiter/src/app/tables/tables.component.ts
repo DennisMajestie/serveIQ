@@ -5,6 +5,7 @@ import { TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
 import { Table, Tab } from '@serveiq/shared/models';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { AuthService } from '@serveiq/shared/data-access';
 
 @Component({
   selector: 'app-tables',
@@ -17,6 +18,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   private tablesApi = inject(TablesApiService);
   private tabsApi = inject(TabsApiService);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   branchName = 'Main Dining Room';
   isSynced = signal(false);
@@ -34,6 +36,26 @@ export class TablesComponent implements OnInit, OnDestroy {
       occupied: t.filter(x => x.status === 'occupied').length
     };
   });
+
+  get currentUserId(): string {
+    const token = this.authService.getToken();
+    if (!token) return '';
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.userId || payload.sub || '';
+    } catch {
+      return '';
+    }
+  }
+
+  getTabForTable(tableId: string): Tab | undefined {
+    return this.openTabs().find(t => t.tableId === tableId);
+  }
+
+  isTabLockedByOther(table: Table): boolean {
+    const tab = this.getTabForTable(table.id);
+    return tab?.status === 'open' && !!tab.waiterId && tab.waiterId !== this.currentUserId;
+  }
 
   private pollSub?: Subscription;
 
@@ -87,16 +109,20 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   async onTableClick(table: Table) {
-    if (table.status === 'available') {
+    // Check if tab is locked by another waiter
+    if (this.isTabLockedByOther(table)) {
+      console.log('[Tables] Tab is occupied by another waiter');
+      return;
+    }
+
+    const tab = this.getTabForTable(table.id);
+    
+    if (!tab) {
+      // No open tab - start new order
       await this.router.navigate(['/tabs/create', table.id]);
     } else {
-      const tabs = await this.tabsApi.getAllTabs().toPromise();
-      const openTab = (tabs || []).find(t => t.tableId === table.id && t.status === 'open');
-      if (openTab) {
-        await this.router.navigate(['/tabs/detail', openTab.id]);
-      } else {
-        await this.router.navigate(['/tabs/create', table.id]);
-      }
+      // Existing open tab - go to detail page
+      await this.router.navigate(['/tabs/detail', tab.id]);
     }
   }
 
