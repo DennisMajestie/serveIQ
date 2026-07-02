@@ -157,15 +157,27 @@ export class TablesComponent implements OnInit, OnDestroy {
     if (!tab) {
       if (table.status === 'occupied') {
         console.warn('[Tables] Table is occupied but no open tab exists — data mismatch. Refusing to create duplicate.');
-        Swal.fire({
+        const result = await Swal.fire({
           icon: 'error',
           title: 'Table Mismatch',
-          text: 'This table shows as occupied but no active tab was found. Please refresh and try again, or contact a manager.',
-          confirmButtonText: 'Refresh',
-        }).then(() => {
+          text: 'This table shows as occupied but no active tab was found.',
+          showConfirmButton: true,
+          showDenyButton: true,
+          confirmButtonText: 'Reset Table',
+          denyButtonText: 'Refresh',
+        });
+        if (result.isConfirmed) {
+          try {
+            await firstValueFrom(this.tablesApi.updateTableStatus(table.id!, 'available' as any));
+            this.loadTables();
+            this.loadOpenTabs();
+          } catch {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to reset table status' });
+          }
+        } else if (result.isDenied) {
           this.loadTables();
           this.loadOpenTabs();
-        });
+        }
         return;
       }
       console.log('[Tables] No open tab — navigating to create');
