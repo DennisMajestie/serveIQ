@@ -7,6 +7,7 @@ import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from '@serveiq/shared/data-access';
 import { firstValueFrom } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-tables',
@@ -154,6 +155,19 @@ export class TablesComponent implements OnInit, OnDestroy {
     }
 
     if (!tab) {
+      if (table.status === 'occupied') {
+        console.warn('[Tables] Table is occupied but no open tab exists — data mismatch. Refusing to create duplicate.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Table Mismatch',
+          text: 'This table shows as occupied but no active tab was found. Please refresh and try again, or contact a manager.',
+          confirmButtonText: 'Refresh',
+        }).then(() => {
+          this.loadTables();
+          this.loadOpenTabs();
+        });
+        return;
+      }
       console.log('[Tables] No open tab — navigating to create');
       await this.router.navigate(['/tabs/create', table.id]);
     } else {
