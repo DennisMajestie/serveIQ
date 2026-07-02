@@ -77,6 +77,9 @@ import { Subscription, interval } from 'rxjs';
               <mat-icon>people_outline</mat-icon>
               <p>No waiter activity yet today</p>
             </div>
+            <div class="view-all-row">
+              <a routerLink="/staff">View all staff →</a>
+            </div>
           </div>
           <ng-template #waiterSkeleton>
             <div class="waiter-list">
@@ -109,12 +112,15 @@ import { Subscription, interval } from 'rxjs';
                 <span class="txn-meta inter-font">x{{ order.quantity }} • {{ order.createdAt | date:'short' }}</span>
               </div>
               <div class="txn-amount">
-                <span class="amount space-font">₦{{ (order.priceKobo / 100).toLocaleString() }}</span>
+                <span class="amount space-font">₦{{ (order.subtotalKobo / 100).toLocaleString() }}</span>
               </div>
             </div>
             <div class="txn-empty" *ngIf="recentOrders().length === 0">
               <mat-icon>receipt_long</mat-icon>
               <p>No orders yet today</p>
+            </div>
+            <div class="view-all-row">
+              <a routerLink="/tables">View all orders →</a>
             </div>
           </div>
           <ng-template #txnSkeletons>
@@ -261,6 +267,20 @@ import { Subscription, interval } from 'rxjs';
     .status-chip.highlight { background: #fee2e2; color: #b91c1c; }
     .status-chip.chip-success { background: #e8f5e9; color: #2e7d32; }
 
+    .view-all-row {
+      text-align: center;
+      padding: 12px 0 4px;
+      border-top: 1px solid #f0f1f3;
+      margin-top: 8px;
+    }
+    .view-all-row a {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f97316;
+      text-decoration: none;
+    }
+    .view-all-row a:hover { text-decoration: underline; }
+
     .revenue-card { background: #fffcf0; padding: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
     .revenue-icon-header { display: flex; align-items: center; gap: 12px; color: #854d0e; }
     .revenue-icon-header h3 { margin: 0; font-size: 1.125rem; }
@@ -317,8 +337,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ];
   });
 
-  waiterPerformance = computed(() => this.stats().waiterPerformance || []);
-  recentOrders = computed(() => (this.stats().recentOrders || []).slice(0, 10));
+  waiterPerformance = computed(() => (this.stats().waiterPerformance || []).slice(0, 5));
+  recentOrders = computed(() => (this.stats().recentOrders || []).slice(0, 5));
   activeTables = computed(() => this.stats().activeTables);
   totalTables = computed(() => this.stats().totalTables);
   openTabs = computed(() => this.stats().openTabs);

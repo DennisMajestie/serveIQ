@@ -134,6 +134,7 @@ export interface RecentOrder {
   menuItemName: string;
   menuItemId: string;
   priceKobo: number;
+  subtotalKobo: number;
   quantity: number;
   tabId: string;
   createdAt: Date;
