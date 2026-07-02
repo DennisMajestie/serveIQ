@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -18,4 +18,16 @@ import { RouterModule } from '@angular/router';
     }
   `]
 })
-export class App {}
+export class App implements OnInit {
+  ngOnInit() {
+    if ('fonts' in document) {
+      (document as any).fonts.ready.then(() => {
+        document.body.classList.add('fonts-loaded');
+      });
+    } else {
+      setTimeout(() => {
+        document.body.classList.add('fonts-loaded');
+      }, 300);
+    }
+  }
+}

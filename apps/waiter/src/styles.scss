@@ -21,7 +21,19 @@ body {
   color: #dce1fb;
 }
 
-/* Material Icons */
+/* ===== Icon Font FOUC Prevention ===== */
+.material-symbols-outlined,
+.material-icons {
+  font-family: 'Material Symbols Outlined' !important;
+  font-display: block;
+  visibility: hidden;
+}
+
+body.fonts-loaded .material-symbols-outlined,
+body.fonts-loaded .material-icons {
+  visibility: visible;
+}
+
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   vertical-align: middle;

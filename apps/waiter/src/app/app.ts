@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -9,6 +9,18 @@ import { CommonModule } from '@angular/common';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit {
   protected title = 'waiter';
+
+  ngOnInit() {
+    if ('fonts' in document) {
+      (document as any).fonts.ready.then(() => {
+        document.body.classList.add('fonts-loaded');
+      });
+    } else {
+      setTimeout(() => {
+        document.body.classList.add('fonts-loaded');
+      }, 300);
+    }
+  }
 }

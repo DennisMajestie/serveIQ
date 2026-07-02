@@ -37,15 +37,15 @@ export class AuthService {
   ) {}
 
   get isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return !!(localStorage.getItem('token') || localStorage.getItem('staffToken'));
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!(localStorage.getItem('token') || localStorage.getItem('staffToken'));
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem('token') || localStorage.getItem('staffToken');
   }
 
   private get apiUrl(): string {
@@ -188,11 +188,15 @@ export class AuthService {
   }
 
   logout() {
-    this.serverLogout().subscribe({ error: () => {} });
+    // Clear local tokens first to prevent interceptor from retrying auth calls
     localStorage.removeItem('token');
+    localStorage.removeItem('staffToken');
     localStorage.removeItem('businessId');
     localStorage.removeItem('businessName');
-    localStorage.removeItem('staffToken');
     this.tokenSubject.next(null);
+    // Best-effort server logout (not awaited, errors ignored)
+    this.serverLogout().subscribe({ error: () => {} });
+    // Hard redirect to login page
+    window.location.href = '/login';
   }
 }

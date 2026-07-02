@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
-import { OpenTabRequest, Table } from '@serveiq/shared/models';
+import { OpenTabRequest, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 function getBranchId(): string | null {
@@ -33,18 +33,35 @@ export class OpenTabComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('tableId');
     if (id) {
       this.tableId = id;
-      this.tablesApi.getTable(id).subscribe({
-        next: (table: Table) => {
-          this.tableName = `Table ${table.tableNumber}`;
-          this.isLoading = false;
+      // Safety check: if a tab already exists for this table, redirect to detail
+      this.tabsApi.getAllTabs().subscribe({
+        next: (tabs) => {
+          const existingTab = (Array.isArray(tabs) ? tabs : []).find(
+            (t: Tab) => t.tableId === id && t.status === 'open'
+          );
+          if (existingTab) {
+            this.router.navigate(['/tabs/detail', existingTab.id], { replaceUrl: true });
+            return;
+          }
+          this.loadTableDetails();
         },
-        error: () => {
-          this.isLoading = false;
-        }
+        error: () => this.loadTableDetails()
       });
     } else {
       this.isLoading = false;
     }
+  }
+
+  private loadTableDetails() {
+    this.tablesApi.getTable(this.tableId).subscribe({
+      next: (table: Table) => {
+        this.tableName = `Table ${table.tableNumber}`;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   cancel() {

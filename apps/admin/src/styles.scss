@@ -158,6 +158,8 @@ h1, h2, h3, .metric, .space-font {
 /* ===== Icon Font FOUC Prevention ===== */
 .material-symbols-outlined,
 .material-icons {
+  font-family: 'Material Icons' !important;
+  font-display: block;
   visibility: hidden;
 }
 

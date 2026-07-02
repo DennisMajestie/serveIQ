@@ -6,6 +6,7 @@ import { Table, Tab } from '@serveiq/shared/models';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from '@serveiq/shared/data-access';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-tables',
@@ -68,7 +69,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     ).subscribe(tables => {
       if (Array.isArray(tables)) this.tables.set(tables);
       this.isSynced.set(true);
-      this.loadOpenTabs();
+      this.refreshOpenTabs();
     });
   }
 
@@ -109,14 +110,14 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   async onTableClick(table: Table) {
-    // Check if tab is locked by another waiter
+    // Fetch latest open tabs first
+    await this.refreshOpenTabs();
+
+    // Check if tab is locked by another waiter (uses fresh data)
     if (this.isTabLockedByOther(table)) {
       console.log('[Tables] Tab is occupied by another waiter');
       return;
     }
-
-    // Ensure we have latest open tabs
-    await this.refreshOpenTabs();
 
     const tab = this.getTabForTable(table.id);
     
@@ -130,15 +131,12 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   private async refreshOpenTabs(): Promise<void> {
-    return new Promise((resolve) => {
-      this.tabsApi.getAllTabs().subscribe({
-        next: (tabs) => {
-          this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
-          resolve();
-        },
-        error: () => resolve(),
-      });
-    });
+    try {
+      const tabs = await firstValueFrom(this.tabsApi.getAllTabs());
+      this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
+    } catch (err) {
+      console.error('[Tables] Failed to refresh open tabs:', err);
+    }
   }
 
   async onSeatTable(table: Table) {
