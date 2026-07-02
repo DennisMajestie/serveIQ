@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token') || localStorage.getItem('staffToken');
+    return localStorage.getItem('staffToken') || localStorage.getItem('token');
   }
 
   private get apiUrl(): string {
