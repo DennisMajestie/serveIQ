@@ -2,7 +2,8 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
+import { ENVIRONMENT_CONFIG, PosApiService } from '@serveiq/shared/data-access';
+import { firstValueFrom } from 'rxjs';
 
 interface PosTerminal {
   id: string;
@@ -18,12 +19,7 @@ interface PosTerminal {
   styleUrls: ['./pos-management.component.scss'],
 })
 export class PosManagementComponent implements OnInit {
-  private http = inject(HttpClient);
-  private env = inject(ENVIRONMENT_CONFIG);
-
-  private get apiUrl(): string {
-    return this.env.apiUrl;
-  }
+  private posApi = inject(PosApiService);
 
   terminals = signal<PosTerminal[]>([]);
   showModal = signal(false);
@@ -34,7 +30,7 @@ export class PosManagementComponent implements OnInit {
   ngOnInit() { this.loadTerminals(); }
 
   loadTerminals() {
-    this.http.get<PosTerminal[]>(this.apiUrl + '/api/v1/pos/terminals').subscribe(data => {
+    this.posApi.getAll().subscribe(data => {
       this.terminals.set(Array.isArray(data) ? data : []);
     });
   }
@@ -55,10 +51,10 @@ export class PosManagementComponent implements OnInit {
 
   saveTerminal() {
     const body = { label: this.formLabel(), is_active: this.formActive() };
-    const req = this.editingTerminal()
-      ? this.http.patch(this.apiUrl + '/api/v1/pos/terminals/' + this.editingTerminal()!.id, body)
-      : this.http.post(this.apiUrl + '/api/v1/pos/terminals', body);
-    req.subscribe(() => {
+    const obs = this.editingTerminal()
+      ? this.posApi.update(this.editingTerminal()!.id, body)
+      : this.posApi.create(body);
+    obs.subscribe(() => {
       this.showModal.set(false);
       this.loadTerminals();
     });
@@ -66,6 +62,6 @@ export class PosManagementComponent implements OnInit {
 
   deleteTerminal(id: string) {
     if (confirm('Delete this POS terminal?'))
-      this.http.delete(this.apiUrl + '/api/v1/pos/terminals/' + id).subscribe(() => this.loadTerminals());
+      this.posApi.delete(id).subscribe(() => this.loadTerminals());
   }
 }

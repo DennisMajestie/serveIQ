@@ -33,3 +33,4 @@ export * from './lib/api/admin-api.service';
 export * from './lib/api/suppliers-api.service';
 export * from './lib/api/shifts-api.service';
 export * from './lib/api/inventory-api.service';
+export * from './lib/api/pos-api.service';

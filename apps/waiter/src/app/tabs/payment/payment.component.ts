@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BillsApiService, TabsApiService, TablesApiService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
+import { BillsApiService, TabsApiService, TablesApiService, PosApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
@@ -21,7 +21,7 @@ export class PaymentComponent implements OnInit {
   private tabService = inject(TabsApiService);
   private tableService = inject(TablesApiService);
   private http = inject(HttpClient);
-  private env = inject(ENVIRONMENT_CONFIG);
+  private posApi = inject(PosApiService);
 
   tabId = signal('');
   table = signal<Table | null>(null);
@@ -93,7 +93,7 @@ export class PaymentComponent implements OnInit {
   }
 
   loadActiveTerminals() {
-    this.http.get<any[]>(this.env.apiUrl + '/api/v1/pos/terminals/active').subscribe({
+    this.posApi.getActive().subscribe({
       next: (data) => this.terminals.set(Array.isArray(data) ? data : []),
     });
   }

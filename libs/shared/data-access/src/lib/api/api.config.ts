@@ -117,6 +117,15 @@ export const API_CONFIG = {
     nemotron: {
       completions: '/v1/chat/completions',
     },
+    // POS Terminals
+    pos: {
+      list: '/api/v1/pos/terminals',
+      active: '/api/v1/pos/terminals/active',
+      get: '/api/v1/pos/terminals/:id',
+      create: '/api/v1/pos/terminals',
+      update: '/api/v1/pos/terminals/:id',
+      delete: '/api/v1/pos/terminals/:id',
+    },
     admin: {
       businesses: '/api/v1/admin/businesses',
       business: '/api/v1/admin/businesses/:id',
