@@ -1,5 +1,7 @@
 {
   "installCommand": "npm install",
+  "buildCommand": "npx nx build waiter --configuration=production",
+  "outputDirectory": "dist/apps/waiter/browser",
   "rewrites": [
     {
       "source": "/api/v1/(.*)",

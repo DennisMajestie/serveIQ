@@ -1,5 +1,7 @@
 {
   "installCommand": "npm install",
+  "buildCommand": "npx nx build admin --configuration=production",
+  "outputDirectory": "dist/apps/admin/browser",
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
