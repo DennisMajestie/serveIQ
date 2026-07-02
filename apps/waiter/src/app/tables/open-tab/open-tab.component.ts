@@ -89,6 +89,18 @@ export class OpenTabComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to open tab:', err);
+        if (err?.status === 400 && err?.error?.message?.includes('already exists')) {
+          this.tabsApi.getAllTabs().subscribe((tabs) => {
+            const existing = (Array.isArray(tabs) ? tabs : []).find(
+              (t: Tab) => t.tableId === this.tableId && t.status === 'open'
+            );
+            if (existing) {
+              this.router.navigate(['/tabs/detail', existing.id], { replaceUrl: true });
+              return;
+            }
+          });
+          return;
+        }
         Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to open tab' });
       }
     });
