@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
 
 interface PosTerminal {
   id: string;
@@ -18,6 +19,11 @@ interface PosTerminal {
 })
 export class PosManagementComponent implements OnInit {
   private http = inject(HttpClient);
+  private env = inject(ENVIRONMENT_CONFIG);
+
+  private get apiUrl(): string {
+    return this.env.apiUrl;
+  }
 
   terminals = signal<PosTerminal[]>([]);
   showModal = signal(false);
@@ -28,7 +34,7 @@ export class PosManagementComponent implements OnInit {
   ngOnInit() { this.loadTerminals(); }
 
   loadTerminals() {
-    this.http.get<PosTerminal[]>('/api/v1/pos/terminals').subscribe(data => {
+    this.http.get<PosTerminal[]>(this.apiUrl + '/api/v1/pos/terminals').subscribe(data => {
       this.terminals.set(Array.isArray(data) ? data : []);
     });
   }
@@ -50,8 +56,8 @@ export class PosManagementComponent implements OnInit {
   saveTerminal() {
     const body = { label: this.formLabel(), is_active: this.formActive() };
     const req = this.editingTerminal()
-      ? this.http.patch('/api/v1/pos/terminals/' + this.editingTerminal()!.id, body)
-      : this.http.post('/api/v1/pos/terminals', body);
+      ? this.http.patch(this.apiUrl + '/api/v1/pos/terminals/' + this.editingTerminal()!.id, body)
+      : this.http.post(this.apiUrl + '/api/v1/pos/terminals', body);
     req.subscribe(() => {
       this.showModal.set(false);
       this.loadTerminals();
@@ -60,6 +66,6 @@ export class PosManagementComponent implements OnInit {
 
   deleteTerminal(id: string) {
     if (confirm('Delete this POS terminal?'))
-      this.http.delete('/api/v1/pos/terminals/' + id).subscribe(() => this.loadTerminals());
+      this.http.delete(this.apiUrl + '/api/v1/pos/terminals/' + id).subscribe(() => this.loadTerminals());
   }
 }
