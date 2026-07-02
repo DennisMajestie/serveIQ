@@ -195,7 +195,7 @@ export class PaymentComponent implements OnInit {
     this.billsApi.recordPayment(this.tabId(), {
       amount,
       method: this.selectedMethod,
-      terminalId: (this.selectedMethod === 'card' || this.selectedMethod === 'pos') ? this.selectedTerminalId() : undefined,
+      terminal_id: (this.selectedMethod === 'card' || this.selectedMethod === 'pos') ? this.selectedTerminalId() : undefined,
     }).subscribe({
       next: () => {
         this.isProcessing.set(false);
