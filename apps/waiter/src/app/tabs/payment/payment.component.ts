@@ -27,7 +27,7 @@ export class PaymentComponent implements OnInit {
   table = signal<Table | null>(null);
   bill = signal<Bill | null>(null);
   isLoading = signal(true);
-  selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' = 'cash';
+  selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos' = 'cash';
   currentAmount = signal('0');
   isEditingAmount = false;
   isProcessing = signal(false);
@@ -85,7 +85,7 @@ export class PaymentComponent implements OnInit {
     return parts.join('.');
   }
 
-  selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd') {
+  selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos') {
     this.selectedMethod = method;
     if (method === 'card' || method === 'pos') {
       this.loadActiveTerminals();

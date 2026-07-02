@@ -232,7 +232,7 @@ export interface GenerateBillRequest {
 export interface RecordPaymentRequest {
   amount: number;
   method: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos';
-  terminalId?: string;
+  terminal_id?: string;
   reference?: string;
 }
 

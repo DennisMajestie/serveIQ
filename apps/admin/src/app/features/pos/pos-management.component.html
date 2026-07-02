@@ -1,70 +1,73 @@
-<div class="section-header">
-  <div>
-    <h2>POS Terminals</h2>
-    <p>Manage point-of-sale devices connected to this branch.</p>
+<div class="page-container">
+  <div class="section-header">
+    <div>
+      <h2>POS Terminals</h2>
+      <p>Manage point-of-sale devices connected to this branch.</p>
+    </div>
+    <button class="btn-primary" (click)="openAddModal()">+ Add POS</button>
   </div>
-  <button class="btn-primary" (click)="openAddModal()">+ Add POS</button>
-</div>
 
-<div class="card table-card" *ngIf="terminals().length > 0; else emptyState">
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Label</th>
-        <th>Status</th>
-        <th style="width:140px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let terminal of terminals()">
-        <td>
-          <div class="cell-label">
-            <div class="icon-circle">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
+  <div class="card table-card" *ngIf="terminals().length > 0; else emptyState">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>Status</th>
+          <th style="width:140px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let terminal of terminals()">
+          <td>
+            <div class="cell-label">
+              <div class="icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </div>
+              <span>{{ terminal.label }}</span>
             </div>
-            <span>{{ terminal.label }}</span>
-          </div>
-        </td>
-        <td>
-          <span class="status-pill" [class.active]="terminal.is_active" [class.inactive]="!terminal.is_active">
-            {{ terminal.is_active ? 'Active' : 'Inactive' }}
-          </span>
-        </td>
-        <td>
-          <div class="action-buttons">
-            <button class="btn-icon" (click)="editTerminal(terminal)" title="Edit">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-              </svg>
-            </button>
-            <button class="btn-icon btn-icon-danger" (click)="deleteTerminal(terminal.id)" title="Delete">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-              </svg>
-            </button>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          </td>
+          <td>
+            <span class="status-pill" [class.active]="terminal.isActive" [class.inactive]="!terminal.isActive">
+              {{ terminal.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon" (click)="editTerminal(terminal)" title="Edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                </svg>
+              </button>
+              <button class="btn-icon btn-icon-danger" (click)="deleteTerminal(terminal.id)" title="Delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;color:#d1d5db;">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+        <line x1="8" y1="21" x2="16" y2="21"/>
+        <line x1="12" y1="17" x2="12" y2="21"/>
+      </svg>
+      <p>No POS terminals yet.</p>
+    </div>
+  </ng-template>
 </div>
 
-<ng-template #emptyState>
-  <div class="empty-state">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;color:#d1d5db;">
-      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-      <line x1="8" y1="21" x2="16" y2="21"/>
-      <line x1="12" y1="17" x2="12" y2="21"/>
-    </svg>
-    <p>No POS terminals yet.</p>
-  </div>
-</ng-template>
-
+<!-- Modal (outside page-container since it's fixed position) -->
 <div class="modal-overlay" *ngIf="showModal()" (click)="showModal.set(false)">
   <div class="modal-panel" (click)="$event.stopPropagation()">
     <div class="modal-header">

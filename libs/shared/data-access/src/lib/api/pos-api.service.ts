@@ -8,10 +8,10 @@ import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 export interface PosTerminal {
   id: string;
   label: string;
-  is_active: boolean;
-  branch_id?: string;
-  created_at?: string;
-  updated_at?: string;
+  isActive: boolean;
+  branchId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,15 +24,15 @@ export class PosApiService extends BaseApiService {
   }
 
   getAll(): Observable<PosTerminal[]> {
-    return this.get<PosTerminal[]>(API_CONFIG.endpoints.pos.list);
+    return super.get<PosTerminal[]>(API_CONFIG.endpoints.pos.list);
   }
 
   getActive(): Observable<PosTerminal[]> {
-    return this.get<PosTerminal[]>(API_CONFIG.endpoints.pos.active);
+    return super.get<PosTerminal[]>(API_CONFIG.endpoints.pos.active);
   }
 
-  get(id: string): Observable<PosTerminal> {
-    return this.get<PosTerminal>(buildUrl(API_CONFIG.endpoints.pos.get, { id }));
+  getById(id: string): Observable<PosTerminal> {
+    return super.get<PosTerminal>(buildUrl(API_CONFIG.endpoints.pos.get, { id }));
   }
 
   create(data: Partial<PosTerminal>): Observable<PosTerminal> {

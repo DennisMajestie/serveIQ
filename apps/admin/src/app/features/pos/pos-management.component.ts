@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 interface PosTerminal {
   id: string;
   label: string;
-  is_active: boolean;
+  isActive: boolean;
 }
 
 @Component({
@@ -45,7 +45,7 @@ export class PosManagementComponent implements OnInit {
   editTerminal(t: PosTerminal) {
     this.editingTerminal.set(t);
     this.formLabel.set(t.label);
-    this.formActive.set(t.is_active);
+    this.formActive.set(t.isActive);
     this.showModal.set(true);
   }
 
