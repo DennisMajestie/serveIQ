@@ -56,20 +56,23 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/login`, {
       email, password
     }).pipe(
-      tap(response => {
-        const token = response.data?.access_token;
+      tap((response: any) => {
+        const token = response.access_token || response.data?.access_token;
         if (token) {
           localStorage.setItem('token', token);
+
+          const data = response.data || response;
+          const branchId = data.branch?.id ||
+                           data.branchId ||
+                           data.user?.branch?.id ||
+                           data.user?.branch ||
+                           data.user?.branch_id;
           
-          const branchId = response.data.branch?.id || 
-                           response.data.branchId || 
-                           response.data.user?.branch?.id || 
-                           response.data.user?.branch;
-          
-          const businessId = response.data.business?.id || 
-                             response.data.businessId || 
-                             response.data.user?.business?.id || 
-                             response.data.user?.business;
+          const businessId = data.business?.id ||
+                             data.businessId ||
+                             data.user?.business?.id ||
+                             data.user?.business ||
+                             data.user?.business_id;
 
           if (branchId && branchId !== 'default-branch') {
             localStorage.setItem('branchId', branchId);

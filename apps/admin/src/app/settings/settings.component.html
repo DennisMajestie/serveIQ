@@ -196,18 +196,7 @@
               <div class="form-group">
                 <label class="form-label">Timezone</label>
                 <select class="form-select" [ngModel]="timezone()" (ngModelChange)="timezone.set($event)">
-                  <option value="Africa/Lagos">GMT+1 (West Africa)</option>
-                  <option value="Africa/Nairobi">GMT+3 (East Africa)</option>
-                  <option value="Africa/Johannesburg">GMT+2 (South Africa)</option>
-                  <option value="Africa/Cairo">GMT+2 (Egypt)</option>
-                  <option value="Africa/Casablanca">GMT+0 (Morocco)</option>
-                  <option value="Europe/London">GMT+0 (United Kingdom)</option>
-                  <option value="America/New_York">GMT-5 (US Eastern)</option>
-                  <option value="America/Chicago">GMT-6 (US Central)</option>
-                  <option value="America/Denver">GMT-7 (US Mountain)</option>
-                  <option value="America/Los_Angeles">GMT-8 (US Pacific)</option>
-                  <option value="Asia/Dubai">GMT+4 (UAE)</option>
-                  <option value="Asia/Singapore">GMT+8 (Singapore)</option>
+                  <option *ngFor="let tz of timezones" [value]="tz.value">{{ tz.label }}</option>
                 </select>
               </div>
             </div>

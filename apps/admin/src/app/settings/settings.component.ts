@@ -41,6 +41,54 @@ export class SettingsComponent implements OnInit {
   taxRate = signal<number | null>(null);
   currency = signal('NGN');
   timezone = signal('Africa/Lagos');
+  timezones = [
+    // Africa
+    { label: 'GMT+1 (West Africa - Nigeria, Ghana)', value: 'Africa/Lagos' },
+    { label: 'GMT+2 (South Africa)', value: 'Africa/Johannesburg' },
+    { label: 'GMT+3 (East Africa - Kenya, Tanzania)', value: 'Africa/Nairobi' },
+    { label: 'GMT+2 (Egypt)', value: 'Africa/Cairo' },
+    { label: 'GMT+0 (Morocco)', value: 'Africa/Casablanca' },
+    { label: 'GMT+0 (Ghana)', value: 'Africa/Accra' },
+
+    // Europe
+    { label: 'GMT+0 (United Kingdom - London)', value: 'Europe/London' },
+    { label: 'GMT+1 (France, Germany, Netherlands)', value: 'Europe/Paris' },
+    { label: 'GMT+2 (Greece, Romania, Finland)', value: 'Europe/Athens' },
+    { label: 'GMT+3 (Turkey, Russia Moscow)', value: 'Europe/Moscow' },
+
+    // Americas
+    { label: 'GMT-5 (US Eastern - New York)', value: 'America/New_York' },
+    { label: 'GMT-6 (US Central - Chicago)', value: 'America/Chicago' },
+    { label: 'GMT-7 (US Mountain - Denver)', value: 'America/Denver' },
+    { label: 'GMT-8 (US Pacific - Los Angeles)', value: 'America/Los_Angeles' },
+    { label: 'GMT-4 (Canada - Halifax)', value: 'America/Halifax' },
+    { label: 'GMT-5 (Canada - Toronto)', value: 'America/Toronto' },
+    { label: 'GMT-7 (Canada - Vancouver)', value: 'America/Vancouver' },
+    { label: 'GMT-3 (Brazil - São Paulo)', value: 'America/Sao_Paulo' },
+    { label: 'GMT-5 (Mexico - Mexico City)', value: 'America/Mexico_City' },
+    { label: 'GMT-4 (Caribbean - Jamaica)', value: 'America/Jamaica' },
+
+    // Middle East
+    { label: 'GMT+4 (UAE - Dubai)', value: 'Asia/Dubai' },
+    { label: 'GMT+3 (Saudi Arabia - Riyadh)', value: 'Asia/Riyadh' },
+    { label: 'GMT+2 (Israel)', value: 'Asia/Jerusalem' },
+    { label: 'GMT+3 (Qatar - Doha)', value: 'Asia/Qatar' },
+
+    // Asia
+    { label: 'GMT+5:30 (India - Mumbai)', value: 'Asia/Kolkata' },
+    { label: 'GMT+6 (Bangladesh - Dhaka)', value: 'Asia/Dhaka' },
+    { label: 'GMT+7 (Thailand - Bangkok)', value: 'Asia/Bangkok' },
+    { label: 'GMT+8 (China - Beijing)', value: 'Asia/Shanghai' },
+    { label: 'GMT+8 (Singapore)', value: 'Asia/Singapore' },
+    { label: 'GMT+8 (Malaysia - Kuala Lumpur)', value: 'Asia/Kuala_Lumpur' },
+    { label: 'GMT+9 (Japan - Tokyo)', value: 'Asia/Tokyo' },
+    { label: 'GMT+9 (South Korea - Seoul)', value: 'Asia/Seoul' },
+
+    // Oceania
+    { label: 'GMT+10 (Australia - Sydney)', value: 'Australia/Sydney' },
+    { label: 'GMT+8 (Australia - Perth)', value: 'Australia/Perth' },
+    { label: 'GMT+12 (New Zealand - Auckland)', value: 'Pacific/Auckland' },
+  ];
   isSavingSettings = signal(false);
   brandPrimaryColor = signal('#F97316');
   brandAccentColor = signal('#d97706');
