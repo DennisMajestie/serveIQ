@@ -23,11 +23,26 @@ export interface AuthResponse {
   };
 }
 
+/** Read staffToken from sessionStorage first, then localStorage (legacy fallback). */
+function getStaffToken(): string | null {
+  return sessionStorage.getItem('staffToken') || localStorage.getItem('staffToken');
+}
+
+/** Write staffToken to sessionStorage (per-tab isolation). */
+function setStaffToken(token: string): void {
+  sessionStorage.setItem('staffToken', token);
+}
+
+/** Remove staffToken from both storages. */
+function removeStaffToken(): void {
+  sessionStorage.removeItem('staffToken');
+  localStorage.removeItem('staffToken');
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenSubject = new BehaviorSubject<string | null>(
-    localStorage.getItem('token')
+    getStaffToken() || localStorage.getItem('token')
   );
   token$ = this.tokenSubject.asObservable();
 
@@ -37,15 +52,15 @@ export class AuthService {
   ) {}
 
   get isAuthenticated(): boolean {
-    return !!(localStorage.getItem('token') || localStorage.getItem('staffToken'));
+    return !!(localStorage.getItem('token') || getStaffToken());
   }
 
   isLoggedIn(): boolean {
-    return !!(localStorage.getItem('token') || localStorage.getItem('staffToken'));
+    return !!(localStorage.getItem('token') || getStaffToken());
   }
 
   getToken(): string | null {
-    return localStorage.getItem('staffToken') || localStorage.getItem('token');
+    return getStaffToken() || localStorage.getItem('token');
   }
 
   private get apiUrl(): string {
@@ -96,8 +111,6 @@ export class AuthService {
     ).pipe(
       tap(response => {
         const token = response.data?.access_token;
-        // In the new NestJS API, the structure is { success: true, business: {...}, branch: {...}, user: {...} }
-        // or for staff login it's { access_token: "...", user: {...} }
         
         const resData = response.data as any;
         const businessId = resData.business?.id || resData.businessId || resData.user?.business;
@@ -126,7 +139,7 @@ export class AuthService {
         const resData = response.data as any;
         const branchId = resData.user?.branch || resData.branchId || resData.branch?.id;
         if (token) {
-          localStorage.setItem('staffToken', token);
+          setStaffToken(token);
         }
         if (branchId && branchId !== 'default-branch') {
           localStorage.setItem('branchId', branchId);
@@ -147,16 +160,15 @@ export class AuthService {
 
   /** Refresh the access token using the refresh token */
   refreshToken(): Observable<AuthResponse> {
-    // Use whichever token is available (staffToken for waiters, token for admin)
-    const currentToken = localStorage.getItem('staffToken') || localStorage.getItem('token');
-    const isStaff = !!localStorage.getItem('staffToken');
+    const currentToken = getStaffToken() || localStorage.getItem('token');
+    const isStaff = !!getStaffToken();
     
     return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/refresh`, {}).pipe(
       tap(response => {
         const token = response.data?.access_token;
         if (token) {
           if (isStaff) {
-            localStorage.setItem('staffToken', token);
+            setStaffToken(token);
           } else {
             localStorage.setItem('token', token);
           }
@@ -167,7 +179,7 @@ export class AuthService {
   }
 
   serverLogout(): Observable<void> {
-    const refreshToken = localStorage.getItem('staffToken') || localStorage.getItem('token') || '';
+    const refreshToken = getStaffToken() || localStorage.getItem('token') || '';
     return this.http.post<void>(`${this.apiUrl}/api/v1/auth/logout`, { refresh_token: refreshToken });
   }
 
@@ -188,15 +200,12 @@ export class AuthService {
   }
 
   logout() {
-    // Clear local tokens first to prevent interceptor from retrying auth calls
     localStorage.removeItem('token');
-    localStorage.removeItem('staffToken');
+    removeStaffToken();
     localStorage.removeItem('businessId');
     localStorage.removeItem('businessName');
     this.tokenSubject.next(null);
-    // Best-effort server logout (not awaited, errors ignored)
     this.serverLogout().subscribe({ error: () => {} });
-    // Hard redirect to login page
     window.location.href = '/login';
   }
 }
