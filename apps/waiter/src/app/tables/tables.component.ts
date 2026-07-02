@@ -55,15 +55,20 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   isTabLockedByOther(table: Table): boolean {
     const tab = this.getTabForTable(table.id);
-    return tab?.status === 'open' && !!tab.waiterId && tab.waiterId !== this.currentUserId;
+    if (!tab) {
+      console.log(`[Tables] isTabLockedByOther: no tab for table ${table.id}`);
+      return false;
+    }
+    console.log(`[Tables] isTabLockedByOther: table=${table.id}, tab.waiterId=${tab.waiterId}, currentUserId=${this.currentUserId}`);
+    return tab.status === 'open' && !!tab.waiterId && tab.waiterId !== this.currentUserId;
   }
 
   private pollSub?: Subscription;
+  private tabsSub?: Subscription;
 
   ngOnInit() {
     this.loadTables();
     this.loadOpenTabs();
-    // Poll every 5 seconds for live updates
     this.pollSub = interval(5000).pipe(
       switchMap(() => this.tablesApi.getAllTables())
     ).subscribe(tables => {
@@ -75,6 +80,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.pollSub?.unsubscribe();
+    this.tabsSub?.unsubscribe();
   }
 
   loadTables() {
@@ -89,10 +95,12 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   loadOpenTabs() {
-    this.tabsApi.getAllTabs().subscribe({
+    this.tabsSub?.unsubscribe();
+    this.tabsSub = this.tabsApi.getAllTabs().subscribe({
       next: (tabs) => {
         this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
-      }
+      },
+      error: (err) => console.error('[Tables] loadOpenTabs error:', err)
     });
   }
 
@@ -110,8 +118,13 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   async onTableClick(table: Table) {
+    console.log(`[Tables] onTableClick: table=${table.id}, status=${table.status}`);
+
     // Fetch latest open tabs first
-    await this.refreshOpenTabs();
+    const refreshOk = await this.refreshOpenTabs();
+    if (!refreshOk) {
+      console.warn('[Tables] refreshOpenTabs failed, using existing data');
+    }
 
     // Check if tab is locked by another waiter (uses fresh data)
     if (this.isTabLockedByOther(table)) {
@@ -119,28 +132,51 @@ export class TablesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const tab = this.getTabForTable(table.id);
-    
+    let tab = this.getTabForTable(table.id);
+    console.log(`[Tables] getTabForTable result:`, tab?.id ?? 'none');
+
+    // Fallback: table is occupied but no tab found in openTabs — do a direct lookup
+    if (!tab && table.status === 'occupied') {
+      console.log('[Tables] Table is occupied but no open tab found in list — querying API directly');
+      try {
+        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs());
+        const allOpen = Array.isArray(allTabs) ? allTabs.filter(t => t.status === 'open') : [];
+        this.openTabs.set(allOpen);
+        tab = allOpen.find(t => t.tableId === table.id);
+        if (tab) {
+          console.log('[Tables] Found tab via direct lookup:', tab.id);
+        } else {
+          console.warn('[Tables] Table is occupied but no open tab found even after direct lookup');
+        }
+      } catch (err) {
+        console.error('[Tables] Direct tab lookup failed:', err);
+      }
+    }
+
     if (!tab) {
-      // No open tab - start new order
+      console.log('[Tables] No open tab — navigating to create');
       await this.router.navigate(['/tabs/create', table.id]);
     } else {
-      // Existing open tab - go to detail page
+      console.log('[Tables] Existing tab found — navigating to detail:', tab.id);
       await this.router.navigate(['/tabs/detail', tab.id]);
     }
   }
 
-  private async refreshOpenTabs(): Promise<void> {
+  private async refreshOpenTabs(): Promise<boolean> {
+    // Cancel the stale subscribe-based load so it doesn't overwrite our fresh data
+    this.tabsSub?.unsubscribe();
     try {
       const tabs = await firstValueFrom(this.tabsApi.getAllTabs());
       this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
+      console.log(`[Tables] refreshOpenTabs: ${this.openTabs().length} open tabs found`);
+      return true;
     } catch (err) {
       console.error('[Tables] Failed to refresh open tabs:', err);
+      return false;
     }
   }
 
   async onSeatTable(table: Table) {
-    // Same logic as onTableClick
     await this.onTableClick(table);
   }
 }

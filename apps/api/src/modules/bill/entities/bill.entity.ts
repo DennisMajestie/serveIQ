@@ -44,6 +44,9 @@ export class Bill {
   @Column({ nullable: true })
   paid_at: Date;
 
+  @Column({ nullable: true })
+  terminal_id: string;
+
   @Column()
   issued_by: string;
 

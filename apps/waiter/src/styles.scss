@@ -155,3 +155,56 @@ body.fonts-loaded .material-icons {
   border: 2px solid rgba(64, 71, 88, 0.2);
   border-radius: 12px;
 }
+
+/* ===== SweetAlert2 Theme Overrides ===== */
+.swal2-popup {
+  border: 1px solid rgba(64, 71, 88, 0.2);
+  border-radius: 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+.swal2-title {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.swal2-html-container {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.swal2-confirm,
+.swal2-cancel {
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 12px 24px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.swal2-input,
+.swal2-file,
+.swal2-textarea {
+  border-radius: 10px !important;
+  background-color: #334155 !important;
+  border: 1px solid #475569 !important;
+  color: #fff !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.swal2-input:focus {
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
+}
+
+.swal2-timer-progress-bar {
+  background-color: #f97316 !important;
+}
+
+.swal2-validation-message {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+}

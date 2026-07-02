@@ -42,6 +42,7 @@ export class TabDetailComponent implements OnInit {
       const id = params.get('id');
       if (id) {
         this.tabId.set(id);
+        this.isLoading.set(true);
         this.loadTab(id);
         this.loadMenuItems();
       }
@@ -53,7 +54,6 @@ export class TabDetailComponent implements OnInit {
   private readRouterStateOnce() {
     if (this.orderPosted) return;
     
-    // Use history.state which persists after navigation
     const state = history.state as { selectedItems?: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
     if (state?.selectedItems?.length) {
       console.log('[TabDetail] Received selectedItems from history.state:', state.selectedItems);
@@ -110,8 +110,11 @@ export class TabDetailComponent implements OnInit {
     this.orderService.getByTab(tabId).subscribe({
       next: (items) => { 
         console.log('[TabDetail] Raw orders API response:', items);
-        // Normalize field names (backend may return snake_case)
-        const normalized = (items || []).map((item: any) => ({
+        const raw = Array.isArray(items) ? items : [];
+        if (raw.length === 0) {
+          console.warn('[TabDetail] No order items returned from API for tab:', tabId);
+        }
+        const normalized = raw.map((item: any) => ({
           ...item,
           menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? item.name ?? item.itemName ?? item.details?.name ?? '',
           menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
@@ -193,7 +196,6 @@ export class TabDetailComponent implements OnInit {
     this.orderService.addItems(this.tabId(), orderItems).subscribe({
       next: (response) => {
         console.log('[TabDetail] Add items response:', response);
-        // Normalize and reload
         const normalized = (response || []).map((item: any) => ({
           ...item,
           menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',

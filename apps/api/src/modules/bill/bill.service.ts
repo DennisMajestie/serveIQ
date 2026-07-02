@@ -10,6 +10,7 @@ import { MenuItem } from '../menu/entities/menu-item.entity';
 import { User } from '../user/entities/user.entity';
 import { Branch } from '../branch/entities/branch.entity';
 import { Business } from '../business/entities/business.entity';
+import { PosTerminal } from '../pos/entities/pos-terminal.entity';
 import { GenerateBillDto } from './dto/generate-bill.dto';
 import { ProcessPaymentDto } from './dto/process-payment.dto';
 
@@ -32,6 +33,8 @@ export class BillService {
     private branchRepository: Repository<Branch>,
     @InjectRepository(Business)
     private businessRepository: Repository<Business>,
+    @InjectRepository(PosTerminal)
+    private posTerminalRepository: Repository<PosTerminal>,
     private dataSource: DataSource,
   ) {}
 
@@ -71,6 +74,9 @@ export class BillService {
     if (paymentDto.reference) {
       bill.payment_reference = paymentDto.reference;
     }
+    if (paymentDto.terminal_id) {
+      bill.terminal_id = paymentDto.terminal_id;
+    }
     bill.paid_at = new Date();
     
     await this.billRepository.save(bill);
@@ -109,6 +115,10 @@ export class BillService {
     const waiter = await this.userRepository.findOne({ where: { id: tab.waiter_id } });
     const branch = await this.branchRepository.findOne({ where: { id: tab.branch_id } });
     const business = branch ? await this.businessRepository.findOne({ where: { id: branch.business_id } }) : null;
+    let terminal = null;
+    if (bill.terminal_id) {
+      terminal = await this.posTerminalRepository.findOne({ where: { id: bill.terminal_id } });
+    }
 
     return {
       business,
@@ -117,6 +127,7 @@ export class BillService {
       table,
       waiter,
       bill,
+      terminal,
       orders: orderItems,
       receipt_number: `RCP-${Date.now()}`,
     };

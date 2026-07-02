@@ -2,49 +2,69 @@
   <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
   <!-- Main Content -->
   <main class="receipt-main">
-    <!-- Success Icon -->
-    <div class="success-icon">
-      <div class="success-circle">
-        <span class="material-symbols-outlined">check</span>
+    @if (hasError()) {
+      <!-- Error State -->
+      <div class="error-state">
+        <div class="error-icon">
+          <span class="material-symbols-outlined">receipt_long</span>
+        </div>
+        <h2>Receipt Unavailable</h2>
+        <p class="error-message">{{ errorMessage() }}</p>
+        <button class="btn-primary" (click)="goToTables()">
+          <span class="material-symbols-outlined">table_restaurant</span>
+          Back to Tables
+        </button>
       </div>
-    </div>
+    } @else {
+      <!-- Success Icon -->
+      <div class="success-icon">
+        <div class="success-circle">
+          <span class="material-symbols-outlined">check</span>
+        </div>
+      </div>
 
-    <!-- Title -->
-    <div class="title-section">
-      <h1>Payment Confirmed</h1>
-      <p>The transaction was processed successfully.</p>
-    </div>
+      <!-- Title -->
+      <div class="title-section">
+        <h1>Payment Confirmed</h1>
+        <p>The transaction was processed successfully.</p>
+      </div>
 
-    <!-- Receipt Card -->
-    <div class="receipt-card">
-      <div class="receipt-header">
-        <h2 class="business-name">{{ businessName() }}</h2>
-        @if (branchName()) {
-          <p class="branch-name">{{ branchName() }}</p>
+      <!-- Receipt Card -->
+      <div class="receipt-card">
+        <div class="receipt-header">
+          <h2 class="business-name">{{ businessName() }}</h2>
+          @if (branchName()) {
+            <p class="branch-name">{{ branchName() }}</p>
+          }
+          <p class="receipt-num">Receipt #{{ receiptNumber() }}</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="info-row">
+          <span class="info-label">Waiter</span>
+          <span class="info-value">{{ waiterName() }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Table</span>
+          <span class="info-value">Table {{ tableNumber() }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Date</span>
+          <span class="info-value">{{ date() }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Payment Method</span>
+          <span class="info-value">{{ paymentMethod() }}</span>
+        </div>
+        @if (paymentTerminal()) {
+          <div class="info-row">
+            <span class="info-label">POS Terminal</span>
+            <span class="info-value">{{ paymentTerminal() }}</span>
+          </div>
         }
-        <p class="receipt-num">Receipt #{{ receiptNumber() }}</p>
-      </div>
 
-      <div class="divider"></div>
-
-      <div class="info-row">
-        <span class="info-label">Waiter</span>
-        <span class="info-value">{{ waiterName() }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Table</span>
-        <span class="info-value">Table {{ tableNumber() }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Date</span>
-        <span class="info-value">{{ date() }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Payment Method</span>
-        <span class="info-value">{{ paymentMethod() }}</span>
-      </div>
-
-      <div class="divider"></div>
+        <div class="divider"></div>
 
       <div class="items-header">
         <span class="item-col-qty">Qty</span>
@@ -111,6 +131,7 @@
         Print Receipt
       </button>
     </div>
+  }
   </main>
 
   <!-- Footer -->

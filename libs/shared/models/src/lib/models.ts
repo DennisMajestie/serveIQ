@@ -13,7 +13,7 @@ export interface User {
   isActive?: boolean;
 }
 
-export interface Waiter extends User {}
+export type Waiter = User;
 
 export interface Business {
   id: string;

@@ -21,4 +21,9 @@ export class ProcessPaymentDto {
   @IsString()
   @IsOptional()
   reference?: string;
+
+  @ApiProperty({ example: 'pos-terminal-uuid', description: 'POS terminal ID (optional)', required: false })
+  @IsString()
+  @IsOptional()
+  terminal_id?: string;
 }

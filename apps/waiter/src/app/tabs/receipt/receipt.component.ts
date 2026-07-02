@@ -23,6 +23,8 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   receipt = signal<any>(null);
   table = signal<Table | null>(null);
   isLoading = signal(true);
+  hasError = signal(false);
+  errorMessage = signal('');
 
   businessName = computed(() => this.receipt()?.business?.name ?? 'ServeIQ');
   branchName = computed(() => this.receipt()?.branch?.name ?? '');
@@ -31,6 +33,7 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
     const method = this.receipt()?.bill?.paymentMethod ?? '';
     return method ? method.charAt(0).toUpperCase() + method.slice(1) : '—';
   });
+  paymentTerminal = computed(() => this.receipt()?.terminal?.label ?? '');
   amountPaid = computed(() => (this.receipt()?.bill?.totalKobo ?? 0) / 100);
   subtotalNaira = computed(() => (this.receipt()?.bill?.subtotalKobo ?? 0) / 100);
   serviceChargeNaira = computed(() => (this.receipt()?.bill?.serviceChargeKobo ?? 0) / 100);
@@ -73,7 +76,15 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
               });
             }
           },
-          error: () => this.isLoading.set(false)
+          error: (err) => {
+            this.isLoading.set(false);
+            this.hasError.set(true);
+            if (err?.status === 404) {
+              this.errorMessage.set('No receipt found for this order. The bill may not have been paid yet.');
+            } else {
+              this.errorMessage.set('Failed to load receipt. Please try again.');
+            }
+          }
         });
       }
     });
