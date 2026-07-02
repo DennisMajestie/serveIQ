@@ -145,12 +145,21 @@ export class AuthService {
     return this.http.post<{ url: string }>(`${this.apiUrl}/api/v1/upload`, formData);
   }
 
+  /** Refresh the access token using the refresh token */
   refreshToken(): Observable<AuthResponse> {
+    // Use whichever token is available (staffToken for waiters, token for admin)
+    const currentToken = localStorage.getItem('staffToken') || localStorage.getItem('token');
+    const isStaff = !!localStorage.getItem('staffToken');
+    
     return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/refresh`, {}).pipe(
       tap(response => {
         const token = response.data?.access_token;
         if (token) {
-          localStorage.setItem('token', token);
+          if (isStaff) {
+            localStorage.setItem('staffToken', token);
+          } else {
+            localStorage.setItem('token', token);
+          }
           this.tokenSubject.next(token);
         }
       })
@@ -158,7 +167,7 @@ export class AuthService {
   }
 
   serverLogout(): Observable<void> {
-    const refreshToken = localStorage.getItem('token') || '';
+    const refreshToken = localStorage.getItem('staffToken') || localStorage.getItem('token') || '';
     return this.http.post<void>(`${this.apiUrl}/api/v1/auth/logout`, { refresh_token: refreshToken });
   }
 

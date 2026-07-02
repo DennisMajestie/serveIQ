@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Observable, throwError, of, BehaviorSubject } from 'rxjs';
+import { catchError, switchMap, tap, filter, take } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  private isRefreshing = false;
+  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
@@ -23,25 +26,49 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          // Try to refresh token before logging out
-          return this.authService.refreshToken().pipe(
-            switchMap(() => {
-              const activeToken = localStorage.getItem('token') || localStorage.getItem('staffToken');
-              if (activeToken) {
+        if (error.status === 401 && activeToken) {
+          // Only attempt refresh if we have a token and not already refreshing
+          if (!this.isRefreshing) {
+            this.isRefreshing = true;
+            this.refreshTokenSubject.next(null);
+
+            return this.authService.refreshToken().pipe(
+              tap(() => {
+                this.isRefreshing = false;
+                const newToken = localStorage.getItem('staffToken') || localStorage.getItem('token');
+                this.refreshTokenSubject.next(newToken);
+              }),
+              switchMap(() => {
+                const newToken = localStorage.getItem('staffToken') || localStorage.getItem('token');
+                if (newToken) {
+                  const retryRequest = request.clone({
+                    setHeaders: { Authorization: `Bearer ${newToken}` }
+                  });
+                  return next.handle(retryRequest);
+                }
+                this.authService.logout();
+                return throwError(() => error);
+              }),
+              catchError(() => {
+                this.isRefreshing = false;
+                this.authService.logout();
+                return throwError(() => error);
+              })
+            );
+          } else {
+            // Wait for refresh;
+            // Another request is already refreshing, wait for it
+            return this.refreshTokenSubject.pipe(
+              filter(token => token !== null),
+              take(1),
+              switchMap(newToken => {
                 const retryRequest = request.clone({
-                  setHeaders: { Authorization: `Bearer ${activeToken}` }
+                  setHeaders: { Authorization: `Bearer ${newToken}` }
                 });
                 return next.handle(retryRequest);
-              }
-              this.authService.logout();
-              return throwError(() => error);
-            }),
-            catchError(() => {
-              this.authService.logout();
-              return throwError(() => error);
-            })
-          );
+              })
+            );
+          }
         }
         return throwError(() => error);
       })
