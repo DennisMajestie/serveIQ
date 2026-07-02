@@ -23,20 +23,51 @@ export interface AuthResponse {
   };
 }
 
-/** Read staffToken from sessionStorage first, then localStorage (legacy fallback). */
+const SS = sessionStorage;
+const LS = localStorage;
+
+function decodeUserId(token: string): string | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.sub || payload.userId || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Current waiter's userId — tracked per-tab in sessionStorage so tabs don't collide. */
+function getCurrentWaiterId(): string | null {
+  return SS.getItem('staffWaiterId');
+}
+
+/** Read the token for the current waiter from localStorage (survives refresh). */
 function getStaffToken(): string | null {
-  return sessionStorage.getItem('staffToken') || localStorage.getItem('staffToken');
+  const uid = getCurrentWaiterId();
+  if (uid) {
+    const t = LS.getItem('staffToken_' + uid);
+    if (t) return t;
+  }
+  // legacy fallback — single-token stored under flat key
+  return LS.getItem('staffToken');
 }
 
-/** Write staffToken to sessionStorage (per-tab isolation). */
+/** Store token keyed by waiter userId so different waiters don't overwrite each other. */
 function setStaffToken(token: string): void {
-  sessionStorage.setItem('staffToken', token);
+  const uid = decodeUserId(token);
+  if (uid) {
+    LS.setItem('staffToken_' + uid, token);
+    SS.setItem('staffWaiterId', uid);
+  } else {
+    LS.setItem('staffToken', token);
+  }
 }
 
-/** Remove staffToken from both storages. */
+/** Remove only the current waiter's token. */
 function removeStaffToken(): void {
-  sessionStorage.removeItem('staffToken');
-  localStorage.removeItem('staffToken');
+  const uid = getCurrentWaiterId();
+  if (uid) LS.removeItem('staffToken_' + uid);
+  SS.removeItem('staffWaiterId');
+  LS.removeItem('staffToken');
 }
 
 @Injectable({ providedIn: 'root' })
