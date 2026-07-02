@@ -11,6 +11,7 @@ import { MenuItem } from './modules/menu/entities/menu-item.entity';
 import { Tab } from './modules/tab/entities/tab.entity';
 import { Order } from './modules/order/entities/order.entity';
 import { Bill } from './modules/bill/entities/bill.entity';
+import { PosTerminal } from './modules/pos/entities/pos-terminal.entity';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { BusinessModule } from './modules/business/business.module';
@@ -26,6 +27,7 @@ import { UploadModule } from './modules/upload/upload.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { PosTerminalModule } from './modules/pos/pos-terminal.module';
 import { SeedService } from './database/seed.service';
 
 @Module({
@@ -47,8 +49,9 @@ import { SeedService } from './database/seed.service';
         Tab,
         Order,
         Bill,
+        PosTerminal,
       ],
-      synchronize: process.env.NODE_ENV === 'development',
+      synchronize: true,
       logging: process.env.NODE_ENV === 'development',
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
       retryAttempts: 10,
@@ -64,6 +67,7 @@ import { SeedService } from './database/seed.service';
     TabModule,
     OrderModule,
     BillModule,
+    PosTerminalModule,
     AiModule,
     UploadModule,
     AuditModule,
