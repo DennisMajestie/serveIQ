@@ -115,6 +115,9 @@ export class TablesComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Ensure we have latest open tabs
+    await this.refreshOpenTabs();
+
     const tab = this.getTabForTable(table.id);
     
     if (!tab) {
@@ -124,6 +127,18 @@ export class TablesComponent implements OnInit, OnDestroy {
       // Existing open tab - go to detail page
       await this.router.navigate(['/tabs/detail', tab.id]);
     }
+  }
+
+  private async refreshOpenTabs(): Promise<void> {
+    return new Promise((resolve) => {
+      this.tabsApi.getAllTabs().subscribe({
+        next: (tabs) => {
+          this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
+          resolve();
+        },
+        error: () => resolve(),
+      });
+    });
   }
 
   async onSeatTable(table: Table) {
