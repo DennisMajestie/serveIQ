@@ -62,6 +62,6 @@ export class PosManagementComponent implements OnInit {
 
   deleteTerminal(id: string) {
     if (confirm('Delete this POS terminal?'))
-      this.posApi.delete(id).subscribe(() => this.loadTerminals());
+      this.posApi.remove(id).subscribe(() => this.loadTerminals());
   }
 }

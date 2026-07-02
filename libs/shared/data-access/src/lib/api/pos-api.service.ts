@@ -43,7 +43,7 @@ export class PosApiService extends BaseApiService {
     return this.patch<PosTerminal>(buildUrl(API_CONFIG.endpoints.pos.update, { id }), data);
   }
 
-  delete(id: string): Observable<void> {
-    return this.delete<void>(buildUrl(API_CONFIG.endpoints.pos.delete, { id }));
+  remove(id: string): Observable<any> {
+    return super.delete(buildUrl(API_CONFIG.endpoints.pos.delete, { id }));
   }
 }
