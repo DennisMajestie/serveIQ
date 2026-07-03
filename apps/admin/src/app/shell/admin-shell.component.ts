@@ -1,8 +1,18 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { SyncStore } from '@serveiq/data-access';
-import { AuthService, UserApiService, User } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService, TablesApiService, TabsApiService, User } from '@serveiq/shared/data-access';
+import { of, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
+
+interface SearchResult {
+  type: 'table' | 'staff' | 'order';
+  label: string;
+  subtitle: string;
+  route: string;
+}
 
 interface NavItem {
   label: string;
@@ -14,7 +24,7 @@ interface NavItem {
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
   template: `
     <div class="admin-shell">
       <!-- Sidebar -->
@@ -113,9 +123,23 @@ interface NavItem {
       <div class="main-content-wrapper">
         <!-- Top Nav -->
         <header class="top-nav">
-          <div class="search-container">
-            <span class="material-symbols-outlined">search</span>
-            <input type="text" placeholder="Search orders, tables, or staff...">
+          <div class="search-wrapper">
+            <div class="search-container">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" [formControl]="searchControl" placeholder="Search orders, tables, or staff..." (blur)="onSearchBlur()">
+            </div>
+            <div class="suggestions-dropdown" *ngIf="showDropdown()">
+              <div class="suggestion-item" *ngFor="let item of searchResults()" (click)="navigateTo(item)">
+                <span class="material-symbols-outlined">{{ item.type === 'table' ? 'table_restaurant' : item.type === 'staff' ? 'person' : 'receipt_long' }}</span>
+                <div>
+                  <span class="label">{{ item.label }}</span>
+                  <span class="subtitle">{{ item.subtitle }}</span>
+                </div>
+              </div>
+              <div class="no-results" *ngIf="searchResults().length === 0">
+                No results found
+              </div>
+            </div>
           </div>
           <div class="top-nav-right">
             <div class="top-nav-actions">
@@ -388,6 +412,59 @@ interface NavItem {
       font-family: 'Inter', sans-serif;
     }
 
+    .search-wrapper {
+      position: relative;
+
+      .suggestions-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e4e4e7;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        z-index: 1000;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+
+      .suggestion-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid #f4f4f5;
+
+        &:hover { background: #fafafa; }
+        &:last-child { border-bottom: none; }
+
+        .material-symbols-outlined {
+          color: var(--secondary);
+        }
+
+        .label {
+          font-size: 14px;
+          font-weight: 500;
+          color: #18181b;
+          display: block;
+        }
+
+        .subtitle {
+          font-size: 12px;
+          color: #71717a;
+        }
+      }
+
+      .no-results {
+        padding: 16px;
+        text-align: center;
+        font-size: 13px;
+        color: #71717a;
+      }
+    }
+
     .top-nav-right {
       display: flex;
       align-items: center;
@@ -485,9 +562,14 @@ export class AdminShellComponent implements OnInit {
   sidebarCollapsed = signal(false);
   profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: 'owner' });
   hasNotifications = signal(false);
+  searchControl = new FormControl('');
+  searchResults = signal<SearchResult[]>([]);
+  showDropdown = signal(false);
 
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
+  private tablesApi = inject(TablesApiService);
+  private tabsApi = inject(TabsApiService);
   private router = inject(Router);
 
   ngOnInit() {
@@ -495,6 +577,56 @@ export class AdminShellComponent implements OnInit {
       next: (user: any) => this.profile.set({ fullName: user.fullName, role: user.role, avatarUrl: user.avatarUrl || user.avatar_url }),
       error: () => {}
     });
+
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query || query.trim().length < 2) {
+          this.showDropdown.set(false);
+          return of([]);
+        }
+        const q = query.trim().toLowerCase();
+        return forkJoin({
+          tables: this.tablesApi.getAllTables(),
+          tabs: this.tabsApi.getAllTabs(),
+          staff: this.userApi.listWaiters(),
+        }).pipe(
+          map(({ tables, tabs, staff }) => {
+            const results: SearchResult[] = [];
+            tables.forEach(t => {
+              if ((t.label || '').toLowerCase().includes(q) || (t.tableNumber || '').toLowerCase().includes(q) || (t.status || '').toLowerCase().includes(q)) {
+                results.push({ type: 'table', label: t.label || `Table ${t.tableNumber}`, subtitle: t.status, route: '/tables' });
+              }
+            });
+            staff.forEach(s => {
+              if ((s.fullName || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q)) {
+                results.push({ type: 'staff', label: s.fullName || s.email, subtitle: s.role || 'Staff', route: '/staff' });
+              }
+            });
+            (tabs || []).forEach(t => {
+              if ((t.id || '').toLowerCase().includes(q) || (t.status || '').toLowerCase().includes(q)) {
+                results.push({ type: 'order', label: `Tab #${(t.id || '').slice(0, 8)}`, subtitle: t.status, route: '/tables' });
+              }
+            });
+            return results.slice(0, 10);
+          })
+        );
+      })
+    ).subscribe(results => {
+      this.searchResults.set(results);
+      this.showDropdown.set(results.length > 0);
+    });
+  }
+
+  navigateTo(item: SearchResult) {
+    this.showDropdown.set(false);
+    this.searchControl.setValue('');
+    this.router.navigate([item.route]);
+  }
+
+  onSearchBlur() {
+    setTimeout(() => this.showDropdown.set(false), 200);
   }
 
   toggleSidebar() {

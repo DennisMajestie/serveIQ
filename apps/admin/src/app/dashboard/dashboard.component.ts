@@ -199,21 +199,30 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
       margin-bottom: 24px;
 
       h2 {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 700;
         color: #18181b;
         margin: 0;
+        line-height: 1;
       }
     }
 
     .refresh-btn { 
-      display: flex; align-items: center; gap: 8px; 
-      background: white; border: 1px solid #e2e8f0; border-radius: 8px; 
-      padding: 8px 16px; cursor: pointer; font-size: 0.875rem;
-      color: #64748b; transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid #e4e4e7;
+      border-radius: 10px;
+      background: white;
+      font-size: 13px;
+      font-weight: 500;
+      color: #52525b;
+      cursor: pointer;
+      transition: all 0.2s;
     }
     .refresh-btn:hover:not(:disabled) { 
-      background: #f8f9ff; color: #0b1c30; 
+      background: #f4f4f5;
     }
     .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .refresh-btn mat-icon { font-size: 18px; width: 18px; height: 18px; }
