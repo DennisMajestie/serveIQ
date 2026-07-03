@@ -15,13 +15,23 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, MatIconModule],
   template: `
-    <div class="dashboard-page">
-      <!-- Header -->
-      <div class="dashboard-header">
-        <h2>Dashboard Stats</h2>
-        <button class="refresh-btn" (click)="loadStats()" [disabled]="isLoading()">
-          <mat-icon>refresh</mat-icon>
-          Refresh
+    <div class="page-wrapper">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <span>Admin</span>
+        <span class="separator">›</span>
+        <span class="current">Dashboard</span>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Overview of today's restaurant performance</p>
+        </div>
+        <button class="btn-action" (click)="loadStats(); loadPeakHours()" [disabled]="isLoading()">
+          <mat-icon>refresh</mat-icon> Refresh
         </button>
       </div>
 
@@ -31,30 +41,34 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
       </div>
 
       <ng-container *ngIf="!isLoading(); else statsSkeleton">
+        <!-- Stats Grid -->
         <div class="stats-grid">
           <div class="stat-card" *ngFor="let kpi of kpiCards()">
-            <div class="card-icon" [style.background]="kpi.iconBg + '15'">
+            <div class="icon-wrap" [style.background]="kpi.iconBg + '15'">
               <mat-icon [style.color]="kpi.iconBg">{{ kpi.icon }}</mat-icon>
             </div>
-            <div class="card-label">{{ kpi.label }}</div>
-            <div class="card-value">{{ kpi.value }}</div>
-            <span class="card-badge" *ngIf="kpi.subValue">{{ kpi.subValue }}</span>
+            <div class="card-info">
+              <div class="label">{{ kpi.label }}</div>
+              <div class="value">{{ kpi.value }}</div>
+            </div>
           </div>
         </div>
       </ng-container>
       <ng-template #statsSkeleton>
         <div class="stats-grid">
           <div class="stat-card" *ngFor="let i of [1,2,3,4]">
-            <div class="skeleton-shimmer" style="width: 40px; height: 40px; border-radius: 10px; margin-bottom: 16px;"></div>
-            <div class="skeleton-shimmer" style="width: 60%; height: 12px; margin-bottom: 8px;"></div>
-            <div class="skeleton-shimmer" style="width: 80%; height: 28px;"></div>
+            <div class="skeleton-shimmer" style="width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;"></div>
+            <div style="flex: 1;">
+              <div class="skeleton-shimmer" style="width: 60%; height: 12px; margin-bottom: 6px;"></div>
+              <div class="skeleton-shimmer" style="width: 80%; height: 24px;"></div>
+            </div>
           </div>
         </div>
       </ng-template>
 
-      <!-- Peak Hours Chart -->
-      <div class="peak-hours-section">
-        <div class="peak-header">
+      <!-- Peak Hours -->
+      <div class="section-card">
+        <div class="section-header">
           <h2>Peak Hours</h2>
           <p>Hourly order volume from completed tabs</p>
         </div>
@@ -63,14 +77,12 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
         </div>
       </div>
 
-      <!-- Main Content Grid -->
-      <section class="content-grid" aria-label="Dashboard content">
-        <article class="content-card waiter-card">
-          <div class="card-header">
-            <div class="card-title-group">
-              <h2 class="card-title">Waiter Performance</h2>
-              <p class="card-subtitle">Today's tabs and revenue per staff member</p>
-            </div>
+      <!-- Bottom Grid: Waiter Performance + Recent Orders -->
+      <div class="bottom-grid">
+        <div class="section-card">
+          <div class="section-header">
+            <h2>Waiter Performance</h2>
+            <p>Today's tabs and revenue per staff member</p>
           </div>
           <div class="waiter-list" *ngIf="!isLoading(); else waiterSkeleton">
             <div class="waiter-row" *ngFor="let w of waiterPerformance()">
@@ -96,22 +108,20 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
           <ng-template #waiterSkeleton>
             <div class="waiter-list">
               <div class="waiter-row" *ngFor="let i of [1,2,3]">
-                <div class="skeleton-shimmer" style="width: 44px; height: 44px; border-radius: 50%;"></div>
-                <div class="waiter-info">
+                <div class="skeleton-shimmer" style="width: 40px; height: 40px; border-radius: 50%;"></div>
+                <div style="flex: 1;">
                   <div class="skeleton-shimmer" style="width: 120px; height: 14px; margin-bottom: 4px;"></div>
                   <div class="skeleton-shimmer" style="width: 80px; height: 12px;"></div>
                 </div>
               </div>
             </div>
           </ng-template>
-        </article>
+        </div>
 
-        <article class="content-card transactions-card">
-          <div class="card-header">
-            <div class="card-title-group">
-              <h2 class="card-title">Recent Orders</h2>
-              <p class="card-subtitle">Latest orders across all tabs</p>
-            </div>
+        <div class="section-card">
+          <div class="section-header">
+            <h2>Recent Orders</h2>
+            <p>Latest orders across all tabs</p>
           </div>
           <div class="transactions-list" *ngIf="!isLoading(); else txnSkeletons">
             <div class="transaction-row" *ngFor="let order of recentOrders()">
@@ -137,20 +147,20 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
           <ng-template #txnSkeletons>
             <div class="transactions-list">
               <div class="transaction-row" *ngFor="let i of [1,2,3,4,5]">
-                <div class="skeleton-shimmer" style="width: 44px; height: 44px; border-radius: 50%;"></div>
-                <div class="txn-details">
+                <div class="skeleton-shimmer" style="width: 40px; height: 40px; border-radius: 50%;"></div>
+                <div style="flex: 1;">
                   <div class="skeleton-shimmer" style="width: 100px; height: 14px; margin-bottom: 4px;"></div>
                   <div class="skeleton-shimmer" style="width: 140px; height: 12px;"></div>
                 </div>
               </div>
             </div>
           </ng-template>
-        </article>
-      </section>
+        </div>
+      </div>
 
-      <!-- Bottom Row -->
-      <section class="bottom-grid" aria-label="Operational Pulse">
-        <article class="venue-status-card">
+      <!-- Operational Section: Occupancy + Revenue -->
+      <div class="ops-grid">
+        <div class="venue-status-card">
           <div class="venue-status-icon">
             <mat-icon [style.font-size.px]="48" [style.color]="occupancyPercent() >= 80 ? '#ef4444' : '#00D166'">table_restaurant</mat-icon>
           </div>
@@ -172,249 +182,263 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
               <span class="status-chip" *ngIf="openTabs() > 0">{{ openTabs() }} open tab{{ openTabs() !== 1 ? 's' : '' }}</span>
             </div>
           </div>
-        </article>
+        </div>
 
-        <article class="revenue-card">
+        <div class="revenue-card">
           <div class="revenue-icon-header">
             <mat-icon class="rev-icon">payments</mat-icon>
             <h3>Today's Revenue</h3>
           </div>
           <div class="revenue-amount">₦{{ (dailyRevenue() / 100).toLocaleString() }}</div>
           <p>From {{ todayTabsCount() }} completed tab{{ todayTabsCount() !== 1 ? 's' : '' }}</p>
-        </article>
-      </section>
+        </div>
+      </div>
+
     </div>
   `,
   styles: [`
-    .dashboard-page {
-      padding: 40px 48px;
-      max-width: 1600px;
-      margin: 0 auto;
-      font-family: 'Inter', sans-serif;
-      color: #0b1c30;
+    .page-wrapper {
+      padding: 32px 40px;
+      background: var(--surface);
+      min-height: 100%;
     }
 
-    .dashboard-header {
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+      color: var(--on-surface-muted); font-size: 0.8125rem; font-weight: 500;
+      .current { color: var(--on-surface); font-weight: 600; }
+      .separator { font-size: 16px; width: 16px; height: 16px; }
+    }
+
+    .page-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 24px;
-
-      h2 {
-        font-size: 18px;
-        font-weight: 700;
-        color: #18181b;
-        margin: 0;
-        line-height: 1;
-      }
+      align-items: flex-end;
+      margin-bottom: 40px;
     }
 
-    .refresh-btn { 
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border: 1px solid #e4e4e7;
-      border-radius: 10px;
-      background: white;
-      font-size: 13px;
-      font-weight: 500;
-      color: #52525b;
-      cursor: pointer;
-      transition: all 0.2s;
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--on-surface);
+      margin: 0;
+      line-height: 1.1;
     }
-    .refresh-btn:hover:not(:disabled) { 
-      background: #f4f4f5;
+
+    .page-subtitle {
+      font-size: 1rem;
+      color: var(--on-surface-muted);
+      margin: 8px 0 0;
     }
-    .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .refresh-btn mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+    .btn-action {
+      background: var(--primary); color: white; border: none;
+      padding: 12px 24px; border-radius: 12px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+      transition: transform 0.2s;
+      &:hover { transform: translateY(-2px); box-shadow: 0 8px 16px var(--primary-glow); }
+      &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+      mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    }
 
     .error-message {
-      display: flex; align-items: center; gap: 8px;
-      background: #fef2f2; border: 1px solid #fee2e2; border-radius: 8px;
-      padding: 12px 16px; margin-bottom: 24px; color: #b91c1c;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fef2f2;
+      color: #b91c1c;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      font-size: 0.875rem;
+      mat-icon { font-size: 20px; width: 20px; height: 20px; }
     }
-    .error-message mat-icon { font-size: 18px; width: 18px; height: 18px; }
 
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      gap: 24px;
       margin-bottom: 32px;
-
-      @media (max-width: 1024px) {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      @media (max-width: 640px) {
-        grid-template-columns: 1fr;
-      }
     }
 
     .stat-card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 20px 24px;
-      border: 1px solid #f0f1f3;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      background: white;
+      border-radius: 24px;
+      padding: 32px 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 8px 32px rgba(11, 28, 48, 0.03);
+    }
 
-      .card-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 16px;
+    .icon-wrap {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      mat-icon { font-size: 28px; width: 28px; height: 28px; }
+    }
+
+    .card-info {
+      .label {
+        font-size: 0.8125rem; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.05em; color: var(--on-surface-muted); margin-bottom: 4px;
       }
-
-      .card-label {
-        font-size: 12px;
-        font-weight: 600;
-        color: #71717a;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin-bottom: 8px;
-      }
-
-      .card-value {
-        font-size: 28px;
-        font-weight: 700;
-        color: #18181b;
-      }
-
-      .card-badge {
-        float: right;
-        font-size: 11px;
-        font-weight: 600;
-        padding: 3px 8px;
-        border-radius: 999px;
-        background: #dcfce7;
-        color: #16a34a;
+      .value {
+        font-size: 1.75rem; font-weight: 700; color: var(--on-surface);
       }
     }
 
-    .peak-hours-section {
+    .section-card {
+      background: white;
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 8px 32px rgba(11, 28, 48, 0.03);
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+      h2 { font-size: 1.25rem; font-weight: 700; color: var(--on-surface); margin: 0 0 4px; }
+      p { font-size: 0.875rem; color: var(--on-surface-muted); margin: 0; }
+    }
+
+    .chart-wrapper {
       width: 100%;
       box-sizing: border-box;
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 20px 24px;
-      border: 1px solid #f0f1f3;
-      margin-bottom: 32px;
+      canvas { display: block; width: 100% !important; height: auto !important; }
+    }
 
-      .peak-header {
-        h2 {
-          font-size: 18px;
-          font-weight: 700;
-          color: #18181b;
-          margin: 0 0 4px;
-        }
-        p {
-          font-size: 13px;
-          color: #71717a;
-          margin: 0;
-        }
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+      .section-card { margin-bottom: 0; }
+    }
+
+    .waiter-list {
+      .waiter-row {
+        display: flex; align-items: center; gap: 14px;
+        padding: 12px 0; border-bottom: 1px solid var(--surface-container);
+        &:last-child { border-bottom: none; }
       }
-
-      .chart-wrapper {
-        position: relative;
-        height: 220px;
-        margin-top: 16px;
-        width: 100%;
-
-        canvas {
-          width: 100% !important;
-        }
+      .waiter-empty {
+        text-align: center; padding: 24px; color: var(--on-surface-muted);
+        mat-icon { font-size: 40px; width: 40px; height: 40px; margin-bottom: 8px; }
+        p { margin: 0; font-size: 0.875rem; }
       }
     }
 
-    .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .content-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 20px 24px; border: 1px solid #f0f1f3; }
-    .card-title { font-size: 18px; font-weight: 700; margin: 0; color: #18181b; }
-    .card-subtitle { color: #71717a; font-size: 13px; margin: 4px 0 0; }
+    .waiter-avatar {
+      width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      img { width: 100%; height: 100%; object-fit: cover; }
+    }
 
-    .waiter-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
-    .waiter-row { 
-      display: flex; align-items: center; gap: 16px; padding: 12px; 
-      background: #f8f9ff; border-radius: 12px;
+    .waiter-info {
+      flex: 1; display: flex; flex-direction: column;
+      .waiter-name { font-weight: 600; color: var(--on-surface); font-size: 0.9375rem; }
+      .waiter-meta { font-size: 0.8125rem; color: var(--on-surface-muted); }
     }
-    .waiter-avatar img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-    .waiter-info { flex: 1; display: flex; flex-direction: column; }
-    .waiter-name { font-size: 14px; font-weight: 600; color: #18181b; }
-    .waiter-meta { font-size: 12px; color: #71717a; }
-    .waiter-revenue { font-weight: 600; font-size: 14px; color: #18181b; }
-    .waiter-empty { 
-      display: flex; flex-direction: column; align-items: center; gap: 8px; 
-      padding: 32px; color: #71717a; text-align: center;
-    }
-    .waiter-empty mat-icon { font-size: 40px; width: 40px; height: 40px; }
 
-    .transactions-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
-    .transaction-row { 
-      display: flex; align-items: center; gap: 16px; padding: 12px; 
-      background: #f8f9ff; border-radius: 12px;
+    .waiter-revenue {
+      .amount { font-weight: 700; color: var(--on-surface); font-size: 0.9375rem; }
     }
-    .txn-avatar { 
-      width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-      background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .txn-details { flex: 1; display: flex; flex-direction: column; }
-    .txn-title { font-size: 14px; font-weight: 600; color: #18181b; }
-    .txn-meta { font-size: 12px; color: #71717a; }
-    .txn-amount { font-weight: 600; font-size: 14px; color: #18181b; }
 
-    .bottom-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
-    .venue-status-card { 
-      display: flex; gap: 24px; padding: 20px 24px; align-items: center; 
-      background: #eef2ff; border-radius: 16px;
+    .transactions-list {
+      .transaction-row {
+        display: flex; align-items: center; gap: 14px;
+        padding: 12px 0; border-bottom: 1px solid var(--surface-container);
+        &:last-child { border-bottom: none; }
+      }
+      .txn-empty {
+        text-align: center; padding: 24px; color: var(--on-surface-muted);
+        mat-icon { font-size: 40px; width: 40px; height: 40px; margin-bottom: 8px; }
+        p { margin: 0; font-size: 0.875rem; }
+      }
     }
-    .venue-status-icon { flex-shrink: 0; }
-    .venue-info { flex: 1; display: flex; flex-direction: column; gap: 16px; }
-    .venue-header h3 { margin: 0; font-size: 16px; font-weight: 700; color: #18181b; }
-    .venue-header p { margin: 4px 0 0; font-size: 13px; color: #71717a; line-height: 1.4; }
-    .occupancy-bar { display: flex; align-items: center; gap: 12px; }
-    .occupancy-track { flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-    .occupancy-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
-    .occupancy-label { font-size: 13px; font-weight: 600; color: #18181b; min-width: 36px; }
-    .venue-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-    .status-chip { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 8px; background: white; color: #71717a; }
-    .status-chip.highlight { background: #fee2e2; color: #b91c1c; }
-    .status-chip.chip-success { background: #e8f5e9; color: #16a34a; }
-    .txn-empty { 
-      display: flex; flex-direction: column; align-items: center; gap: 8px; 
-      padding: 32px; color: #71717a; text-align: center;
+
+    .txn-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #fff3e0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .txn-empty mat-icon { font-size: 40px; width: 40px; height: 40px; }
+
+    .txn-details {
+      flex: 1; display: flex; flex-direction: column;
+      .txn-title { font-weight: 600; color: var(--on-surface); font-size: 0.9375rem; }
+      .txn-meta { font-size: 0.8125rem; color: var(--on-surface-muted); }
+    }
+
+    .txn-amount {
+      .amount { font-weight: 700; color: var(--on-surface); font-size: 0.9375rem; }
+    }
 
     .view-all-row {
-      text-align: center;
-      padding: 12px 0 4px;
-      border-top: 1px solid #f0f1f3;
-      margin-top: 8px;
+      margin-top: 12px; text-align: right;
+      a { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.875rem; }
     }
-    .view-all-row a {
-      font-size: 13px;
-      font-weight: 600;
-      color: #f97316;
-      text-decoration: none;
-    }
-    .view-all-row a:hover { text-decoration: underline; }
 
-    .revenue-card { 
-      background: #fffcf0; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; 
-      border-radius: 16px; border: 1px solid #f0f1f3;
+    .ops-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
     }
-    .revenue-icon-header { display: flex; align-items: center; gap: 12px; color: #854d0e; }
-    .revenue-icon-header h3 { margin: 0; font-size: 16px; font-weight: 700; }
-    .rev-icon { font-size: 24px; }
-    .revenue-amount { font-size: 28px; font-weight: 700; color: #854d0e; }
-    .revenue-card p { font-size: 13px; color: #854d0e; line-height: 1.4; margin: 0; }
+
+    .venue-status-card {
+      background: white; border-radius: 24px; padding: 32px 28px;
+      display: flex; align-items: flex-start; gap: 24px;
+      box-shadow: 0 8px 32px rgba(11, 28, 48, 0.03);
+    }
+
+    .venue-status-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--surface-container); display: flex;
+      align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .venue-info { flex: 1; }
+    .venue-header {
+      margin-bottom: 16px;
+      h3 { font-size: 1.125rem; font-weight: 700; margin: 0 0 4px; color: var(--on-surface); }
+      p { font-size: 0.875rem; color: var(--on-surface-muted); margin: 0; }
+    }
+
+    .occupancy-bar {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+    }
+    .occupancy-track {
+      flex: 1; height: 10px; background: var(--surface-container); border-radius: 99px; overflow: hidden;
+    }
+    .occupancy-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+    .occupancy-label { font-size: 0.8125rem; font-weight: 700; color: var(--on-surface-muted); min-width: 36px; }
+
+    .venue-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .status-chip {
+      font-size: 0.6875rem; font-weight: 700; padding: 4px 12px;
+      border-radius: 99px; letter-spacing: 0.05em;
+      background: var(--surface-container); color: var(--on-surface-muted);
+      &.highlight { background: #fef2f2; color: #ef4444; }
+      &.chip-success { background: #e8f5e9; color: #2e7d32; }
+    }
+
+    .revenue-card {
+      background: var(--primary); border-radius: 24px; padding: 32px 28px;
+      display: flex; flex-direction: column; justify-content: center;
+      h3 { color: white; font-size: 1rem; font-weight: 600; margin: 0; }
+      p { color: rgba(255,255,255,0.7); font-size: 0.875rem; margin: 4px 0 0; }
+    }
+    .revenue-icon-header {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    }
+    .rev-icon { color: white; }
+    .revenue-amount {
+      font-size: 2.25rem; font-weight: 800; color: white;
+    }
 
     .skeleton-shimmer {
-      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background: linear-gradient(90deg, var(--surface-container) 25%, #e8ecf0 50%, var(--surface-container) 75%);
       background-size: 200% 100%;
-      animation: shimmer 1.5s ease-in-out infinite;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
     }
 
     @keyframes shimmer {
