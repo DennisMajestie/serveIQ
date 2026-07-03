@@ -187,6 +187,8 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
   `,
   styles: [`
     .dashboard-page {
+      max-width: 1280px;
+      margin: 0 auto;
       padding: 32px 40px 40px;
     }
 
