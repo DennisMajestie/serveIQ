@@ -187,8 +187,11 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
   `,
   styles: [`
     .dashboard-page {
-      max-width: 1280px;
-      padding: 32px 40px 40px;
+      padding: 40px 48px;
+      max-width: 1600px;
+      margin: 0 auto;
+      font-family: 'Inter', sans-serif;
+      color: #0b1c30;
     }
 
     .dashboard-header {
@@ -251,7 +254,7 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
     .stat-card {
       background: #ffffff;
       border-radius: 16px;
-      padding: 20px;
+      padding: 20px 24px;
       border: 1px solid #f0f1f3;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 
@@ -292,9 +295,11 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
     }
 
     .peak-hours-section {
+      width: 100%;
+      box-sizing: border-box;
       background: #ffffff;
       border-radius: 16px;
-      padding: 24px;
+      padding: 20px 24px;
       border: 1px solid #f0f1f3;
       margin-bottom: 32px;
 
@@ -316,11 +321,16 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
         position: relative;
         height: 220px;
         margin-top: 16px;
+        width: 100%;
+
+        canvas {
+          width: 100% !important;
+        }
       }
     }
 
-    .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
-    .content-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 24px; border: 1px solid #f0f1f3; }
+    .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .content-card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 20px 24px; border: 1px solid #f0f1f3; }
     .card-title { font-size: 18px; font-weight: 700; margin: 0; color: #18181b; }
     .card-subtitle { color: #71717a; font-size: 13px; margin: 4px 0 0; }
 
@@ -356,8 +366,8 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
 
     .bottom-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
     .venue-status-card { 
-      display: flex; gap: 24px; padding: 24px; align-items: center; 
-      background: #eef2ff; border: none; border-radius: 16px;
+      display: flex; gap: 24px; padding: 20px 24px; align-items: center; 
+      background: #eef2ff; border-radius: 16px;
     }
     .venue-status-icon { flex-shrink: 0; }
     .venue-info { flex: 1; display: flex; flex-direction: column; gap: 16px; }
@@ -392,7 +402,7 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
     .view-all-row a:hover { text-decoration: underline; }
 
     .revenue-card { 
-      background: #fffcf0; padding: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; 
+      background: #fffcf0; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; 
       border-radius: 16px; border: 1px solid #f0f1f3;
     }
     .revenue-icon-header { display: flex; align-items: center; gap: 12px; color: #854d0e; }
