@@ -271,8 +271,8 @@ export interface UpdateProfileRequest {
 
 export interface PeakHoursEntry {
   hour: number;
-  order_count: number;
-  revenue_kobo: number;
+  orderCount: number;
+  revenueKobo: number;
 }
 
 // ===== Suppliers =====

@@ -1,10 +1,14 @@
-import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { BranchesApiService, DashboardStats } from '@serveiq/shared/data-access';
+import { BranchesApiService, ReportsApiService, DashboardStats } from '@serveiq/shared/data-access';
+import { PeakHoursEntry } from '@serveiq/shared/models';
 import { Subscription, interval } from 'rxjs';
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 @Component({
   selector: 'app-dashboard',
@@ -134,6 +138,21 @@ import { Subscription, interval } from 'rxjs';
               </div>
             </div>
           </ng-template>
+        </article>
+      </section>
+
+      <!-- Peak Hours Chart -->
+      <section class="chart-section" aria-label="Peak hours chart">
+        <article class="content-card chart-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title space-font">Peak Hours</h2>
+              <p class="card-subtitle inter-font">Hourly order volume from completed tabs</p>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas #peakHoursCanvas></canvas>
+          </div>
         </article>
       </section>
 
@@ -281,6 +300,10 @@ import { Subscription, interval } from 'rxjs';
     }
     .view-all-row a:hover { text-decoration: underline; }
 
+    .chart-section { padding: 0 40px 24px; }
+    .chart-card { padding: 24px; }
+    .chart-wrapper { position: relative; height: 220px; margin-top: 16px; }
+
     .revenue-card { background: #fffcf0; padding: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
     .revenue-icon-header { display: flex; align-items: center; gap: 12px; color: #854d0e; }
     .revenue-icon-header h3 { margin: 0; font-size: 1.125rem; }
@@ -289,10 +312,14 @@ import { Subscription, interval } from 'rxjs';
     .revenue-card p { font-size: 0.8125rem; color: #854d0e; line-height: 1.4; margin: 0; }
   `]
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private branchService = inject(BranchesApiService);
+  private reportsService = inject(ReportsApiService);
+
+  @ViewChild('peakHoursCanvas') peakHoursCanvas!: ElementRef<HTMLCanvasElement>;
 
   isLoading = signal(true);
+  peakHours = signal<PeakHoursEntry[]>([]);
   stats = signal<DashboardStats>({
     realTimeSales: 0,
     activeTables: 0,
@@ -305,14 +332,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
   });
   errorMessage = signal<string | null>(null);
   private pollingSub?: Subscription;
+  private chartInstance?: Chart;
 
   ngOnInit() {
     this.loadStats();
-    this.pollingSub = interval(30000).subscribe(() => this.loadStats());
+    this.loadPeakHours();
+    this.pollingSub = interval(30000).subscribe(() => {
+      this.loadStats();
+      this.loadPeakHours();
+    });
+  }
+
+  ngAfterViewInit() {
+    this.initChart();
   }
 
   ngOnDestroy() {
     this.pollingSub?.unsubscribe();
+    this.chartInstance?.destroy();
+  }
+
+  private getBranchId(): string {
+    return localStorage.getItem('branchId') || '';
   }
 
   loadStats() {
@@ -325,6 +366,75 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.errorMessage.set(error.status === 401 ? 'Unauthorized. Please login again.' : 'Failed to load dashboard stats.');
       }
     });
+  }
+
+  loadPeakHours() {
+    const branchId = this.getBranchId();
+    if (!branchId) return;
+    this.reportsService.getPeakHours(branchId).subscribe({
+      next: (entries) => {
+        this.peakHours.set(entries || []);
+        this.updateChart();
+      },
+      error: () => {}
+    });
+  }
+
+  private initChart() {
+    if (!this.peakHoursCanvas?.nativeElement) return;
+    const ctx = this.peakHoursCanvas.nativeElement.getContext('2d');
+    if (!ctx) return;
+    this.chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Orders',
+          data: [],
+          backgroundColor: '#0059bb',
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0b1c30',
+            titleFont: { family: 'Inter' },
+            bodyFont: { family: 'Inter' },
+            cornerRadius: 8,
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { family: 'Inter', size: 11 }, color: '#64748b' },
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: '#f1f5f9' },
+            ticks: { font: { family: 'Inter', size: 11 }, color: '#64748b', stepSize: 1 },
+          }
+        }
+      }
+    });
+  }
+
+  private updateChart() {
+    if (!this.chartInstance) return;
+    const data = this.peakHours();
+    const labels = data.map(e => {
+      const h = e.hour;
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${hour12}${ampm}`;
+    });
+    const values = data.map(e => e.orderCount);
+    this.chartInstance.data.labels = labels;
+    this.chartInstance.data.datasets[0].data = values;
+    this.chartInstance.update('none');
   }
 
   kpiCards = computed(() => {
