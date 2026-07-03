@@ -8,6 +8,17 @@ const appDefaults: SweetAlertOptions = {
   reverseButtons: true,
   iconColor: '#f97316',
   timerProgressBar: true,
+  width: '32rem',
+  customClass: {
+    container: 'swal-container',
+    popup: 'swal-popup',
+    title: 'swal-title',
+    htmlContainer: 'swal-content',
+    actions: 'swal-actions',
+    confirmButton: 'swal-confirm-btn',
+    denyButton: 'swal-deny-btn',
+    cancelButton: 'swal-cancel-btn',
+  },
 };
 
 const origFire = Swal.fire.bind(Swal) as (...args: any[]) => any;
