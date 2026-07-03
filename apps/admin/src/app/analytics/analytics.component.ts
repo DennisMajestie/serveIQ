@@ -26,8 +26,8 @@ interface StaffPerformance {
 
 interface PeakHoursData {
   hour: number;
-  order_count: number;
-  revenue_kobo: number;
+  orderCount: number;
+  revenueKobo: number;
 }
 
 interface CategoryROI {
@@ -184,6 +184,6 @@ export class AnalyticsComponent implements OnInit {
 
   getMaxOrders(): number {
     if (!this.peakHoursData().length) return 0;
-    return Math.max(...this.peakHoursData().map(d => d.order_count));
+    return Math.max(...this.peakHoursData().map(d => d.orderCount));
   }
 }
