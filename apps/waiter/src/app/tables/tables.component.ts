@@ -57,10 +57,8 @@ export class TablesComponent implements OnInit, OnDestroy {
   isTabLockedByOther(table: Table): boolean {
     const tab = this.getTabForTable(table.id);
     if (!tab) {
-      console.log(`[Tables] isTabLockedByOther: no tab for table ${table.id}`);
       return false;
     }
-    console.log(`[Tables] isTabLockedByOther: table=${table.id}, tab.waiterId=${tab.waiterId}, currentUserId=${this.currentUserId}`);
     return tab.status === 'open' && !!tab.waiterId && tab.waiterId !== this.currentUserId;
   }
 
@@ -70,7 +68,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadTables();
     this.loadOpenTabs();
-    this.pollSub = interval(5000).pipe(
+    this.pollSub = interval(30000).pipe(
       switchMap(() => this.tablesApi.getAllTables())
     ).subscribe(tables => {
       if (Array.isArray(tables)) this.tables.set(tables);
@@ -194,7 +192,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     try {
       const tabs = await firstValueFrom(this.tabsApi.getAllTabs());
       this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
-      console.log(`[Tables] refreshOpenTabs: ${this.openTabs().length} open tabs found`);
+      console.debug(`[Tables] refreshOpenTabs: ${this.openTabs().length} open tabs found`);
       return true;
     } catch (err) {
       console.error('[Tables] Failed to refresh open tabs:', err);
