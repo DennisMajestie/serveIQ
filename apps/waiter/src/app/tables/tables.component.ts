@@ -219,8 +219,9 @@ export class TablesComponent implements OnInit, OnDestroy {
         console.log('[Tables] Existing tab found — navigating to detail:', tab.id);
         await this.router.navigate(['/tabs/detail', tab.id]);
       } catch (err: any) {
-        if (err.status === 403) {
-          const msg = err.error?.message || 'This table is being served by another waiter';
+        const httpStatus = err.status ?? err.statusCode;
+        if (httpStatus === 403) {
+          const msg = err.error?.message || err.message || 'This table is being served by another waiter';
           console.warn('[Tables] Access denied by backend:', msg);
           this.showToast(msg);
         } else {

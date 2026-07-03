@@ -27,6 +27,7 @@ export class TabDetailComponent implements OnInit {
   items = signal<OrderItem[]>([]);
   menuItems = signal<MenuItem[]>([]);
   isLoading = signal(true);
+  toastMessage = signal<string | null>(null);
 
   private orderPosted = false;
 
@@ -100,8 +101,16 @@ export class TabDetailComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('[TabDetail] Failed to load tab:', err);
-        this.isLoading.set(false);
+        const httpStatus = err.status ?? err.statusCode;
+        if (httpStatus === 403) {
+          const msg = err.message || 'This table is being served by another waiter';
+          console.warn('[TabDetail] Access denied:', msg);
+          this.showToast(msg);
+          setTimeout(() => this.router.navigate(['/tables']), 2500);
+        } else {
+          console.error('[TabDetail] Failed to load tab:', err);
+          this.isLoading.set(false);
+        }
       }
     });
   }
@@ -225,6 +234,11 @@ export class TabDetailComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/tables']);
+  }
+
+  showToast(message: string): void {
+    this.toastMessage.set(message);
+    setTimeout(() => this.toastMessage.set(null), 5000);
   }
 
   viewBill() {

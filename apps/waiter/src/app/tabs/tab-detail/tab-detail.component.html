@@ -1,4 +1,11 @@
 <div class="tab-detail-container">
+  @if (toastMessage(); as msg) {
+    <div class="toast-notification" (click)="toastMessage.set(null)">
+      <span class="material-symbols-outlined">lock</span>
+      <span>{{ msg }}</span>
+    </div>
+  }
+
   <!-- Top Navigation -->
   <header class="top-nav">
     <button class="back-btn" (click)="goBack()">
