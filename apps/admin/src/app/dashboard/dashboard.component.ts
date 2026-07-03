@@ -72,7 +72,7 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
           <h2>Peak Hours</h2>
           <p>Hourly order volume from completed tabs</p>
         </div>
-        <div class="chart-wrapper">
+        <div class="chart-container">
           <canvas #peakHoursCanvas></canvas>
         </div>
       </div>
@@ -294,6 +294,7 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
       padding: 32px 28px;
       box-shadow: 0 8px 32px rgba(11, 28, 48, 0.03);
       margin-bottom: 24px;
+      overflow: hidden;
     }
 
     .section-header {
@@ -302,10 +303,12 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
       p { font-size: 0.875rem; color: var(--on-surface-muted); margin: 0; }
     }
 
-    .chart-wrapper {
+    .chart-container {
+      position: relative;
+      height: 200px;
       width: 100%;
       box-sizing: border-box;
-      canvas { display: block; width: 100% !important; height: auto !important; }
+      canvas { display: block; width: 100% !important; height: 100% !important; }
     }
 
     .bottom-grid {
