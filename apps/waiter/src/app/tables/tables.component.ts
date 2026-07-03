@@ -119,22 +119,14 @@ export class TablesComponent implements OnInit, OnDestroy {
   async onTableClick(table: Table) {
     console.log(`[Tables] onTableClick: table=${table.id}, status=${table.status}`);
 
-    // Fetch latest open tabs first
-    const refreshOk = await this.refreshOpenTabs();
-    if (!refreshOk) {
-      console.warn('[Tables] refreshOpenTabs failed, using existing data');
-    }
-
-    // Check if tab is locked by another waiter (uses fresh data)
+    // Check lock using existing polling data (no API call needed)
     if (this.isTabLockedByOther(table)) {
-      console.log('[Tables] Tab is occupied by another waiter');
       return;
     }
 
     let tab = this.getTabForTable(table.id);
-    console.log(`[Tables] getTabForTable result:`, tab?.id ?? 'none');
 
-    // Fallback: table is occupied but no tab found in openTabs — do a direct lookup
+    // Fallback: table is occupied but no tab found — do a direct lookup
     if (!tab && table.status === 'occupied') {
       console.log('[Tables] Table is occupied but no open tab found in list — querying API directly');
       try {
@@ -142,11 +134,6 @@ export class TablesComponent implements OnInit, OnDestroy {
         const allOpen = Array.isArray(allTabs) ? allTabs.filter(t => t.status === 'open') : [];
         this.openTabs.set(allOpen);
         tab = allOpen.find(t => t.tableId === table.id);
-        if (tab) {
-          console.log('[Tables] Found tab via direct lookup:', tab.id);
-        } else {
-          console.warn('[Tables] Table is occupied but no open tab found even after direct lookup');
-        }
       } catch (err) {
         console.error('[Tables] Direct tab lookup failed:', err);
       }
@@ -182,6 +169,7 @@ export class TablesComponent implements OnInit, OnDestroy {
       await this.router.navigate(['/tabs/create', table.id]);
     } else {
       console.log('[Tables] Existing tab found — navigating to detail:', tab.id);
+      // Navigate immediately — tab-detail component has shimmer for its own loading
       await this.router.navigate(['/tabs/detail', tab.id]);
     }
   }
