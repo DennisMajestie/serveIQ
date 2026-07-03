@@ -15,6 +15,13 @@
   </header>
 
   <main class="main-content">
+    @if (toastMessage(); as msg) {
+      <div class="toast-notification" (click)="toastMessage.set(null)">
+        <span class="material-symbols-outlined">lock</span>
+        <span>{{ msg }}</span>
+      </div>
+    }
+
     @if (isLoading()) {
       <!-- Shimmer: Stats Row -->
       <div class="stats-row">
@@ -94,7 +101,13 @@
               @if (isTabLockedByOther(table)) {
                 <div class="lock-indicator">
                   <span class="material-symbols-outlined">lock</span>
+                  <span>{{ getWaiterName(table.id) || 'In use' }}</span>
+                  @if (isOwnerOrManager()) {
+                    <button class="release-btn" (click)="releaseTable(table, $event)">Release</button>
+                  }
                 </div>
+              } @else if (table.status === 'occupied' && isOwnerOrManager()) {
+                <button class="release-standalone-btn" (click)="releaseTable(table, $event)">Release Table</button>
               }
             </div>
           </div>

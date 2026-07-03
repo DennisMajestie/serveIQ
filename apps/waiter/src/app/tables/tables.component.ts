@@ -25,6 +25,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   branchName = 'Main Dining Room';
   isSynced = signal(false);
   isLoading = signal(true);
+  toastMessage = signal<string | null>(null);
 
   tables = signal<Table[]>([]);
   openTabs = signal<Tab[]>([]);
@@ -50,6 +51,22 @@ export class TablesComponent implements OnInit, OnDestroy {
     }
   }
 
+  get currentUserRole(): string {
+    const token = this.authService.getToken();
+    if (!token) return '';
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || '';
+    } catch {
+      return '';
+    }
+  }
+
+  isOwnerOrManager = computed(() => {
+    const role = this.currentUserRole;
+    return role === 'owner' || role === 'manager';
+  });
+
   getTabForTable(tableId: string): Tab | undefined {
     return this.openTabs().find(t => t.tableId === tableId);
   }
@@ -60,6 +77,12 @@ export class TablesComponent implements OnInit, OnDestroy {
       return false;
     }
     return tab.status === 'open' && !!tab.waiterId && tab.waiterId !== this.currentUserId;
+  }
+
+  getWaiterName(tableId: string): string | null {
+    const tab = this.getTabForTable(tableId);
+    if (!tab) return null;
+    return ((tab as any).waiter?.fullName) || null;
   }
 
   private pollSub?: Subscription;
@@ -116,13 +139,35 @@ export class TablesComponent implements OnInit, OnDestroy {
     return status.toLowerCase();
   }
 
+  showToast(message: string): void {
+    this.toastMessage.set(message);
+    setTimeout(() => this.toastMessage.set(null), 5000);
+  }
+
+  async releaseTable(table: Table, event: Event) {
+    event.stopPropagation();
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Release Table?',
+      text: `Force-release "${table.label || table.tableNumber}"? Any open tab will be voided.`,
+      showCancelButton: true,
+      confirmButtonText: 'Release',
+      cancelButtonText: 'Cancel',
+    });
+    if (!result.isConfirmed) return;
+    try {
+      await firstValueFrom(this.tablesApi.releaseTable(table.id));
+      this.showToast(`Table "${table.label || table.tableNumber}" released`);
+      this.loadTables();
+      this.loadOpenTabs();
+    } catch (err: any) {
+      const msg = err.error?.message || 'Failed to release table';
+      Swal.fire({ icon: 'error', title: 'Error', text: msg });
+    }
+  }
+
   async onTableClick(table: Table) {
     console.log(`[Tables] onTableClick: table=${table.id}, status=${table.status}`);
-
-    // Check lock using existing polling data (no API call needed)
-    if (this.isTabLockedByOther(table)) {
-      return;
-    }
 
     let tab = this.getTabForTable(table.id);
 
@@ -168,9 +213,22 @@ export class TablesComponent implements OnInit, OnDestroy {
       console.log('[Tables] No open tab — navigating to create');
       await this.router.navigate(['/tabs/create', table.id]);
     } else {
-      console.log('[Tables] Existing tab found — navigating to detail:', tab.id);
-      // Navigate immediately — tab-detail component has shimmer for its own loading
-      await this.router.navigate(['/tabs/detail', tab.id]);
+      // Pre-flight: verify waiter ownership against backend (source of truth)
+      try {
+        await firstValueFrom(this.tabsApi.getTab(tab.id));
+        console.log('[Tables] Existing tab found — navigating to detail:', tab.id);
+        await this.router.navigate(['/tabs/detail', tab.id]);
+      } catch (err: any) {
+        if (err.status === 403) {
+          const msg = err.error?.message || 'This table is being served by another waiter';
+          console.warn('[Tables] Access denied by backend:', msg);
+          this.showToast(msg);
+        } else {
+          console.error('[Tables] Pre-flight tab check failed:', err);
+          // Non-auth error — still try to navigate; detail component handles its own errors
+          await this.router.navigate(['/tabs/detail', tab.id]);
+        }
+      }
     }
   }
 

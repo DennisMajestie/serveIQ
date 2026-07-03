@@ -58,6 +58,7 @@ export const API_CONFIG = {
       update: '/api/v1/tables/:id',
       delete: '/api/v1/tables/:id',
       updateStatus: '/api/v1/tables/:id/status',
+      release: '/api/v1/tables/:id/release',
     },
     // Tabs
     tabs: {

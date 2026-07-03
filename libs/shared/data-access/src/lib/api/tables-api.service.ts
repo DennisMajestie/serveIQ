@@ -40,6 +40,11 @@ export class TablesApiService extends BaseApiService {
     return this.patch<Table>(buildUrl(API_CONFIG.endpoints.tables.updateStatus, { id }), { status });
   }
 
+  // Force-release a table (owner/manager only)
+  releaseTable(id: string): Observable<Table> {
+    return this.post<Table>(buildUrl(API_CONFIG.endpoints.tables.release, { id }), {});
+  }
+
   // Delete a table
   deleteTable(id: string): Observable<void> {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.tables.delete, { id }));
