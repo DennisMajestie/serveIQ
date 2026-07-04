@@ -141,7 +141,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   todayTabsCount = computed(() => this.stats().todayTabsCount);
   revenueDisplay = computed(() => `₦${(this.stats().realTimeSales / 100).toLocaleString()}`);
   staffCount = computed(() => (this.stats().waiterPerformance || []).length);
-  staffOnDuty = computed(() => Math.max(this.staffCount(), 6));
+  staffOnDuty = computed(() => this.staffCount());
   tableVelocity = computed(() => {
     const orders = this.recentOrders();
     if (orders.length === 0) return '—';

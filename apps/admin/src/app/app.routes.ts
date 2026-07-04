@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import { authGuard } from './core/auth.guard';
+import { superAdminGuard } from './core/super-admin.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -92,6 +93,11 @@ export const appRoutes: Route[] = [
       {
         path: 'admin/businesses',
         loadComponent: () => import('./admin/businesses/businesses.component').then(m => m.BusinessesComponent)
+      },
+      {
+        path: 'autopilot',
+        loadComponent: () => import('./autopilot/autopilot.component').then(m => m.AutopilotComponent),
+        canActivate: [superAdminGuard]
       },
       {
         path: '',

@@ -117,6 +117,12 @@ interface NavItem {
                 <span>Businesses</span>
               </a>
             </li>
+            <li class="nav-item" *ngIf="profile().role === 'super_admin'">
+              <a class="nav-link" routerLink="/app/autopilot" routerLinkActive="active">
+                <span class="material-symbols-outlined">smart_toy</span>
+                <span>Autopilot</span>
+              </a>
+            </li>
           </ul>
         </nav>
         <div class="sidebar-footer">

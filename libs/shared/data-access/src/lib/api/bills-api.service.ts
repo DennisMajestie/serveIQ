@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 import { Bill, Receipt, GenerateBillRequest, RecordPaymentRequest } from '@serveiq/shared/models';
+import { snakeToCamel } from '@serveiq/shared/models';
 
 /** Manages bill generation, payment recording and receipts. */
 @Injectable({ providedIn: 'root' })
@@ -34,7 +35,16 @@ export class BillsApiService extends BaseApiService {
 
   /** Fetch the bill for a given tab (via receipt endpoint). Returns null if no bill exists. */
   getByTab(tabId: string): Observable<Bill | null> {
-    return this.getReceipt(tabId).pipe(
+    const url = `${this.apiUrl}${buildUrl(API_CONFIG.endpoints.bills.receipt, { tabId })}`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.get<any>(url, { headers }).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+          data = data.data;
+        }
+        return snakeToCamel<Receipt>(data);
+      }),
       map(r => r.bill),
       catchError(() => of(null))
     );
