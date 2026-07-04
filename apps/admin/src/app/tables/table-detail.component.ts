@@ -317,7 +317,7 @@ import Swal from 'sweetalert2';
     }
     .card-header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 24px; border-bottom: 1px solid var(--outline-variant); background: white;
+      padding: 20px 24px; border-bottom: 1px solid var(--outline-variant); background: var(--surface-container-lowest);
     }
     .card-title { font-size: 18px; line-height: 28px; font-weight: 700; margin: 0; }
     .add-item-btn {
@@ -386,7 +386,7 @@ import Swal from 'sweetalert2';
     }
     .close-tab-btn:active { transform: scale(0.98); }
     .print-bill-btn {
-      width: 100%; height: 56px; background: white; color: var(--primary);
+      width: 100%; height: 56px; background: var(--surface-container-lowest); color: var(--primary);
       border: 2px solid var(--primary); border-radius: 12px;
       font-size: 16px; line-height: 24px; font-weight: 600;
       font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s ease;

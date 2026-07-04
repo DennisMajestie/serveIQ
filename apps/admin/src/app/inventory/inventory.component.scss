@@ -96,7 +96,7 @@
 }
 
 .inventory-card {
-  background: white;
+  background: var(--surface-container-lowest);
   border: 1px solid #f1f5f9;
   border-radius: 16px;
   padding: 20px;
@@ -216,7 +216,7 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--surface-container-lowest);
   border-radius: 20px;
   width: 100%;
   max-width: 500px;

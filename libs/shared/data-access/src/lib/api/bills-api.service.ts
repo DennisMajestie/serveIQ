@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
@@ -31,13 +32,11 @@ export class BillsApiService extends BaseApiService {
     return this.get<Receipt>(buildUrl(API_CONFIG.endpoints.bills.receipt, { tabId }));
   }
 
-  /** Fetch the bill for a given tab (via receipt endpoint). */
-  getByTab(tabId: string): Observable<Bill> {
-    return new Observable(obs => {
-      this.getReceipt(tabId).subscribe({
-        next: (r) => { obs.next(r.bill); obs.complete(); },
-        error: (e) => obs.error(e)
-      });
-    });
+  /** Fetch the bill for a given tab (via receipt endpoint). Returns null if no bill exists. */
+  getByTab(tabId: string): Observable<Bill | null> {
+    return this.getReceipt(tabId).pipe(
+      map(r => r.bill),
+      catchError(() => of(null))
+    );
   }
 }

@@ -44,7 +44,7 @@
 }
 
 .card {
-  background: #ffffff;
+  background: var(--surface-container-lowest);
   border: 1px solid #f0f1f3;
   border-radius: 16px;
 }
@@ -136,7 +136,7 @@
   height: 34px;
   border: 1px solid #e4e4e7;
   border-radius: 8px;
-  background: white;
+  background: var(--surface);
   color: #71717a;
   cursor: pointer;
 
@@ -248,7 +248,7 @@
 }
 
 .modal-panel {
-  background: white;
+  background: var(--surface-container-lowest);
   border-radius: 16px;
   width: 440px;
   max-width: 90vw;

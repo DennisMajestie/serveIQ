@@ -95,7 +95,7 @@ interface BillWithTab {
     .skeleton-row { height: 64px; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    .table-card { background: white; border-radius: 24px; border: 1px solid #f1f5f9; box-shadow: 0 8px 32px rgba(11,28,48,0.04); overflow: hidden; }
+    .table-card { background: var(--surface-container-lowest); border-radius: 24px; border: 1px solid #f1f5f9; box-shadow: 0 8px 32px rgba(11,28,48,0.04); overflow: hidden; }
     .table-wrapper { overflow-x: auto; }
     .bills-table { width: 100%; border-collapse: collapse; }
     .bills-table th { text-align: left; padding: 20px 24px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; background: #f8fafc; }
@@ -135,9 +135,8 @@ export class BillsComponent implements OnInit {
         tabs.forEach((tab: Tab) => {
           this.billsApi.getByTab(tab.id).subscribe({
             next: (bill) => {
-              billEntries.push({ bill, tab });
+              if (bill) billEntries.push({ bill, tab });
             },
-            error: () => {}, // bill may not exist yet for open tabs — skip silently
             complete: () => {
               pending--;
               if (pending === 0) {

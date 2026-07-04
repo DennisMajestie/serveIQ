@@ -423,7 +423,7 @@
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid var(--outline-variant);
-  background-color: white;
+  background-color: var(--surface-container-lowest);
 }
 
 .card-title {
@@ -670,7 +670,7 @@
 .print-bill-btn {
   width: 100%;
   height: 56px;
-  background-color: white;
+  background-color: var(--surface-container-lowest);
   color: var(--primary);
   border: 2px solid var(--primary);
   border-radius: 12px;
