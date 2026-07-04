@@ -30,3 +30,5 @@ apps/api/src/**/*.js
 apps/api/src/**/*.js.map
 
 tmp/
+
+.env*
