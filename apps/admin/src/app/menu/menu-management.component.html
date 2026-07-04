@@ -20,15 +20,8 @@
     <!-- Category Grid -->
     <div class="grid grid-cols-12 gap-5">
       <div *ngFor="let cat of categories()" class="col-span-12 md:col-span-4 bento-card relative h-[220px] rounded-[32px] overflow-hidden group cursor-pointer" [class.ring-2]="selectedCategory() === cat.name" [class.ring-[var(--primary)]]="selectedCategory() === cat.name" (click)="selectCategory(cat.name)">
-        <div class="absolute inset-0 bg-gradient-to-br" [class.from-emerald-900/60]="cat.name === 'All'" [class.to-sky-900/60]="cat.name === 'All'"
-             [class.from-amber-900/60]="cat.name === 'starter' || cat.name === 'dessert'" [class.to-orange-900/60]="cat.name === 'starter' || cat.name === 'dessert'"
-             [class.from-rose-900/60]="cat.name === 'main-course'" [class.to-red-900/60]="cat.name === 'main-course'"
-             [class.from-emerald-900/60]="cat.name === 'fruit-juice' || cat.name === 'water-soft-drinks'" [class.to-teal-900/60]="cat.name === 'fruit-juice' || cat.name === 'water-soft-drinks'"
-             [class.from-amber-900/60]="cat.name === 'beer'" [class.to-yellow-900/60]="cat.name === 'beer'"
-             [class.from-red-900/60]="cat.name === 'wine'" [class.to-rose-900/60]="cat.name === 'wine'"
-             [class.from-stone-900/60]="cat.name === 'tea-coffee'" [class.to-stone-800/60]="cat.name === 'tea-coffee'"
-             [class.from-lime-900/60]="cat.name === 'sides'" [class.to-green-900/60]="cat.name === 'sides'"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        <div class="absolute inset-0 bg-cover bg-center" [style.background-image]="cat.imageUrl ? 'url(' + cat.imageUrl + ')' : ''"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"></div>
         <div class="absolute bottom-0 left-0 p-6 w-full">
           <span class="bg-primary-20 backdrop-blur-md text-[var(--primary)] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">{{ cat.name === 'All' ? 'All Items' : cat.name | titlecase }}</span>
           <div class="flex justify-between items-end">

@@ -2,7 +2,7 @@
   <!-- Header -->
   <header class="flex flex-col gap-1">
     <h2 class="text-[32px] leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Executive Control</h2>
-    <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Real-time performance metrics for <span class="text-[var(--on-background)] font-bold">Lagos Central Branch</span></p>
+    <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Real-time performance metrics for <span class="text-[var(--on-background)] font-bold">{{ branchName() || 'Dashboard' }}</span></p>
   </header>
 
   <ng-container *ngIf="!isLoading(); else skeleton">
@@ -22,7 +22,7 @@
             <span class="text-[14px] leading-[20px] font-semibold text-[var(--secondary)] uppercase tracking-widest text-[10px]" style="font-family:'Inter',sans-serif">Revenue Pulse</span>
             <h3 class="text-4xl font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ revenueDisplay() }}</h3>
           </div>
-          <span class="px-2 py-1 text-[var(--primary-container)] text-[11px] font-bold rounded-lg" style="background: color-mix(in srgb, var(--primary-container) 10%, transparent)">+14.2%</span>
+          <span class="px-2 py-1 text-[var(--primary-container)] text-[11px] font-bold rounded-lg" style="background: color-mix(in srgb, var(--primary-container) 10%, transparent)" *ngIf="stats().realTimeSales > 0">Today</span>
         </div>
         <div class="h-16 w-full">
           <canvas id="revenue-sparkline" class="w-full h-full"></canvas>

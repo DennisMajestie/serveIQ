@@ -8,7 +8,7 @@
   </div>
 
   <div class="search-bar">
-    <input type="text" placeholder="Search tabs by ID, table or status..." [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" class="search-input" />
+    <input type="text" placeholder="Search tabs by ID, customer or status..." [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" class="search-input" />
   </div>
 
   <!-- Loading skeleton -->
@@ -34,13 +34,19 @@
       (click)="viewTab(tab)"
       [style.animation-delay.s]="i * 0.04"
     >
-      <div class="tab-info">
-        <span class="tab-id">Tab #{{ tab.id.slice(0, 8) }}</span>
-        <span class="tab-table" *ngIf="tab.tableId">Table: {{ tab.tableId }}</span>
+      <div class="tab-row">
+        <div class="tab-customer">
+          <span class="customer-name">{{ tab.customerName || 'Walk-in' }}</span>
+          <span class="tab-table-label">Table {{ getTableLabel(tab) }}</span>
+        </div>
+        <div class="tab-amount">
+          <span class="amount-value">{{ formatKobo(getTotalKobo(tab)) }}</span>
+        </div>
       </div>
-      <div class="tab-meta">
+      <div class="tab-footer">
         <span class="status-badge" [class]="getStatusClass(tab.status)">{{ tab.status }}</span>
-        <span class="tab-date">{{ tab.openedAt | date:'short' }}</span>
+        <span class="tab-timestamp">Opened {{ tab.openedAt | date:'short' }}</span>
+        <span class="tab-timestamp tab-closed" *ngIf="tab.closedAt">Closed {{ tab.closedAt | date:'short' }}</span>
       </div>
     </div>
   </div>

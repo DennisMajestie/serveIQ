@@ -27,8 +27,8 @@ export class TabsManagementComponent implements OnInit {
     if (!q) return all;
     return all.filter(t =>
       t.id.toLowerCase().includes(q) ||
-      (t.tableId && t.tableId.toLowerCase().includes(q)) ||
-      t.status.toLowerCase().includes(q)
+      (t.customerName && t.customerName.toLowerCase().includes(q)) ||
+      (t.status && t.status.toLowerCase().includes(q))
     );
   });
 
@@ -54,17 +54,27 @@ export class TabsManagementComponent implements OnInit {
     this.router.navigate(['/tabs/detail', tab.id]);
   }
 
+  getTableLabel(tab: any): string {
+    return tab.table?.tableNumber || tab.table?.label || tab.tableId.slice(0, 8);
+  }
+
   getStatusClass(status: string): string {
     switch (status) {
       case 'open': return 'status-open';
-      case 'closed': return 'status-closed';
+      case 'billed': return 'status-billed';
+      case 'paid': return 'status-paid';
       case 'voided': return 'status-voided';
       default: return '';
     }
   }
 
   formatKobo(kobo: number): string {
-    return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (!kobo) return '₦0.00';
+    return '₦' + (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  getTotalKobo(tab: Tab): number {
+    return (tab as any).totalKobo || 0;
   }
 
   trackById(_index: number, tab: Tab) {

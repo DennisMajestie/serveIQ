@@ -72,12 +72,17 @@ export class MenuManagementComponent implements OnInit {
 
   categories = computed(() => {
     const items = this.items();
-    if (!Array.isArray(items)) return [{ name: 'All', count: 0 }];
+    if (!Array.isArray(items)) return [{ name: 'All', count: 0, imageUrl: '' }];
     const cats = ['All', ...new Set(items.map(i => i.category))];
-    return cats.map(c => ({ 
-      name: c, 
-      count: c === 'All' ? items.length : items.filter(i => i.category === c).length 
-    }));
+    return cats.map(c => {
+      const catItems = c === 'All' ? items : items.filter(i => i.category === c);
+      const firstWithImage = catItems.find(i => i.imageUrl);
+      return {
+        name: c,
+        count: catItems.length,
+        imageUrl: firstWithImage ? resolveImageUrl(firstWithImage.imageUrl, this.env.apiUrl) : ''
+      };
+    });
   });
 
   ngOnInit() {

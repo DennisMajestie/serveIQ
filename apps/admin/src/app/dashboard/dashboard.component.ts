@@ -17,6 +17,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private reportsService = inject(ReportsApiService);
 
   isLoading = signal(true);
+  branchName = signal('');
   peakHours = signal<PeakHoursEntry[]>([]);
   stats = signal<DashboardStats>({
     realTimeSales: 0,
@@ -33,6 +34,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private chartCanvas?: HTMLCanvasElement;
 
   ngOnInit() {
+    this.loadBranchName();
     this.loadStats();
     this.loadPeakHours();
     this.pollingSub = interval(30000).subscribe(() => {
@@ -51,6 +53,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getBranchId(): string {
     return localStorage.getItem('branchId') || '';
+  }
+
+  loadBranchName() {
+    const branchId = this.getBranchId();
+    if (!branchId) return;
+    this.branchService.getById(branchId).subscribe({
+      next: (branch) => this.branchName.set(branch.name),
+    });
   }
 
   loadStats() {
@@ -90,10 +100,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const data = this.peakHours();
-    const values = data.length > 0 ? data.map(e => e.orderCount) : [8, 10, 12, 16, 14, 9, 11];
-    const max = Math.max(...values, 1);
-
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * dpr;
@@ -102,6 +108,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const w = rect.width;
     const h = rect.height;
+
+    const data = this.peakHours();
+    if (data.length === 0) { ctx.clearRect(0, 0, w, h); return; }
+    const values = data.map(e => e.orderCount);
+    const max = Math.max(...values, 1);
+
     const barCount = values.length;
     const gap = 2;
     const barWidth = (w - gap * (barCount - 1)) / barCount;
