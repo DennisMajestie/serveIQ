@@ -62,7 +62,6 @@ export class TablesManagementComponent implements OnInit {
       html: `<input id="swal-number" class="swal2-input" placeholder="Table number" type="number">
              <input id="swal-capacity" class="swal2-input" placeholder="Capacity (seats)" type="number">`,
       confirmButtonText: 'Create',
-      confirmButtonColor: '#F97316',
       showCancelButton: true,
       preConfirm: () => ({
         tableNumber: (document.getElementById('swal-number') as HTMLInputElement).value,
@@ -86,7 +85,6 @@ export class TablesManagementComponent implements OnInit {
       input: 'number',
       inputLabel: 'Capacity (seats)',
       inputValue: table.capacity,
-      confirmButtonColor: '#F97316',
       showCancelButton: true
     }).then(result => {
       if (result.isConfirmed) {
@@ -115,15 +113,12 @@ export class TablesManagementComponent implements OnInit {
       text: `Remove Table ${table.tableNumber} permanently?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#EF4444',
       confirmButtonText: 'Delete',
-      background: '#0c1324',
-      color: '#dce1fb'
     }).then(result => {
       if (result.isConfirmed) {
         this.tableService.deleteTable(table.id).subscribe({
           next: () => this.tables.update(ts => ts.filter(t => t.id !== table.id)),
-          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed', text: 'Could not delete table.', confirmButtonColor: '#EF4444', background: '#0c1324', color: '#dce1fb' })
+          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed', text: 'Could not delete table.' })
         });
       }
     });

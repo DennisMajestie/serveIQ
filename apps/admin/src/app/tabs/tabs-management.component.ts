@@ -45,7 +45,7 @@ export class TabsManagementComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to load tabs', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to load tabs' });
       }
     });
   }

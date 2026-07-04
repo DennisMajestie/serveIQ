@@ -2,20 +2,20 @@
   <!-- TopNavBar -->
   <header class="sticky top-0 z-40 w-full flex justify-between items-center">
     <div class="flex items-center gap-8">
-      <h2 class="text-[48px] leading-[1.1] font-bold text-[#4be277] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Staff Management</h2>
-      <div class="hidden lg:flex items-center bg-[#23293c]/30 px-4 py-2 rounded-full min-w-[300px]">
-        <span class="material-symbols-outlined text-[#bccbb9] mr-2">search</span>
-        <input class="bg-transparent border-none outline-none text-[#dce1fb] placeholder:text-[#bccbb9]/50 w-full text-[16px] leading-[1.5]" placeholder="Search roster..." type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
+      <h2 class="text-[48px] leading-[1.1] font-bold text-[var(--primary)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Staff Management</h2>
+      <div class="hidden lg:flex items-center bg-surface-container-high-30 px-4 py-2 rounded-full min-w-[300px]">
+        <span class="material-symbols-outlined text-[var(--on-surface-variant)] mr-2">search</span>
+        <input class="bg-transparent border-none outline-none text-[var(--on-background)] placeholder:text-on-surface-variant-50 w-full text-[16px] leading-[1.5]" placeholder="Search roster..." type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
       </div>
     </div>
     <div class="flex items-center gap-6">
-      <button class="bg-[#4be277]/40 hover:bg-[#4be277]/80 text-[#003915] px-6 py-2.5 rounded-full text-[14px] leading-none font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(75,226,119,0.3)] active:scale-95 flex items-center gap-2" (click)="openAddStaffModal()">
+      <button class="bg-primary-40 hover-bg-primary-80 text-[var(--on-primary)] px-6 py-2.5 rounded-full text-[14px] leading-none font-semibold transition-all duration-300 shadow-[0_0_15px_color-mix(in srgb, var(--primary) 30%, transparent)] active:scale-95 flex items-center gap-2" (click)="openAddStaffModal()">
         <span class="material-symbols-outlined">person_add</span>
         Add Waiter
       </button>
       <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-[#bccbb9] hover:text-[#4be277] cursor-pointer transition-colors">notifications</span>
-        <div class="w-10 h-10 rounded-full overflow-hidden bg-[#2e3447] flex items-center justify-center text-[#dce1fb] font-bold text-sm">{{ getInitials('Admin') }}</div>
+        <span class="material-symbols-outlined text-[var(--on-surface-variant)] hover:text-[var(--primary)] cursor-pointer transition-colors">notifications</span>
+        <div class="w-10 h-10 rounded-full overflow-hidden bg-[var(--surface-variant)] flex items-center justify-center text-[var(--on-background)] font-bold text-sm">{{ getInitials('Admin') }}</div>
       </div>
     </div>
   </header>
@@ -25,37 +25,37 @@
       <!-- Top Performers (8 cols) -->
       <section class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="col-span-full mb-2">
-          <h3 class="text-[32px] leading-[1.2] font-semibold text-[#dce1fb] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Top Performers</h3>
+          <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Top Performers</h3>
         </div>
         <ng-container *ngIf="filteredWaiters().length > 0; else noStaff">
           <div *ngFor="let waiter of filteredWaiters().slice(0, 4); let i = index" class="glass-card p-6 rounded-[32px] flex items-center gap-6">
             <div class="relative">
               <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl">
                 <img *ngIf="waiter.avatarUrl" [src]="waiter.avatarUrl" alt="{{ waiter.fullName }}" class="w-full h-full object-cover" />
-                <div *ngIf="!waiter.avatarUrl" class="w-full h-full bg-[#2e3447] flex items-center justify-center text-[#dce1fb] font-bold text-xl">{{ getInitials(waiter.fullName) }}</div>
+                <div *ngIf="!waiter.avatarUrl" class="w-full h-full bg-[var(--surface-variant)] flex items-center justify-center text-[var(--on-background)] font-bold text-xl">{{ getInitials(waiter.fullName) }}</div>
               </div>
-              <div class="absolute -bottom-2 -right-2 bg-[#4be277] text-[#003915] w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">{{ i + 1 }}</div>
+              <div class="absolute -bottom-2 -right-2 bg-[var(--primary)] text-[var(--on-primary)] w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">{{ i + 1 }}</div>
             </div>
             <div>
-              <h4 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ waiter.fullName }}</h4>
-              <p class="text-[12px] leading-none font-medium text-[#bccbb9] mb-2" style="font-family:'Inter',sans-serif">Waiter</p>
+              <h4 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ waiter.fullName }}</h4>
+              <p class="text-[12px] leading-none font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">Waiter</p>
               <div class="flex flex-col">
-                <span class="text-[18px] leading-none font-semibold tracking-wider text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">{{ 85 + (i * 4) }}%</span>
-                <span class="text-[10px] text-[#bccbb9]/60 uppercase tracking-tighter" style="font-family:'Inter',sans-serif">Efficiency Rank</span>
+                <span class="text-[18px] leading-none font-semibold tracking-wider text-[var(--primary)]" style="font-family:'Space Grotesk',sans-serif">{{ 85 + (i * 4) }}%</span>
+                <span class="text-[10px] text-on-surface-variant-60 uppercase tracking-tighter" style="font-family:'Inter',sans-serif">Efficiency Rank</span>
               </div>
               <div class="flex gap-2 mt-3">
-                <button class="text-[#bccbb9] hover:text-[#4be277] transition-colors text-xs" (click)="openEditWaiter(waiter)">✎ Edit</button>
-                <button class="text-[#bccbb9] hover:text-[#ffb4ab] transition-colors text-xs" (click)="resetPin(waiter.id)">🔑 PIN</button>
-                <button class="text-[#bccbb9] hover:text-[#ffb4ab] transition-colors text-xs" (click)="deleteWaiter(waiter.id)">✕ Remove</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors text-xs" (click)="openEditWaiter(waiter)">✎ Edit</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="resetPin(waiter.id)">🔑 PIN</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="deleteWaiter(waiter.id)">✕ Remove</button>
               </div>
             </div>
           </div>
         </ng-container>
         <ng-template #noStaff>
           <div class="col-span-full glass-card p-12 rounded-[32px] text-center">
-            <span class="material-symbols-outlined text-5xl text-[#bccbb9]/50 mb-4">badge</span>
-            <p class="text-[#dce1fb] text-lg font-medium" style="font-family:'Space Grotesk',sans-serif">No staff members yet</p>
-            <p class="text-[#bccbb9] text-sm mt-2" style="font-family:'Inter',sans-serif">Add your first waiter to get started.</p>
+            <span class="material-symbols-outlined text-5xl text-on-surface-variant-50 mb-4">badge</span>
+            <p class="text-[var(--on-background)] text-lg font-medium" style="font-family:'Space Grotesk',sans-serif">No staff members yet</p>
+            <p class="text-[var(--on-surface-variant)] text-sm mt-2" style="font-family:'Inter',sans-serif">Add your first waiter to get started.</p>
           </div>
         </ng-template>
       </section>
@@ -63,20 +63,20 @@
       <!-- Duty State (4 cols) -->
       <aside class="col-span-12 lg:col-span-4 glass-card p-6 rounded-[40px] flex flex-col gap-6">
         <div class="flex justify-between items-center">
-          <h3 class="text-[32px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Duty State</h3>
-          <span class="text-[#4be277] text-[12px] leading-none font-medium px-2 py-1 bg-[#4be277]/10 rounded-lg">{{ filteredWaiters().length }} Active</span>
+          <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Duty State</h3>
+          <span class="text-[var(--primary)] text-[12px] leading-none font-medium px-2 py-1 bg-primary-10 rounded-lg">{{ filteredWaiters().length }} Active</span>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <div *ngFor="let waiter of filteredWaiters().slice(0, 6)" class="bg-[#4be277]/5 p-4 rounded-[24px] flex flex-col gap-2 group hover:bg-[#4be277]/10 transition-all">
+          <div *ngFor="let waiter of filteredWaiters().slice(0, 6)" class="bg-primary-5 p-4 rounded-[24px] flex flex-col gap-2 group hover-bg-primary-10 transition-all">
             <div class="flex justify-between">
-              <div class="w-2 h-2 rounded-full bg-[#4be277] animate-pulse"></div>
-              <span class="text-[10px] font-bold text-[#4be277]/60" style="font-family:'Inter',sans-serif">{{ waiter.isActive !== false ? 'ACTIVE' : 'OFF DUTY' }}</span>
+              <div class="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse"></div>
+              <span class="text-[10px] font-bold text-primary-60" style="font-family:'Inter',sans-serif">{{ waiter.isActive !== false ? 'ACTIVE' : 'OFF DUTY' }}</span>
             </div>
-            <p class="text-[14px] leading-none font-semibold text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ waiter.fullName }}</p>
-            <p class="text-[10px] text-[#bccbb9]/40" style="font-family:'Inter',sans-serif">{{ waiter.email }}</p>
+            <p class="text-[14px] leading-none font-semibold text-[var(--on-background)]" style="font-family:'Inter',sans-serif">{{ waiter.fullName }}</p>
+            <p class="text-[10px] text-on-surface-variant-40" style="font-family:'Inter',sans-serif">{{ waiter.email }}</p>
           </div>
         </div>
-        <button class="mt-auto w-full py-3 rounded-2xl bg-[#23293c] text-[#bccbb9] text-[14px] leading-none font-semibold hover:bg-[#2e3447] transition-colors" (click)="openAddStaffModal()">
+        <button class="mt-auto w-full py-3 rounded-2xl bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold hover:bg-[var(--surface-variant)] transition-colors" (click)="openAddStaffModal()">
           View All Statuses
         </button>
       </aside>
@@ -84,52 +84,52 @@
       <!-- Personnel Roster (8 cols) -->
       <section class="col-span-12 lg:col-span-8 glass-card rounded-[40px] overflow-hidden">
         <div class="p-6 border-b border-white/5 flex justify-between items-center">
-          <h3 class="text-[32px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Personnel Roster</h3>
+          <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Personnel Roster</h3>
           <div class="flex gap-2">
-            <button class="p-2 hover:bg-[#2e3447]/40 rounded-lg transition-colors" (click)="clearFilters()">
-              <span class="material-symbols-outlined text-[#bccbb9]">filter_list</span>
+            <button class="p-2 hover-bg-surface-variant-40 rounded-lg transition-colors" (click)="clearFilters()">
+              <span class="material-symbols-outlined text-[var(--on-surface-variant)]">filter_list</span>
             </button>
           </div>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-[#23293c]/10">
-                <th class="px-6 py-4 text-[14px] leading-none font-semibold text-[#bccbb9]/60 tracking-widest" style="font-family:'Inter',sans-serif">NAME</th>
-                <th class="px-6 py-4 text-[14px] leading-none font-semibold text-[#bccbb9]/60 tracking-widest" style="font-family:'Inter',sans-serif">STATUS</th>
-                <th class="px-6 py-4 text-[14px] leading-none font-semibold text-[#bccbb9]/60 tracking-widest" style="font-family:'Inter',sans-serif">ACTIONS</th>
+              <tr class="bg-surface-container-high-10">
+                <th class="px-6 py-4 text-[14px] leading-none font-semibold text-on-surface-variant-60 tracking-widest" style="font-family:'Inter',sans-serif">NAME</th>
+                <th class="px-6 py-4 text-[14px] leading-none font-semibold text-on-surface-variant-60 tracking-widest" style="font-family:'Inter',sans-serif">STATUS</th>
+                <th class="px-6 py-4 text-[14px] leading-none font-semibold text-on-surface-variant-60 tracking-widest" style="font-family:'Inter',sans-serif">ACTIONS</th>
               </tr>
             </thead>
             <tbody class="text-[16px] leading-[1.5] divide-y divide-white/5" style="font-family:'Inter',sans-serif">
               <tr *ngFor="let waiter of filteredWaiters(); trackBy: trackById" class="hover:bg-white/[0.02] transition-colors group">
                 <td class="px-6 py-5 flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full overflow-hidden bg-[#2e3447] flex-shrink-0">
+                  <div class="w-10 h-10 rounded-full overflow-hidden bg-[var(--surface-variant)] flex-shrink-0">
                     <img *ngIf="waiter.avatarUrl" [src]="waiter.avatarUrl" alt="" class="w-full h-full object-cover" />
-                    <div *ngIf="!waiter.avatarUrl" class="w-full h-full flex items-center justify-center text-[#dce1fb] font-bold text-xs">{{ getInitials(waiter.fullName) }}</div>
+                    <div *ngIf="!waiter.avatarUrl" class="w-full h-full flex items-center justify-center text-[var(--on-background)] font-bold text-xs">{{ getInitials(waiter.fullName) }}</div>
                   </div>
                   <div>
-                    <span class="font-semibold text-[#dce1fb]">{{ waiter.fullName }}</span>
-                    <span *ngIf="waiter.email" class="block text-[12px] leading-none font-medium text-[#bccbb9]/60">{{ waiter.email }}</span>
+                    <span class="font-semibold text-[var(--on-background)]">{{ waiter.fullName }}</span>
+                    <span *ngIf="waiter.email" class="block text-[12px] leading-none font-medium text-on-surface-variant-60">{{ waiter.email }}</span>
                   </div>
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full" [class.bg-[#4be277]]="waiter.isActive !== false" [class.bg-[#bccbb9]/40]="waiter.isActive === false"></span>
-                    <span class="text-[#bccbb9] text-sm">{{ waiter.isActive !== false ? 'Active' : 'Inactive' }}</span>
+                    <span class="w-2 h-2 rounded-full" [class.bg-[var(--primary)]]="waiter.isActive !== false" [style.background]="waiter.isActive === false ? 'color-mix(in srgb, var(--on-surface-variant) 40%, transparent)' : ''"></span>
+                    <span class="text-[var(--on-surface-variant)] text-sm">{{ waiter.isActive !== false ? 'Active' : 'Inactive' }}</span>
                   </div>
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex items-center gap-2">
-                    <button class="text-[#bccbb9] hover:text-[#4be277] transition-colors p-1" (click)="openEditWaiter(waiter)" title="Edit">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors p-1" (click)="openEditWaiter(waiter)" title="Edit">
                       <span class="material-symbols-outlined text-[16px]">edit</span>
                     </button>
-                    <button class="text-[#bccbb9] hover:text-[#ffb3b7] transition-colors p-1" (click)="resetPin(waiter.id)" title="Reset PIN">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="resetPin(waiter.id)" title="Reset PIN">
                       <span class="material-symbols-outlined text-[16px]">key</span>
                     </button>
-                    <button class="text-[#bccbb9] hover:text-[#ffb4ab] transition-colors p-1" (click)="toggleStatus(waiter)" title="Toggle Active">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="toggleStatus(waiter)" title="Toggle Active">
                       <span class="material-symbols-outlined text-[16px]">{{ waiter.isActive !== false ? 'block' : 'check_circle' }}</span>
                     </button>
-                    <button class="text-[#bccbb9] hover:text-[#ffb4ab] transition-colors p-1" (click)="deleteWaiter(waiter.id)" title="Delete">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="deleteWaiter(waiter.id)" title="Delete">
                       <span class="material-symbols-outlined text-[16px]">delete</span>
                     </button>
                   </div>
@@ -142,32 +142,32 @@
 
       <!-- Shift Load (4 cols) -->
       <section class="col-span-12 lg:col-span-4 glass-card p-6 rounded-[40px] flex flex-col gap-6">
-        <h3 class="text-[32px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Shift Load</h3>
+        <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Shift Load</h3>
         <div class="flex-grow flex items-end justify-between gap-2 h-40 pb-4">
-          <div class="w-full bg-[#4be277]/20 rounded-t-lg relative" style="height: 30%">
-            <div class="absolute inset-0 bg-[#4be277]/40 rounded-t-lg blur-[4px]"></div>
-            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[#bccbb9]">08:00</div>
+          <div class="w-full bg-primary-20 rounded-t-lg relative" style="height: 30%">
+            <div class="absolute inset-0 bg-primary-40 rounded-t-lg blur-[4px]"></div>
+            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[var(--on-surface-variant)]">08:00</div>
           </div>
-          <div class="w-full bg-[#4be277]/30 rounded-t-lg relative" style="height: 55%">
-            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[#bccbb9]">12:00</div>
+          <div class="w-full bg-primary-30 rounded-t-lg relative" style="height: 55%">
+            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[var(--on-surface-variant)]">12:00</div>
           </div>
-          <div class="w-full bg-[#4be277]/10 rounded-t-lg relative" style="height: 25%">
-            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[#bccbb9]">15:00</div>
+          <div class="w-full bg-primary-10 rounded-t-lg relative" style="height: 25%">
+            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[var(--on-surface-variant)]">15:00</div>
           </div>
-          <div class="w-full bg-[#4be277]/60 rounded-t-lg relative" style="height: 85%">
-            <div class="absolute inset-0 bg-[#4be277]/70 rounded-t-lg blur-[8px]"></div>
-            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[#bccbb9]">19:00</div>
+          <div class="w-full bg-primary-60 rounded-t-lg relative" style="height: 85%">
+            <div class="absolute inset-0 bg-primary-70 rounded-t-lg blur-[8px]"></div>
+            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[var(--on-surface-variant)]">19:00</div>
           </div>
-          <div class="w-full bg-[#4be277]/40 rounded-t-lg relative" style="height: 65%">
-            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[#bccbb9]">22:00</div>
+          <div class="w-full bg-primary-40 rounded-t-lg relative" style="height: 65%">
+            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50 text-[var(--on-surface-variant)]">22:00</div>
           </div>
         </div>
-        <div class="p-4 rounded-2xl bg-[#151b2d] flex items-center justify-between">
+        <div class="p-4 rounded-2xl bg-[var(--surface)] flex items-center justify-between">
           <div>
-            <p class="text-[12px] leading-none font-medium text-[#bccbb9]" style="font-family:'Inter',sans-serif">Optimal Staffing</p>
-            <p class="text-[24px] leading-[1.3] font-medium text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">{{ filteredWaiters().length }} Active</p>
+            <p class="text-[12px] leading-none font-medium text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Optimal Staffing</p>
+            <p class="text-[24px] leading-[1.3] font-medium text-[var(--primary)]" style="font-family:'Space Grotesk',sans-serif">{{ filteredWaiters().length }} Active</p>
           </div>
-          <span class="material-symbols-outlined text-[#4be277] text-3xl">verified</span>
+          <span class="material-symbols-outlined text-[var(--primary)] text-3xl">verified</span>
         </div>
       </section>
     </div>
@@ -201,7 +201,7 @@
 <div class="modal-panel" [class.modal-open]="!!editWaiter()">
   <div class="modal-header">
     <div class="modal-header-icon">
-      <span class="material-symbols-outlined text-[#4be277]">edit</span>
+      <span class="material-symbols-outlined text-[var(--primary)]">edit</span>
     </div>
     <div>
       <h2 class="modal-title">Edit Waiter</h2>
@@ -240,7 +240,7 @@
 <div class="modal-panel" [class.modal-open]="showAddModal()">
   <div class="modal-header">
     <div class="modal-header-icon">
-      <span class="material-symbols-outlined text-[#4be277]">person_add</span>
+      <span class="material-symbols-outlined text-[var(--primary)]">person_add</span>
     </div>
     <div>
       <h2 class="modal-title">Add New Waiter</h2>
@@ -256,7 +256,7 @@
       <input type="file" id="sw-file" accept="image/jpeg,image/png,image/webp" class="file-input-hidden" (change)="onAvatarSelected($event)">
       <div class="avatar-preview-wrap">
         <div class="avatar-circle" *ngIf="!avatarPreview()">
-          <span class="material-symbols-outlined text-[#bccbb9]">person</span>
+          <span class="material-symbols-outlined text-[var(--on-surface-variant)]">person</span>
         </div>
         <img [src]="avatarPreview()!" class="avatar-img" alt="Preview" *ngIf="avatarPreview()">
         <label for="sw-file" class="avatar-upload-btn">
@@ -283,7 +283,7 @@
       </div>
     </div>
     <div class="pin-info-card">
-      <span class="material-symbols-outlined text-[#4be277]">info</span>
+      <span class="material-symbols-outlined text-[var(--primary)]">info</span>
       <p>A unique <strong>4-digit PIN</strong> will be generated and shown after creation. The waiter uses this PIN to log in on the waiter app.</p>
     </div>
   </div>

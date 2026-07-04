@@ -52,7 +52,7 @@ export class TabDetailComponent implements OnInit {
   loadTab() {
     this.tabsApi.getTab(this.tabId).subscribe({
       next: (tab) => this.tab.set(tab),
-      error: () => Swal.fire({ icon: 'error', title: 'Failed to load tab', confirmButtonColor: '#F97316' })
+      error: () => Swal.fire({ icon: 'error', title: 'Failed to load tab' })
     });
   }
 
@@ -132,12 +132,12 @@ export class TabDetailComponent implements OnInit {
       next: () => {
         this.isAddingItems.set(false);
         this.closeAddItemsModal();
-        Swal.fire({ icon: 'success', title: 'Items Added', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Items Added', timer: 1500, showConfirmButton: false });
         this.loadOrders();
       },
       error: () => {
         this.isAddingItems.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to add items', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to add items' });
       }
     });
   }
@@ -151,18 +151,18 @@ export class TabDetailComponent implements OnInit {
   transferTab(targetTableId?: string) {
     const tables = this.availableTables();
     if (tables.length === 0) {
-      Swal.fire({ icon: 'info', title: 'No tables available', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'info', title: 'No tables available' });
       return;
     }
 
     const doTransfer = (tableId: string) => {
       this.tabsApi.transferTab(this.tabId, tableId).subscribe({
         next: () => {
-          Swal.fire({ icon: 'success', title: 'Tab Transferred', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+          Swal.fire({ icon: 'success', title: 'Tab Transferred', timer: 1500, showConfirmButton: false });
           this.loadTab();
           this.loadAvailableTables();
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Transfer Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+        error: () => Swal.fire({ icon: 'error', title: 'Transfer Failed' })
       });
     };
 
@@ -178,9 +178,6 @@ export class TabDetailComponent implements OnInit {
       inputOptions,
       inputPlaceholder: 'Select a table',
       showCancelButton: true,
-      confirmButtonColor: '#F97316',
-      background: '#1e293b',
-      color: '#fff'
     }).then(result => {
       if (result.isConfirmed && result.value) {
         doTransfer(result.value);
@@ -195,7 +192,7 @@ export class TabDetailComponent implements OnInit {
     }
     this.ordersApi.updateItem(item.id, { quantity }).subscribe({
       next: (updated) => this.orders.update(os => os.map(o => o.id === item.id ? updated : o)),
-      error: () => Swal.fire({ icon: 'error', title: 'Update Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+      error: () => Swal.fire({ icon: 'error', title: 'Update Failed' })
     });
   }
 
@@ -205,15 +202,11 @@ export class TabDetailComponent implements OnInit {
       text: `Remove "${item.menuItemName}" from this tab?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#dc2626',
-      cancelButtonColor: '#6b7280',
-      background: '#1e293b',
-      color: '#fff'
     }).then(result => {
       if (result.isConfirmed) {
         this.ordersApi.deleteItem(item.id).subscribe({
           next: () => this.orders.update(os => os.filter(o => o.id !== item.id)),
-          error: () => Swal.fire({ icon: 'error', title: 'Remove Failed', text: 'Could not remove item. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Remove Failed', text: 'Could not remove item. Please try again.' })
         });
       }
     });
@@ -234,18 +227,14 @@ export class TabDetailComponent implements OnInit {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Void',
-      confirmButtonColor: '#dc2626',
-      cancelButtonColor: '#6b7280',
-      background: '#1e293b',
-      color: '#fff',
     }).then((result) => {
       if (result.isConfirmed) {
         this.tabsApi.voidTab(this.tabId).subscribe({
           next: () => {
-            Swal.fire({ icon: 'success', title: 'Tab Voided', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'success', title: 'Tab Voided', timer: 1500, showConfirmButton: false });
             this.router.navigate(['/tables']);
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Void Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Void Failed' })
         });
       }
     });
@@ -266,7 +255,6 @@ export class TabDetailComponent implements OnInit {
                 </div>
               `,
               confirmButtonText: 'View Bill',
-              confirmButtonColor: '#F97316',
               showCancelButton: true,
               cancelButtonText: 'Close'
             }).then(result => {
@@ -275,10 +263,10 @@ export class TabDetailComponent implements OnInit {
               }
             });
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Failed to Close Tab', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Failed to Close Tab' })
         });
       },
-      error: () => Swal.fire({ icon: 'error', title: 'Failed to Generate Bill', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+      error: () => Swal.fire({ icon: 'error', title: 'Failed to Generate Bill' })
     });
   }
 

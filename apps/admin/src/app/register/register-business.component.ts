@@ -61,10 +61,7 @@ export class RegisterBusinessComponent {
       Swal.fire({
         icon: 'warning',
         title: 'Incomplete Information',
-        text: 'Please fill in all required fields to continue.',
-        background: '#1e293b',
-        color: '#dce1fb',
-        confirmButtonColor: '#4be277'
+        text: 'Please fill in all required fields to continue.'
       });
       return;
     }
@@ -79,16 +76,13 @@ export class RegisterBusinessComponent {
       businessType: 'restaurant'
     }).subscribe({
       next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Platform Initialized!',
-          text: 'Welcome to ServeIQ. Your Luminous Engine is active.',
-          showConfirmButton: false,
-          timer: 2000,
-          background: '#1e293b',
-          color: '#dce1fb',
-          iconColor: '#4be277'
-        });
+          Swal.fire({
+            icon: 'success',
+            title: 'Platform Initialized!',
+            text: 'Welcome to ServeIQ. Your Luminous Engine is active.',
+            showConfirmButton: false,
+            timer: 2000
+          });
 
         this.authService.login(this.email(), this.pin()).subscribe({
           next: () => {
@@ -103,11 +97,11 @@ export class RegisterBusinessComponent {
         this.isLoading.set(false);
 
         if (err.status === 409) {
-          Swal.fire({ icon: 'error', title: 'Registration Failed', text: 'This email is already registered', background: '#1e293b', color: '#dce1fb', confirmButtonColor: '#4be277' });
+          Swal.fire({ icon: 'error', title: 'Registration Failed', text: 'This email is already registered' });
         } else if (err.status === 400) {
-          Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.error?.message || 'Invalid registration data', background: '#1e293b', color: '#dce1fb', confirmButtonColor: '#4be277' });
+          Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.error?.message || 'Invalid registration data' });
         } else {
-          Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.error?.message || 'Registration failed. Check your connection and try again.', background: '#1e293b', color: '#dce1fb', confirmButtonColor: '#4be277' });
+          Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.error?.message || 'Registration failed. Check your connection and try again.' });
         }
       }
     });

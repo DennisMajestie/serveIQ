@@ -42,7 +42,7 @@ export class ShiftsComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to load shifts', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to load shifts' });
       }
     });
   }
@@ -58,7 +58,7 @@ export class ShiftsComponent implements OnInit {
 
   openShift() {
     if (this.startingCash() <= 0) {
-      Swal.fire({ icon: 'error', title: 'Starting cash must be greater than 0', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'error', title: 'Starting cash must be greater than 0' });
       return;
     }
 
@@ -75,18 +75,18 @@ export class ShiftsComponent implements OnInit {
         this.startingCash.set(0);
         this.loadShifts();
         this.loadCurrentShift();
-        Swal.fire({ icon: 'success', title: 'Shift Opened', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Shift Opened', timer: 1500, showConfirmButton: false });
       },
       error: () => {
         this.isSaving.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to open shift', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to open shift' });
       }
     });
   }
 
   closeShift(shift: Shift) {
     if (this.closeCash() <= 0) {
-      Swal.fire({ icon: 'error', title: 'Actual cash must be greater than 0', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'error', title: 'Actual cash must be greater than 0' });
       return;
     }
 
@@ -97,8 +97,7 @@ export class ShiftsComponent implements OnInit {
         text: `Expected: ${(shift.expectedCashKobo || 0) / 100} | Actual: ${this.closeCash() / 100}. Continue?`,
         showCancelButton: true,
         confirmButtonText: 'Yes, close shift',
-        confirmButtonColor: '#F97316',
-        cancelButtonColor: '#6b7280'
+
       }).then((result) => {
         if (result.isConfirmed) {
           this.performCloseShift(shift);
@@ -133,16 +132,15 @@ export class ShiftsComponent implements OnInit {
             text: `Variance: ${variance > 0 ? '+' : ''}${(variance / 100).toFixed(2)}`,
             timer: 3000,
             showConfirmButton: false,
-            background: '#1e293b',
-            color: '#fff'
+
           });
         } else {
-          Swal.fire({ icon: 'success', title: 'Shift Closed', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+          Swal.fire({ icon: 'success', title: 'Shift Closed', timer: 1500, showConfirmButton: false });
         }
       },
       error: () => {
         this.isSaving.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to close shift', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to close shift' });
       }
     });
   }

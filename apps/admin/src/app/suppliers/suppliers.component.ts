@@ -44,7 +44,7 @@ export class SuppliersComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to load suppliers', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to load suppliers' });
       }
     });
   }
@@ -95,7 +95,7 @@ export class SuppliersComponent implements OnInit {
 
     this.suppliersApi.list().subscribe({
       next: (data) => this.suppliers.set(data),
-      error: () => Swal.fire({ icon: 'error', title: 'Failed to save supplier', confirmButtonColor: '#F97316' })
+      error: () => Swal.fire({ icon: 'error', title: 'Failed to save supplier' })
     });
 
     this.closeModals();
@@ -109,25 +109,22 @@ export class SuppliersComponent implements OnInit {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
-      confirmButtonColor: '#dc2626',
-      cancelButtonColor: '#6b7280',
-      background: '#1e293b',
-      color: '#fff',
+
     }).then((result) => {
       if (result.isConfirmed) {
         this.suppliersApi.removeById(supplier.id).subscribe({
           next: () => {
             this.suppliers.set(this.suppliers().filter(s => s.id !== supplier.id));
-            Swal.fire({ icon: 'success', title: 'Supplier Deleted', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'success', title: 'Supplier Deleted', timer: 1500, showConfirmButton: false });
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed' })
         });
       }
     });
   }
 
   saveSwal(title: string) {
-    Swal.fire({ icon: 'success', title, timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+    Swal.fire({ icon: 'success', title, timer: 1500, showConfirmButton: false });
   }
 
   getInitials(name: string): string {

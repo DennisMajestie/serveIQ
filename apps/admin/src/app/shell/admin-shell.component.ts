@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { SyncStore } from '@serveiq/data-access';
 import { AuthService, UserApiService, TablesApiService, TabsApiService, User, SubscriptionsApiService } from '@serveiq/shared/data-access';
 import { SubscriptionService } from '../core/subscription.service';
+import { ThemeService } from '../core/theme.service';
 import { of, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
 
@@ -150,6 +151,9 @@ interface NavItem {
           </div>
           <div class="top-nav-right">
             <div class="top-nav-actions">
+              <button class="icon-btn" (click)="themeService.toggleTheme()" [attr.aria-label]="(themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode')">
+                <span class="material-symbols-outlined">{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
+              </button>
               <button class="icon-btn" (click)="openNotifications()">
                 <span class="material-symbols-outlined">notifications</span>
                 <span class="notification-dot" *ngIf="hasNotifications()"></span>
@@ -199,54 +203,6 @@ interface NavItem {
   `,
   styles: [`
     :host {
-      --on-secondary-fixed: #141b2b;
-      --on-surface: #151c27;
-      --tertiary-container: #00a2f4;
-      --error-container: #ffdad6;
-      --surface: #f9f9ff;
-      --on-primary-fixed-variant: #783200;
-      --inverse-on-surface: #ebf1ff;
-      --tertiary-fixed: #cde5ff;
-      --background: #f9f9ff;
-      --surface-container-highest: #dce2f3;
-      --primary-fixed-dim: #ffb690;
-      --on-background: #151c27;
-      --surface-container-low: #f0f3ff;
-      --on-tertiary-fixed-variant: #004b74;
-      --primary-container: #f97316;
-      --surface-container: #e7eefe;
-      --on-error-container: #93000a;
-      --on-primary-fixed: #341100;
-      --on-tertiary-container: #003554;
-      --on-error: #ffffff;
-      --on-tertiary-fixed: #001d32;
-      --on-primary: #ffffff;
-      --surface-container-high: #e2e8f8;
-      --on-secondary: #ffffff;
-      --surface-container-lowest: #ffffff;
-      --on-secondary-container: #5c6274;
-      --surface-tint: #9d4300;
-      --secondary: #575e70;
-      --tertiary-fixed-dim: #93ccff;
-      --surface-dim: #d3daea;
-      --secondary-fixed-dim: #c0c6db;
-      --outline: #8c7164;
-      --inverse-surface: #2a313d;
-      --on-tertiary: #ffffff;
-      --on-surface-variant: #584237;
-      --error: #ba1a1a;
-      --tertiary: #006398;
-      --outline-variant: #e0c0b1;
-      --on-primary-container: #582200;
-      --primary-fixed: #ffdbca;
-      --secondary-container: #d9dff5;
-      --primary: #9d4300;
-      --surface-variant: #dce2f3;
-      --surface-bright: #f9f9ff;
-      --secondary-fixed: #dce2f7;
-      --on-secondary-fixed-variant: #404758;
-      --inverse-primary: #ffb690;
-
       display: block;
       width: 100%;
       height: 100%;
@@ -447,8 +403,8 @@ interface NavItem {
         top: calc(100% + 8px);
         left: 0;
         right: 0;
-        background: white;
-        border: 1px solid #e4e4e7;
+        background: var(--surface-container);
+        border: 1px solid var(--outline-variant);
         border-radius: 12px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.08);
         z-index: 1000;
@@ -462,9 +418,9 @@ interface NavItem {
         gap: 12px;
         padding: 12px 16px;
         cursor: pointer;
-        border-bottom: 1px solid #f4f4f5;
+        border-bottom: 1px solid var(--outline-variant);
 
-        &:hover { background: #fafafa; }
+        &:hover { background: var(--surface-container-high); }
         &:last-child { border-bottom: none; }
 
         .material-symbols-outlined {
@@ -474,13 +430,13 @@ interface NavItem {
         .label {
           font-size: 14px;
           font-weight: 500;
-          color: #18181b;
+          color: var(--on-surface);
           display: block;
         }
 
         .subtitle {
           font-size: 12px;
-          color: #71717a;
+          color: var(--on-surface-variant);
         }
       }
 
@@ -488,7 +444,7 @@ interface NavItem {
         padding: 16px;
         text-align: center;
         font-size: 13px;
-        color: #71717a;
+        color: var(--on-surface-variant);
       }
     }
 
@@ -576,16 +532,16 @@ interface NavItem {
       height: 40px;
       border-radius: 9999px;
       object-fit: cover;
-      border: 2px solid rgba(157,67,0,0.2);
+      border: 2px solid color-mix(in srgb, var(--primary) 20%, transparent);
     }
 
     .sub-banner { width: 100%; }
     .sub-banner-inner { display: flex; align-items: center; gap: 8px; padding: 10px 24px; font-size: 14px; font-weight: 500; }
     .sub-banner-inner a { color: inherit; font-weight: 700; text-decoration: underline; }
-    .sub-banner-inner.status-trialing { background: #dbeafe; color: #1e40af; }
-    .sub-banner-inner.status-past_due { background: #fef3c7; color: #92400e; }
-    .sub-banner-inner.status-expired { background: #fee2e2; color: #991b1b; }
-    .sub-banner-inner.status-canceled { background: #f3f4f6; color: #374151; }
+    .sub-banner-inner.status-trialing { background: color-mix(in srgb, var(--tertiary) 20%, var(--surface)); color: var(--on-tertiary-container); }
+    .sub-banner-inner.status-past_due { background: color-mix(in srgb, var(--secondary) 20%, var(--surface)); color: var(--on-secondary-container); }
+    .sub-banner-inner.status-expired { background: color-mix(in srgb, var(--error) 20%, var(--surface)); color: var(--on-error-container); }
+    .sub-banner-inner.status-canceled { background: color-mix(in srgb, var(--on-surface-variant) 15%, var(--surface)); color: var(--on-surface-variant); }
     .sub-banner-inner .material-symbols-outlined { font-size: 20px; }
 
     .content-area {
@@ -608,6 +564,7 @@ export class AdminShellComponent implements OnInit {
   private tabsApi = inject(TabsApiService);
   private router = inject(Router);
   subService = inject(SubscriptionService);
+  themeService = inject(ThemeService);
 
   daysLeft(dateStr: string | null): number {
     if (!dateStr) return 0;

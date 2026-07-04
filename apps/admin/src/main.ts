@@ -5,6 +5,10 @@ import { bootstrapSwal } from '@serveiq/shared/models';
 
 bootstrapSwal();
 
+const savedTheme = localStorage.getItem('serveiq-admin-theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+document.documentElement.setAttribute('data-theme', savedTheme || (prefersDark ? 'dark' : 'light'));
+
 bootstrapApplication(App, appConfig).catch((err) => console.error(err));
 
 // Font loading detection — prevent FOUC of icon text

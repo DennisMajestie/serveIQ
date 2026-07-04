@@ -166,23 +166,23 @@ export class ResetPasswordComponent {
 
   onSubmit() {
     if (!this.password || this.password.length < 8) {
-      Swal.fire({ icon: 'warning', title: 'Password too short', text: 'Must be at least 8 characters', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'warning', title: 'Password too short', text: 'Must be at least 8 characters' });
       return;
     }
     if (this.password !== this.confirmPassword) {
-      Swal.fire({ icon: 'warning', title: 'Passwords do not match', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'warning', title: 'Passwords do not match' });
       return;
     }
 
     this.isLoading.set(true);
     this.authService.resetPassword({ token: this.token(), password: this.password }).subscribe({
       next: () => {
-        Swal.fire({ icon: 'success', title: 'Password Reset', text: 'You can now log in with your new password.', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'success', title: 'Password Reset', text: 'You can now log in with your new password.' });
         this.router.navigate(['/login']);
       },
       error: (err) => {
         this.isLoading.set(false);
-        Swal.fire({ icon: 'error', title: 'Reset Failed', text: err.error?.message || 'Invalid or expired token', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Reset Failed', text: err.error?.message || 'Invalid or expired token' });
       }
     });
   }

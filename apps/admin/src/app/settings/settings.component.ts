@@ -156,11 +156,11 @@ export class SettingsComponent implements OnInit {
     } as any).subscribe({
       next: () => {
         this.isSavingSettings.set(false);
-        Swal.fire({ icon: 'success', title: 'Settings Saved', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Settings Saved', timer: 1500, showConfirmButton: false });
       },
       error: () => {
         this.isSavingSettings.set(false);
-        Swal.fire({ icon: 'error', title: 'Save Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Save Failed' });
       }
     });
   }
@@ -195,11 +195,11 @@ export class SettingsComponent implements OnInit {
       next: () => {
         this.isSavingBranding.set(false);
         this.brandLogoFile.set(null);
-        Swal.fire({ icon: 'success', title: 'Branding Saved', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Branding Saved', timer: 1500, showConfirmButton: false });
       },
       error: () => {
         this.isSavingBranding.set(false);
-        Swal.fire({ icon: 'error', title: 'Save Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Save Failed' });
       }
     });
   }
@@ -219,11 +219,11 @@ export class SettingsComponent implements OnInit {
     this.userApi.updateMe({ fullName: this.profileName() } as any).subscribe({
       next: () => {
         this.isUpdatingProfile.set(false);
-        Swal.fire({ icon: 'success', title: 'Profile Updated', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Profile Updated', timer: 1500, showConfirmButton: false });
       },
       error: () => {
         this.isUpdatingProfile.set(false);
-        Swal.fire({ icon: 'error', title: 'Update Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Update Failed' });
       }
     });
   }
@@ -262,12 +262,12 @@ export class SettingsComponent implements OnInit {
       next: () => {
         this.isSavingBranch.set(false);
         this.showBranchModal.set(false);
-        Swal.fire({ icon: 'success', title: this.editingBranch() ? 'Branch Updated' : 'Branch Created', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: this.editingBranch() ? 'Branch Updated' : 'Branch Created', timer: 1500, showConfirmButton: false });
         this.branchesApi.list().subscribe(b => this.branches.set(Array.isArray(b) ? b : []));
       },
       error: () => {
         this.isSavingBranch.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed' });
       }
     });
   }
@@ -279,18 +279,14 @@ export class SettingsComponent implements OnInit {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
-      confirmButtonColor: '#dc2626',
-      cancelButtonColor: '#6b7280',
-      background: '#1e293b',
-      color: '#fff',
     }).then(result => {
       if (result.isConfirmed) {
         this.branchesApi.removeBranch(branch.id).subscribe({
           next: () => {
-            Swal.fire({ icon: 'success', title: 'Branch Deleted', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'success', title: 'Branch Deleted', timer: 1500, showConfirmButton: false });
             this.branchesApi.list().subscribe(b => this.branches.set(Array.isArray(b) ? b : []));
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed' })
         });
       }
     });
@@ -353,13 +349,12 @@ export class SettingsComponent implements OnInit {
           icon: 'success', title: 'Waiter Created',
           text: waiter.pin ? `PIN: ${waiter.pin}` : undefined,
           timer: waiter.pin ? 5000 : 1500, showConfirmButton: false,
-          background: '#1e293b', color: '#fff'
         });
         this.loadWaiters();
       },
       error: () => {
         this.isSavingWaiter.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to create waiter', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to create waiter' });
       }
     });
   }
@@ -371,9 +366,6 @@ export class SettingsComponent implements OnInit {
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Reset',
-      confirmButtonColor: '#F97316',
-      cancelButtonColor: '#6b7280',
-      background: '#1e293b', color: '#fff',
     }).then(result => {
       if (!result.isConfirmed) return;
       this.userApi.resetStaffPin(waiter.id, '').subscribe({
@@ -383,10 +375,9 @@ export class SettingsComponent implements OnInit {
             icon: 'success', title: 'PIN Reset',
             text: `New PIN for ${waiter.fullName}: ${pin}`,
             timer: 8000, showConfirmButton: false,
-            background: '#1e293b', color: '#fff'
           });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Reset Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+        error: () => Swal.fire({ icon: 'error', title: 'Reset Failed' })
       });
     });
   }
@@ -399,17 +390,14 @@ export class SettingsComponent implements OnInit {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: label,
-      confirmButtonColor: waiter.isActive === false ? '#22c55e' : '#dc2626',
-      cancelButtonColor: '#6b7280',
-      background: '#1e293b', color: '#fff',
     }).then(result => {
       if (!result.isConfirmed) return;
       this.userApi.deactivateUser(waiter.id).subscribe({
         next: () => {
-          Swal.fire({ icon: 'success', title: `${waiter.fullName} ${label}d`, timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+          Swal.fire({ icon: 'success', title: `${waiter.fullName} ${label}d`, timer: 1500, showConfirmButton: false });
           this.loadWaiters();
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+        error: () => Swal.fire({ icon: 'error', title: 'Failed' })
       });
     });
   }
@@ -420,11 +408,11 @@ export class SettingsComponent implements OnInit {
     const pw = this.newPassword();
     const confirm = this.confirmPassword();
     if (!pw || pw.length < 8) {
-      Swal.fire({ icon: 'error', title: 'Password must be at least 8 characters', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'error', title: 'Password must be at least 8 characters' });
       return;
     }
     if (pw !== confirm) {
-      Swal.fire({ icon: 'error', title: 'Passwords do not match', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'error', title: 'Passwords do not match' });
       return;
     }
     this.isUpdatingPassword.set(true);
@@ -433,11 +421,11 @@ export class SettingsComponent implements OnInit {
         this.isUpdatingPassword.set(false);
         this.newPassword.set('');
         this.confirmPassword.set('');
-        Swal.fire({ icon: 'success', title: 'Password Updated', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Password Updated', timer: 1500, showConfirmButton: false });
       },
       error: () => {
         this.isUpdatingPassword.set(false);
-        Swal.fire({ icon: 'error', title: 'Update Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Update Failed' });
       }
     });
   }
@@ -450,11 +438,11 @@ export class SettingsComponent implements OnInit {
       next: () => {
         this.isSendingCode.set(false);
         this.showCodeInput.set(true);
-        Swal.fire({ icon: 'success', title: 'Code Sent', text: 'Check your email for the verification code.', timer: 2000, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Code Sent', text: 'Check your email for the verification code.', timer: 2000, showConfirmButton: false });
       },
       error: () => {
         this.isSendingCode.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not send verification email.', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not send verification email.' });
       }
     });
   }
@@ -466,10 +454,10 @@ export class SettingsComponent implements OnInit {
         this.isEmailVerified.set(true);
         this.showCodeInput.set(false);
         this.verificationCode.set('');
-        Swal.fire({ icon: 'success', title: 'Email Verified', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Email Verified', timer: 1500, showConfirmButton: false });
       },
       error: () => {
-        Swal.fire({ icon: 'error', title: 'Verification Failed', text: 'Invalid or expired code.', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Verification Failed', text: 'Invalid or expired code.' });
       }
     });
   }

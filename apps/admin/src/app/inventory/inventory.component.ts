@@ -46,7 +46,7 @@ export class InventoryComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to load inventory', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to load inventory' });
       }
     });
   }
@@ -68,7 +68,7 @@ export class InventoryComponent implements OnInit {
 
   addStock() {
     if (!this.selectedInventory() || this.stockQuantity() <= 0) {
-      Swal.fire({ icon: 'error', title: 'Stock quantity must be greater than 0', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'error', title: 'Stock quantity must be greater than 0' });
       return;
     }
 
@@ -79,12 +79,12 @@ export class InventoryComponent implements OnInit {
 
     this.inventoryApi.addStock(this.selectedInventory()!.id, payload).subscribe({
       next: () => {
-        Swal.fire({ icon: 'success', title: 'Stock Added', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Stock Added', timer: 1500, showConfirmButton: false });
         this.closeStockModal();
         this.loadInventory();
       },
       error: () => {
-        Swal.fire({ icon: 'error', title: 'Failed to add stock', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to add stock' });
       }
     });
   }

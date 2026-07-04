@@ -155,7 +155,7 @@ export class BillingComponent implements OnInit {
 
   private chooseFreePlan(plan: any): void {
     if (!plan.id) {
-      Swal.fire({ icon: 'error', title: 'Free plan not available', text: 'Please contact support.', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'error', title: 'Free plan not available', text: 'Please contact support.' });
       return;
     }
     this.isProcessing.set(true);
@@ -167,14 +167,14 @@ export class BillingComponent implements OnInit {
       },
       error: () => {
         this.isProcessing.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to activate plan', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to activate plan' });
       },
     });
   }
 
   private choosePaidPlan(plan: any): void {
     if (!plan.id) {
-      Swal.fire({ icon: 'error', title: 'Plan not found', text: 'Please refresh and try again.', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'error', title: 'Plan not found', text: 'Please refresh and try again.' });
       return;
     }
     this.isProcessing.set(true);
@@ -187,7 +187,7 @@ export class BillingComponent implements OnInit {
       },
       error: () => {
         this.isProcessing.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to initiate payment', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to initiate payment' });
       },
     });
   }
@@ -199,16 +199,15 @@ export class BillingComponent implements OnInit {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, cancel',
-      confirmButtonColor: '#dc2626',
       cancelButtonText: 'Keep it',
     }).then(result => {
       if (result.isConfirmed) {
         this.subService.cancel().subscribe({
           next: () => {
-            Swal.fire({ icon: 'success', title: 'Subscription canceled', confirmButtonColor: '#F97316' });
+            Swal.fire({ icon: 'success', title: 'Subscription canceled' });
             this.subService.load();
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Failed to cancel', confirmButtonColor: '#F97316' }),
+            error: () => Swal.fire({ icon: 'error', title: 'Failed to cancel' }),
         });
       }
     });

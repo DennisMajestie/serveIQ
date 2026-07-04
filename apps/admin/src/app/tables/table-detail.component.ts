@@ -535,7 +535,7 @@ export class TableDetailComponent implements OnInit {
         this.loadTabForTable(id);
       },
       error: () => {
-        Swal.fire({ icon: 'error', title: 'Failed to load table', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to load table' });
         this.isLoading.set(false);
       }
     });
@@ -586,7 +586,6 @@ export class TableDetailComponent implements OnInit {
       `,
       showCancelButton: true,
       confirmButtonText: 'Save',
-      confirmButtonColor: '#F97316',
       preConfirm: () => {
         const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
         const capacity = parseInt((document.getElementById('swal-capacity') as HTMLInputElement).value, 10);
@@ -601,7 +600,7 @@ export class TableDetailComponent implements OnInit {
             this.table.set(updated);
             Swal.fire({ icon: 'success', title: 'Table Updated', timer: 1500, showConfirmButton: false });
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Update Failed', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Update Failed' })
         });
       }
     });
@@ -652,7 +651,7 @@ export class TableDetailComponent implements OnInit {
 
     const tab = this.tab();
     if (!tab) {
-      Swal.fire({ icon: 'info', title: 'Open a tab first', confirmButtonColor: '#F97316' });
+      Swal.fire({ icon: 'info', title: 'Open a tab first' });
       return;
     }
 
@@ -672,7 +671,7 @@ export class TableDetailComponent implements OnInit {
       },
       error: () => {
         this.isAddingItems.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to add items', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to add items' });
       }
     });
   }
@@ -683,13 +682,11 @@ export class TableDetailComponent implements OnInit {
       text: `Remove "${item.menuItemName || item.menu_item_name}" from this tab?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#dc2626',
-      cancelButtonColor: '#6b7280'
     }).then(result => {
       if (result.isConfirmed) {
         this.ordersApi.deleteItem(item.id).subscribe({
           next: () => this.orders.update(os => os.filter(o => o.id !== item.id)),
-          error: () => Swal.fire({ icon: 'error', title: 'Remove Failed', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Remove Failed' })
         });
       }
     });
@@ -713,7 +710,6 @@ export class TableDetailComponent implements OnInit {
                 </div>
               `,
               confirmButtonText: 'View Bills',
-              confirmButtonColor: '#F97316',
               showCancelButton: true,
               cancelButtonText: 'Close'
             }).then(result => {
@@ -721,10 +717,10 @@ export class TableDetailComponent implements OnInit {
               else this.loadData();
             });
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Failed to Close Tab', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Failed to Close Tab' })
         });
       },
-      error: () => Swal.fire({ icon: 'error', title: 'Failed to Generate Bill', confirmButtonColor: '#F97316' })
+      error: () => Swal.fire({ icon: 'error', title: 'Failed to Generate Bill' })
     });
   }
 
@@ -742,8 +738,6 @@ export class TableDetailComponent implements OnInit {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Void',
-      confirmButtonColor: '#dc2626',
-      cancelButtonColor: '#6b7280'
     }).then(result => {
       if (result.isConfirmed) {
         this.tabsApi.voidTab(tab.id).subscribe({
@@ -751,7 +745,7 @@ export class TableDetailComponent implements OnInit {
             Swal.fire({ icon: 'success', title: 'Tab Voided', timer: 1500, showConfirmButton: false });
             this.router.navigate(['/tables']);
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Void Failed', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Void Failed' })
         });
       }
     });

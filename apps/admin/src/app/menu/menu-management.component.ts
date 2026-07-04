@@ -93,7 +93,7 @@ export class MenuManagementComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to Load Menu', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to Load Menu' });
       }
     });
   }
@@ -115,7 +115,6 @@ export class MenuManagementComponent implements OnInit {
       text: `Remove "${item.name}" from the menu?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#EF4444',
       confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel'
     }).then(result => {
@@ -185,7 +184,7 @@ export class MenuManagementComponent implements OnInit {
       },
       error: () => {
         this.isSubmitting.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to Create Item', text: 'Could not add menu item. Please try again.', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to Create Item', text: 'Could not add menu item. Please try again.' });
       }
     });
   }

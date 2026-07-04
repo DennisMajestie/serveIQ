@@ -121,12 +121,11 @@ export class WaiterManagementComponent implements OnInit {
           icon: 'success',
           title: 'Waiter Created',
           html: `Waiter added successfully!<br><strong style="font-size:22px;letter-spacing:4px">${w.pin}</strong><br><small>Share this PIN with the waiter to log in.</small>`,
-          confirmButtonColor: '#F97316'
         });
       },
       error: () => {
         this.isSubmitting.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to create waiter', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to create waiter' });
       }
     });
   }
@@ -145,7 +144,6 @@ export class WaiterManagementComponent implements OnInit {
       text: `Reset PIN for this waiter? A new PIN will be generated and displayed.`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#F97316',
       confirmButtonText: 'Reset PIN'
     }).then(result => {
       if (result.isConfirmed) {
@@ -189,11 +187,11 @@ export class WaiterManagementComponent implements OnInit {
         this.isEditing.set(false);
         this.waiters.update(ws => ws.map(w => w.id === updated.id ? { ...w, fullName: updated.fullName || this.editFullName(), email: updated.email || this.editEmail() } : w));
         this.closeEditModal();
-        Swal.fire({ icon: 'success', title: 'Waiter Updated', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+        Swal.fire({ icon: 'success', title: 'Waiter Updated', timer: 1500, showConfirmButton: false });
       },
       error: () => {
         this.isEditing.set(false);
-        Swal.fire({ icon: 'error', title: 'Update Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Update Failed' });
       }
     });
   }
@@ -204,16 +202,15 @@ export class WaiterManagementComponent implements OnInit {
       text: 'This waiter will lose access to the system. You can re-activate later.',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#EF4444',
       confirmButtonText: 'Deactivate'
     }).then(result => {
       if (result.isConfirmed) {
         this.staffService.deactivateUser(id).subscribe({
           next: () => {
             this.waiters.update(ws => ws.map(w => w.id === id ? { ...w, isActive: false } : w));
-            Swal.fire({ icon: 'success', title: 'Waiter Deactivated', timer: 2000, showConfirmButton: false, background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'success', title: 'Waiter Deactivated', timer: 2000, showConfirmButton: false });
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+          error: () => Swal.fire({ icon: 'error', title: 'Failed' })
         });
       }
     });
@@ -225,7 +222,6 @@ export class WaiterManagementComponent implements OnInit {
       text: 'Are you sure you want to remove this waiter?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#F97316',
       confirmButtonText: 'Yes, delete'
     }).then(result => {
       if (result.isConfirmed) {

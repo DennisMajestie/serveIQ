@@ -38,7 +38,7 @@ export class PosManagementComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to Load Terminals', confirmButtonColor: '#F97316' });
+        Swal.fire({ icon: 'error', title: 'Failed to Load Terminals' });
       }
     });
   }
@@ -67,7 +67,7 @@ export class PosManagementComponent implements OnInit {
         this.showModal.set(false);
         this.loadTerminals();
       },
-      error: () => Swal.fire({ icon: 'error', title: 'Save Failed', confirmButtonColor: '#F97316' })
+      error: () => Swal.fire({ icon: 'error', title: 'Save Failed' })
     });
   }
 
@@ -77,13 +77,12 @@ export class PosManagementComponent implements OnInit {
       text: 'This action cannot be undone.',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#EF4444',
       confirmButtonText: 'Delete'
     }).then(result => {
       if (result.isConfirmed) {
         this.posApi.remove(id).subscribe({
           next: () => this.loadTerminals(),
-          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed', confirmButtonColor: '#EF4444' })
+          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed' })
         });
       }
     });

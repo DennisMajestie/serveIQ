@@ -28,11 +28,8 @@ export class LoginComponent {
       inputLabel: 'Enter your email address',
       inputPlaceholder: 'name@business.com',
       showCancelButton: true,
-      confirmButtonColor: '#F97316',
       confirmButtonText: 'Send Reset Link',
       cancelButtonText: 'Cancel',
-      background: '#1e293b',
-      color: '#fff',
       inputAttributes: { autocapitalize: 'off' },
       preConfirm: (email) => {
         if (!email) {
@@ -55,12 +52,11 @@ export class LoginComponent {
 
   onSubmit() {
     if (!this.email() || !this.password()) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Missing Fields',
-        text: 'Please enter both email and password to access your dashboard.',
-        confirmButtonColor: '#F97316'
-      });
+        Swal.fire({
+          icon: 'warning',
+          title: 'Missing Fields',
+          text: 'Please enter both email and password to access your dashboard.'
+        });
       return;
     }
 
@@ -88,15 +84,13 @@ export class LoginComponent {
           Swal.fire({
             icon: 'error',
             title: 'Authentication Failed',
-            text: 'Invalid email or password',
-            confirmButtonColor: '#F97316'
+            text: 'Invalid email or password'
           });
         } else {
           Swal.fire({
             icon: 'error',
             title: 'Authentication Failed',
-            text: err.error?.message || 'Please check your credentials and try again.',
-            confirmButtonColor: '#F97316'
+            text: err.error?.message || 'Please check your credentials and try again.'
           });
         }
       }

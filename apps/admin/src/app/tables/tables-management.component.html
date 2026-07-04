@@ -2,15 +2,15 @@
   <!-- Header Section -->
   <div class="flex justify-between items-end">
     <div>
-      <h2 class="text-[32px] leading-[1.2] font-semibold tracking-tight text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Floor Management</h2>
-      <p class="text-[18px] leading-[1.6] text-[#adc6ff] opacity-80" style="font-family:'Inter',sans-serif">Arctic White Command Suite</p>
+      <h2 class="text-[32px] leading-[1.2] font-semibold tracking-tight text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Floor Management</h2>
+      <p class="text-[18px] leading-[1.6] text-[var(--secondary)] opacity-80" style="font-family:'Inter',sans-serif">Arctic White Command Suite</p>
     </div>
     <div class="flex gap-4">
       <div class="glass-card px-6 py-3 rounded-xl flex flex-col items-end">
-        <span class="text-[12px] leading-none font-medium text-[#adc6ff] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Total Efficiency</span>
-        <span class="text-[48px] leading-[1.1] font-bold text-[#4be277] tracking-tight" style="font-family:'Space Grotesk',sans-serif">{{ totalEfficiency() }}%</span>
+        <span class="text-[12px] leading-none font-medium text-[var(--secondary)] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Total Efficiency</span>
+        <span class="text-[48px] leading-[1.1] font-bold text-[var(--primary)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">{{ totalEfficiency() }}%</span>
       </div>
-      <button class="px-6 py-3 bg-[#22c55e] text-[#003915] rounded-xl font-semibold text-sm transition-all hover:brightness-110 active:scale-95 flex items-center gap-2" (click)="addNewTable()">
+      <button class="px-6 py-3 bg-[var(--primary)] text-[var(--on-primary)] rounded-xl font-semibold text-sm transition-all hover:brightness-110 active:scale-95 flex items-center gap-2" (click)="addNewTable()">
         <span class="material-symbols-outlined text-[18px]">add</span> Add Table
       </button>
     </div>
@@ -35,20 +35,20 @@
         </div>
         <div class="relative z-10 h-full flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Main Dining Hall</span>
-            <div class="flex items-center gap-2 bg-[#4be277]/10 px-3 py-1 rounded-full">
-              <span class="w-2 h-2 bg-[#4be277] rounded-full animate-pulse"></span>
-              <span class="text-[12px] leading-none font-medium text-[#4be277] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Live Feed</span>
+            <span class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Main Dining Hall</span>
+            <div class="flex items-center gap-2 px-3 py-1 rounded-full" style="background: color-mix(in srgb, var(--primary) 10%, transparent)">
+              <span class="w-2 h-2 bg-[var(--primary)] rounded-full animate-pulse"></span>
+              <span class="text-[12px] leading-none font-medium text-[var(--primary)] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Live Feed</span>
             </div>
           </div>
           <div class="flex gap-8">
             <div>
-              <p class="text-[12px] leading-none font-medium text-[#adc6ff] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Active Covers</p>
-              <p class="text-[32px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ activeCovers() }} <span class="text-[#adc6ff]/50 text-[24px] font-medium">/ {{ totalCovers() }}</span></p>
+              <p class="text-[12px] leading-none font-medium text-[var(--secondary)] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Active Covers</p>
+              <p class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ activeCovers() }} <span class="text-[var(--secondary)]/50 text-[24px] font-medium">/ {{ totalCovers() }}</span></p>
             </div>
             <div>
-              <p class="text-[12px] leading-none font-medium text-[#adc6ff] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Est. Wait Time</p>
-              <p class="text-[32px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ estimatedWaitTime() }} <span class="text-[#adc6ff]/50 text-[24px] font-medium">min</span></p>
+              <p class="text-[12px] leading-none font-medium text-[var(--secondary)] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Est. Wait Time</p>
+              <p class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ estimatedWaitTime() }} <span class="text-[var(--secondary)]/50 text-[24px] font-medium">min</span></p>
             </div>
           </div>
         </div>
@@ -56,17 +56,17 @@
 
       <!-- Real-time Activity -->
       <div class="col-span-12 lg:col-span-4 glass-card rounded-3xl p-6 flex flex-col">
-        <h3 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb] mb-6" style="font-family:'Space Grotesk',sans-serif">Real-time Activity</h3>
+        <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)] mb-6" style="font-family:'Space Grotesk',sans-serif">Real-time Activity</h3>
         <div class="flex-1 space-y-4">
           <ng-container *ngIf="tables().length > 0; else emptyActivity">
-            <div *ngFor="let table of recentActivity()" class="p-4 rounded-xl bg-[#151b2d] border-l-4 pulse-left relative cursor-pointer" [class.border-[#4be277]/40]="table.status === 'available'" [class.border-[#adc6ff]/40]="table.status === 'occupied'" [class.border-[#ffb4ab]/40]="table.status === 'reserved'" (click)="editTable(table)">
-              <p class="text-[14px] leading-none font-semibold text-[#dce1fb]" style="font-family:'Inter',sans-serif">Table {{ 'T-' + table.tableNumber.toString().padStart(2, '0') }} — {{ table.status | titlecase }}</p>
-              <p class="text-[12px] leading-none font-medium text-[#adc6ff]" style="font-family:'Inter',sans-serif">{{ table.capacity }} seats</p>
+            <div *ngFor="let table of recentActivity()" class="p-4 rounded-xl bg-[var(--surface)] border-l-4 pulse-left relative cursor-pointer" [style.border-left-color]="table.status === 'available' ? 'color-mix(in srgb, var(--primary) 40%, transparent)' : table.status === 'occupied' ? 'color-mix(in srgb, var(--secondary) 40%, transparent)' : 'color-mix(in srgb, var(--error) 40%, transparent)'" (click)="editTable(table)">
+              <p class="text-[14px] leading-none font-semibold text-[var(--on-background)]" style="font-family:'Inter',sans-serif">Table {{ 'T-' + table.tableNumber.toString().padStart(2, '0') }} — {{ table.status | titlecase }}</p>
+              <p class="text-[12px] leading-none font-medium text-[var(--secondary)]" style="font-family:'Inter',sans-serif">{{ table.capacity }} seats</p>
             </div>
           </ng-container>
           <ng-template #emptyActivity>
-            <div class="p-4 rounded-xl bg-[#151b2d] text-center">
-              <p class="text-[14px] leading-none font-medium text-[#adc6ff]" style="font-family:'Inter',sans-serif">No tables configured yet</p>
+            <div class="p-4 rounded-xl bg-[var(--surface)] text-center">
+              <p class="text-[14px] leading-none font-medium text-[var(--secondary)]" style="font-family:'Inter',sans-serif">No tables configured yet</p>
             </div>
           </ng-template>
         </div>
@@ -75,34 +75,34 @@
       <!-- Table Cards -->
       <div *ngFor="let table of tables()" class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 transition-all hover:scale-[1.02] cursor-pointer" [class.luminous-glow-primary]="table.status === 'available'" (click)="editTable(table)">
         <div class="flex justify-between items-start mb-8">
-          <span class="text-[48px] leading-[1.1] font-bold text-[#dce1fb] tracking-tight" style="font-family:'Space Grotesk',sans-serif" [class.opacity-60]="table.status !== 'available'">{{ 'T-' + table.tableNumber.toString().padStart(2, '0') }}</span>
+          <span class="text-[48px] leading-[1.1] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif" [class.opacity-60]="table.status !== 'available'">{{ 'T-' + table.tableNumber.toString().padStart(2, '0') }}</span>
           <span class="px-3 py-1 text-[12px] leading-none font-medium rounded-full" [ngClass]="statusBadgeClass(table.status)">
             {{ table.status | titlecase }}
           </span>
         </div>
         <div class="space-y-4">
           <div class="flex justify-between items-center">
-            <span class="text-[12px] leading-none font-medium text-[#adc6ff] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Efficiency</span>
-            <span class="text-[18px] leading-none font-semibold tracking-wider" style="font-family:'Space Grotesk',sans-serif" [class.text-[#4be277]]="table.status === 'available'" [class.text-[#adc6ff]]="table.status !== 'available'">{{ tableEfficiency() }}%</span>
+            <span class="text-[12px] leading-none font-medium text-[var(--secondary)] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Efficiency</span>
+            <span class="text-[18px] leading-none font-semibold tracking-wider" style="font-family:'Space Grotesk',sans-serif" [class.text-[var(--primary)]]="table.status === 'available'" [class.text-[var(--secondary)]]="table.status !== 'available'">{{ tableEfficiency() }}%</span>
           </div>
-          <div class="h-1.5 bg-[#2e3447] rounded-full overflow-hidden">
-            <div class="h-full w-[92%]" [style.width.%]="tableEfficiency()" [class.bg-[#4be277]]="table.status === 'available'" [class.bg-[#adc6ff]]="table.status !== 'available'"></div>
+          <div class="h-1.5 rounded-full overflow-hidden" style="background: var(--surface-variant)">
+            <div class="h-full w-[92%]" [style.width.%]="tableEfficiency()" [style.background]="table.status === 'available' ? 'var(--primary)' : 'var(--secondary)'"></div>
           </div>
-          <div class="pt-4 flex justify-between text-[#adc6ff]">
+          <div class="pt-4 flex justify-between text-[var(--secondary)]">
             <span class="text-[12px] leading-none font-medium flex items-center gap-1" style="font-family:'Inter',sans-serif">
               <span class="material-symbols-outlined text-sm">group</span> {{ table.capacity }} Seats
             </span>
             <div class="flex gap-2">
-              <button class="text-[#adc6ff] hover:text-[#22c55e] transition-colors" (click)="$event.stopPropagation(); updateTableStatus(table, 'available')" title="Set Available">
+              <button class="text-[var(--secondary)] hover:text-[var(--primary)] transition-colors" (click)="$event.stopPropagation(); updateTableStatus(table, 'available')" title="Set Available">
                 <span class="material-symbols-outlined text-[16px]">check_circle</span>
               </button>
-              <button class="text-[#adc6ff] hover:text-[#ffb3b7] transition-colors" (click)="$event.stopPropagation(); updateTableStatus(table, 'occupied')" title="Set Occupied">
+              <button class="text-[var(--secondary)] hover:text-[var(--error)] transition-colors" (click)="$event.stopPropagation(); updateTableStatus(table, 'occupied')" title="Set Occupied">
                 <span class="material-symbols-outlined text-[16px]">person</span>
               </button>
-              <button class="text-[#adc6ff] hover:text-[#ff8892] transition-colors" (click)="$event.stopPropagation(); updateTableStatus(table, 'reserved')" title="Set Reserved">
+              <button class="text-[var(--secondary)] hover:text-[var(--error)] transition-colors" (click)="$event.stopPropagation(); updateTableStatus(table, 'reserved')" title="Set Reserved">
                 <span class="material-symbols-outlined text-[16px]">event</span>
               </button>
-              <button class="text-[#adc6ff] hover:text-[#ffb4ab] transition-colors" (click)="$event.stopPropagation(); deleteTable(table)" title="Delete">
+              <button class="text-[var(--secondary)] hover:text-[var(--error)] transition-colors" (click)="$event.stopPropagation(); deleteTable(table)" title="Delete">
                 <span class="material-symbols-outlined text-[16px]">delete</span>
               </button>
             </div>
@@ -112,10 +112,10 @@
 
       <!-- Empty state -->
       <div *ngIf="tables().length === 0" class="col-span-12 glass-card rounded-3xl p-12 text-center">
-        <span class="material-symbols-outlined text-5xl text-[#adc6ff]/50 mb-4">table_restaurant</span>
-        <p class="text-[#dce1fb] text-lg font-medium mb-2" style="font-family:'Space Grotesk',sans-serif">No tables yet</p>
-        <p class="text-[#adc6ff] text-sm mb-6" style="font-family:'Inter',sans-serif">Add your first table to start managing your floor.</p>
-        <button class="px-6 py-3 bg-[#22c55e] text-[#003915] rounded-xl font-semibold text-sm transition-all hover:brightness-110 active:scale-95" (click)="addNewTable()">Add Your First Table</button>
+        <span class="material-symbols-outlined text-5xl text-[var(--secondary)]/50 mb-4">table_restaurant</span>
+        <p class="text-[var(--on-background)] text-lg font-medium mb-2" style="font-family:'Space Grotesk',sans-serif">No tables yet</p>
+        <p class="text-[var(--secondary)] text-sm mb-6" style="font-family:'Inter',sans-serif">Add your first table to start managing your floor.</p>
+        <button class="px-6 py-3 bg-[var(--primary)] text-[var(--on-primary)] rounded-xl font-semibold text-sm transition-all hover:brightness-110 active:scale-95" (click)="addNewTable()">Add Your First Table</button>
       </div>
     </div>
   </ng-container>

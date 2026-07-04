@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ElementRef, ViewChild, Inject, PLATFORM_ID, HostBinding } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ThemeService } from '../core/theme.service';
 
 @Component({
   selector: 'app-landing',
@@ -38,7 +39,10 @@ export class LandingComponent implements AfterViewInit {
     { icon: 'cancel_presentation', color: 'primary', title: 'One waiter voids far more orders than the rest of the floor', desc: 'Performance anomaly: Waiter ID #402 (John D.)' }
   ];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
+    private themeService: ThemeService
+  ) {}
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -71,9 +75,14 @@ export class LandingComponent implements AfterViewInit {
       }
     }
 
+    const hex = this.themeService.getCssVar('--primary') || '#4be277';
+    const rr = parseInt(hex.slice(1, 3), 16), gg = parseInt(hex.slice(3, 5), 16), bb = parseInt(hex.slice(5, 7), 16);
+    const lineColor = `rgba(${rr},${gg},${bb},0.08)`;
+    const dotColor = `rgba(${rr},${gg},${bb},0.15)`;
+
     function draw() {
       ctx!.clearRect(0, 0, width, height);
-      ctx!.strokeStyle = 'rgba(75, 226, 119, 0.08)';
+      ctx!.strokeStyle = lineColor;
       ctx!.lineWidth = 0.8;
 
       particles.forEach((p, i) => {
@@ -84,7 +93,7 @@ export class LandingComponent implements AfterViewInit {
 
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx!.fillStyle = 'rgba(75, 226, 119, 0.15)';
+        ctx!.fillStyle = dotColor;
         ctx!.fill();
 
         for (let j = i + 1; j < particles.length; j++) {

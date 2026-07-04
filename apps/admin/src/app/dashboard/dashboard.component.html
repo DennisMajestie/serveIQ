@@ -1,8 +1,8 @@
 <div class="dashboard-canvas space-y-8">
   <!-- Header -->
   <header class="flex flex-col gap-1">
-    <h2 class="text-[32px] leading-[40px] font-bold text-[#151c27] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Executive Control</h2>
-    <p class="text-[16px] leading-[24px] text-[#575e70]" style="font-family:'Inter',sans-serif">Real-time performance metrics for <span class="text-[#151c27] font-bold">Lagos Central Branch</span></p>
+    <h2 class="text-[32px] leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Executive Control</h2>
+    <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Real-time performance metrics for <span class="text-[var(--on-background)] font-bold">Lagos Central Branch</span></p>
   </header>
 
   <ng-container *ngIf="!isLoading(); else skeleton">
@@ -15,14 +15,14 @@
     <!-- Asymmetric Bento Grid -->
     <div class="grid grid-cols-12 gap-6">
       <!-- Revenue Pulse -->
-      <div class="col-span-12 lg:col-span-4 bento-card bg-[#f0f3ff] rounded-xl p-6 relative overflow-hidden group">
-        <div class="absolute -right-12 -top-12 w-48 h-48 bg-[#F97316]/10 rounded-full blur-3xl group-hover:bg-[#F97316]/20 transition-all duration-500"></div>
+      <div class="col-span-12 lg:col-span-4 bento-card bg-[var(--surface-container-low)] rounded-xl p-6 relative overflow-hidden group">
+        <div class="absolute -right-12 -top-12 w-48 h-48 decor-blob rounded-full blur-3xl transition-all duration-500"></div>
         <div class="flex justify-between items-start mb-6">
           <div class="space-y-1">
-            <span class="text-[14px] leading-[20px] font-semibold text-[#575e70] uppercase tracking-widest text-[10px]" style="font-family:'Inter',sans-serif">Revenue Pulse</span>
-            <h3 class="text-4xl font-bold text-[#151c27]" style="font-family:'Space Grotesk',sans-serif">{{ revenueDisplay() }}</h3>
+            <span class="text-[14px] leading-[20px] font-semibold text-[var(--secondary)] uppercase tracking-widest text-[10px]" style="font-family:'Inter',sans-serif">Revenue Pulse</span>
+            <h3 class="text-4xl font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ revenueDisplay() }}</h3>
           </div>
-          <span class="px-2 py-1 bg-[#F97316]/10 text-[#F97316] text-[11px] font-bold rounded-lg">+14.2%</span>
+          <span class="px-2 py-1 text-[var(--primary-container)] text-[11px] font-bold rounded-lg" style="background: color-mix(in srgb, var(--primary-container) 10%, transparent)">+14.2%</span>
         </div>
         <div class="h-16 w-full">
           <canvas id="revenue-sparkline" class="w-full h-full"></canvas>
@@ -30,60 +30,60 @@
       </div>
 
       <!-- Table Velocity -->
-      <div class="col-span-6 lg:col-span-4 bento-card bg-[#f0f3ff] rounded-xl p-6 flex flex-col justify-between">
+      <div class="col-span-6 lg:col-span-4 bento-card bg-[var(--surface-container-low)] rounded-xl p-6 flex flex-col justify-between">
         <div class="flex items-center gap-3">
-          <div class="p-3 bg-[#d9dff5]/30 rounded-xl text-[#575e70]">
+          <div class="p-3 rounded-xl text-[var(--secondary)]" style="background: color-mix(in srgb, var(--secondary-container) 30%, transparent)">
             <span class="material-symbols-outlined">timer</span>
           </div>
-          <span class="text-[14px] leading-[20px] font-semibold text-[#575e70]" style="font-family:'Inter',sans-serif">Table Velocity</span>
+          <span class="text-[14px] leading-[20px] font-semibold text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Table Velocity</span>
         </div>
         <div class="mt-4">
           <div class="flex items-baseline gap-2">
-            <span class="text-5xl font-bold text-[#151c27]" style="font-family:'Space Grotesk',sans-serif">{{ tableVelocity() }}</span>
-            <span class="text-[16px] leading-[24px] text-[#575e70]" style="font-family:'Inter',sans-serif">avg.</span>
+            <span class="text-5xl font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ tableVelocity() }}</span>
+            <span class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">avg.</span>
           </div>
-          <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-[#00a2f4]/10 text-[#006398] font-bold rounded-full text-xs">
-            <span class="w-2 h-2 bg-[#006398] rounded-full animate-pulse"></span>
+          <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 text-[var(--tertiary)] font-bold rounded-full text-xs" style="background: color-mix(in srgb, var(--tertiary-container) 10%, transparent)">
+            <span class="w-2 h-2 bg-[var(--tertiary)] rounded-full animate-pulse"></span>
             Peak Efficiency
           </div>
         </div>
       </div>
 
       <!-- Staff on Duty -->
-      <div class="col-span-6 lg:col-span-4 bento-card bg-[#f0f3ff] rounded-xl p-6 flex flex-col justify-between">
+      <div class="col-span-6 lg:col-span-4 bento-card bg-[var(--surface-container-low)] rounded-xl p-6 flex flex-col justify-between">
         <div class="flex items-center gap-3">
-          <div class="p-3 bg-[#F97316]/10 rounded-xl text-[#F97316]">
+          <div class="p-3 rounded-xl text-[var(--primary-container)]" style="background: color-mix(in srgb, var(--primary-container) 10%, transparent)">
             <span class="material-symbols-outlined">groups</span>
           </div>
-          <span class="text-[14px] leading-[20px] font-semibold text-[#575e70]" style="font-family:'Inter',sans-serif">Staff on Duty</span>
+          <span class="text-[14px] leading-[20px] font-semibold text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Staff on Duty</span>
         </div>
         <div class="mt-4">
           <div class="flex items-center gap-[-8px]">
-            <span class="text-5xl font-bold text-[#151c27] mr-4" style="font-family:'Space Grotesk',sans-serif">{{ staffOnDuty() }}</span>
+            <span class="text-5xl font-bold text-[var(--on-background)] mr-4" style="font-family:'Space Grotesk',sans-serif">{{ staffOnDuty() }}</span>
             <div class="flex -space-x-3">
-              <div class="w-10 h-10 rounded-full bg-[#d9dff5] border-2 border-[#f0f3ff] flex items-center justify-center text-sm font-bold text-[#575e70]">T</div>
-              <div class="w-10 h-10 rounded-full bg-[#c0c6db] border-2 border-[#f0f3ff] flex items-center justify-center text-sm font-bold text-white">C</div>
-              <div class="w-10 h-10 rounded-full bg-[#e2e8f8] border-2 border-[#f0f3ff] flex items-center justify-center text-[10px] font-bold text-[#575e70]">+{{ staffOnDuty() <= 2 ? 0 : staffOnDuty() - 2 }}</div>
+              <div class="w-10 h-10 rounded-full bg-[var(--secondary-container)] border-2 border-[var(--surface-container-low)] flex items-center justify-center text-sm font-bold text-[var(--secondary)]">T</div>
+              <div class="w-10 h-10 rounded-full bg-[var(--secondary-fixed-dim)] border-2 border-[var(--surface-container-low)] flex items-center justify-center text-sm font-bold text-[var(--on-secondary)]">C</div>
+              <div class="w-10 h-10 rounded-full bg-[var(--surface-container-high)] border-2 border-[var(--surface-container-low)] flex items-center justify-center text-[10px] font-bold text-[var(--secondary)]">+{{ staffOnDuty() <= 2 ? 0 : staffOnDuty() - 2 }}</div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Operational Efficiency -->
-      <div class="col-span-12 lg:col-span-8 bento-card bg-[#f0f3ff] rounded-xl p-8 min-h-[400px] flex flex-col">
+      <div class="col-span-12 lg:col-span-8 bento-card bg-[var(--surface-container-low)] rounded-xl p-8 min-h-[400px] flex flex-col">
         <ng-container *ngIf="peakHours().length > 0; else peakHoursPlaceholder">
           <div class="flex justify-between items-end mb-8">
             <div>
-              <h3 class="text-2xl font-bold text-[#151c27] mb-1" style="font-family:'Space Grotesk',sans-serif">Peak Hours</h3>
-              <p class="text-[16px] leading-[24px] text-[#575e70]" style="font-family:'Inter',sans-serif">Hourly order volume from completed tabs</p>
+              <h3 class="text-2xl font-bold text-[var(--on-background)] mb-1" style="font-family:'Space Grotesk',sans-serif">Peak Hours</h3>
+              <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Hourly order volume from completed tabs</p>
             </div>
           </div>
           <div class="flex-1 w-full rounded-2xl relative overflow-hidden">
             <div class="chart-container h-full w-full">
               <div class="flex items-end gap-2 h-full min-h-[200px]">
                 <div *ngFor="let entry of peakHours()" class="flex-1 flex flex-col items-center gap-1">
-                  <div class="w-full bg-[#F97316]/80 rounded-t transition-all duration-500" [style.height.px]="(entry.orderCount / maxPeakValue()) * 180 || 2"></div>
-                  <span class="text-[10px] text-[#575e70] font-medium">{{ formatHour(entry.hour) }}</span>
+                  <div class="w-full rounded-t transition-all duration-500" [style.height.px]="(entry.orderCount / maxPeakValue()) * 180 || 2" style="background: color-mix(in srgb, var(--primary-container) 80%, transparent)"></div>
+                  <span class="text-[10px] text-[var(--secondary)] font-medium">{{ formatHour(entry.hour) }}</span>
                 </div>
               </div>
             </div>
@@ -92,8 +92,8 @@
         <ng-template #peakHoursPlaceholder>
           <div class="flex justify-between items-end mb-8">
             <div>
-              <h3 class="text-2xl font-bold text-[#151c27] mb-1" style="font-family:'Space Grotesk',sans-serif">Operational Efficiency</h3>
-              <p class="text-[16px] leading-[24px] text-[#575e70]" style="font-family:'Inter',sans-serif">Service throughput vs. Customer volume</p>
+              <h3 class="text-2xl font-bold text-[var(--on-background)] mb-1" style="font-family:'Space Grotesk',sans-serif">Operational Efficiency</h3>
+              <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Service throughput vs. Customer volume</p>
             </div>
           </div>
           <div class="flex-1 w-full bg-gradient-to-br from-emerald-400 to-sky-500 rounded-2xl relative overflow-hidden shadow-inner">
@@ -118,56 +118,56 @@
       </div>
 
       <!-- Recent Activity -->
-      <div class="col-span-12 lg:col-span-4 bento-card bg-[#f0f3ff] rounded-xl p-8 flex flex-col h-full">
-        <h3 class="text-2xl font-bold text-[#151c27] mb-6" style="font-family:'Space Grotesk',sans-serif">Recent Orders</h3>
+      <div class="col-span-12 lg:col-span-4 bento-card bg-[var(--surface-container-low)] rounded-xl p-8 flex flex-col h-full">
+        <h3 class="text-2xl font-bold text-[var(--on-background)] mb-6" style="font-family:'Space Grotesk',sans-serif">Recent Orders</h3>
         <div class="flex-1 space-y-6 overflow-y-auto" style="scrollbar-width:none;-ms-overflow-style:none">
           <ng-container *ngIf="recentOrders().length > 0; else emptyOrders">
-            <div *ngFor="let order of recentOrders().slice(0, 5)" class="flex items-center justify-between group cursor-pointer hover:bg-[#e2e8f8] p-2 -m-2 rounded-xl transition-all">
+            <div *ngFor="let order of recentOrders().slice(0, 5)" class="flex items-center justify-between group cursor-pointer hover:bg-[var(--surface-container-high)] p-2 -m-2 rounded-xl transition-all">
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
                   <span class="material-symbols-outlined text-sm">shopping_cart</span>
                 </div>
                 <div>
-                  <p class="text-[14px] leading-[20px] font-semibold text-[#151c27]" style="font-family:'Inter',sans-serif">{{ order.menuItemName }}</p>
-                  <p class="text-[11px] text-[#575e70]" style="font-family:'Inter',sans-serif">x{{ order.quantity }} • {{ order.createdAt | date:'short' }}</p>
+                  <p class="text-[14px] leading-[20px] font-semibold text-[var(--on-background)]" style="font-family:'Inter',sans-serif">{{ order.menuItemName }}</p>
+                  <p class="text-[11px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">x{{ order.quantity }} • {{ order.createdAt | date:'short' }}</p>
                 </div>
               </div>
-              <span class="font-bold text-[#151c27]" style="font-family:'Space Grotesk',sans-serif">₦{{ (order.subtotalKobo / 100).toLocaleString() }}</span>
+              <span class="font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">₦{{ (order.subtotalKobo / 100).toLocaleString() }}</span>
             </div>
           </ng-container>
           <ng-template #emptyOrders>
-            <div class="flex flex-col items-center justify-center py-12 text-[#575e70]">
+            <div class="flex flex-col items-center justify-center py-12 text-[var(--secondary)]">
               <span class="material-symbols-outlined text-4xl mb-2">receipt_long</span>
               <p class="text-sm">No orders yet today</p>
             </div>
           </ng-template>
         </div>
-        <a routerLink="/tables" class="mt-6 w-full block text-center py-3 bg-[#e2e8f8] rounded-xl text-[14px] leading-[20px] font-semibold text-[#F97316] hover:bg-[#F97316] hover:text-white transition-all cursor-pointer">View All Orders</a>
+        <a routerLink="/tables" class="view-all-btn mt-6 w-full block text-center py-3 rounded-xl text-[14px] leading-[20px] font-semibold transition-all cursor-pointer">View All Orders</a>
       </div>
     </div>
   </ng-container>
 
   <ng-template #skeleton>
     <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-12 lg:col-span-4 bg-[#f0f3ff] rounded-xl p-6">
+      <div class="col-span-12 lg:col-span-4 bg-[var(--surface-container-low)] rounded-xl p-6">
         <div class="skeleton-shimmer" style="width: 100px; height: 14px; margin-bottom: 16px;"></div>
         <div class="skeleton-shimmer" style="width: 180px; height: 36px; margin-bottom: 24px;"></div>
         <div class="skeleton-shimmer" style="width: 100%; height: 60px;"></div>
       </div>
-      <div class="col-span-6 lg:col-span-4 bg-[#f0f3ff] rounded-xl p-6">
+      <div class="col-span-6 lg:col-span-4 bg-[var(--surface-container-low)] rounded-xl p-6">
         <div class="skeleton-shimmer" style="width: 120px; height: 14px; margin-bottom: 24px;"></div>
         <div class="skeleton-shimmer" style="width: 80px; height: 48px;"></div>
       </div>
-      <div class="col-span-6 lg:col-span-4 bg-[#f0f3ff] rounded-xl p-6">
+      <div class="col-span-6 lg:col-span-4 bg-[var(--surface-container-low)] rounded-xl p-6">
         <div class="skeleton-shimmer" style="width: 120px; height: 14px; margin-bottom: 24px;"></div>
         <div class="skeleton-shimmer" style="width: 60px; height: 48px;"></div>
       </div>
-      <div class="col-span-12 lg:col-span-8 bg-[#f0f3ff] rounded-xl p-8" style="min-height: 400px;">
+      <div class="col-span-12 lg:col-span-8 bg-[var(--surface-container-low)] rounded-xl p-8" style="min-height: 400px;">
         <div class="skeleton-shimmer" style="width: 200px; height: 24px; margin-bottom: 8px;"></div>
         <div class="skeleton-shimmer" style="width: 300px; height: 16px; margin-bottom: 32px;"></div>
         <div class="skeleton-shimmer" style="width: 100%; height: 260px;"></div>
       </div>
-      <div class="col-span-12 lg:col-span-4 bg-[#f0f3ff] rounded-xl p-8" style="min-height: 400px;">
+      <div class="col-span-12 lg:col-span-4 bg-[var(--surface-container-low)] rounded-xl p-8" style="min-height: 400px;">
         <div class="skeleton-shimmer" style="width: 160px; height: 24px; margin-bottom: 24px;"></div>
         <div class="skeleton-shimmer" style="width: 100%; height: 40px; margin-bottom: 16px;"></div>
         <div class="skeleton-shimmer" style="width: 100%; height: 40px; margin-bottom: 16px;"></div>

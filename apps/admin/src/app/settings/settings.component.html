@@ -1,32 +1,32 @@
-<div class="min-h-screen bg-[#0c1324] text-[#dce1fb] overflow-x-hidden">
+<div class="min-h-screen bg-[var(--background)] text-[var(--on-background)] overflow-x-hidden">
   <div class="grid grid-cols-[280px_1fr] gap-8">
     <!-- Sidebar -->
     <aside class="space-y-4">
       <div class="mb-8">
-        <h1 class="text-[24px] leading-[1.3] font-bold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">Lumina Studio</h1>
-        <p class="text-[#bccbb9] text-[12px] leading-none font-semibold mt-1" style="font-family:'Inter',sans-serif">Executive Admin</p>
+        <h1 class="text-[24px] leading-[1.3] font-bold text-[var(--primary)]" style="font-family:'Space Grotesk',sans-serif">Lumina Studio</h1>
+        <p class="text-[var(--on-surface-variant)] text-[12px] leading-none font-semibold mt-1" style="font-family:'Inter',sans-serif">Executive Admin</p>
       </div>
       <nav class="space-y-1">
         @for (item of navItems; track item.key) {
           <button (click)="setActiveSection(item.key)"
-            class="w-full flex items-center gap-3 py-3 pl-5 rounded-xl transition-all duration-300 hover:bg-[#4be277]/10 hover:translate-x-1 text-left"
-            [class.text-[#4be277]]="activeSection() === item.key"
+            class="w-full flex items-center gap-3 py-3 pl-5 rounded-xl transition-all duration-300 hover-bg-primary-10 hover:translate-x-1 text-left"
+            [class.text-[var(--primary)]]="activeSection() === item.key"
             [class.font-bold]="activeSection() === item.key"
-            [class.bg-[#4be277]/5]="activeSection() === item.key"
+            [style.background]="activeSection() === item.key ? 'color-mix(in srgb, var(--primary) 5%, transparent)' : ''"
             [class.border-l-4]="activeSection() === item.key"
-            [class.border-[#4be277]]="activeSection() === item.key"
-            [class.text-[#bccbb9]]="activeSection() !== item.key">
+            [class.border-[var(--primary)]]="activeSection() === item.key"
+            [class.text-[var(--on-surface-variant)]]="activeSection() !== item.key">
             <span class="material-symbols-outlined">{{ item.icon }}</span>
             <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">{{ item.label }}</span>
           </button>
         }
       </nav>
       <div class="mt-auto pt-8 space-y-2">
-        <button class="w-full text-left flex items-center gap-3 py-3 px-5 text-[#bccbb9] hover:text-[#4be277] transition-colors text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">
+        <button class="w-full text-left flex items-center gap-3 py-3 px-5 text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">
           <span class="material-symbols-outlined">help</span>
           Help
         </button>
-        <button class="w-full text-left flex items-center gap-3 py-3 px-5 text-[#bccbb9] hover:text-[#ffb4ab] transition-colors text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">
+        <button class="w-full text-left flex items-center gap-3 py-3 px-5 text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">
           <span class="material-symbols-outlined">logout</span>
           Logout
         </button>
@@ -43,10 +43,10 @@
       } @else {
         <!-- Header -->
         <div class="mb-10">
-          <h2 class="text-[32px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">
+          <h2 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">
             {{ activeSection() === 'branch-setup' ? 'Branch Settings' : activeSection() === 'branding' ? 'Branding' : activeSection() === 'staff' ? 'Staff Management' : activeSection() === 'security' ? 'Security' : 'Email Verification' }}
           </h2>
-          <p class="text-[#bccbb9] text-[18px] leading-[1.6] mt-1" style="font-family:'Inter',sans-serif">
+          <p class="text-[var(--on-surface-variant)] text-[18px] leading-[1.6] mt-1" style="font-family:'Inter',sans-serif">
             {{ activeSection() === 'branch-setup' ? 'Configure the digital DNA of your high-tech studio environment.' : activeSection() === 'branding' ? 'Customize your business appearance, logo, and brand colors.' : activeSection() === 'staff' ? 'Manage waiters, reset PINs, and control staff access.' : activeSection() === 'security' ? 'Update your account password.' : 'Verify your email address to enable all features.' }}
           </p>
         </div>
@@ -57,22 +57,22 @@
             <!-- Branch Global Identity -->
             <div class="col-span-12 lg:col-span-8 glass-card p-6">
               <div class="flex items-center gap-3 mb-8">
-                <div class="p-2 bg-[#4be277]/10 rounded-lg">
-                  <span class="material-symbols-outlined text-[#4be277]">hub</span>
+                <div class="p-2 bg-primary-10 rounded-lg">
+                  <span class="material-symbols-outlined text-[var(--primary)]">hub</span>
                 </div>
-                <h3 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Branch Global Identity</h3>
+                <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Branch Global Identity</h3>
               </div>
               <div class="grid grid-cols-2 gap-6">
                 <div class="col-span-2 md:col-span-1 space-y-2">
-                  <label class="text-[14px] leading-none font-semibold text-[#bccbb9] ml-1" style="font-family:'Inter',sans-serif">Profile Name</label>
-                  <input type="text" [ngModel]="profileName()" (ngModelChange)="profileName.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="Your name" style="font-family:'Inter',sans-serif" />
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)] ml-1" style="font-family:'Inter',sans-serif">Profile Name</label>
+                  <input type="text" [ngModel]="profileName()" (ngModelChange)="profileName.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="Your name" style="font-family:'Inter',sans-serif" />
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2">
-                  <label class="text-[14px] leading-none font-semibold text-[#bccbb9] ml-1" style="font-family:'Inter',sans-serif">Email</label>
-                  <input type="email" [ngModel]="profileEmail()" (ngModelChange)="profileEmail.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="email@business.com" style="font-family:'Inter',sans-serif" />
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)] ml-1" style="font-family:'Inter',sans-serif">Email</label>
+                  <input type="email" [ngModel]="profileEmail()" (ngModelChange)="profileEmail.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="email@business.com" style="font-family:'Inter',sans-serif" />
                 </div>
               </div>
-              <button (click)="updateProfile()" [disabled]="isUpdatingProfile()" class="mt-6 px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+              <button (click)="updateProfile()" [disabled]="isUpdatingProfile()" class="mt-6 px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
                 {{ isUpdatingProfile() ? 'Saving...' : 'Save Changes' }}
               </button>
             </div>
@@ -80,25 +80,25 @@
             <!-- Brand Tokens -->
             <div class="col-span-12 lg:col-span-4 glass-card p-6 flex flex-col">
               <div class="flex items-center gap-3 mb-6">
-                <div class="p-2 bg-[#ffb3b7]/10 rounded-lg">
-                  <span class="material-symbols-outlined text-[#ffb3b7]">token</span>
+                <div class="p-2 bg-error-10 rounded-lg">
+                  <span class="material-symbols-outlined text-[var(--error)]">token</span>
                 </div>
-                <h3 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Active Branch</h3>
+                <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Active Branch</h3>
               </div>
               <div class="flex-1 space-y-6">
                 <div class="space-y-2">
-                  <label class="text-[14px] leading-none font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">Current Branch</label>
-                  <select [ngModel]="activeBranchId()" (ngModelChange)="setActiveBranch($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
-                    <option value="" class="bg-[#0c1324]">All Branches</option>
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Current Branch</label>
+                  <select [ngModel]="activeBranchId()" (ngModelChange)="setActiveBranch($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
+                    <option value="" class="bg-[var(--background)]">All Branches</option>
                     @for (b of branches(); track b.id) {
-                      <option [value]="b.id" class="bg-[#0c1324]">{{ b.name }}</option>
+                      <option [value]="b.id" class="bg-[var(--background)]">{{ b.name }}</option>
                     }
                   </select>
                 </div>
-                <div class="mt-4 p-4 bg-[#4be277]/5 rounded-2xl border border-[#4be277]/10">
+                <div class="mt-4 p-4 bg-primary-5 rounded-2xl border border-primary-10">
                   <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-[#4be277]" style="font-variation-settings:'FILL' 1">info</span>
-                    <p class="text-[#bccbb9] text-[14px] leading-[1.4]" style="font-family:'Inter',sans-serif">Global identity changes take up to 5 minutes to propagate.</p>
+                    <span class="material-symbols-outlined text-[var(--primary)]" style="font-variation-settings:'FILL' 1">info</span>
+                    <p class="text-[var(--on-surface-variant)] text-[14px] leading-[1.4]" style="font-family:'Inter',sans-serif">Global identity changes take up to 5 minutes to propagate.</p>
                   </div>
                 </div>
               </div>
@@ -108,12 +108,12 @@
             <div class="col-span-12 glass-card p-6">
               <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div class="flex items-center gap-3">
-                  <div class="p-2 bg-[#0566d9]/10 rounded-lg">
-                    <span class="material-symbols-outlined text-[#adc6ff]">bolt</span>
+                  <div class="p-2 bg-secondary-10 rounded-lg">
+                    <span class="material-symbols-outlined text-[var(--secondary)]">bolt</span>
                   </div>
-                  <h3 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Your Branches</h3>
+                  <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Your Branches</h3>
                 </div>
-                <button (click)="showCreateBranch()" class="px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all flex items-center gap-2" style="font-family:'Inter',sans-serif">
+                <button (click)="showCreateBranch()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all flex items-center gap-2" style="font-family:'Inter',sans-serif">
                   <span class="material-symbols-outlined text-sm">add</span>
                   Add Branch
                 </button>
@@ -124,20 +124,20 @@
                   @for (branch of branches(); track branch.id) {
                     <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors">
                       <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-[#4be277]/20 flex items-center justify-center text-[#4be277]">
+                        <div class="w-10 h-10 rounded-xl bg-primary-20 flex items-center justify-center text-[var(--primary)]">
                           <span class="material-symbols-outlined">business</span>
                         </div>
                         <div>
-                          <p class="text-[#dce1fb] font-semibold text-sm" style="font-family:'Inter',sans-serif">{{ branch.name }}</p>
-                          <p class="text-[#bccbb9] text-xs" style="font-family:'Inter',sans-serif">{{ branch.address }}{{ branch.phoneNumber ? ' · ' + branch.phoneNumber : '' }}</p>
+                          <p class="text-[var(--on-background)] font-semibold text-sm" style="font-family:'Inter',sans-serif">{{ branch.name }}</p>
+                          <p class="text-[var(--on-surface-variant)] text-xs" style="font-family:'Inter',sans-serif">{{ branch.address }}{{ branch.phoneNumber ? ' · ' + branch.phoneNumber : '' }}</p>
                         </div>
                       </div>
                       <div class="flex items-center gap-3">
-                        <span class="px-3 py-1 rounded-full bg-[#22c55e]/20 text-[#22c55e] text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Active</span>
-                        <button (click)="showEditBranch(branch)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#bccbb9] hover:bg-white/10 transition-all">
+                        <span class="px-3 py-1 rounded-full bg-primary-20 text-[var(--primary)] text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Active</span>
+                        <button (click)="showEditBranch(branch)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--on-surface-variant)] hover:bg-white/10 transition-all">
                           <span class="material-symbols-outlined text-sm">edit</span>
                         </button>
-                        <button (click)="deleteBranch(branch)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#ffb4ab] hover:bg-white/10 transition-all">
+                        <button (click)="deleteBranch(branch)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--error)] hover:bg-white/10 transition-all">
                           <span class="material-symbols-outlined text-sm">delete</span>
                         </button>
                       </div>
@@ -145,7 +145,7 @@
                   }
                 </div>
               } @else {
-                <div class="flex flex-col items-center justify-center py-12 text-[#bccbb9] gap-3">
+                <div class="flex flex-col items-center justify-center py-12 text-[var(--on-surface-variant)] gap-3">
                   <span class="material-symbols-outlined text-4xl">business</span>
                   <p class="text-sm" style="font-family:'Inter',sans-serif">No branches yet. Click + Add Branch to get started.</p>
                 </div>
@@ -155,38 +155,38 @@
             <!-- Global Configurations -->
             <div class="col-span-12 glass-card p-6">
               <div class="flex items-center gap-3 mb-8">
-                <div class="p-2 bg-[#4be277]/10 rounded-lg">
-                  <span class="material-symbols-outlined text-[#4be277]">public</span>
+                <div class="p-2 bg-primary-10 rounded-lg">
+                  <span class="material-symbols-outlined text-[var(--primary)]">public</span>
                 </div>
-                <h3 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Global Branch Configurations</h3>
+                <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Global Branch Configurations</h3>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="space-y-2">
-                  <label class="text-[14px] leading-none font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">Default Tax Rate (%)</label>
-                  <input type="number" step="0.01" min="0" max="100" [ngModel]="taxRate()" (ngModelChange)="taxRate.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. 7.5" style="font-family:'Inter',sans-serif" />
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Default Tax Rate (%)</label>
+                  <input type="number" step="0.01" min="0" max="100" [ngModel]="taxRate()" (ngModelChange)="taxRate.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 7.5" style="font-family:'Inter',sans-serif" />
                 </div>
                 <div class="space-y-2">
-                  <label class="text-[14px] leading-none font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">Base Currency</label>
-                  <select [ngModel]="currency()" (ngModelChange)="currency.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
-                    <option value="NGN" class="bg-[#0c1324]">NGN (₦)</option>
-                    <option value="USD" class="bg-[#0c1324]">USD ($)</option>
-                    <option value="GBP" class="bg-[#0c1324]">GBP (£)</option>
-                    <option value="EUR" class="bg-[#0c1324]">EUR (€)</option>
-                    <option value="KES" class="bg-[#0c1324]">KES (KSh)</option>
-                    <option value="GHS" class="bg-[#0c1324]">GHS (GH₵)</option>
-                    <option value="ZAR" class="bg-[#0c1324]">ZAR (R)</option>
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Base Currency</label>
+                  <select [ngModel]="currency()" (ngModelChange)="currency.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
+                    <option value="NGN" class="bg-[var(--background)]">NGN (₦)</option>
+                    <option value="USD" class="bg-[var(--background)]">USD ($)</option>
+                    <option value="GBP" class="bg-[var(--background)]">GBP (£)</option>
+                    <option value="EUR" class="bg-[var(--background)]">EUR (€)</option>
+                    <option value="KES" class="bg-[var(--background)]">KES (KSh)</option>
+                    <option value="GHS" class="bg-[var(--background)]">GHS (GH₵)</option>
+                    <option value="ZAR" class="bg-[var(--background)]">ZAR (R)</option>
                   </select>
                 </div>
                 <div class="space-y-2">
-                  <label class="text-[14px] leading-none font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">Timezone</label>
-                  <select [ngModel]="timezone()" (ngModelChange)="timezone.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Timezone</label>
+                  <select [ngModel]="timezone()" (ngModelChange)="timezone.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
                     @for (tz of timezones; track tz.value) {
-                      <option [value]="tz.value" class="bg-[#0c1324]">{{ tz.label }}</option>
+                      <option [value]="tz.value" class="bg-[var(--background)]">{{ tz.label }}</option>
                     }
                   </select>
                 </div>
               </div>
-              <button (click)="saveBusinessSettings()" [disabled]="isSavingSettings()" class="mt-6 px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+              <button (click)="saveBusinessSettings()" [disabled]="isSavingSettings()" class="mt-6 px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
                 {{ isSavingSettings() ? 'Saving...' : 'Synchronize Branch' }}
               </button>
             </div>
@@ -197,53 +197,53 @@
         @if (activeSection() === 'branding') {
           <div class="space-y-6">
             <div class="glass-card p-6">
-              <h3 class="text-[18px] leading-[1.6] font-medium text-[#dce1fb] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
-                <span class="material-symbols-outlined text-[#4be277]">palette</span>
+              <h3 class="text-[18px] leading-[1.6] font-medium text-[var(--on-background)] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
+                <span class="material-symbols-outlined text-[var(--primary)]">palette</span>
                 Business Logo
               </h3>
               <div class="flex items-center gap-6">
-                <div class="w-24 h-24 rounded-xl bg-[#151b2d] flex items-center justify-center overflow-hidden border border-white/5">
+                <div class="w-24 h-24 rounded-xl bg-[var(--surface)] flex items-center justify-center overflow-hidden border border-white/5">
                   @if (brandLogoPreview() || businessSettings()?.logoUrl) {
                     <img [src]="brandLogoPreview() || businessSettings()?.logoUrl" class="w-full h-full object-cover" />
                   } @else {
-                    <div class="flex flex-col items-center gap-1 text-[#bccbb9] text-xs">
+                    <div class="flex flex-col items-center gap-1 text-[var(--on-surface-variant)] text-xs">
                       <span class="material-symbols-outlined">image</span>
                       <span>No logo</span>
                     </div>
                   }
                 </div>
                 <div class="flex flex-col gap-2">
-                  <label class="px-5 py-2.5 rounded-xl bg-white/5 border border-dashed border-white/10 text-[#bccbb9] text-[14px] leading-none font-semibold cursor-pointer hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">
+                  <label class="px-5 py-2.5 rounded-xl bg-white/5 border border-dashed border-white/10 text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold cursor-pointer hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">
                     Choose File
                     <input type="file" accept="image/*" (change)="onBrandLogoSelected($event)" hidden />
                   </label>
-                  <span class="text-[12px] leading-none text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">PNG, JPG or WebP. Max 2MB.</span>
+                  <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">PNG, JPG or WebP. Max 2MB.</span>
                 </div>
               </div>
             </div>
 
             <div class="glass-card p-6">
-              <h3 class="text-[18px] leading-[1.6] font-medium text-[#dce1fb] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
-                <span class="material-symbols-outlined text-[#4be277]">edit</span>
+              <h3 class="text-[18px] leading-[1.6] font-medium text-[var(--on-background)] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
+                <span class="material-symbols-outlined text-[var(--primary)]">edit</span>
                 Brand Colors
               </h3>
               <div class="grid grid-cols-2 gap-6">
                 <div class="space-y-2">
-                  <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">PRIMARY COLOR</label>
+                  <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">PRIMARY COLOR</label>
                   <div class="flex items-center gap-3">
                     <input type="color" [ngModel]="brandPrimaryColor()" (ngModelChange)="brandPrimaryColor.set($event)" class="w-11 h-11 rounded-xl border border-white/10 p-0.5 cursor-pointer bg-transparent" />
-                    <input type="text" [ngModel]="brandPrimaryColor()" (ngModelChange)="brandPrimaryColor.set($event)" class="flex-1 h-14 px-4 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                    <input type="text" [ngModel]="brandPrimaryColor()" (ngModelChange)="brandPrimaryColor.set($event)" class="flex-1 h-14 px-4 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
                   </div>
                 </div>
                 <div class="space-y-2">
-                  <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">ACCENT COLOR</label>
+                  <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">ACCENT COLOR</label>
                   <div class="flex items-center gap-3">
                     <input type="color" [ngModel]="brandAccentColor()" (ngModelChange)="brandAccentColor.set($event)" class="w-11 h-11 rounded-xl border border-white/10 p-0.5 cursor-pointer bg-transparent" />
-                    <input type="text" [ngModel]="brandAccentColor()" (ngModelChange)="brandAccentColor.set($event)" class="flex-1 h-14 px-4 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                    <input type="text" [ngModel]="brandAccentColor()" (ngModelChange)="brandAccentColor.set($event)" class="flex-1 h-14 px-4 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
                   </div>
                 </div>
               </div>
-              <button (click)="saveBranding()" [disabled]="isSavingBranding()" class="mt-6 px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+              <button (click)="saveBranding()" [disabled]="isSavingBranding()" class="mt-6 px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
                 {{ isSavingBranding() ? 'Saving...' : 'Save Branding' }}
               </button>
             </div>
@@ -254,8 +254,8 @@
         @if (activeSection() === 'staff') {
           <div class="space-y-6">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Waiters</h3>
-              <button (click)="showCreateWaiter()" class="px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all flex items-center gap-2" style="font-family:'Inter',sans-serif">
+              <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Waiters</h3>
+              <button (click)="showCreateWaiter()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all flex items-center gap-2" style="font-family:'Inter',sans-serif">
                 <span class="material-symbols-outlined text-sm">add</span>
                 Add Waiter
               </button>
@@ -272,30 +272,30 @@
                 @for (w of waiters(); track w.id) {
                   <div class="glass-card p-5 rounded-2xl flex flex-col gap-3">
                     <div class="flex items-center gap-3">
-                      <div class="w-11 h-11 rounded-xl bg-[#4be277]/20 flex items-center justify-center text-[#4be277] font-bold text-sm">{{ getInitials(w.fullName) }}</div>
+                      <div class="w-11 h-11 rounded-xl bg-primary-20 flex items-center justify-center text-[var(--primary)] font-bold text-sm">{{ getInitials(w.fullName) }}</div>
                       <div class="flex-1">
-                        <p class="text-[#dce1fb] font-semibold text-sm" style="font-family:'Inter',sans-serif">{{ w.fullName }}</p>
-                        <p class="text-[#bccbb9] text-xs capitalize" style="font-family:'Inter',sans-serif">{{ w.role }}</p>
+                        <p class="text-[var(--on-background)] font-semibold text-sm" style="font-family:'Inter',sans-serif">{{ w.fullName }}</p>
+                        <p class="text-[var(--on-surface-variant)] text-xs capitalize" style="font-family:'Inter',sans-serif">{{ w.role }}</p>
                       </div>
                       <span class="px-3 py-1 rounded-full text-[12px] leading-none font-semibold"
-                        [class.bg-[#22c55e]/20]="w.isActive !== false"
-                        [class.text-[#22c55e]]="w.isActive !== false"
+                        [style.background]="w.isActive !== false ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : ''"
+                        [class.text-[var(--primary)]]="w.isActive !== false"
                         [class.bg-white/10]="w.isActive === false"
-                        [class.text-[#bccbb9]]="w.isActive === false"
+                        [class.text-[var(--on-surface-variant)]]="w.isActive === false"
                         style="font-family:'Inter',sans-serif">
                         {{ w.isActive === false ? 'Inactive' : 'Active' }}
                       </span>
                     </div>
                     @if (w.email) {
-                      <p class="text-[#bccbb9] text-xs" style="font-family:'Inter',sans-serif">{{ w.email }}</p>
+                      <p class="text-[var(--on-surface-variant)] text-xs" style="font-family:'Inter',sans-serif">{{ w.email }}</p>
                     }
                     <div class="flex gap-2 mt-1">
-                      <button (click)="resetWaiterPin(w)" class="flex-1 py-2 rounded-xl bg-white/5 text-[#bccbb9] text-[13px] leading-none font-semibold hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">Reset PIN</button>
+                      <button (click)="resetWaiterPin(w)" class="flex-1 py-2 rounded-xl bg-white/5 text-[var(--on-surface-variant)] text-[13px] leading-none font-semibold hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">Reset PIN</button>
                       <button (click)="deactivateWaiter(w)" class="flex-1 py-2 rounded-xl text-[13px] leading-none font-semibold transition-all"
-                        [class.bg-[#ffb4ab]/10]="w.isActive !== false"
-                        [class.text-[#ffb4ab]]="w.isActive !== false"
-                        [class.bg-[#22c55e]/10]="w.isActive === false"
-                        [class.text-[#22c55e]]="w.isActive === false"
+                        [style.background]="w.isActive !== false ? 'color-mix(in srgb, var(--error) 10%, transparent)' : ''"
+                        [class.text-[var(--error)]]="w.isActive !== false"
+                        [style.background]="w.isActive === false ? 'color-mix(in srgb, var(--primary) 10%, transparent)' : ''"
+                        [class.text-[var(--primary)]]="w.isActive === false"
                         style="font-family:'Inter',sans-serif">
                         {{ w.isActive === false ? 'Activate' : 'Deactivate' }}
                       </button>
@@ -303,7 +303,7 @@
                   </div>
                 }
                 @if (waiters().length === 0) {
-                  <div class="col-span-full flex flex-col items-center justify-center py-12 text-[#bccbb9] gap-3">
+                  <div class="col-span-full flex flex-col items-center justify-center py-12 text-[var(--on-surface-variant)] gap-3">
                     <span class="material-symbols-outlined text-4xl">group</span>
                     <p class="text-sm" style="font-family:'Inter',sans-serif">No staff members yet. Click + Add Waiter.</p>
                   </div>
@@ -316,21 +316,21 @@
         <!-- Security Section -->
         @if (activeSection() === 'security') {
           <div class="glass-card p-6 max-w-lg">
-            <h3 class="text-[18px] leading-[1.6] font-medium text-[#dce1fb] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
-              <span class="material-symbols-outlined text-[#4be277]">lock</span>
+            <h3 class="text-[18px] leading-[1.6] font-medium text-[var(--on-background)] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
+              <span class="material-symbols-outlined text-[var(--primary)]">lock</span>
               Change Password
             </h3>
             <div class="space-y-4">
               <div class="space-y-2">
-                <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">NEW PASSWORD</label>
-                <input type="password" [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="Min. 8 characters" minlength="8" style="font-family:'Inter',sans-serif" />
+                <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">NEW PASSWORD</label>
+                <input type="password" [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="Min. 8 characters" minlength="8" style="font-family:'Inter',sans-serif" />
               </div>
               <div class="space-y-2">
-                <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">CONFIRM PASSWORD</label>
-                <input type="password" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="Re-enter new password" style="font-family:'Inter',sans-serif" />
+                <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">CONFIRM PASSWORD</label>
+                <input type="password" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="Re-enter new password" style="font-family:'Inter',sans-serif" />
               </div>
             </div>
-            <button (click)="updatePassword()" [disabled]="isUpdatingPassword() || !newPassword() || !confirmPassword()" class="mt-6 px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+            <button (click)="updatePassword()" [disabled]="isUpdatingPassword() || !newPassword() || !confirmPassword()" class="mt-6 px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
               {{ isUpdatingPassword() ? 'Updating...' : 'Update Password' }}
             </button>
           </div>
@@ -339,27 +339,27 @@
         <!-- Verification Section -->
         @if (activeSection() === 'verification') {
           <div class="glass-card p-6 max-w-lg">
-            <h3 class="text-[18px] leading-[1.6] font-medium text-[#dce1fb] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
-              <span class="material-symbols-outlined text-[#4be277]">verified</span>
+            <h3 class="text-[18px] leading-[1.6] font-medium text-[var(--on-background)] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
+              <span class="material-symbols-outlined text-[var(--primary)]">verified</span>
               Verify Email
             </h3>
             @if (profileEmail()) {
-              <p class="text-[#bccbb9] text-sm mb-4" style="font-family:'Inter',sans-serif">We'll send a code to <strong class="text-[#dce1fb]">{{ profileEmail() }}</strong></p>
+              <p class="text-[var(--on-surface-variant)] text-sm mb-4" style="font-family:'Inter',sans-serif">We'll send a code to <strong class="text-[var(--on-background)]">{{ profileEmail() }}</strong></p>
             }
             @if (isEmailVerified()) {
-              <span class="inline-block px-3 py-1 rounded-full bg-[#22c55e]/20 text-[#22c55e] text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Verified</span>
+              <span class="inline-block px-3 py-1 rounded-full bg-primary-20 text-[var(--primary)] text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Verified</span>
             } @else {
               <div class="flex flex-col gap-4">
-                <button (click)="sendVerificationCode()" [disabled]="isSendingCode() || !profileEmail()" class="px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all self-start" style="font-family:'Inter',sans-serif">
+                <button (click)="sendVerificationCode()" [disabled]="isSendingCode() || !profileEmail()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all self-start" style="font-family:'Inter',sans-serif">
                   {{ isSendingCode() ? 'Sending...' : 'Send Code' }}
                 </button>
                 @if (showCodeInput()) {
                   <div class="flex gap-4 items-end">
                     <div class="flex-1 space-y-2">
-                      <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">ENTER CODE</label>
-                      <input type="text" [ngModel]="verificationCode()" (ngModelChange)="verificationCode.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. 123456" style="font-family:'Inter',sans-serif" />
+                      <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">ENTER CODE</label>
+                      <input type="text" [ngModel]="verificationCode()" (ngModelChange)="verificationCode.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 123456" style="font-family:'Inter',sans-serif" />
                     </div>
-                    <button (click)="verifyEmailCode()" [disabled]="!verificationCode()" class="px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">Verify</button>
+                    <button (click)="verifyEmailCode()" [disabled]="!verificationCode()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">Verify</button>
                   </div>
                 }
               </div>
@@ -370,8 +370,8 @@
         <!-- Sticky Footer (Branch Setup only) -->
         @if (activeSection() === 'branch-setup') {
           <div class="mt-10 flex items-center justify-end gap-4 p-6 glass-card">
-            <button class="px-8 py-3 rounded-full text-[#bccbb9] text-[14px] leading-none font-semibold hover:text-[#dce1fb] transition-colors" style="font-family:'Inter',sans-serif">Discard Changes</button>
-            <button (click)="saveBusinessSettings()" [disabled]="isSavingSettings()" class="px-10 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+            <button class="px-8 py-3 rounded-full text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold hover:text-[var(--on-background)] transition-colors" style="font-family:'Inter',sans-serif">Discard Changes</button>
+            <button (click)="saveBusinessSettings()" [disabled]="isSavingSettings()" class="px-10 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
               {{ isSavingSettings() ? 'Saving...' : 'Synchronize Branch' }}
             </button>
           </div>
@@ -385,32 +385,32 @@
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" (click)="showBranchModal.set(false)">
       <div class="glass-card rounded-2xl w-[480px] max-w-[90vw] p-8" (click)="$event.stopPropagation()">
         <div class="flex justify-between items-center mb-6">
-          <h3 class="text-[20px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ editingBranch() ? 'Edit Branch' : 'Create Branch' }}</h3>
-          <button (click)="showBranchModal.set(false)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#bccbb9] hover:bg-white/10 transition-all">
+          <h3 class="text-[20px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ editingBranch() ? 'Edit Branch' : 'Create Branch' }}</h3>
+          <button (click)="showBranchModal.set(false)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--on-surface-variant)] hover:bg-white/10 transition-all">
             <span class="material-symbols-outlined text-sm">close</span>
           </button>
         </div>
         <div class="space-y-4">
           <div class="space-y-2">
-            <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">BRANCH NAME</label>
-            <input type="text" [ngModel]="branchFormName()" (ngModelChange)="branchFormName.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. Victoria Island" style="font-family:'Inter',sans-serif" />
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">BRANCH NAME</label>
+            <input type="text" [ngModel]="branchFormName()" (ngModelChange)="branchFormName.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. Victoria Island" style="font-family:'Inter',sans-serif" />
           </div>
           <div class="space-y-2">
-            <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">ADDRESS</label>
-            <input type="text" [ngModel]="branchFormAddress()" (ngModelChange)="branchFormAddress.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. 123 Marina Street" style="font-family:'Inter',sans-serif" />
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">ADDRESS</label>
+            <input type="text" [ngModel]="branchFormAddress()" (ngModelChange)="branchFormAddress.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 123 Marina Street" style="font-family:'Inter',sans-serif" />
           </div>
           <div class="space-y-2">
-            <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">PHONE NUMBER</label>
-            <input type="text" [ngModel]="branchFormPhone()" (ngModelChange)="branchFormPhone.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. +234 800 000 0000" style="font-family:'Inter',sans-serif" />
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">PHONE NUMBER</label>
+            <input type="text" [ngModel]="branchFormPhone()" (ngModelChange)="branchFormPhone.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. +234 800 000 0000" style="font-family:'Inter',sans-serif" />
           </div>
           <div class="space-y-2">
-            <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">LOCATION</label>
-            <input type="text" [ngModel]="branchFormLocation()" (ngModelChange)="branchFormLocation.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. Lagos, Nigeria" style="font-family:'Inter',sans-serif" />
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">LOCATION</label>
+            <input type="text" [ngModel]="branchFormLocation()" (ngModelChange)="branchFormLocation.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. Lagos, Nigeria" style="font-family:'Inter',sans-serif" />
           </div>
         </div>
         <div class="flex justify-end gap-3 mt-8">
-          <button (click)="showBranchModal.set(false)" class="px-6 py-3 rounded-full bg-white/5 text-[#bccbb9] text-[14px] leading-none font-semibold hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">Cancel</button>
-          <button (click)="saveBranch()" [disabled]="isSavingBranch() || !branchFormName()" class="px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+          <button (click)="showBranchModal.set(false)" class="px-6 py-3 rounded-full bg-white/5 text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">Cancel</button>
+          <button (click)="saveBranch()" [disabled]="isSavingBranch() || !branchFormName()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
             {{ isSavingBranch() ? 'Saving...' : editingBranch() ? 'Update Branch' : 'Create Branch' }}
           </button>
         </div>
@@ -423,36 +423,36 @@
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" (click)="showCreateWaiterModal.set(false)">
       <div class="glass-card rounded-2xl w-[480px] max-w-[90vw] p-8" (click)="$event.stopPropagation()">
         <div class="flex justify-between items-center mb-6">
-          <h3 class="text-[20px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Add Waiter</h3>
-          <button (click)="showCreateWaiterModal.set(false)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#bccbb9] hover:bg-white/10 transition-all">
+          <h3 class="text-[20px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Add Waiter</h3>
+          <button (click)="showCreateWaiterModal.set(false)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--on-surface-variant)] hover:bg-white/10 transition-all">
             <span class="material-symbols-outlined text-sm">close</span>
           </button>
         </div>
         <div class="space-y-4">
           <div class="space-y-2">
-            <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">FULL NAME</label>
-            <input type="text" [ngModel]="waiterFormName()" (ngModelChange)="waiterFormName.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. Jane Waiter" style="font-family:'Inter',sans-serif" />
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">FULL NAME</label>
+            <input type="text" [ngModel]="waiterFormName()" (ngModelChange)="waiterFormName.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. Jane Waiter" style="font-family:'Inter',sans-serif" />
           </div>
           <div class="space-y-2">
-            <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">EMAIL (optional)</label>
-            <input type="email" [ngModel]="waiterFormEmail()" (ngModelChange)="waiterFormEmail.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. jane@bistro.com" style="font-family:'Inter',sans-serif" />
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">EMAIL (optional)</label>
+            <input type="email" [ngModel]="waiterFormEmail()" (ngModelChange)="waiterFormEmail.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. jane@bistro.com" style="font-family:'Inter',sans-serif" />
           </div>
           <div class="space-y-2">
-            <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">PHONE (optional)</label>
-            <input type="text" [ngModel]="waiterFormPhone()" (ngModelChange)="waiterFormPhone.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5]" placeholder="e.g. +234 800 000 0000" style="font-family:'Inter',sans-serif" />
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">PHONE (optional)</label>
+            <input type="text" [ngModel]="waiterFormPhone()" (ngModelChange)="waiterFormPhone.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. +234 800 000 0000" style="font-family:'Inter',sans-serif" />
           </div>
           <div class="space-y-2">
-            <label class="text-[12px] leading-none font-bold text-[#bccbb9] tracking-wider" style="font-family:'Inter',sans-serif">BRANCH</label>
-            <select [ngModel]="waiterFormBranchId()" (ngModelChange)="waiterFormBranchId.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[#dce1fb] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">BRANCH</label>
+            <select [ngModel]="waiterFormBranchId()" (ngModelChange)="waiterFormBranchId.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
               @for (b of branches(); track b.id) {
-                <option [value]="b.id" class="bg-[#0c1324]">{{ b.name }}</option>
+                <option [value]="b.id" class="bg-[var(--background)]">{{ b.name }}</option>
               }
             </select>
           </div>
         </div>
         <div class="flex justify-end gap-3 mt-8">
-          <button (click)="showCreateWaiterModal.set(false)" class="px-6 py-3 rounded-full bg-white/5 text-[#bccbb9] text-[14px] leading-none font-semibold hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">Cancel</button>
-          <button (click)="createWaiter()" [disabled]="isSavingWaiter() || !waiterFormName() || !waiterFormBranchId()" class="px-6 py-3 rounded-full bg-[#4be277] text-[#003915] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+          <button (click)="showCreateWaiterModal.set(false)" class="px-6 py-3 rounded-full bg-white/5 text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">Cancel</button>
+          <button (click)="createWaiter()" [disabled]="isSavingWaiter() || !waiterFormName() || !waiterFormBranchId()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
             {{ isSavingWaiter() ? 'Saving...' : 'Create Waiter' }}
           </button>
         </div>

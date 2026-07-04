@@ -169,7 +169,6 @@ export class BillsComponent implements OnInit {
           <p><strong>Status:</strong> ${bill.paidAt ? 'Paid on ' + new Date(bill.paidAt).toLocaleDateString() : 'Pending'}</p>
         </div>
       `,
-      confirmButtonColor: '#F97316',
       confirmButtonText: 'Close',
       width: 480
     });
