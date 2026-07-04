@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./register-business.component.scss']
 })
 export class RegisterBusinessComponent {
+  @HostBinding('attr.data-theme') theme = 'dark';
   businessName = signal('');
   pin = signal('');
   fullName = signal('');

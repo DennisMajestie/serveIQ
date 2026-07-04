@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, AfterViewInit, Inject, PLATFORM_ID, HostBinding } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./premium-dashboard.component.scss']
 })
 export class PremiumDashboardComponent implements AfterViewInit {
+  @HostBinding('attr.data-theme') theme = 'dark';
   recentEvents = [
     { tx: '#TX_8829', status: 'Paid', statusClass: 'status-paid', desc: 'Table 12 - $145.00', time: '14:22:10 UTC' },
     { tx: '#TX_8830', status: 'Pending', statusClass: 'status-pending', desc: 'Table 04 - $82.50', time: '14:25:44 UTC' },
@@ -68,9 +69,9 @@ void main() {
     float orangeBlob = smoothstep(0.6, 0.0, distance(uv, vec2(0.2 + 0.1 * sin(u_time * 0.4), 0.3 + 0.1 * cos(u_time * 0.5))));
     float violetBlob = smoothstep(0.7, 0.0, distance(uv, vec2(0.8 + 0.1 * cos(u_time * 0.3), 0.7 + 0.1 * sin(u_time * 0.4))));
     float tertiaryBlob = smoothstep(0.5, 0.0, distance(uv, vec2(0.5 + 0.2 * sin(u_time * 0.2), 0.5 + 0.2 * cos(u_time * 0.3))));
-    vec3 orange = vec3(0.976, 0.451, 0.086);
-    vec3 violet = vec3(0.545, 0.361, 0.965);
-    vec3 base = vec3(0.973, 0.980, 0.988);
+    vec3 orange = vec3(0.294, 0.886, 0.467);
+    vec3 violet = vec3(0.678, 0.776, 1.000);
+    vec3 base = vec3(0.008, 0.024, 0.090);
     vec3 color = base;
     color = mix(color, orange, orangeBlob * 0.3);
     color = mix(color, violet, violetBlob * 0.3);

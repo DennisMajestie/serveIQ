@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild, Inject, PLATFORM_ID, HostBinding } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent implements AfterViewInit {
+  @HostBinding('attr.data-theme') theme = 'dark';
   @ViewChild('luxuryCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
   features = [
@@ -72,7 +73,7 @@ export class LandingComponent implements AfterViewInit {
 
     function draw() {
       ctx!.clearRect(0, 0, width, height);
-      ctx!.strokeStyle = 'rgba(144, 63, 0, 0.08)';
+      ctx!.strokeStyle = 'rgba(75, 226, 119, 0.08)';
       ctx!.lineWidth = 0.8;
 
       particles.forEach((p, i) => {
@@ -83,7 +84,7 @@ export class LandingComponent implements AfterViewInit {
 
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx!.fillStyle = 'rgba(144, 63, 0, 0.15)';
+        ctx!.fillStyle = 'rgba(75, 226, 119, 0.15)';
         ctx!.fill();
 
         for (let j = i + 1; j < particles.length; j++) {

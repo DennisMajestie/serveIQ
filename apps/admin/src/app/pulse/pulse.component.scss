@@ -1,8 +1,8 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #020617;
-  color: #dce1fb;
+  background: var(--background);
+  color: var(--on-background);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 }
@@ -18,10 +18,10 @@
   align-items: center;
   padding: 0 40px;
   height: 96px;
-  background: rgba(2, 6, 23, 0.2);
+  background: color-mix(in srgb, var(--background) 20%, transparent);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
-  border-bottom: 1px solid rgba(75, 226, 119, 0.1);
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
   box-sizing: border-box;
 }
 
@@ -29,8 +29,8 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 48px;
   font-weight: 700;
-  color: #4be277;
-  text-shadow: 0 0 10px rgba(75, 226, 119, 0.5), 0 0 20px rgba(75, 226, 119, 0.3);
+  color: var(--primary);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--primary) 50%, transparent), 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent);
   letter-spacing: -0.02em;
 }
 
@@ -50,17 +50,17 @@
   font-weight: 600;
   font-family: 'JetBrains Mono', monospace;
   text-transform: uppercase;
-  color: rgba(188, 203, 185, 0.4);
+  color: var(--on-surface-variant);
   text-decoration: none;
   transition: all 0.3s;
 }
 
 .nav-link:hover, .nav-link.active {
-  color: #4be277;
+  color: var(--primary);
 }
 
 .nav-link.active {
-  border-bottom: 2px solid #4be277;
+  border-bottom: 2px solid var(--primary);
   padding-bottom: 4px;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .icon-btn {
-  background: rgba(75, 226, 119, 0.05);
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -81,7 +81,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
-  color: #4be277;
+  color: var(--primary);
 }
 
 .icon-btn:hover {
@@ -108,8 +108,8 @@
 }
 
 .panel {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(75, 226, 119, 0.1);
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
   border-radius: 12px;
   padding: 28px;
   backdrop-filter: blur(32px);
@@ -121,10 +121,10 @@
 }
 
 .panel:hover {
-  background: rgba(15, 23, 42, 0.6);
-  border-color: rgba(75, 226, 119, 0.3);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent);
   transform: translateY(-4px);
-  box-shadow: 0 12px 48px rgba(74, 225, 118, 0.1);
+  box-shadow: 0 12px 48px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .reasoning-panel {
@@ -145,7 +145,7 @@
 .scanner-line {
   height: 2px;
   width: 100%;
-  background: linear-gradient(90deg, transparent, rgba(75, 226, 119, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 50%, transparent), transparent);
   position: absolute;
   top: -2px;
   left: 0;
@@ -168,7 +168,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 24px;
   font-weight: 500;
-  color: #4be277;
+  color: var(--primary);
   margin: 0;
 }
 
@@ -190,26 +190,26 @@
 }
 
 .stream-item {
-  border-left: 2px solid rgba(75, 226, 119, 0.1);
+  border-left: 2px solid color-mix(in srgb, var(--primary) 10%, transparent);
   padding: 8px 0 8px 16px;
   border-radius: 0 8px 8px 0;
   transition: all 0.3s;
 }
 
 .stream-item.active {
-  border-left-color: #4be277;
-  background: rgba(75, 226, 119, 0.05);
+  border-left-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
 }
 
 .stream-item:hover {
-  background: rgba(75, 226, 119, 0.1);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .stream-title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   font-weight: 700;
-  color: #4be277;
+  color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 4px;
@@ -217,27 +217,27 @@
 
 .stream-time {
   font-size: 12px;
-  color: rgba(220, 225, 251, 0.8);
+  color: color-mix(in srgb, var(--on-background) 80%, transparent);
   margin: 0 0 2px;
 }
 
 .stream-detail {
   font-size: 12px;
-  color: rgba(75, 226, 119, 0.6);
+  color: color-mix(in srgb, var(--primary) 60%, transparent);
   margin: 0;
 }
 
 .stream-footer {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid rgba(75, 226, 119, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: rgba(75, 226, 119, 0.4);
+  color: color-mix(in srgb, var(--primary) 40%, transparent);
   font-family: 'JetBrains Mono', monospace;
 }
 
@@ -251,7 +251,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #4be277;
+  background: var(--primary);
 }
 
 .dot.ping {
@@ -312,17 +312,17 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px solid rgba(75, 226, 119, 0.2);
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
   animation: pulse-border 2s infinite alternate;
 }
 
 @keyframes pulse-border {
   from {
-    border-color: rgba(75, 226, 119, 0.2);
+    border-color: color-mix(in srgb, var(--primary) 20%, transparent);
   }
   to {
-    border-color: rgba(75, 226, 119, 0.6);
-    box-shadow: 0 0 15px rgba(75, 226, 119, 0.2);
+    border-color: color-mix(in srgb, var(--primary) 60%, transparent);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 20%, transparent);
   }
 }
 
@@ -338,23 +338,23 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 32px;
   font-weight: 600;
-  color: #4be277;
+  color: var(--primary);
   letter-spacing: 0.4em;
   text-transform: uppercase;
   margin-bottom: 16px;
-  text-shadow: 0 0 10px rgba(75, 226, 119, 0.5), 0 0 20px rgba(75, 226, 119, 0.3);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--primary) 50%, transparent), 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent);
   opacity: 0.9;
 }
 
 .core-freq {
   font-size: 12px;
   font-weight: 500;
-  color: rgba(220, 225, 251, 0.6);
-  background: rgba(2, 6, 23, 0.6);
+  color: color-mix(in srgb, var(--on-background) 60%, transparent);
+  background: color-mix(in srgb, var(--background) 60%, transparent);
   backdrop-filter: blur(16px);
   padding: 4px 16px;
   border-radius: 9999px;
-  border: 1px solid rgba(75, 226, 119, 0.1);
+  border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .core-metrics {
@@ -364,13 +364,13 @@
   transform: translateX(-50%);
   display: flex;
   gap: 64px;
-  background: rgba(75, 226, 119, 0.05);
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
   padding: 24px 48px;
   border-radius: 16px;
-  border: 1px solid rgba(75, 226, 119, 0.1);
-  box-shadow: 0 0 30px rgba(75, 226, 119, 0.15);
+  border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--primary) 15%, transparent);
   white-space: nowrap;
 }
 
@@ -389,8 +389,8 @@
   transform: scale(1.1);
 }
 
-.text-primary { color: #4be277; }
-.text-secondary { color: #adc6ff; }
+.text-primary { color: var(--primary); }
+.text-secondary { color: var(--secondary); }
 
 .metric-label {
   font-size: 10px;
@@ -401,13 +401,13 @@
 }
 
 .metric-label {
-  color: rgba(75, 226, 119, 0.4);
+  color: color-mix(in srgb, var(--primary) 40%, transparent);
 }
 
 .metric-divider {
   width: 1px;
   height: 40px;
-  background: rgba(75, 226, 119, 0.1);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
   align-self: center;
 }
 
@@ -444,33 +444,33 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--on-background) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-background) 5%, transparent);
 }
 
 .manifest-item.completed {
-  background: rgba(75, 226, 119, 0.05);
-  border-color: rgba(75, 226, 119, 0.1);
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .manifest-item:hover {
-  background: rgba(75, 226, 119, 0.1);
-  border-color: rgba(75, 226, 119, 0.3);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
 .manifest-item.completed:hover {
-  background: rgba(75, 226, 119, 0.15);
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
 .manifest-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   font-weight: 600;
-  color: #dce1fb;
+  color: var(--on-background);
 }
 
 .text-muted {
-  color: rgba(188, 203, 185, 0.4);
+  color: var(--on-surface-variant);
 }
 
 .fill {
@@ -481,14 +481,14 @@
   margin-top: 32px;
   width: 100%;
   padding: 20px;
-  background: rgba(75, 226, 119, 0.1);
-  color: #4be277;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  border: 1px solid rgba(75, 226, 119, 0.2);
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
@@ -499,7 +499,7 @@
 }
 
 .create-btn:hover {
-  background: rgba(75, 226, 119, 0.2);
+  background: color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .pulse-footer {
@@ -509,10 +509,10 @@
   width: 100%;
   z-index: 50;
   padding: 16px 40px;
-  background: rgba(2, 6, 23, 0.4);
+  background: color-mix(in srgb, var(--background) 40%, transparent);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
-  border-top: 1px solid rgba(75, 226, 119, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
   box-sizing: border-box;
 }
 
@@ -536,14 +536,14 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   letter-spacing: 0.1em;
-  color: #adc6ff;
+  color: var(--secondary);
 }
 
 .footer-badge {
   font-size: 9px;
-  color: #4be277;
-  background: rgba(75, 226, 119, 0.1);
-  border: 1px solid rgba(75, 226, 119, 0.2);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
   padding: 4px 12px;
   border-radius: 9999px;
   text-transform: uppercase;
@@ -564,11 +564,11 @@
 
 .cmd-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--on-background) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-background) 10%, transparent);
   border-radius: 9999px;
   padding: 16px 32px;
-  color: #4be277;
+  color: var(--primary);
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   outline: none;
@@ -577,12 +577,12 @@
 }
 
 .cmd-input::placeholder {
-  color: rgba(188, 203, 185, 0.2);
+  color: var(--on-surface-variant);
 }
 
 .cmd-input:focus {
-  border-color: rgba(75, 226, 119, 0.4);
-  box-shadow: 0 0 20px rgba(75, 226, 119, 0.1);
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .cmd-actions {
@@ -592,7 +592,7 @@
   transform: translateY(-50%);
   display: flex;
   gap: 16px;
-  color: rgba(188, 203, 185, 0.4);
+  color: var(--on-surface-variant);
 }
 
 .cmd-actions .material-symbols-outlined {
@@ -601,7 +601,7 @@
 }
 
 .cmd-actions .material-symbols-outlined:hover {
-  color: #4be277;
+  color: var(--primary);
 }
 
 .footer-links {
@@ -618,13 +618,13 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.1em;
-  color: rgba(188, 203, 185, 0.4);
+  color: var(--on-surface-variant);
   text-decoration: none;
   transition: color 0.3s;
 }
 
 .footer-links a:hover {
-  color: #4be277;
+  color: var(--primary);
 }
 
 .material-symbols-outlined {
@@ -632,5 +632,5 @@
 }
 
 .neon {
-  text-shadow: 0 0 10px rgba(75, 226, 119, 0.5), 0 0 20px rgba(75, 226, 119, 0.3);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--primary) 50%, transparent), 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent);
 }

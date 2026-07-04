@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./pulse.component.scss']
 })
 export class PulseComponent {
+  @HostBinding('attr.data-theme') theme = 'dark';
   reasoningEntries = [
     {
       title: 'Analyzing Floor Load...',
