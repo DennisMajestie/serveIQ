@@ -10,7 +10,11 @@
         @for (item of navItems; track item.key) {
           <button (click)="setActiveSection(item.key)"
             class="w-full flex items-center gap-3 py-3 pl-5 rounded-xl transition-all duration-300 hover:bg-[#4be277]/10 hover:translate-x-1 text-left"
-            [class.text-[#4be277] font-bold bg-[#4be277]/5 border-l-4 border-[#4be277]]="activeSection() === item.key"
+            [class.text-[#4be277]]="activeSection() === item.key"
+            [class.font-bold]="activeSection() === item.key"
+            [class.bg-[#4be277]/5]="activeSection() === item.key"
+            [class.border-l-4]="activeSection() === item.key"
+            [class.border-[#4be277]]="activeSection() === item.key"
             [class.text-[#bccbb9]]="activeSection() !== item.key">
             <span class="material-symbols-outlined">{{ item.icon }}</span>
             <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">{{ item.label }}</span>
