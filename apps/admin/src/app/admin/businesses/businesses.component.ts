@@ -122,42 +122,42 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
     .page-header { margin-bottom: 28px; }
     .header-content { display: flex; justify-content: space-between; align-items: flex-start; }
     .title-group { }
-    .page-title { font-size: 20px; font-weight: 700; color: #1e293b; margin: 0 0 4px; }
-    .page-subtitle { font-size: 14px; color: #64748b; margin: 0; }
+    .page-title { font-size: 20px; font-weight: 700; color: var(--on-surface); margin: 0 0 4px; }
+    .page-subtitle { font-size: 14px; color: var(--secondary); margin: 0; }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-    .stat-card { background: #fff; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .stat-card { background: var(--surface-container-lowest); border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .stat-icon svg { width: 24px; height: 24px; }
-    .stat-icon--orange { background: #fff3e0; color: #f97316; }
-    .stat-icon--green { background: #e8f5e9; color: #22c55e; }
-    .stat-icon--blue { background: #e3f2fd; color: #3b82f6; }
-    .stat-icon--purple { background: #f3e5f5; color: #a855f7; }
+    .stat-icon--orange { background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); }
+    .stat-icon--green { background: color-mix(in srgb, #22c55e 12%, transparent); color: #22c55e; }
+    .stat-icon--blue { background: color-mix(in srgb, #3b82f6 12%, transparent); color: #3b82f6; }
+    .stat-icon--purple { background: color-mix(in srgb, #a855f7 12%, transparent); color: #a855f7; }
     .stat-content { }
-    .stat-label { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px; }
-    .stat-value { font-size: 28px; font-weight: 700; color: #1e293b; margin: 0; }
-    .table-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
-    .table-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; }
-    .table-header h2 { font-size: 16px; font-weight: 700; color: #1e293b; margin: 0; }
-    .showing-count { font-size: 13px; color: #64748b; }
+    .stat-label { font-size: 12px; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px; }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--on-surface); margin: 0; }
+    .table-card { background: var(--surface-container-lowest); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+    .table-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--outline-variant); }
+    .table-header h2 { font-size: 16px; font-weight: 700; color: var(--on-surface); margin: 0; }
+    .showing-count { font-size: 13px; color: var(--secondary); }
     .table-wrapper { overflow-x: auto; }
     .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
-    .data-table td { padding: 14px 16px; font-size: 14px; color: #334155; border-bottom: 1px solid #f1f5f9; }
-    .data-row:hover { background: #f8fafc; }
+    .data-table th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; background: var(--surface-container-low); border-bottom: 1px solid var(--outline-variant); }
+    .data-table td { padding: 14px 16px; font-size: 14px; color: var(--secondary); border-bottom: 1px solid var(--outline-variant); }
+    .data-row:hover { background: var(--surface-container-low); }
     .cell-name { }
     .biz-info { display: flex; flex-direction: column; gap: 2px; }
-    .biz-name { font-weight: 600; color: #1e293b; }
-    .biz-email { font-size: 12px; color: #94a3b8; }
-    .type-pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #f1f5f9; color: #475569; text-transform: capitalize; }
+    .biz-name { font-weight: 600; color: var(--on-surface); }
+    .biz-email { font-size: 12px; color: var(--secondary); }
+    .type-pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: var(--surface-container-low); color: var(--secondary); text-transform: capitalize; }
     .status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
-    .status-badge.active { background: #dcfce7; color: #16a34a; }
-    .status-badge.inactive { background: #fef2f2; color: #dc2626; }
+    .status-badge.active { background: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary); }
+    .status-badge.inactive { background: var(--error-container); color: var(--on-error-container); }
     .cell-actions { text-align: right; }
-    .action-icon-btn { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 8px; color: #64748b; transition: all 0.15s; }
-    .action-icon-btn:hover { background: #f1f5f9; color: #f97316; }
+    .action-icon-btn { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 8px; color: var(--secondary); transition: all 0.15s; }
+    .action-icon-btn:hover { background: var(--surface-container-low); color: var(--primary); }
     .action-icon-btn svg { width: 20px; height: 20px; }
-    .empty-state { text-align: center; padding: 48px; color: #94a3b8; font-size: 14px; }
-    .loading-state { text-align: center; padding: 48px; color: #64748b; }
+    .empty-state { text-align: center; padding: 48px; color: var(--secondary); font-size: 14px; }
+    .loading-state { text-align: center; padding: 48px; color: var(--secondary); }
   `]
 })
 export class BusinessesComponent implements OnInit {

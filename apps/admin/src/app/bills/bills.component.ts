@@ -87,34 +87,34 @@ interface BillWithTab {
 
     .page-header { margin-bottom: 40px; }
     .title-group { display: flex; flex-direction: column; gap: 8px; }
-    .page-title { margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; color: #0b1c30; }
-    .page-subtitle { margin: 0; font-size: 1rem; color: #64748b; }
+    .page-title { margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; color: var(--on-surface); }
+    .page-subtitle { margin: 0; font-size: 1rem; color: var(--secondary); }
 
     .skeleton-list { display: flex; flex-direction: column; gap: 12px; }
-    .skeleton-shimmer { background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }
+    .skeleton-shimmer { background: linear-gradient(90deg, var(--surface-container-low) 25%, var(--surface-container-high) 50%, var(--surface-container-low) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }
     .skeleton-row { height: 64px; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    .table-card { background: var(--surface-container-lowest); border-radius: 24px; border: 1px solid #f1f5f9; box-shadow: 0 8px 32px rgba(11,28,48,0.04); overflow: hidden; }
+    .table-card { background: var(--surface-container-lowest); border-radius: 24px; border: 1px solid var(--outline-variant); box-shadow: 0 8px 32px rgba(11,28,48,0.04); overflow: hidden; }
     .table-wrapper { overflow-x: auto; }
     .bills-table { width: 100%; border-collapse: collapse; }
-    .bills-table th { text-align: left; padding: 20px 24px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; background: #f8fafc; }
-    .bills-table td { padding: 20px 24px; border-bottom: 1px solid #f8fafc; color: #334155; font-size: 0.9375rem; }
-    .bill-row:hover { background: #fcfdfe; }
+    .bills-table th { text-align: left; padding: 20px 24px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary); background: var(--surface-container-low); }
+    .bills-table td { padding: 20px 24px; border-bottom: 1px solid var(--outline-variant); color: var(--secondary); font-size: 0.9375rem; }
+    .bill-row:hover { background: var(--surface-container-low); }
 
-    .cell-id code { font-family: monospace; font-size: 0.8rem; color: #64748b; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; }
-    .cell-total { font-weight: 700; color: #0b1c30; }
+    .cell-id code { font-family: monospace; font-size: 0.8rem; color: var(--secondary); background: var(--surface-container-low); padding: 4px 8px; border-radius: 6px; }
+    .cell-total { font-weight: 700; color: var(--on-surface); }
 
-    .method-badge { padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; background: #e0f2fe; color: #0369a1; }
-    .method-badge.unpaid { background: #fef2f2; color: #991b1b; }
+    .method-badge { padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; background: color-mix(in srgb, var(--tertiary) 20%, transparent); color: var(--tertiary); }
+    .method-badge.unpaid { background: var(--error-container); color: var(--on-error-container); }
 
-    .status-badge { padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; background: #fef2f2; color: #991b1b; }
-    .status-badge.paid { background: #e7f9ed; color: #166534; }
+    .status-badge { padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; background: var(--error-container); color: var(--on-error-container); }
+    .status-badge.paid { background: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary); }
 
     .cell-actions { display: flex; gap: 8px; }
-    .action-btn { background: transparent; border: none; color: #94a3b8; cursor: pointer; padding: 6px; border-radius: 8px; transition: all 0.2s; svg { width: 18px; height: 18px; } &:hover { color: #F97316; background: #fdf5f1; } }
+    .action-btn { background: transparent; border: none; color: var(--secondary); cursor: pointer; padding: 6px; border-radius: 8px; transition: all 0.2s; svg { width: 18px; height: 18px; } &:hover { color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent); } }
 
-    .empty-state { text-align: center; padding: 48px; color: #94a3b8; font-size: 1rem; }
+    .empty-state { text-align: center; padding: 48px; color: var(--secondary); font-size: 1rem; }
   `]
 })
 export class BillsComponent implements OnInit {

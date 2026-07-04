@@ -21,13 +21,13 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 .page-subtitle {
   margin: 0;
   font-size: 0.9375rem;
-  color: #64748b;
+  color: var(--secondary);
 }
 
 .header-actions {
@@ -41,22 +41,22 @@
   align-items: center;
   gap: 8px;
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--secondary);
   cursor: pointer;
 }
 
 .btn-refresh {
   padding: 10px 16px;
-  background: #f1f5f9;
+  background: var(--surface-container-low);
   border: none;
   border-radius: 8px;
-  color: #475569;
+  color: var(--secondary);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
   &:hover {
-    background: #e2e8f0;
-    color: #0b1c30;
+    background: var(--surface-container-high);
+    color: var(--on-surface);
   }
 }
 
@@ -71,8 +71,8 @@
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #f1f5f9;
-  border-top-color: #F97316;
+  border: 4px solid var(--surface-container-low);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -85,7 +85,7 @@
 .empty-state {
   text-align: center;
   padding: 80px 24px;
-  color: #94a3b8;
+  color: var(--secondary);
 }
 
 /* Inventory Grid */
@@ -118,12 +118,12 @@
   margin: 0 0 4px;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 .item-category {
   font-size: 0.8125rem;
-  color: #94a3b8;
+  color: var(--secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -136,13 +136,13 @@
 }
 
 .alert-normal {
-  background: #d1fae5;
-  color: #065f46;
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  color: var(--primary);
 }
 
 .alert-low-stock {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--error-container);
+  color: var(--on-error-container);
 }
 
 .card-body {
@@ -158,7 +158,7 @@
 .stat-label {
   display: block;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 4px;
@@ -167,7 +167,7 @@
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 .card-footer {
@@ -187,19 +187,19 @@
 }
 
 .btn-primary {
-  background: #F97316;
-  color: white;
+  background: var(--primary);
+  color: var(--on-primary);
   &:hover {
-    background: #ea580c;
+    background: color-mix(in srgb, var(--primary) 85%, black);
   }
 }
 
 .btn-secondary {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--surface-container-low);
+  color: var(--secondary);
   &:hover {
-    background: #e2e8f0;
-    color: #0b1c30;
+    background: var(--surface-container-high);
+    color: var(--on-surface);
   }
 }
 
@@ -228,23 +228,23 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--outline-variant);
 }
 
 .modal-title {
   margin: 0;
   font-weight: 700;
   font-size: 1.25rem;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 .modal-close {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--secondary);
   cursor: pointer;
   &:hover {
-    color: #475569;
+    color: var(--secondary);
   }
 }
 
@@ -260,22 +260,22 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--secondary);
   margin-bottom: 8px;
 }
 
 .form-input, .form-textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--outline-variant);
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
   font-size: 0.9375rem;
-  color: #0b1c30;
+  color: var(--on-surface);
   outline: none;
   transition: border-color 0.2s;
   &:focus {
-    border-color: #F97316;
+    border-color: var(--primary);
   }
 }
 
@@ -287,9 +287,9 @@
 .form-value {
   margin: 0;
   padding: 12px 16px;
-  background: #f8fafc;
+  background: var(--surface-container-low);
   border-radius: 10px;
-  color: #0b1c30;
+  color: var(--on-surface);
   font-weight: 600;
 }
 

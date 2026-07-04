@@ -15,7 +15,7 @@ import { ThemeService } from './core/theme.service';
   styles: [`
     .admin-app {
       min-height: 100vh;
-      background-color: #f8fafc;
+      background-color: var(--background);
     }
   `]
 })

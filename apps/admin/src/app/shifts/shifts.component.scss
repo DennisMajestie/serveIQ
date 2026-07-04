@@ -21,13 +21,13 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 .page-subtitle {
   margin: 0;
   font-size: 0.9375rem;
-  color: #64748b;
+  color: var(--secondary);
 }
 
 .btn-primary, .btn-secondary {
@@ -41,26 +41,26 @@
 }
 
 .btn-primary {
-  background: #F97316;
-  color: white;
+  background: var(--primary);
+  color: var(--on-primary);
   &:hover {
-    background: #ea580c;
+    background: color-mix(in srgb, var(--primary) 85%, black);
   }
 }
 
 .btn-secondary {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--surface-container-low);
+  color: var(--secondary);
   &:hover {
-    background: #e2e8f0;
-    color: #0b1c30;
+    background: var(--surface-container-high);
+    color: var(--on-surface);
   }
 }
 
 /* Current Shift */
 .current-shift-card {
   background: var(--surface-container-lowest);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--outline-variant);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 32px;
@@ -78,7 +78,7 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 .status-badge {
@@ -112,7 +112,7 @@
 
 .stat-label {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -120,7 +120,7 @@
 .stat-value {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 .card-footer {
@@ -131,7 +131,7 @@
 /* Shifts List */
 .shifts-list {
   background: var(--surface-container-lowest);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--outline-variant);
   border-radius: 16px;
   padding: 24px;
 }
@@ -140,7 +140,7 @@
   margin: 0 0 20px;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 /* Loading */
@@ -154,8 +154,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f1f5f9;
-  border-top-color: #F97316;
+  border: 4px solid var(--surface-container-low);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -168,7 +168,7 @@
 .empty-state {
   text-align: center;
   padding: 40px;
-  color: #94a3b8;
+  color: var(--secondary);
 }
 
 /* Table */
@@ -191,15 +191,15 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #94a3b8;
-  background: #f8fafc;
-  border-bottom: 2px solid #f1f5f9;
+  color: var(--secondary);
+  background: var(--surface-container-low);
+  border-bottom: 2px solid var(--outline-variant);
 }
 
 .shifts-table td {
   font-size: 0.875rem;
-  color: #475569;
-  border-bottom: 1px solid #f8fafc;
+  color: var(--secondary);
+  border-bottom: 1px solid var(--outline-variant);
 }
 
 /* Modal */
@@ -227,23 +227,23 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--outline-variant);
 }
 
 .modal-title {
   margin: 0;
   font-weight: 700;
   font-size: 1.25rem;
-  color: #0b1c30;
+  color: var(--on-surface);
 }
 
 .modal-close {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--secondary);
   cursor: pointer;
   &:hover {
-    color: #475569;
+    color: var(--secondary);
   }
 }
 
@@ -259,22 +259,22 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--secondary);
   margin-bottom: 8px;
 }
 
 .form-input, .form-textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--outline-variant);
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
   font-size: 0.9375rem;
-  color: #0b1c30;
+  color: var(--on-surface);
   outline: none;
   transition: border-color 0.2s;
   &:focus {
-    border-color: #F97316;
+    border-color: var(--primary);
   }
 }
 
@@ -286,9 +286,9 @@
 .form-value {
   margin: 0;
   padding: 12px 16px;
-  background: #f8fafc;
+  background: var(--surface-container-low);
   border-radius: 10px;
-  color: #0b1c30;
+  color: var(--on-surface);
   font-weight: 600;
 }
 
@@ -296,7 +296,7 @@
   display: flex;
   gap: 12px;
   padding: 20px 24px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--outline-variant);
 }
 
 @media (max-width: 768px) {

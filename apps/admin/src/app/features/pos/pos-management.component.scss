@@ -67,7 +67,7 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: #71717a;
-      background: #fafafa;
+      background: var(--surface-container-low);
       border-bottom: 1px solid #f0f1f3;
     }
   }
@@ -99,7 +99,7 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #fff7ed;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
   color: #f97316;
   flex-shrink: 0;
 }
@@ -113,13 +113,13 @@
   font-weight: 600;
 
   &.active {
-    background: #f0fdf4;
-    color: #16a34a;
+    background: color-mix(in srgb, var(--primary) 15%, transparent);
+    color: var(--primary);
   }
 
   &.inactive {
-    background: #fef2f2;
-    color: #dc2626;
+    background: var(--error-container);
+    color: var(--on-error-container);
   }
 }
 
@@ -143,14 +143,14 @@
   svg { width: 16px; height: 16px; }
 
   &:hover {
-    background: #f4f4f5;
+    background: var(--surface-container-low);
     color: #18181b;
   }
 
   &-danger:hover {
-    background: #fef2f2;
-    border-color: #fecaca;
-    color: #dc2626;
+    background: var(--error-container);
+    border-color: transparent;
+    color: var(--on-error-container);
   }
 }
 
@@ -225,7 +225,7 @@
 }
 
 .btn-secondary {
-  background: #f4f4f5;
+  background: var(--surface-container-low);
   color: #52525b;
   border: none;
   border-radius: 10px;
@@ -234,7 +234,7 @@
   font-size: 14px;
   cursor: pointer;
 
-  &:hover { background: #e4e4e7; }
+  &:hover { background: var(--surface-container-high); }
 }
 
 .modal-overlay {
@@ -278,7 +278,7 @@
   border-radius: 6px;
 
   &:hover {
-    background: #f4f4f5;
+    background: var(--surface-container-low);
     color: #18181b;
   }
 }
