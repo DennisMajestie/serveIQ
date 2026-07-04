@@ -17,12 +17,18 @@ import { VerificationToken } from './entities/verification-token.entity';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET') || 'serveiq-secret-2024',
-        signOptions: {
-          expiresIn: configService.get('JWT_EXPIRES_IN', '24h'),
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get('JWT_SECRET');
+        if (!secret) {
+          throw new Error('JWT_SECRET environment variable is required');
+        }
+        return {
+          secret,
+          signOptions: {
+            expiresIn: configService.get('JWT_EXPIRES_IN', '24h'),
+          },
+        };
+      },
     }),
   ],
   providers: [

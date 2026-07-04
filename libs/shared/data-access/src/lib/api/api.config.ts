@@ -127,6 +127,17 @@ export const API_CONFIG = {
       update: '/api/v1/pos/terminals/:id',
       delete: '/api/v1/pos/terminals/:id',
     },
+    // Subscriptions
+    subscriptions: {
+      current: '/api/v1/subscriptions/current',
+      initialize: '/api/v1/subscriptions/initialize',
+      cancel: '/api/v1/subscriptions/cancel',
+      adminGrant: '/api/v1/subscriptions/admin/grant',
+    },
+    // Plans
+    plans: {
+      list: '/api/v1/plans',
+    },
     admin: {
       businesses: '/api/v1/admin/businesses',
       business: '/api/v1/admin/businesses/:id',

@@ -54,12 +54,7 @@ export class AuthController {
     description:
       'Authenticates a waiter using their 4-digit PIN and branch ID or business ID.',
   })
-  async waiterLogin(@Body() payload: any) {
-    const dto = new WaiterLoginDto();
-    dto.pin = payload.pin || payload.passCode || payload.code || '';
-    dto.branchId = payload.branchId || payload.branch_id || '';
-    dto.businessId = payload.businessId || payload.business_id || '';
-    
+  async waiterLogin(@Body() dto: WaiterLoginDto) {
     return this.authService.waiterLogin(dto);
   }
 

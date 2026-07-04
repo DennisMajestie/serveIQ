@@ -240,9 +240,13 @@ export class WaiterManagementComponent implements OnInit {
     });
   }
 
-  onSearch() {}
-  toggleFilters() {}
-  toggleStatus(waiter: Waiter) {}
+  onSearch() { /* search is handled reactively via filteredWaiters computed from searchQuery */ }
+  toggleFilters() { /* reserved for future filter panel */ }
+  toggleStatus(waiter: Waiter) {
+    if (waiter.isActive) {
+      this.deactivateWaiter(waiter.id);
+    }
+  }
   clearFilters() { this.searchQuery.set(''); }
   trackById(index: number, w: Waiter) { return w.id; }
   getInitials(name: string | undefined | null): string { 

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ — Business Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#2e3447",
+                    "on-background": "#dce1fb",
+                    "tertiary": "#ffb3b7",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-container": "#191f31",
+                    "on-primary": "#003915",
+                    "on-error": "#690005",
+                    "surface-container-high": "#23293c",
+                    "on-tertiary-fixed": "#40000d",
+                    "primary": "#4be277",
+                    "primary-fixed": "#6bff8f",
+                    "surface-container-highest": "#2e3447",
+                    "surface-bright": "#33394c",
+                    "secondary-container": "#0566d9",
+                    "surface-container-lowest": "#070d1f",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-primary-fixed": "#002109",
+                    "inverse-primary": "#006e2f",
+                    "tertiary-fixed-dim": "#ffb2b7",
+                    "on-secondary-container": "#e6ecff",
+                    "error": "#ffb4ab",
+                    "on-secondary-fixed-variant": "#004395",
+                    "outline": "#869585",
+                    "on-surface-variant": "#bccbb9",
+                    "inverse-on-surface": "#2a3043",
+                    "tertiary-container": "#ff8892",
+                    "surface-tint": "#4ae176",
+                    "secondary": "#adc6ff",
+                    "on-secondary": "#002e6a",
+                    "on-error-container": "#ffdad6",
+                    "on-surface": "#dce1fb",
+                    "on-tertiary": "#67001b",
+                    "surface-dim": "#0c1324",
+                    "tertiary-fixed": "#ffdadb",
+                    "on-tertiary-container": "#840025",
+                    "surface": "#0c1324",
+                    "on-primary-fixed-variant": "#005321",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "outline-variant": "#3d4a3d",
+                    "inverse-surface": "#dce1fb",
+                    "on-primary-container": "#004b1e",
+                    "primary-container": "#22c55e",
+                    "error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#92002a",
+                    "background": "#0c1324",
+                    "primary-fixed-dim": "#4ae176",
+                    "surface-container-low": "#151b2d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding": "32px",
+                    "inner-padding": "24px",
+                    "bento-gap": "20px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "metric-sm": ["Space Grotesk"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Space Grotesk"],
+                    "headline-lg": ["Space Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Space Grotesk"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "metric-sm": ["18px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background: #0c1324;
+            color: #dce1fb;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .glow-green {
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.4);
+        }
+
+        .glow-green:hover {
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.6);
+        }
+
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #151b2d 0%, #0c1324 100%);
+        }
+
+        .blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(75, 226, 119, 0.1) 0%, rgba(5, 102, 217, 0.05) 50%, transparent 100%);
+            filter: blur(80px);
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(20%, 20%); }
+        }
+
+        .input-glow:focus {
+            box-shadow: 0 4px 12px -2px rgba(5, 102, 217, 0.3);
+            border-bottom: 2px solid #0566d9;
+        }
+
+        .step-transition {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="font-body-md flex items-center justify-center min-h-screen">
+<div class="mesh-bg">
+<div class="blob" style="top: -10%; left: -10%;"></div>
+<div class="blob" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
+</div>
+<!-- Top Navigation Placeholder (Hidden for Transactional/Focused Onboarding) -->
+<!-- As per instructions, Shell is suppressed for Transactional/Onboarding pages -->
+<main class="w-full max-w-2xl px-6 py-12 relative z-10">
+<div class="flex flex-col items-center mb-12 space-y-2">
+<h1 class="font-headline-lg text-headline-lg tracking-tighter uppercase text-on-background text-center">
+                SERVEIQ — ONBOARDING
+            </h1>
+<p class="text-on-background/60 font-label-md tracking-widest text-center">ARCTIC WHITE EDITION • LUMINOUS ENGINE</p>
+</div>
+<!-- Bento Stack Onboarding Form -->
+<div class="glass-card rounded-[32px] p-inner-padding md:p-container-padding space-y-bento-gap">
+<form class="space-y-8" id="onboardingForm">
+<!-- Step 1: Business Identity -->
+<div class="step-transition" id="step-1">
+<div class="space-y-6">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">domain</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-background">Business Profile</h2>
+<p class="text-on-background/50 font-label-sm">Establish your organizational footprint.</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="relative">
+<label class="block font-label-sm text-on-background/60 mb-2 px-1">Business Name</label>
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl py-4 px-5 text-on-background placeholder-on-background/30 focus:ring-0 input-glow transition-all" placeholder="e.g. Lumina Grand Resorts" type="text"/>
+</div>
+<div class="relative">
+<label class="block font-label-sm text-on-background/60 mb-2 px-1">Multi-tenant PIN</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl py-4 px-5 text-on-background placeholder-on-background/30 focus:ring-0 input-glow transition-all tracking-[0.5em] font-bold" maxlength="6" placeholder="••••••" type="password"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-background/30 cursor-pointer">visibility</span>
+</div>
+<p class="text-[10px] mt-2 text-on-background/40 px-1 uppercase tracking-tighter">Required for cross-department synchronization.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Step 2: Admin Identity -->
+<div class="step-transition" id="step-2">
+<div class="space-y-6">
+<div class="flex items-center gap-4 mb-8 pt-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">admin_panel_settings</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-background">Administrator</h2>
+<p class="text-on-background/50 font-label-sm">Assign the primary platform custodian.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="relative">
+<label class="block font-label-sm text-on-background/60 mb-2 px-1">Full Name</label>
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl py-4 px-5 text-on-background placeholder-on-background/30 focus:ring-0 input-glow transition-all" placeholder="Alex Chen" type="text"/>
+</div>
+<div class="relative">
+<label class="block font-label-sm text-on-background/60 mb-2 px-1">Email Address</label>
+<input class="w-full bg-surface-container-low/50 border-none rounded-xl py-4 px-5 text-on-background placeholder-on-background/30 focus:ring-0 input-glow transition-all" placeholder="alex@serveiq.com" type="email"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Accent: Stats Bento Cell -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white/5 rounded-2xl p-4 flex flex-col justify-between h-32 group hover:bg-white/10 transition-all cursor-default">
+<span class="material-symbols-outlined text-primary/60 text-sm">auto_awesome</span>
+<div>
+<p class="text-primary font-metric-sm">AI-READY</p>
+<p class="text-[10px] text-on-background/40 uppercase">Optimized Engine</p>
+</div>
+</div>
+<div class="bg-white/5 rounded-2xl p-4 flex flex-col justify-between h-32 group hover:bg-white/10 transition-all cursor-default">
+<span class="material-symbols-outlined text-secondary/60 text-sm">shield</span>
+<div>
+<p class="text-secondary font-metric-sm">ENCRYPTED</p>
+<p class="text-[10px] text-on-background/40 uppercase">AES-256 Vault</p>
+</div>
+</div>
+</div>
+<!-- CTA Button -->
+<div class="pt-6">
+<button class="w-full bg-primary-container text-on-primary py-5 rounded-2xl font-headline-md text-headline-md glow-green transition-all transform active:scale-[0.98] flex items-center justify-center gap-3" type="submit">
+<span>Initiate Platform</span>
+<span class="material-symbols-outlined font-bold">bolt</span>
+</button>
+<p class="text-center mt-6 text-on-background/30 font-label-sm">
+                        By initiating, you agree to the <span class="text-primary/60 cursor-pointer hover:text-primary underline underline-offset-4">Neural Systems Agreement</span>.
+                    </p>
+</div>
+</form>
+</div>
+<!-- Atmospheric Image -->
+<div class="mt-12 rounded-[24px] overflow-hidden glass-card h-48 relative">
+<img alt="ServeIQ Neural Network" class="w-full h-full object-cover opacity-60 mix-blend-luminosity" data-alt="A futuristic, high-tech command center interface showing a shimmering globe with glowing data connection lines across a dark arctic blue background. The aesthetic is clean and minimal, following the luminous engine style with soft green and azure glows illuminating the tech elements. The mood is professional, sophisticated, and highly advanced, perfectly capturing the essence of a digital nervous system for global hospitality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnTvpMDFhzGVSGC12Pwy6LdMgzffzMAVsXFHkytsPgaBbKWMlgJKYshaJ1R7KCP7jxvnlLgoHmWNtxQ_3sU9zpUWLRtqkBm4at8ppmUODHTgDU0rRTrtG1yvBtQjU30tmhHebVMb_q0UT6CmJ9-df1QXeM-Q1o7zo6PSaoNM7W-UNW-oL6L89ycuGHh5FZ4vyrLzwrmc3jPAYy-C1fTL4mqxUarHcAnY-Z2d4yxBXWeR83GMAb4tcUq4yGMA9Y2f9Zh-loVt5xWHtg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="font-label-sm text-on-background/80 tracking-widest uppercase">System Core Active</span>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell (Suppressed as per rules for Transactional pages) -->
+<!-- But if needed, the JSON BottomNavBar would be here. Instruction says "exclude if Linear/Transactional: Sign-up". This is Register Business Flow, so we exclude it. -->
+<script>
+        // Micro-interactions for form feedback
+        document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const originalContent = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span><span>Synthesizing...</span>';
+            btn.classList.remove('glow-green');
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Initialized</span>';
+                btn.classList.add('bg-white', 'text-black');
+                
+                // Trigger a subtle success pulse across the screen
+                const pulse = document.createElement('div');
+                pulse.className = 'fixed inset-0 pointer-events-none z-[100] transition-opacity duration-1000';
+                pulse.style.background = 'radial-gradient(circle, rgba(75, 226, 119, 0.15) 0%, transparent 70%)';
+                document.body.appendChild(pulse);
+                
+                setTimeout(() => pulse.style.opacity = '0', 100);
+            }, 2000);
+        });
+
+        // Hover effect for inputs
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.parentElement.classList.add('scale-[1.01]');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+    </script>
+</body></html>

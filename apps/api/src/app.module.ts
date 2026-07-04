@@ -51,7 +51,7 @@ import { SeedService } from './database/seed.service';
         Bill,
         PosTerminal,
       ],
-      synchronize: true,
+      synchronize: false,
       logging: process.env.NODE_ENV === 'development',
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
       retryAttempts: 10,

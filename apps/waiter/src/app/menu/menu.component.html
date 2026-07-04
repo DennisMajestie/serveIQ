@@ -1,110 +1,152 @@
-<div class="menu-container">
+<div class="bg-[#0c1324] min-h-screen overflow-x-hidden pb-40">
   <!-- Top App Bar -->
-  <header class="top-bar">
-    <div class="top-bar-left">
-      <span class="material-symbols-outlined icon-primary">restaurant</span>
-      <h1 class="page-title">Menu</h1>
-    </div>
-    <div class="top-bar-right">
-      <span class="material-symbols-outlined icon-secondary">search</span>
-      <div class="table-badge">
-        <span class="table-badge-text">Table {{ tableNumber || '—' }}</span>
+  <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl bg-white/5 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-[#2e3447] flex items-center justify-center overflow-hidden">
+        @if (tableNumber) {
+          <span class="material-symbols-outlined text-[#4be277]">table_restaurant</span>
+        } @else {
+          <span class="material-symbols-outlined text-[#bccbb9]">person</span>
+        }
       </div>
+      <h1 class="text-[24px] leading-[1.3] font-bold tracking-widest text-[#4be277]" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 8px 30px rgba(75,226,119,0.3)">LUMINA</h1>
+    </div>
+    <div class="flex items-center gap-4">
+      @if (tableNumber) {
+        <div class="px-4 py-1.5 rounded-full bg-[#4be277]/20 text-[#4be277] text-[12px] leading-none font-semibold border border-[#4be277]/20" style="font-family:'Inter',sans-serif">
+          Table {{ tableNumber }}
+        </div>
+      }
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Category Navigation -->
-    <nav class="category-nav">
-      <button 
-        *ngFor="let cat of categories(); let i = index" 
-        class="category-button"
-        [class.active]="selectedCategory === cat"
-        (click)="selectCategory(cat)">
-        {{ cat }}
-      </button>
-    </nav>
-
+  <main class="pt-24 px-4 max-w-7xl mx-auto">
     @if (isLoading()) {
-      <!-- Shimmer: Menu Grid -->
-      <div class="menu-grid">
-        @for (i of [1,2,3,4]; track i) {
-          <div class="menu-item-card" style="background: var(--surface, #1A1A1A); border-radius: 12px; overflow: hidden; border: 1px solid rgba(64,71,88,0.2);">
-            <div class="shimmer" style="width: 100%; height: 120px; border-radius: 0;"></div>
-            <div style="padding: 12px;">
-              <div class="shimmer" style="width: 70%; height: 16px; margin-bottom: 8px; border-radius: 4px;"></div>
-              <div class="shimmer" style="width: 40%; height: 14px; border-radius: 4px;"></div>
-            </div>
+      <section class="space-y-6">
+        <div class="skeleton-shimmer rounded-2xl h-24 w-full"></div>
+        <div class="grid grid-cols-2 gap-4">
+          @for (i of [1,2,3,4]; track i) {
+            <div class="skeleton-shimmer rounded-3xl" style="height:200px;"></div>
+          }
+        </div>
+      </section>
+    } @else {
+      <!-- Category Tonal Cards -->
+      <section class="mb-8">
+        <h2 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb] mb-4" style="font-family:'Space Grotesk',sans-serif">Categories</h2>
+        <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+          @for (cat of categories(); track cat) {
+            <button (click)="selectCategory(cat)" class="flex-none min-w-[130px] h-24 rounded-2xl flex flex-col justify-end p-4 transition-all hover:brightness-110 active:scale-95"
+              [class.bg-[#4be277]/20]="selectedCategory === cat"
+              [class.bg-white/5]="selectedCategory !== cat">
+              <span class="material-symbols-outlined text-[#4be277] mb-auto">restaurant_menu</span>
+              <span class="text-[14px] leading-none font-semibold mt-2" style="font-family:'Inter',sans-serif"
+                [class.text-[#4be277]]="selectedCategory === cat"
+                [class.text-[#bccbb9]]="selectedCategory !== cat">{{ cat }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- Menu Items -->
+      <section>
+        <div class="flex justify-between items-end mb-4">
+          <h2 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Menu Items</h2>
+          <span class="text-[12px] leading-none font-semibold text-[#4be277] uppercase tracking-wider" style="font-family:'Inter',sans-serif">{{ filteredItems.length }} items</span>
+        </div>
+        @if (filteredItems.length === 0) {
+          <div class="flex flex-col items-center justify-center py-16 text-[#bccbb9] gap-3">
+            <span class="material-symbols-outlined text-4xl">restaurant_menu</span>
+            <p class="text-sm" style="font-family:'Inter',sans-serif">No items in this category</p>
+          </div>
+        } @else {
+          <div class="grid grid-cols-2 md:grid-cols-12 gap-5">
+            @for (item of filteredItems; track item.id) {
+              <div class="col-span-2 md:col-span-6 glass-card rounded-3xl overflow-hidden group">
+                <div class="h-36 overflow-hidden">
+                  <img [src]="item.image" [alt]="item.name" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                </div>
+                <div class="p-4 space-y-3">
+                  <h3 class="text-[16px] leading-[1.5] font-medium text-[#dce1fb] line-clamp-1" style="font-family:'Inter',sans-serif">{{ item.name }}</h3>
+                  <div class="flex justify-between items-center">
+                    <span class="text-[18px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">₦{{ getDisplayPrice(item).toLocaleString() }}</span>
+                    @if (getItemQty(item.id) === 0) {
+                      <button (click)="addToSelection(item)" class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center active:scale-90 transition-transform hover:bg-white/20">
+                        <span class="material-symbols-outlined text-sm">add</span>
+                      </button>
+                    } @else {
+                      <div class="flex items-center gap-1.5 bg-[#4be277]/20 rounded-xl px-1.5 py-1">
+                        <button (click)="$event.stopPropagation(); removeFromSelection(item.id, getSelectedPortion(item.id))" class="w-7 h-7 rounded-lg bg-[#4be277] flex items-center justify-center text-[#003915] active:scale-90 transition-transform">
+                          <span class="material-symbols-outlined text-sm">remove</span>
+                        </button>
+                        <span class="text-sm font-bold text-[#4be277] min-w-[22px] text-center">{{ getItemQty(item.id) }}</span>
+                        <button (click)="$event.stopPropagation(); addToSelection(item)" class="w-7 h-7 rounded-lg bg-[#4be277] flex items-center justify-center text-[#003915] active:scale-90 transition-transform">
+                          <span class="material-symbols-outlined text-sm">add</span>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                  @if (item.portions?.length) {
+                    <div class="flex flex-wrap gap-2 pt-2 border-t border-white/5">
+                      @for (portion of item.portions; track portion.id) {
+                        <button (click)="$event.stopPropagation(); setSelectedPortion(item.id, portion.id)"
+                          class="px-3 py-1 rounded-full text-[11px] font-semibold transition-all"
+                          [class.bg-[#4be277]/30]="getSelectedPortion(item.id) === portion.id"
+                          [class.bg-white/5]="getSelectedPortion(item.id) !== portion.id"
+                          [class.text-[#4be277]]="getSelectedPortion(item.id) === portion.id"
+                          [class.text-[#bccbb9]]="getSelectedPortion(item.id) !== portion.id">
+                          {{ portion.name }}
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
           </div>
         }
-      </div>
-    } @else {
-      <!-- Menu Grid -->
-      <div class="menu-grid">
-        <div 
-          *ngFor="let item of filteredItems" 
-          class="menu-item-card card-tap-feedback">
-          <div class="item-image">
-            <img [src]="item.image" [alt]="item.name" />
-          </div>
-          <div class="item-info">
-            <h3 class="item-name">{{ item.name }}</h3>
-            <p class="item-price">₦{{ getDisplayPrice(item).toLocaleString() }}</p>
-          </div>
-          
-          <!-- Portion Selector -->
-          <div *ngIf="item.portions" class="portion-selector">
-            <button 
-              *ngFor="let portion of item.portions" 
-              class="portion-btn"
-              [class.active]="getSelectedPortion(item.id) === portion.id"
-              (click)="$event.stopPropagation(); setSelectedPortion(item.id, portion.id)">
-              {{ portion.name }}
-            </button>
-          </div>
-          
-          <button *ngIf="getItemQty(item.id) === 0" class="add-button" (click)="addToSelection(item)">
-            <span class="material-symbols-outlined">add</span>
-          </button>
-          <div *ngIf="getItemQty(item.id) > 0" class="qty-control">
-            <button class="qty-btn minus" (click)="$event.stopPropagation(); removeFromSelection(item.id, getSelectedPortion(item.id))">-</button>
-            <span class="qty-display">{{ getItemQty(item.id) }}</span>
-            <button class="qty-btn plus" (click)="$event.stopPropagation(); addToSelection(item)">+</button>
-          </div>
-        </div>
-      </div>
+      </section>
     }
   </main>
 
-  <!-- Cart Summary Bar -->
-  <div 
-    *ngIf="selectedItems.length > 0"
-    class="cart-summary"
-    [class.visible]="selectedItems.length > 0">
-    <div class="cart-info">
-      <span class="item-count">{{ selectedItems.length }}</span>
-      <span class="cart-label">Items in Cart</span>
+  <!-- Floating Order Summary -->
+  @if (selectedItems.length > 0) {
+    <div class="fixed bottom-24 left-4 right-4 z-40">
+      <div class="glass-card rounded-2xl p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="relative w-12 h-12 rounded-xl bg-[#4be277]/20 flex items-center justify-center text-[#4be277]">
+            <span class="material-symbols-outlined">shopping_basket</span>
+            <span class="absolute -top-1 -right-1 w-5 h-5 bg-[#4be277] text-[#003915] text-[10px] rounded-full flex items-center justify-center font-bold">{{ selectedItems.length }}</span>
+          </div>
+          <div>
+            <span class="block text-[12px] leading-none font-medium text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">@if (tableNumber) { Table {{ tableNumber }} } @else { Menu Items }</span>
+            <span class="block text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">₦{{ selectionTotal.toLocaleString() }} Total</span>
+          </div>
+        </div>
+        <button (click)="confirmSelection()" class="bg-[#4be277] text-[#003915] px-6 py-3 rounded-xl text-[14px] leading-none font-semibold font-bold active:scale-95 transition-transform shadow-[0_0_15px_rgba(75,226,119,0.4)]" style="font-family:'Inter',sans-serif">
+          SEND TO KITCHEN
+        </button>
+      </div>
     </div>
-    <div class="cart-action" (click)="confirmSelection()">
-      <span class="cart-total">₦{{ selectionTotal.toLocaleString() }}</span>
-      <span class="material-symbols-outlined">arrow_forward</span>
-    </div>
-  </div>
+  }
 
   <!-- Bottom Navigation Bar -->
-  <nav class="bottom-nav">
-    <a class="nav-item active" (click)="goToTables()">
-      <span class="material-symbols-outlined">table_restaurant</span>
-      <span class="nav-label">Tables</span>
+  <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-[#070d1f]/70 backdrop-blur-[32px] rounded-t-xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+    <a class="flex flex-col items-center justify-center gap-0.5 px-6 py-2 text-[#bccbb9]/60 hover:text-[#4be277]/80 transition-colors cursor-pointer" (click)="goToTables()">
+      <span class="material-symbols-outlined">grid_view</span>
+      <span class="text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Tables</span>
     </a>
-    <a class="nav-item" (click)="goToHistory()">
-      <span class="material-symbols-outlined">history</span>
-      <span class="nav-label">History</span>
+    <a class="flex flex-col items-center justify-center gap-0.5 px-6 py-2 text-[#bccbb9]/60 hover:text-[#4be277]/80 transition-colors cursor-pointer">
+      <span class="material-symbols-outlined">receipt_long</span>
+      <span class="text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Orders</span>
     </a>
-    <a class="nav-item" (click)="goToProfile()">
-      <span class="material-symbols-outlined">person</span>
-      <span class="nav-label">Profile</span>
+    <a class="flex flex-col items-center justify-center gap-0.5 text-[#4be277] bg-[#4be277]/20 rounded-xl px-6 py-2 shadow-[0_0_15px_rgba(75,226,119,0.4)] cursor-pointer" (click)="confirmSelection()">
+      <span class="material-symbols-outlined">restaurant_menu</span>
+      <span class="text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Menu</span>
+    </a>
+    <a class="flex flex-col items-center justify-center gap-0.5 px-6 py-2 text-[#bccbb9]/60 hover:text-[#4be277]/80 transition-colors cursor-pointer">
+      <span class="material-symbols-outlined">notifications_active</span>
+      <span class="text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Service</span>
     </a>
   </nav>
 </div>

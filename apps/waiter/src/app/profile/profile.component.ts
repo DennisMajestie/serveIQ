@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { UserApiService } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService } from '@serveiq/shared/data-access';
 import { User } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
+  private authService = inject(AuthService);
   private userService = inject(UserApiService);
   private router = inject(Router);
 
@@ -116,8 +117,7 @@ export class ProfileComponent implements OnInit {
       cancelButtonText: 'Cancel'
     }).then(result => {
       if (result.isConfirmed) {
-        localStorage.clear();
-        this.router.navigate(['/login']);
+        this.authService.logout();
       }
     });
   }

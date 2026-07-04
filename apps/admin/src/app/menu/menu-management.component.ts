@@ -91,7 +91,10 @@ export class MenuManagementComponent implements OnInit {
         this.items.set(items);
         this.isLoading.set(false);
       },
-      error: () => this.isLoading.set(false)
+      error: () => {
+        this.isLoading.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to Load Menu', confirmButtonColor: '#F97316' });
+      }
     });
   }
 
@@ -158,13 +161,10 @@ export class MenuManagementComponent implements OnInit {
 
     if (this.selectedFile()) {
       try {
-        console.log('[MenuMgmt] Starting upload...');
         const uploaded = await this.uploadService.uploadFile(this.selectedFile()!).toPromise();
-        console.log('[MenuMgmt] Upload response:', uploaded);
         imageUrl = uploaded?.url;
-        console.log('[MenuMgmt] imageUrl:', imageUrl);
       } catch (e) {
-        console.error('[MenuMgmt] Upload failed:', e);
+        // Upload failed silently — item can still be created without image
       }
     }
 
@@ -183,9 +183,9 @@ export class MenuManagementComponent implements OnInit {
         this.isSubmitting.set(false);
         this.closeModal();
       },
-      error: (err) => {
-        console.error('[MenuMgmt] Create item failed:', err);
+      error: () => {
         this.isSubmitting.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to Create Item', text: 'Could not add menu item. Please try again.', confirmButtonColor: '#F97316' });
       }
     });
   }

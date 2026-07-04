@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ | Visionary Admin Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Outfit:wght@300;600;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+                "on-error-container": "#93000a",
+                "inverse-on-surface": "#ebf1ff",
+                "surface": "#f9f9ff",
+                "on-tertiary": "#ffffff",
+                "on-surface-variant": "#584237",
+                "error": "#ba1a1a",
+                "surface-bright": "#f9f9ff",
+                "on-tertiary-container": "#003554",
+                "on-surface": "#151c27",
+                "on-secondary-fixed": "#141b2b",
+                "secondary-container": "#d9dff5",
+                "error-container": "#ffdad6",
+                "outline-variant": "#e0c0b1",
+                "surface-tint": "#9d4300",
+                "surface-container-high": "#e2e8f8",
+                "on-tertiary-fixed-variant": "#004b74",
+                "primary": "#9d4300",
+                "on-primary-container": "#582200",
+                "on-primary": "#ffffff",
+                "tertiary-fixed": "#cde5ff",
+                "secondary-fixed-dim": "#c0c6db",
+                "on-secondary-fixed-variant": "#404758",
+                "inverse-primary": "#ffb690",
+                "primary-container": "#f97316",
+                "on-tertiary-fixed": "#001d32",
+                "surface-container": "#e7eefe",
+                "secondary-fixed": "#dce2f7",
+                "surface-container-lowest": "#ffffff",
+                "outline": "#8c7164",
+                "on-secondary": "#ffffff",
+                "surface-dim": "#d3daea",
+                "on-background": "#151c27",
+                "surface-variant": "#dce2f3",
+                "on-secondary-container": "#5c6274",
+                "tertiary-container": "#00a2f4",
+                "inverse-surface": "#2a313d",
+                "on-error": "#ffffff",
+                "primary-fixed-dim": "#ffb690",
+                "secondary": "#575e70",
+                "primary-fixed": "#ffdbca",
+                "on-primary-fixed": "#341100",
+                "surface-container-low": "#f0f3ff",
+                "tertiary": "#006398",
+                "on-primary-fixed-variant": "#783200"
+            },
+            borderRadius: {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "2xl": "1.5rem",
+                "full": "9999px"
+            },
+            spacing: {
+                "gutter-web": "24px",
+                "tap-target-min": "48px",
+                "margin-page": "24px",
+                "stack-sm": "8px",
+                "stack-md": "16px",
+                "gutter-mobile": "16px"
+            },
+            fontFamily: {
+                "display-lg": ["Outfit", "Inter", "sans-serif"],
+                "body-lg": ["Inter", "sans-serif"],
+                "mono-sm": ["JetBrains Mono", "monospace"],
+                "body-md": ["Inter", "sans-serif"],
+                "mono-xs": ["JetBrains Mono", "monospace"],
+                "label-md": ["Inter", "sans-serif"],
+                "headline-md": ["Outfit", "Inter", "sans-serif"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .glass-dark {
+            background: rgba(15, 15, 15, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .neon-glow-orange {
+            filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.6));
+        }
+        .neon-glow-violet {
+            filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.5));
+        }
+        .pulse-ring {
+            animation: pulse 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.7); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+            100% { transform: scale(0.7); opacity: 0.8; }
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto auto;
+            gap: 24px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen overflow-x-hidden">
+<!-- WebGL Background Layer -->
+<div class="fixed inset-0 z-0">
+<!-- STITCH_SHADER_START:ANIMATION_28 class="absolute inset-0 w-full h-full opacity-60" -->
+<div class="absolute inset-0 w-full h-full opacity-60" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_28" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_28');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+varying vec2 v_texCoord;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+vec3 hsb2rgb(in vec3 c) {
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0);
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix(vec3(1.0), rgb, c.y);
+}
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Create soft, moving blobs using sine/cosine time offsets
+    float orangeBlob = smoothstep(0.6, 0.0, distance(uv, vec2(0.2 + 0.1 * sin(u_time * 0.4), 0.3 + 0.1 * cos(u_time * 0.5))));
+    float violetBlob = smoothstep(0.7, 0.0, distance(uv, vec2(0.8 + 0.1 * cos(u_time * 0.3), 0.7 + 0.1 * sin(u_time * 0.4))));
+    float tertiaryBlob = smoothstep(0.5, 0.0, distance(uv, vec2(0.5 + 0.2 * sin(u_time * 0.2), 0.5 + 0.2 * cos(u_time * 0.3))));
+    
+    vec3 orange = vec3(0.976, 0.451, 0.086); // #F97316
+    vec3 violet = vec3(0.545, 0.361, 0.965); // #8B5CF6
+    vec3 base = vec3(0.973, 0.980, 0.988);   // Arctic White #F8FAFC
+    
+    vec3 color = base;
+    color = mix(color, orange, orangeBlob * 0.3);
+    color = mix(color, violet, violetBlob * 0.3);
+    color = mix(color, orange, tertiaryBlob * 0.1);
+    
+    gl_FragColor = vec4(color, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_28 -->
+</div>
+<!-- Floating Vertical Side Navigation (JSON Logic Applied) -->
+<nav class="fixed left-6 top-6 bottom-6 w-20 glass rounded-2xl z-50 flex flex-col items-center py-8 space-y-8">
+<div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+</div>
+<div class="flex-1 flex flex-col items-center space-y-4">
+<!-- Active Tab: Dashboard -->
+<button class="w-12 h-12 flex items-center justify-center rounded-xl bg-primary-container text-on-primary-container transition-all shadow-md">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-secondary hover:bg-white/40 transition-all">
+<span class="material-symbols-outlined" data-icon="table_restaurant">table_restaurant</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-secondary hover:bg-white/40 transition-all">
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-secondary hover:bg-white/40 transition-all">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</button>
+</div>
+<div class="flex flex-col items-center space-y-4">
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-secondary hover:bg-white/40 transition-all">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+<img alt="Admin User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJrC5qlh2LpI_BsBFvL-wxzwWPeuXvyVb2q318OVIkxuXUpw-MAvs5AeqMRXOgixn_J-Waefs7_1YsCT307dK0GPSBS0bwJzwATYjibHpdgXi4rigCkUd87Bl7Z-t1DwJRxvMwg3xWl3VzLtnbbBmXSflqdgyJH9M45uq9rhrlnOWMudyWVVhmc2KU1x3IU-WyOjTrbwRl1I-Vfw0awozAAkYNEBMpllVt6FtyzDwFpfnfxJS85UYvA_OTBQd7bAJQ2XHOpspQ2y3h"/>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="relative z-10 ml-32 mr-8 py-10">
+<!-- Header -->
+<header class="flex justify-between items-end mb-10">
+<div class="space-y-1">
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight">ServeIQ Admin</h1>
+<p class="font-body-md text-on-surface-variant opacity-70">Visionary Hospitality Management &amp; Analytics</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="glass px-6 py-3 rounded-full flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="font-label-md text-on-surface text-sm">System Live: Prime Time</span>
+</div>
+<button class="bg-primary text-white font-label-md px-8 py-3 rounded-xl shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-transform">
+                    New Order
+                </button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-4 gap-6">
+<!-- Module A (2x1): Total Revenue -->
+<div class="col-span-2 glass p-8 rounded-2xl flex flex-col justify-between relative overflow-hidden group">
+<div class="relative z-10">
+<p class="font-label-md text-on-surface-variant uppercase tracking-widest text-xs mb-2">Total Revenue</p>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-[48px] text-on-surface">₦1.2M</span>
+<span class="text-green-600 font-bold text-lg">+12.5%</span>
+</div>
+</div>
+<div class="mt-6 relative h-20 w-full overflow-hidden">
+<svg class="w-full h-full neon-glow-orange" viewbox="0 0 400 100">
+<path d="M0,80 Q50,70 100,85 T200,40 T300,60 T400,20" fill="none" stroke="#f97316" stroke-linecap="round" stroke-width="4"></path>
+</svg>
+</div>
+<div class="absolute -right-10 -bottom-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors"></div>
+</div>
+<!-- Module B (1x1): Staff Online -->
+<div class="col-span-1 glass p-8 rounded-2xl flex flex-col items-center justify-center text-center">
+<p class="font-label-md text-on-surface-variant uppercase tracking-widest text-xs mb-4">Staff Online</p>
+<div class="relative mb-4">
+<div class="pulse-ring absolute inset-0 bg-primary/20 rounded-full"></div>
+<div class="relative w-20 h-20 glass flex items-center justify-center rounded-full border-2 border-primary/30">
+<span class="font-display-lg text-4xl text-primary">6</span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant">Active Floor Crew</p>
+</div>
+<!-- Module C (1x1): Table Turnaround -->
+<div class="col-span-1 glass p-8 rounded-2xl flex flex-col items-center justify-center text-center">
+<p class="font-label-md text-on-surface-variant uppercase tracking-widest text-xs mb-4">Avg Turnaround</p>
+<div class="relative w-24 h-24 mb-4">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-high" cx="48" cy="48" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="48" cy="48" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="100.48" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-display-lg text-2xl text-on-surface">42<span class="text-sm">m</span></span>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant">Target: 45m</p>
+</div>
+<!-- Module D (3x2): Operational Health -->
+<div class="col-span-3 row-span-2 glass-dark p-10 rounded-2xl overflow-hidden relative">
+<div class="flex justify-between items-start relative z-10">
+<div>
+<h2 class="font-display-lg text-3xl text-white mb-2">Operational Health</h2>
+<p class="font-body-md text-white/50">Real-time load and service efficiency metrics across all zones.</p>
+</div>
+<div class="flex gap-2">
+<span class="px-4 py-1 rounded-full bg-white/10 text-white font-mono-xs text-xs">ZONE_ALPHA</span>
+<span class="px-4 py-1 rounded-full border border-white/20 text-white/60 font-mono-xs text-xs">SYSTEM_STABLE</span>
+</div>
+</div>
+<div class="mt-12 h-64 w-full relative">
+<!-- Complex Glowing Chart Representation -->
+<svg class="w-full h-full opacity-80" viewbox="0 0 800 300">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#9d4300" stop-opacity="0.6"></stop>
+<stop offset="100%" stop-color="#9d4300" stop-opacity="0"></stop>
+</lineargradient>
+<lineargradient id="violetGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.4"></stop>
+<stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,250 Q100,220 200,240 T400,100 T600,180 T800,50 L800,300 L0,300 Z" fill="url(#chartGradient)"></path>
+<path class="neon-glow-orange" d="M0,250 Q100,220 200,240 T400,100 T600,180 T800,50" fill="none" stroke="#f97316" stroke-width="3"></path>
+<path d="M0,280 Q150,260 300,270 T500,150 T800,100 L800,300 L0,300 Z" fill="url(#violetGradient)"></path>
+<path class="neon-glow-violet" d="M0,280 Q150,260 300,270 T500,150 T800,100" fill="none" stroke="#8b5cf6" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Subtle Grid Lines Overlay -->
+<div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0); background-size: 40px 40px;"></div>
+</div>
+<!-- Module E (1x2): Recent Events -->
+<div class="col-span-1 row-span-2 glass p-8 rounded-2xl flex flex-col">
+<h3 class="font-display-lg text-xl text-on-surface mb-6">Recent Events</h3>
+<div class="flex-1 space-y-6 overflow-y-auto pr-2 custom-scrollbar">
+<div class="space-y-2 border-l-2 border-primary-container pl-4">
+<div class="flex justify-between items-center">
+<span class="font-mono-sm text-xs text-primary font-bold">#TX_8829</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">Paid</span>
+</div>
+<p class="font-body-md text-sm text-on-surface-variant font-medium">Table 12 - $145.00</p>
+<p class="font-mono-xs text-[10px] opacity-50">14:22:10 UTC</p>
+</div>
+<div class="space-y-2 border-l-2 border-surface-container-highest pl-4">
+<div class="flex justify-between items-center">
+<span class="font-mono-sm text-xs text-secondary">#TX_8830</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700 uppercase">Pending</span>
+</div>
+<p class="font-body-md text-sm text-on-surface-variant">Table 04 - $82.50</p>
+<p class="font-mono-xs text-[10px] opacity-50">14:25:44 UTC</p>
+</div>
+<div class="space-y-2 border-l-2 border-primary-container pl-4">
+<div class="flex justify-between items-center">
+<span class="font-mono-sm text-xs text-primary font-bold">#TX_8831</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">Paid</span>
+</div>
+<p class="font-body-md text-sm text-on-surface-variant font-medium">Table 22 - $310.00</p>
+<p class="font-mono-xs text-[10px] opacity-50">14:28:12 UTC</p>
+</div>
+<div class="space-y-2 border-l-2 border-error-container pl-4">
+<div class="flex justify-between items-center">
+<span class="font-mono-sm text-xs text-error font-bold">#TX_VOID</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase">Void</span>
+</div>
+<p class="font-body-md text-sm text-on-surface-variant">Table 01 - Refunded</p>
+<p class="font-mono-xs text-[10px] opacity-50">14:30:01 UTC</p>
+</div>
+</div>
+<button class="mt-6 w-full py-3 glass hover:bg-white/60 transition-colors rounded-xl font-label-md text-sm text-on-surface">View All History</button>
+</div>
+</div>
+<!-- Secondary Row: Quick Actions / Staff Highlights -->
+<section class="mt-10 grid grid-cols-4 gap-6">
+<div class="col-span-4 glass rounded-2xl p-6 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex -space-x-4">
+<img alt="Staff Member 1" class="w-10 h-10 rounded-full border-2 border-white ring-2 ring-primary/10" data-alt="A diverse professional staff member portrait with high-key soft studio lighting for a premium hospitality management dashboard. The style is clean, modern, and high-fidelity with a minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgNBJOWmkYYEc9JbFbdjBKF49Nc48bj9jhBUCFkW4O4JRYx8Vx2-PD5fWG58SgGkH3DFuU6r1d-CFxGKIA9xvN6lcbcO-fyVjQTKUxDwsCX7ccMWD9oPKbqJ9BibT6SmpasIDbCbXJLcUPE-Vp9ZgsN6ijufbn-AGvQeXxte2ENOoE6HgNjvxAdUG8EsiQ2Zxf9_geS3Q-QUjgn7N1UuaMeyf8LuyfbAhgQWueay0Y178TKflBGbZHW2pAz7vuQMbuwaROb6ocIjcp"/>
+<img alt="Staff Member 2" class="w-10 h-10 rounded-full border-2 border-white ring-2 ring-primary/10" data-alt="A focused restaurant manager portrait in a professional setting with warm, ambient lighting. The visual style is crisp and modern, matching the premium and visionary aesthetic of the ServeIQ admin dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwkX2mgI-pgxVSegi-GosXwtgIOG7t7IwvYY45_E0_yEHDYO0dgTusK7puA7b1m2Vj3LYeF3HUFPtnK_efOzpgPcIGw7jEQyB1M2dXhCMbtgo-oHEI4QATiNVKTCJfech2oeEUnBZjSFX85EWjUOqc18_ZcAobA-Y6Fa_0qbmCPNVhibGyU71wNefmSMZ2abRpIqRz8CILl2rssqeRSJPjU1nh4J6L9spopov0gFLtL7U0neYrSk9JqJ4zbrW7J_f8YWi42_C3cFtI"/>
+<img alt="Staff Member 3" class="w-10 h-10 rounded-full border-2 border-white ring-2 ring-primary/10" data-alt="A friendly head waiter portrait for a high-end restaurant interface. The image features soft focus backgrounds and high-contrast professional lighting to denote a premium, luxury hospitality environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtqZeSr-3u_0F5T6QdIJOD0b2S8nH_-DArh6pDLg2wPcpJQp6OQo1DvPsTnn7NABGGZcrZeYbCDyFosWTw6klJ8x8oqQX-92FmiBiPg8Ir-lV5dIQgfozNkhWdIC7VPf282xpWt-mASL9F-iN-XntVu69dDLIPfOXYBDho9BU6bSZdjC5nP5M9IPa9IQ8muGSMV7RI6KRazi9mle-V0pyCa55jTMunbZOF9iyeEZP77YCjvfqP0Aq5OFAyVLRGUBJgokfgy6GdowX5"/>
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-xs font-bold border-2 border-white">+3</div>
+</div>
+<div>
+<p class="font-label-md text-on-surface">Premium Support</p>
+<p class="text-xs text-on-surface-variant opacity-60">Concierge line available 24/7</p>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-6 py-2 rounded-xl bg-white/40 hover:bg-white/60 transition-colors border border-white/20">
+<span class="material-symbols-outlined text-xl">contact_support</span>
+<span class="font-label-md text-sm">Get Help</span>
+</button>
+<button class="flex items-center gap-2 px-6 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors border border-primary/10">
+<span class="material-symbols-outlined text-xl">ios_share</span>
+<span class="font-label-md text-sm">Export Report</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<script>
+        // Micro-interactions for the glass cards
+        document.querySelectorAll('.glass, .glass-dark').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // Simulating some live updates
+        setInterval(() => {
+            const revenue = document.querySelector('.font-display-lg.text-\\[48px\\]');
+            if(revenue) {
+                const current = 1200000;
+                const change = Math.floor(Math.random() * 500);
+                revenue.innerText = `₦${(current + change).toLocaleString()}`;
+            }
+        }, 5000);
+    </script>
+</body></html>

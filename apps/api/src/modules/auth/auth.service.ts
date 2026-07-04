@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
@@ -90,12 +90,10 @@ export class AuthService {
     throw new UnauthorizedException('Invalid credentials');
   }
 
-  async logger(context: string, data: any) {
-    console.log(`[AuthService:${context}]`, JSON.stringify(data, null, 2));
-  }
+  private readonly logger = new Logger(AuthService.name);
 
   async waiterLogin(dto: WaiterLoginDto) {
-    await this.logger('waiterLogin', dto);
+    this.logger.log('waiterLogin attempt');
     
     if (!dto.pin) {
       // Just return a generic unauthorized instead of bad request to avoid confusing the frontend
@@ -175,7 +173,7 @@ export class AuthService {
     await this.dataSource.getRepository(VerificationToken).update(verificationToken.id, { isUsed: true });
   }
 
-  async sendVerification(userId: string): Promise<{ otp: string }> {
+  async sendVerification(userId: string): Promise<{ message: string }> {
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     const tokenHash = crypto.createHash('sha256').update(otp).digest('hex');
 
@@ -189,7 +187,7 @@ export class AuthService {
       expiresAt,
     });
 
-    return { otp };
+    return { message: 'Verification code sent' };
   }
 
   async verifyEmail(userId: string, otp: string): Promise<void> {
@@ -224,7 +222,7 @@ export class AuthService {
   }
 
   async activate(dto: LoginDto) {
-    await this.logger('activate', dto);
+    this.logger.log('activate attempt');
     const user = await this.dataSource.getRepository(User).findOne({
       where: [
         { email: dto.email, role: UserRole.OWNER },

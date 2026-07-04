@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { SyncStore } from '@serveiq/data-access';
-import { AuthService, UserApiService, TablesApiService, TabsApiService, User } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService, TablesApiService, TabsApiService, User, SubscriptionsApiService } from '@serveiq/shared/data-access';
+import { SubscriptionService } from '../core/subscription.service';
 import { of, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
 
@@ -36,75 +37,81 @@ interface NavItem {
         <nav class="sidebar-nav">
           <ul class="nav-list">
             <li class="nav-item">
-              <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/dashboard" routerLinkActive="active">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/tables" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/tables" routerLinkActive="active">
                 <span class="material-symbols-outlined">table_restaurant</span>
                 <span>Tables</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/menu" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/menu" routerLinkActive="active">
                 <span class="material-symbols-outlined">restaurant_menu</span>
                 <span>Menu</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/staff" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/staff" routerLinkActive="active">
                 <span class="material-symbols-outlined">group</span>
                 <span>Staff</span>
               </a>
             </li>
             <li class="nav-section-label">Operations</li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/bills" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/bills" routerLinkActive="active">
                 <span class="material-symbols-outlined">receipt_long</span>
                 <span>Bills</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/analytics" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/analytics" routerLinkActive="active">
                 <span class="material-symbols-outlined">analytics</span>
                 <span>Analytics</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/suppliers" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/suppliers" routerLinkActive="active">
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span>Suppliers</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/shifts" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/shifts" routerLinkActive="active">
                 <span class="material-symbols-outlined">schedule</span>
                 <span>Shifts</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/inventory" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/inventory" routerLinkActive="active">
                 <span class="material-symbols-outlined">inventory_2</span>
                 <span>Inventory</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/pos" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/pos" routerLinkActive="active">
                 <span class="material-symbols-outlined">point_of_sale</span>
                 <span>POS</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/settings" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/billing" routerLinkActive="active">
+                <span class="material-symbols-outlined">credit_card</span>
+                <span>Billing</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/settings" routerLinkActive="active">
                 <span class="material-symbols-outlined">settings</span>
                 <span>Settings</span>
               </a>
             </li>
             <li class="nav-section-label" *ngIf="profile().role === 'super_admin'">System</li>
             <li class="nav-item" *ngIf="profile().role === 'super_admin'">
-              <a class="nav-link" routerLink="/admin/businesses" routerLinkActive="active">
+              <a class="nav-link" routerLink="/app/admin/businesses" routerLinkActive="active">
                 <span class="material-symbols-outlined">business</span>
                 <span>Businesses</span>
               </a>
@@ -162,6 +169,26 @@ interface NavItem {
             </div>
           </div>
         </header>
+
+        <!-- Subscription Banner -->
+        <div class="sub-banner" *ngIf="subService.subscription() as sub">
+          <div class="sub-banner-inner status-{{ sub.status }}" *ngIf="sub.status === 'trialing'">
+            <span class="material-symbols-outlined">info</span>
+            <span>Free trial — {{ daysLeft(sub.trialEndsAt) }} days remaining. <a routerLink="/app/billing">Choose a plan</a> to keep access.</span>
+          </div>
+          <div class="sub-banner-inner status-{{ sub.status }}" *ngIf="sub.status === 'past_due'">
+            <span class="material-symbols-outlined">warning</span>
+            <span>Payment failed — {{ daysLeft(sub.gracePeriodEndsAt) }} days before lockout. <a routerLink="/app/billing">Update payment</a>.</span>
+          </div>
+          <div class="sub-banner-inner status-{{ sub.status }}" *ngIf="sub.status === 'expired'">
+            <span class="material-symbols-outlined">block</span>
+            <span>Subscription expired. <a routerLink="/app/billing">Choose a plan</a> to restore access.</span>
+          </div>
+          <div class="sub-banner-inner status-{{ sub.status }}" *ngIf="sub.status === 'canceled'">
+            <span class="material-symbols-outlined">cancel</span>
+            <span>Canceled — expires {{ sub.currentPeriodEnd | date:'mediumDate' }}. <a routerLink="/app/billing">Reactivate</a>.</span>
+          </div>
+        </div>
 
         <!-- Router Outlet -->
         <main class="content-area">
@@ -552,6 +579,15 @@ interface NavItem {
       border: 2px solid rgba(157,67,0,0.2);
     }
 
+    .sub-banner { width: 100%; }
+    .sub-banner-inner { display: flex; align-items: center; gap: 8px; padding: 10px 24px; font-size: 14px; font-weight: 500; }
+    .sub-banner-inner a { color: inherit; font-weight: 700; text-decoration: underline; }
+    .sub-banner-inner.status-trialing { background: #dbeafe; color: #1e40af; }
+    .sub-banner-inner.status-past_due { background: #fef3c7; color: #92400e; }
+    .sub-banner-inner.status-expired { background: #fee2e2; color: #991b1b; }
+    .sub-banner-inner.status-canceled { background: #f3f4f6; color: #374151; }
+    .sub-banner-inner .material-symbols-outlined { font-size: 20px; }
+
     .content-area {
       flex: 1;
       overflow-y: auto;
@@ -571,8 +607,16 @@ export class AdminShellComponent implements OnInit {
   private tablesApi = inject(TablesApiService);
   private tabsApi = inject(TabsApiService);
   private router = inject(Router);
+  subService = inject(SubscriptionService);
+
+  daysLeft(dateStr: string | null): number {
+    if (!dateStr) return 0;
+    const diff = new Date(dateStr).getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  }
 
   ngOnInit() {
+    this.subService.load();
     this.userApi.getMe().subscribe({
       next: (user: any) => this.profile.set({ fullName: user.fullName, role: user.role, avatarUrl: user.avatarUrl || user.avatar_url }),
       error: () => {}
@@ -596,17 +640,17 @@ export class AdminShellComponent implements OnInit {
             const results: SearchResult[] = [];
             tables.forEach(t => {
               if ((t.label || '').toLowerCase().includes(q) || (t.tableNumber || '').toLowerCase().includes(q) || (t.status || '').toLowerCase().includes(q)) {
-                results.push({ type: 'table', label: t.label || `Table ${t.tableNumber}`, subtitle: t.status, route: '/tables' });
+                results.push({ type: 'table', label: t.label || `Table ${t.tableNumber}`, subtitle: t.status, route: '/app/tables' });
               }
             });
             staff.forEach(s => {
               if ((s.fullName || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q)) {
-                results.push({ type: 'staff', label: s.fullName || s.email, subtitle: s.role || 'Staff', route: '/staff' });
+                results.push({ type: 'staff', label: s.fullName || s.email, subtitle: s.role || 'Staff', route: '/app/staff' });
               }
             });
             (tabs || []).forEach(t => {
               if ((t.id || '').toLowerCase().includes(q) || (t.status || '').toLowerCase().includes(q)) {
-                results.push({ type: 'order', label: `Tab #${(t.id || '').slice(0, 8)}`, subtitle: t.status, route: '/tables' });
+                results.push({ type: 'order', label: `Tab #${(t.id || '').slice(0, 8)}`, subtitle: t.status, route: '/app/tables' });
               }
             });
             return results.slice(0, 10);

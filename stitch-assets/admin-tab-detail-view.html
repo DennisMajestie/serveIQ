@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RestoAdmin - Table 5 Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "secondary": "#575e70",
+                    "on-primary-fixed-variant": "#783200",
+                    "on-primary-container": "#582200",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#004b74",
+                    "tertiary": "#006398",
+                    "on-secondary-fixed-variant": "#404758",
+                    "tertiary-fixed": "#cde5ff",
+                    "primary-container": "#f97316",
+                    "primary": "#9d4300",
+                    "on-secondary-container": "#5c6274",
+                    "background": "#f9f9ff",
+                    "surface-container": "#e7eefe",
+                    "surface-variant": "#dce2f3",
+                    "outline-variant": "#e0c0b1",
+                    "on-background": "#151c27",
+                    "surface-container-low": "#f0f3ff",
+                    "secondary-fixed": "#dce2f7",
+                    "primary-fixed": "#ffdbca",
+                    "tertiary-fixed-dim": "#93ccff",
+                    "surface": "#f9f9ff",
+                    "on-surface": "#151c27",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#c0c6db",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e2e8f8",
+                    "primary-fixed-dim": "#ffb690",
+                    "surface-bright": "#f9f9ff",
+                    "on-tertiary-container": "#003554",
+                    "surface-tint": "#9d4300",
+                    "inverse-surface": "#2a313d",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-secondary-fixed": "#141b2b",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#d3daea",
+                    "secondary-container": "#d9dff5",
+                    "on-tertiary-fixed": "#001d32",
+                    "on-surface-variant": "#584237",
+                    "tertiary-container": "#00a2f4",
+                    "inverse-primary": "#ffb690",
+                    "on-primary-fixed": "#341100",
+                    "surface-container-highest": "#dce2f3",
+                    "outline": "#8c7164",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "tap-target-min": "48px",
+                    "stack-sm": "8px",
+                    "gutter-mobile": "16px",
+                    "margin-page": "24px",
+                    "gutter-web": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "mono-sm": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "mono-xs": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "mono-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "mono-xs": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f9f9ff;
+            color: #151c27;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .order-card {
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+        }
+        .zebra-row:nth-child(even) {
+            background-color: #f9f9ff;
+        }
+    </style>
+</head>
+<body class="flex">
+<!-- SideNavBar (Authority: JSON & Style Guidance) -->
+<aside class="flex flex-col h-full border-r border-outline-variant h-screen w-64 fixed left-0 top-0 bg-surface shadow-md z-50">
+<div class="px-6 py-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">RestoAdmin</h1>
+<p class="text-secondary font-label-md text-sm">Management Portal</p>
+</div>
+<nav class="flex-grow">
+<ul class="space-y-1">
+<!-- Dashboard -->
+<li>
+<a class="text-secondary hover:text-primary flex items-center px-6 py-4 transition-colors hover:bg-surface-container-high duration-200" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<!-- Tables (Active State Logic applied) -->
+<li>
+<a class="text-primary font-bold border-r-4 border-primary bg-primary-container/10 flex items-center px-6 py-4 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">table_restaurant</span>
+<span class="font-label-md text-label-md">Tables</span>
+</a>
+</li>
+<!-- Menu -->
+<li>
+<a class="text-secondary hover:text-primary flex items-center px-6 py-4 transition-colors hover:bg-surface-container-high duration-200" href="#">
+<span class="material-symbols-outlined mr-3">restaurant_menu</span>
+<span class="font-label-md text-label-md">Menu</span>
+</a>
+</li>
+<!-- Staff -->
+<li>
+<a class="text-secondary hover:text-primary flex items-center px-6 py-4 transition-colors hover:bg-surface-container-high duration-200" href="#">
+<span class="material-symbols-outlined mr-3">group</span>
+<span class="font-label-md text-label-md">Staff</span>
+</a>
+</li>
+<!-- Settings -->
+<li>
+<a class="text-secondary hover:text-primary flex items-center px-6 py-4 transition-colors hover:bg-surface-container-high duration-200" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="p-6 mt-auto">
+<button class="w-full bg-primary-container text-white py-3 rounded-lg font-label-md flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined">add</span>
+                New Order
+            </button>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="ml-64 flex-grow min-h-screen flex flex-col">
+<!-- TopNavBar (Authority: JSON) -->
+<header class="flex items-center justify-between px-gutter-web w-full h-16 z-40 bg-surface shadow-sm sticky top-0">
+<!-- Search Bar (on_left per JSON) -->
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96 border border-outline-variant focus-within:ring-2 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-secondary mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full" placeholder="Search orders, tables, or staff..." type="text"/>
+</div>
+<!-- Profile and Actions -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-secondary hover:bg-surface-container-low p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-surface"></span>
+</button>
+<div class="flex items-center gap-2 text-secondary cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md text-body-md">Help</span>
+</div>
+</div>
+<div class="h-8 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right">
+<p class="font-label-md text-label-md leading-tight">Marcus Cole</p>
+<p class="text-xs text-secondary">Manager</p>
+</div>
+<img alt="Admin Profile Image" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20" data-alt="A professional portrait of a restaurant manager named Marcus Cole, a man in his late 30s with a warm smile, wearing a clean charcoal grey uniform shirt. The background is a softly blurred modern restaurant interior with warm ambient lighting and wooden textures. The photo has a high-quality corporate aesthetic with natural, balanced lighting and sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaybusLQmZnunOL2JqdLVUOHNP3YQz-SAlAew7fOiFV3L_wuzBKG5uhzMTAnTwmPJBVAE-tW8LhiM0IfR0R1gDEk19ZAY9ouxL0eNCl4dbbLLL94CsZrtgAkbZ7kjlOPCHuBadffduliQa_BilWO0c6wkLaswj6BKBm7PtpU4x-lWHhyvBYTbX2aWEwxNhfUchW3osXvrPUxWyJq1Ko2kNk7CBujdSeALxFPjFsFribrqzHjloASkDUmQRwq56TpjWROFdrLTeCiN7"/>
+</div>
+</div>
+</header>
+<!-- Main Dashboard Area -->
+<main class="p-8 flex-grow">
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-4">
+<a class="p-2 hover:bg-surface-container rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</a>
+<h2 class="font-display-lg text-display-lg text-on-surface">Table 5 — Alice</h2>
+<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                        Open Status
+                    </span>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md">
+<span class="material-symbols-outlined">history</span>
+                        View History
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 text-secondary hover:bg-surface-container-high rounded-lg transition-all font-label-md">
+<span class="material-symbols-outlined">edit</span>
+                        Edit Table
+                    </button>
+</div>
+</div>
+<!-- Two-Column Layout -->
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- Left Column: Current Order (Bento-style card) -->
+<div class="col-span-8">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant order-card overflow-hidden">
+<div class="px-6 py-5 border-b border-outline-variant flex justify-between items-center bg-white">
+<h3 class="font-headline-md text-body-lg font-bold">Current Order</h3>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary/5 text-primary border border-primary/20 hover:bg-primary/10 rounded-lg transition-all font-label-md">
+<span class="material-symbols-outlined text-sm">add</span>
+                                Add Item
+                            </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary">
+<th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider">Item Name</th>
+<th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider text-center">Qty</th>
+<th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider text-right">Unit Price</th>
+<th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider text-right">Total</th>
+<th class="px-6 py-4 font-label-md text-label-md uppercase tracking-wider text-center">Actions</th>
+</tr>
+</thead>
+<tbody>
+<!-- Item 1 -->
+<tr class="zebra-row hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-5 font-body-md">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">lunch_dining</span>
+</div>
+<div>
+<p class="font-bold">Spicy Suya</p>
+<p class="text-xs text-secondary">Extra onions, hot spice</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5 font-mono-sm text-center">2</td>
+<td class="px-6 py-5 font-mono-sm text-right">₦3,500.00</td>
+<td class="px-6 py-5 font-mono-sm text-right font-bold">₦7,000.00</td>
+<td class="px-6 py-5 text-center">
+<button class="text-secondary hover:text-error opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 2 -->
+<tr class="zebra-row hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-5 font-body-md">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">ramen_dining</span>
+</div>
+<div>
+<p class="font-bold">Jollof Rice Special</p>
+<p class="text-xs text-secondary">With fried plantain</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5 font-mono-sm text-center">1</td>
+<td class="px-6 py-5 font-mono-sm text-right">₦5,500.00</td>
+<td class="px-6 py-5 font-mono-sm text-right font-bold">₦5,500.00</td>
+<td class="px-6 py-5 text-center">
+<button class="text-secondary hover:text-error opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 3 -->
+<tr class="zebra-row hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-5 font-body-md">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">local_bar</span>
+</div>
+<div>
+<p class="font-bold">Chapman</p>
+<p class="text-xs text-secondary">Classic chilled</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5 font-mono-sm text-center">3</td>
+<td class="px-6 py-5 font-mono-sm text-right">₦2,000.00</td>
+<td class="px-6 py-5 font-mono-sm text-right font-bold">₦6,000.00</td>
+<td class="px-6 py-5 text-center">
+<button class="text-secondary hover:text-error opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Column: Order Summary -->
+<div class="col-span-4 space-y-6">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant order-card overflow-hidden">
+<div class="px-6 py-5 border-b border-outline-variant bg-white">
+<h3 class="font-headline-md text-body-lg font-bold">Order Summary</h3>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex justify-between text-secondary">
+<span class="font-body-md">Subtotal</span>
+<span class="font-mono-sm">₦18,500.00</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span class="font-body-md">VAT (7.5%)</span>
+<span class="font-mono-sm">₦1,387.50</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span class="font-body-md">Service Charge</span>
+<span class="font-mono-sm">₦0.00</span>
+</div>
+<div class="pt-4 border-t border-outline-variant flex justify-between items-baseline">
+<span class="font-headline-md text-primary font-bold">Total Amount</span>
+<span class="font-mono-sm text-2xl font-bold text-on-surface">₦19,887.50</span>
+</div>
+</div>
+<div class="p-6 bg-surface-container-low space-y-3">
+<button class="w-full bg-primary-container text-white py-4 rounded-xl font-label-md text-lg active:scale-95 transition-all shadow-md">
+                                Close Tab
+                            </button>
+<button class="w-full bg-white border-2 border-primary text-primary py-4 rounded-xl font-label-md text-lg hover:bg-primary/5 active:scale-95 transition-all">
+                                Print Bill
+                            </button>
+</div>
+</div>
+<!-- Actions Card -->
+<div class="p-2">
+<button class="w-full flex items-center justify-center gap-2 py-3 text-error font-label-md hover:bg-error-container/20 rounded-lg transition-all group">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 0;">cancel</span>
+                            Void Order
+                        </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="p-6 border-t border-outline-variant flex justify-between items-center text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="font-body-md text-sm">Opened by Sarah J. • 42 Minutes ago</span>
+</div>
+<div class="text-xs">
+                RestoAdmin v2.4.1 • Server Node 04
+            </div>
+</footer>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        // Simple hover effect for table rows
+        document.querySelectorAll('.zebra-row').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'translateX(4px)';
+                row.style.transition = 'transform 0.2s ease-out';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+</body></html>

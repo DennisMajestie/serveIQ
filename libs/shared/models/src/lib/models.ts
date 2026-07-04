@@ -361,3 +361,41 @@ export interface BestsellerReport {
   slowMovers: Array<{ menuItemId: string; name: string; quantitySold: number }>;
   outOfStock: Array<{ menuItemId: string; name: string }>;
 }
+
+export type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'canceled' | 'expired';
+export type BillingInterval = 'monthly' | 'yearly';
+
+export interface PlanFeatures {
+  maxTables: number;
+  maxWaiters: number;
+  reportingEnabled: boolean;
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  billingInterval: BillingInterval;
+  features: PlanFeatures;
+  isActive: boolean;
+}
+
+export interface Subscription {
+  id: string;
+  branchId: string;
+  planId: string | null;
+  status: SubscriptionStatus;
+  trialEndsAt: string | null;
+  currentPeriodStart: string | null;
+  currentPeriodEnd: string | null;
+  gracePeriodEndsAt: string | null;
+  canceledAt: string | null;
+  plan: SubscriptionPlan | null;
+}
+
+export interface InitializeSubscriptionResponse {
+  authorizationUrl: string;
+  accessCode: string;
+  reference: string;
+}

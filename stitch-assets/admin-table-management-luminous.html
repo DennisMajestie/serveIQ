@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ | Table Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#dce1fb",
+                        "surface-variant": "#2e3447",
+                        "surface-container-high": "#23293c",
+                        "on-tertiary-fixed-variant": "#92002a",
+                        "on-secondary-fixed-variant": "#004395",
+                        "inverse-primary": "#006e2f",
+                        "outline-variant": "#3d4a3d",
+                        "on-tertiary-fixed": "#40000d",
+                        "on-error": "#690005",
+                        "on-background": "#dce1fb",
+                        "background": "#0c1324",
+                        "primary": "#4be277",
+                        "outline": "#869585",
+                        "on-secondary-container": "#e6ecff",
+                        "inverse-on-surface": "#2a3043",
+                        "primary-fixed-dim": "#4ae176",
+                        "surface-container": "#191f31",
+                        "primary-container": "#22c55e",
+                        "on-tertiary-container": "#840025",
+                        "tertiary": "#ffb3b7",
+                        "surface-container-low": "#151b2d",
+                        "surface-container-highest": "#2e3447",
+                        "primary-fixed": "#6bff8f",
+                        "tertiary-fixed": "#ffdadb",
+                        "on-primary-fixed": "#002109",
+                        "tertiary-fixed-dim": "#ffb2b7",
+                        "secondary-container": "#0566d9",
+                        "surface": "#0c1324",
+                        "secondary-fixed": "#d8e2ff",
+                        "inverse-surface": "#dce1fb",
+                        "on-primary": "#003915",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-lowest": "#070d1f",
+                        "on-surface-variant": "#bccbb9",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#4ae176",
+                        "on-primary-container": "#004b1e",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-tertiary": "#67001b",
+                        "error-container": "#93000a",
+                        "tertiary-container": "#ff8892",
+                        "surface-dim": "#0c1324",
+                        "surface-bright": "#33394c",
+                        "secondary": "#adc6ff",
+                        "on-secondary": "#002e6a",
+                        "on-primary-fixed-variant": "#005321",
+                        "on-secondary-fixed": "#001a42"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inner-padding": "24px",
+                        "bento-gap": "20px",
+                        "container-padding": "32px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "metric-sm": ["Space Grotesk"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Space Grotesk"],
+                        "headline-lg-mobile": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "metric-sm": ["18px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+        }
+        
+        .luminous-glow-primary {
+            box-shadow: 0 0 20px rgba(75, 226, 119, 0.15);
+        }
+
+        .luminous-glow-secondary {
+            box-shadow: 0 0 20px rgba(173, 198, 255, 0.15);
+        }
+
+        .blueprint-line {
+            stroke: rgba(173, 198, 255, 0.3);
+            stroke-width: 1;
+            filter: drop-shadow(0 0 2px rgba(173, 198, 255, 0.5));
+        }
+
+        .pulse-left::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #4be277;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .pulse-left:hover::before {
+            opacity: 1;
+        }
+
+        body {
+            background-color: #0c1324;
+            color: #dce1fb;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md">
+<!-- Sidebar Navigation Shell -->
+<nav class="h-screen w-64 fixed left-0 top-0 flex flex-col border-r border-outline-variant bg-surface dark:bg-surface-dim shadow-md z-50">
+<div class="p-6">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">RestoAdmin</h1>
+<p class="font-label-md text-label-md text-secondary opacity-70">Management Portal</p>
+</div>
+<div class="flex-1 mt-4">
+<!-- Dashboard -->
+<a class="text-secondary hover:text-primary flex items-center px-6 py-4 transition-colors hover:bg-surface-container-high transition-all duration-200 active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<!-- Tables (ACTIVE) -->
+<a class="text-primary font-bold border-r-4 border-primary bg-primary-container/10 flex items-center px-6 py-4 transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="table_restaurant">table_restaurant</span>
+                Tables
+            </a>
+<!-- Menu -->
+<a class="text-secondary hover:text-primary flex items-center px-6 py-4 transition-colors hover:bg-surface-container-high transition-all duration-200 active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="restaurant_menu">restaurant_menu</span>
+                Menu
+            </a>
+<!-- Staff -->
+<a class="text-secondary hover:text-primary flex items-center px-6 py-4 transition-colors hover:bg-surface-container-high transition-all duration-200 active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+                Staff
+            </a>
+<!-- Settings -->
+<a class="text-secondary hover:text-primary flex items-center px-6 py-4 transition-colors hover:bg-surface-container-high transition-all duration-200 active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+                Settings
+            </a>
+</div>
+<div class="p-6 border-t border-outline-variant">
+<button class="w-full py-3 bg-primary-container text-on-primary-container rounded-lg font-label-md text-label-md transition-all hover:brightness-110 active:scale-95">
+                New Order
+            </button>
+</div>
+</nav>
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 flex items-center justify-between px-container-padding bg-surface dark:bg-surface-dim shadow-sm z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full focus-within:ring-2 focus-within:ring-primary rounded-lg transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-0 placeholder:text-secondary/50" placeholder="Search tables, orders, or staff..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-gap-4">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors relative">
+<span class="material-symbols-outlined text-secondary" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<button class="flex items-center ml-4 px-3 py-1 hover:bg-surface-container-low rounded-lg transition-colors group">
+<span class="material-symbols-outlined text-secondary mr-2" data-icon="help">help</span>
+<span class="font-body-md text-body-md text-secondary">Help</span>
+</button>
+<div class="ml-6 flex items-center">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img alt="Admin Profile Image" class="w-full h-full object-cover" data-alt="A professional headshot of a senior restaurant manager in his 40s wearing a sharp charcoal suit and a crisp white shirt. He has a confident, warm expression. The background is a blurred, high-end modern restaurant interior with warm ambient lighting and soft bokeh effects. The lighting on his face is cinematic and flattering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcnSyVljmPsRmQ8jbAk65_BI4wEI79MvA-KM_FFkY1D_FnRCZe0tSXLuQMl0LBZmgn4dhLYERxtbR5AM4toypI3KkwNSdLyVMuQqdhjzWAgWYSyZBdWDbXEwJQpmrnMBkL8IL1rdBzHt7ac3WC8zwhQmiSRwFl3budQDEmguinZnTJv497vG0NGz38nnlGZwXIHijaSaZiii5WOUC-nq4NZhYo3Cvdm8_lKiRKnzEz6IZL6relO6MeI5xpCGkDTc8flaOdVdt2Gw6Y"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 mt-16 p-container-padding">
+<div class="max-w-[1280px] mx-auto">
+<!-- Header Section -->
+<div class="mb-10 flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Floor Management</h2>
+<p class="font-body-lg text-body-lg text-secondary opacity-80">Arctic White Command Suite</p>
+</div>
+<div class="flex space-x-4">
+<div class="glass-card px-6 py-3 rounded-xl flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Total Efficiency</span>
+<span class="font-display-lg text-display-lg text-primary">84%</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-bento-gap">
+<!-- Hero Component: Floor Plan Blueprint -->
+<div class="col-span-12 lg:col-span-8 glass-card rounded-3xl p-inner-padding min-h-[400px] relative overflow-hidden group">
+<div class="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-700">
+<!-- Blueprint Visualization (Conceptual) -->
+<svg fill="none" height="100%" viewbox="0 0 800 400" width="100%" xmlns="http://www.w3.org/2000/svg">
+<path class="blueprint-line" d="M50 50H750V350H50V50Z"></path>
+<path class="blueprint-line" d="M200 50V350M400 50V350M600 50V350"></path>
+<circle class="blueprint-line" cx="125" cy="125" r="30"></circle>
+<circle class="blueprint-line" cx="300" cy="125" r="30"></circle>
+<rect class="blueprint-line" height="60" rx="4" width="60" x="480" y="95"></rect>
+<rect class="blueprint-line" height="60" rx="4" width="80" x="650" y="95"></rect>
+<path class="blueprint-line" d="M100 250H150V300H100V250Z"></path>
+<path class="blueprint-line" d="M300 250H450V300H300V250Z"></path>
+</svg>
+</div>
+<div class="relative z-10 h-full flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md text-on-surface">Main Dining Hall</span>
+<div class="flex items-center space-x-2 bg-primary/10 px-3 py-1 rounded-full">
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary uppercase">Live Feed</span>
+</div>
+</div>
+<div class="flex space-x-8">
+<div>
+<p class="font-label-sm text-label-sm text-secondary">Active Covers</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">142 <span class="text-secondary/50 text-headline-md">/ 180</span></p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-secondary">Est. Wait Time</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">12 <span class="text-secondary/50 text-headline-md">min</span></p>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Alerts / Activity -->
+<div class="col-span-12 lg:col-span-4 glass-card rounded-3xl p-inner-padding flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Real-time Activity</h3>
+<div class="flex-1 space-y-4">
+<div class="p-4 rounded-xl bg-surface-container-low border-l-4 border-primary/40 pulse-left relative">
+<p class="font-label-md text-label-md text-on-surface">Table T-04 Checked Out</p>
+<p class="font-label-sm text-label-sm text-secondary">2 minutes ago</p>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border-l-4 border-secondary/40 pulse-left relative">
+<p class="font-label-md text-label-md text-on-surface">Waitlist: "Miller" Party (4)</p>
+<p class="font-label-sm text-label-sm text-secondary">5 minutes ago</p>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border-l-4 border-error/40 pulse-left relative">
+<p class="font-label-md text-label-md text-on-surface">Server Help: T-12</p>
+<p class="font-label-sm text-label-sm text-secondary">8 minutes ago</p>
+</div>
+</div>
+<button class="mt-6 w-full py-4 glass-card border border-outline-variant hover:border-primary/50 text-secondary hover:text-primary transition-all rounded-xl font-label-md text-label-md">
+                        View Audit Log
+                    </button>
+</div>
+<!-- Table Modules -->
+<!-- Table 01: Free -->
+<div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-inner-padding luminous-glow-primary transition-all hover:scale-[1.02] cursor-pointer">
+<div class="flex justify-between items-start mb-8">
+<span class="font-display-lg text-display-lg text-on-surface leading-none">T-01</span>
+<span class="px-3 py-1 bg-primary/10 text-primary font-label-sm text-label-sm rounded-full">Free</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-secondary">Efficiency</span>
+<span class="font-metric-sm text-metric-sm text-primary">92%</span>
+</div>
+<div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[92%]"></div>
+</div>
+<div class="pt-4 flex justify-between text-secondary">
+<span class="font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="group">group</span> 4 Seats</span>
+<span class="font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="timer">timer</span> 0m</span>
+</div>
+</div>
+</div>
+<!-- Table 02: In-Use -->
+<div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-inner-padding transition-all hover:scale-[1.02] cursor-pointer">
+<div class="flex justify-between items-start mb-8">
+<span class="font-display-lg text-display-lg text-on-surface leading-none opacity-60">T-02</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary font-label-sm text-label-sm rounded-full">In-Use</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-secondary">Efficiency</span>
+<span class="font-metric-sm text-metric-sm text-secondary">78%</span>
+</div>
+<div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[78%]"></div>
+</div>
+<div class="pt-4 flex justify-between text-secondary">
+<span class="font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="group">group</span> 2 Seats</span>
+<span class="font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="timer">timer</span> 42m</span>
+</div>
+</div>
+</div>
+<!-- Table 03: In-Use (High Occupancy) -->
+<div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-inner-padding transition-all hover:scale-[1.02] cursor-pointer">
+<div class="flex justify-between items-start mb-8">
+<span class="font-display-lg text-display-lg text-on-surface leading-none opacity-60">T-03</span>
+<span class="px-3 py-1 bg-secondary/10 text-secondary font-label-sm text-label-sm rounded-full">In-Use</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-secondary">Efficiency</span>
+<span class="font-metric-sm text-metric-sm text-secondary">96%</span>
+</div>
+<div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[96%]"></div>
+</div>
+<div class="pt-4 flex justify-between text-secondary">
+<span class="font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="group">group</span> 8 Seats</span>
+<span class="font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="timer">timer</span> 112m</span>
+</div>
+</div>
+</div>
+<!-- Table 04: Free (Just Cleaned) -->
+<div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-inner-padding luminous-glow-primary transition-all hover:scale-[1.02] cursor-pointer">
+<div class="flex justify-between items-start mb-8">
+<span class="font-display-lg text-display-lg text-on-surface leading-none">T-04</span>
+<span class="px-3 py-1 bg-primary/10 text-primary font-label-sm text-label-sm rounded-full">Free</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-secondary">Efficiency</span>
+<span class="font-metric-sm text-metric-sm text-primary">88%</span>
+</div>
+<div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[88%]"></div>
+</div>
+<div class="pt-4 flex justify-between text-secondary">
+<span class="font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="group">group</span> 4 Seats</span>
+<span class="font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="timer">timer</span> 5m</span>
+</div>
+</div>
+</div>
+<!-- Performance Visualization Card -->
+<div class="col-span-12 lg:col-span-12 glass-card rounded-3xl p-inner-padding flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1 w-full">
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Network Load Analysis</h4>
+<p class="font-body-md text-body-md text-secondary opacity-70 mb-6">Service velocity tracking across Arctic White clusters.</p>
+<div class="flex items-end space-x-2 h-32">
+<div class="w-full bg-primary/20 rounded-t-lg h-[40%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+<div class="w-full bg-primary/20 rounded-t-lg h-[65%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+<div class="w-full bg-primary/20 rounded-t-lg h-[85%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+<div class="w-full bg-primary/60 rounded-t-lg h-[95%] hover:bg-primary/80 transition-all cursor-pointer shadow-[0_0_15px_rgba(75,226,119,0.3)]"></div>
+<div class="w-full bg-primary/20 rounded-t-lg h-[75%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+<div class="w-full bg-primary/20 rounded-t-lg h-[55%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+<div class="w-full bg-primary/20 rounded-t-lg h-[45%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+<div class="w-full bg-primary/20 rounded-t-lg h-[35%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+<div class="w-full bg-primary/20 rounded-t-lg h-[65%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+<div class="w-full bg-primary/20 rounded-t-lg h-[80%] hover:bg-primary/40 transition-all cursor-pointer"></div>
+</div>
+</div>
+<div class="w-full md:w-64 flex flex-col space-y-4">
+<div class="p-4 bg-surface-container rounded-2xl border border-primary/10">
+<p class="font-label-sm text-label-sm text-secondary">Peak Throughput</p>
+<p class="font-headline-md text-headline-md text-primary">1,402 ops/h</p>
+</div>
+<div class="p-4 bg-surface-container rounded-2xl border border-secondary/10">
+<p class="font-label-sm text-label-sm text-secondary">Average Latency</p>
+<p class="font-headline-md text-headline-md text-secondary">2.4ms</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for the Arctic White interface
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+                
+                // Dynamic reflection effect
+                const lightEffect = `radial-gradient(400px circle at ${x}px ${y}px, rgba(255,255,255,0.06), transparent 40%)`;
+                card.style.backgroundImage = lightEffect;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.backgroundImage = 'none';
+            });
+        });
+    </script>
+</body></html>

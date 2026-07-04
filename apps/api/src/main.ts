@@ -23,7 +23,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: false,
+      forbidNonWhitelisted: true,
       transform: true,
     }),
   );
@@ -33,13 +33,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   // CORS
-  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') ?? [
-    'http://localhost:3000',
-    'http://localhost:4200',
-    'https://serveiq-admin.vercel.app',
-    'https://serve-iq-one.vercel.app',
-    'https://serve-iq-waiter.vercel.app',
-  ];
+  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') ?? ['http://localhost:4200', 'http://localhost:3000'];
   app.enableCors({
     origin: allowedOrigins,
     credentials: true,

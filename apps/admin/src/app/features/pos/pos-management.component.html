@@ -7,7 +7,9 @@
     <button class="btn-primary" (click)="openAddModal()">+ Add POS</button>
   </div>
 
-  <div class="card table-card" *ngIf="terminals().length > 0; else emptyState">
+  <div class="loading-spinner" *ngIf="isLoading()">Loading terminals...</div>
+
+  <div class="card table-card" *ngIf="!isLoading() && terminals().length > 0; else emptyState">
     <table class="data-table">
       <thead>
         <tr>

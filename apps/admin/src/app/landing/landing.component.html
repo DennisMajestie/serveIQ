@@ -1,0 +1,147 @@
+<div id="shader-bg"></div>
+<canvas class="fixed inset-0 -z-10 opacity-30" id="luxury-canvas" #luxuryCanvas></canvas>
+
+<header class="landing-header">
+  <nav class="nav-container">
+    <div class="nav-brand">
+      <svg class="logo" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#b45309"/>
+        <path d="M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z" fill="white" opacity="0.9"/>
+      </svg>
+    </div>
+    <div class="nav-links">
+      <a class="nav-link active" href="#">Product</a>
+      <a class="nav-link" href="#">Solutions</a>
+      <a class="nav-link" href="#">Pricing</a>
+      <a class="nav-link" href="#">Resources</a>
+    </div>
+    <div class="nav-actions">
+      <a routerLink="/login" class="btn btn-ghost-sm">Log In</a>
+      <button class="btn btn-primary-sm">Book a Demo</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="material-symbols-outlined text-tertiary text-lg">warning</span>
+        <span>RESTAURANTS LOSE 4-8% OF REVENUE TO UNSEEN LEAKAGE</span>
+      </div>
+      <h1 class="hero-title">Every order. Every table.<br/>Every naira, accounted for.</h1>
+      <p class="hero-desc">Stop the leakage. ServeIQ gives you total visibility into every transaction, payment, and staff action so nothing slips through the cracks.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary">Book a demo</button>
+        <button class="btn btn-outline">See pricing</button>
+      </div>
+    </div>
+    <div class="hero-mockup">
+      <div class="mockup-card">
+        <div class="mockup-header">
+          <h3 class="mockup-title">
+            <span class="material-symbols-outlined text-primary">security</span>
+            Live Revenue Protection
+          </h3>
+          <span class="mockup-badge">LIVE</span>
+        </div>
+        <div class="mockup-alerts">
+          @for (alert of alerts; track alert.title) {
+            <div class="alert-card" [class]="'alert-' + alert.color">
+              <span class="material-symbols-outlined" [class]="'text-' + alert.color">{{ alert.icon }}</span>
+              <div>
+                <p class="alert-title">{{ alert.title }}</p>
+                <span class="alert-desc">{{ alert.desc }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <section class="stats-bar">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number">100%</span>
+        <p class="stat-label">Orders traceable to a waiter</p>
+      </div>
+      <div class="stat-item bordered">
+        <span class="stat-number">Zero Overlap</span>
+        <p class="stat-label">1 table, 1 waiter logic</p>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">Live Visibility</span>
+        <p class="stat-label">Sales data from anywhere</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="features-intro">
+      <h2 class="features-title">Designed for Complete Operational Precision</h2>
+      <p class="features-desc">Eliminate disputes, track every kobo, and regain control.</p>
+    </div>
+    <div class="features-grid">
+      @for (feature of features; track feature.title) {
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrap">
+            <span class="material-symbols-outlined text-primary text-[32px]">{{ feature.icon }}</span>
+          </div>
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-desc">{{ feature.desc }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band">
+    <div class="cta-glow"></div>
+    <div class="cta-content">
+      <h2 class="cta-title">Stop guessing where the money goes.</h2>
+      <p class="cta-subtitle">14 day free trial. No card required to start.</p>
+      <button class="btn btn-cta">Start free trial</button>
+    </div>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <div class="footer-grid">
+    <div class="footer-brand-section">
+      <svg class="logo" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#b45309"/>
+        <path d="M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z" fill="white" opacity="0.9"/>
+      </svg>
+      <p class="footer-about">Precision hospitality management software built for the modern restaurant. Recover your revenue and empower your team.</p>
+      <p class="footer-copyright">© 2024 ServeIQ. Precision in Hospitality.</p>
+    </div>
+    <div class="footer-col">
+      <h4 class="footer-heading">Platform</h4>
+      <a href="#">Point of Sale</a>
+      <a href="#">Inventory Control</a>
+      <a href="#">Staff Analytics</a>
+      <a href="#">Security Suite</a>
+    </div>
+    <div class="footer-col">
+      <h4 class="footer-heading">Resources</h4>
+      <a href="#">Case Studies</a>
+      <a href="#">Pricing Plans</a>
+      <a href="#">API Documentation</a>
+      <a href="#">Status</a>
+    </div>
+    <div class="footer-col">
+      <h4 class="footer-heading">Legal & Support</h4>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Contact Support</a>
+      <div class="footer-social">
+        <span class="material-symbols-outlined">public</span>
+        <span class="material-symbols-outlined">verified_user</span>
+      </div>
+    </div>
+  </div>
+</footer>

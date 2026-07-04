@@ -1,5 +1,6 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TabsApiService } from '@serveiq/shared/data-access';
 import { Tab } from '@serveiq/shared/models';
@@ -8,7 +9,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-tabs-management',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './tabs-management.component.html',
   styleUrls: ['./tabs-management.component.scss']
 })
@@ -18,6 +19,18 @@ export class TabsManagementComponent implements OnInit {
 
   tabs = signal<Tab[]>([]);
   isLoading = signal(true);
+  searchQuery = signal('');
+
+  filteredTabs = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    const all = this.tabs();
+    if (!q) return all;
+    return all.filter(t =>
+      t.id.toLowerCase().includes(q) ||
+      (t.tableId && t.tableId.toLowerCase().includes(q)) ||
+      t.status.toLowerCase().includes(q)
+    );
+  });
 
   ngOnInit() {
     this.loadTabs();

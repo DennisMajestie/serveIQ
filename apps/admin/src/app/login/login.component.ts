@@ -79,7 +79,7 @@ export class LoginComponent {
         });
         this.isLoading.set(false);
         setTimeout(() => {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/app/dashboard']);
         }, 1500);
       },
       error: (err) => {

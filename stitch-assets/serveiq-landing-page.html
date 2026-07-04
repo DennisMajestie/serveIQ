@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ | Precision Hospitality Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Work+Sans:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&family=Work+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#fcf2eb",
+                    "surface-container-high": "#f0e6e0",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb4ab",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#ddc1b3",
+                    "surface-bright": "#fff8f5",
+                    "error": "#ba1a1a",
+                    "on-surface": "#1f1b17",
+                    "tertiary-fixed": "#ffdad6",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#fe932c",
+                    "primary-fixed-dim": "#ffb68e",
+                    "on-tertiary-container": "#fff1ef",
+                    "secondary-fixed-dim": "#ffb77d",
+                    "on-secondary-container": "#663500",
+                    "on-tertiary-fixed-variant": "#93000b",
+                    "tertiary": "#b20010",
+                    "surface-dim": "#e2d8d2",
+                    "primary-container": "#b45309",
+                    "surface-container-highest": "#eae1da",
+                    "on-background": "#1f1b17",
+                    "on-tertiary-fixed": "#410002",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#904d00",
+                    "on-surface-variant": "#564338",
+                    "secondary-fixed": "#ffdcc3",
+                    "outline": "#897267",
+                    "on-secondary-fixed-variant": "#6e3900",
+                    "on-primary-fixed": "#331200",
+                    "on-secondary-fixed": "#2f1500",
+                    "surface-variant": "#eae1da",
+                    "inverse-surface": "#342f2b",
+                    "background": "#fff8f5",
+                    "primary": "#903f00",
+                    "surface-container": "#f6ece6",
+                    "on-primary-fixed-variant": "#763300",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#ffdbca",
+                    "surface-tint": "#9b4500",
+                    "inverse-primary": "#ffb68e",
+                    "on-primary-container": "#fff1eb",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#fff8f5",
+                    "tertiary-container": "#d82324",
+                    "inverse-on-surface": "#f9efe8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "48px",
+                    "xl": "80px",
+                    "margin-desktop": "40px",
+                    "md": "24px",
+                    "base": "8px",
+                    "sm": "12px",
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Work Sans"],
+                    "headline-xl": ["Plus Jakarta Sans"],
+                    "body-sm": ["Work Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-md": ["Work Sans"],
+                    "label-md": ["Work Sans"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .ambient-shadow {
+            box-shadow: 0 12px 20px rgba(120, 113, 108, 0.08);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(254, 147, 44, 0.05) 0%, transparent 70%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- Header: TopNavBar -->
+<header class="w-full sticky top-0 z-50 bg-background/80 backdrop-blur-md shadow-sm">
+<nav class="max-w-7xl mx-auto px-margin-desktop h-20 flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<img alt="ServeIQ Logo" class="h-10 w-auto" src="https://lh3.googleusercontent.com/aida/AP1WRLupmvEjBZMZYtyHmt4lmfF6ryspwqdp5m1ag6wBs-90Evchgx0UWf_584rYmo1GMtkAt34PHRtkvqgahlPwCHpCRnvkPY3TXzeFoQczw67a4yBg5ORhH35JoZpPpp7RtWN88PBf4K0o7xGMiP7TPIIlDCtLSAzCBXWdBi5tfUT1hKfE-VKiHeuvaUlgu2oY_pfeoI2MlcQnNcl_AEVcWeWjuleI1YWkjt3PKoUVoH5pER7iG4_d--_2CFBt"/>
+</div>
+<div class="hidden md:flex items-center gap-lg">
+<a class="text-primary font-semibold border-b-2 border-primary pb-1 font-body-md" href="#">Product</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md" href="#">Solutions</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md" href="#">Pricing</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md" href="#">Resources</a>
+</div>
+<div class="flex items-center gap-sm">
+<button class="hidden md:block text-on-surface-variant font-medium hover:text-primary transition-all font-body-md">Log In</button>
+<button class="bg-primary-container text-on-primary-container px-md py-sm rounded-lg font-semibold hover:opacity-90 transition-all shadow-md font-body-md">
+                    Book a Demo
+                </button>
+</div>
+</nav>
+</header>
+<main class="relative">
+<!-- Hero Section -->
+<section class="relative pt-xl pb-24 overflow-hidden hero-gradient">
+<div class="max-w-7xl mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-lg items-center">
+<!-- Left: Content -->
+<div class="flex flex-col items-start gap-md">
+<div class="bg-tertiary-container/10 border border-tertiary/20 px-sm py-xs rounded-full flex items-center gap-xs">
+<span class="material-symbols-outlined text-tertiary text-[18px]">warning</span>
+<span class="text-tertiary font-label-md text-label-md">RESTAURANTS LOSE 4-8% OF REVENUE TO UNSEEN LEAKAGE</span>
+</div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface leading-tight">
+                        Every order. Every table.<br/>Every naira, accounted for.
+                    </h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-xl">
+                        Stop the leakage. ServeIQ gives you total visibility into every transaction, payment, and staff action so nothing slips through the cracks.
+                    </p>
+<div class="flex flex-wrap gap-sm pt-sm">
+<button class="bg-primary-container text-on-primary-container px-xl py-md rounded-xl font-semibold text-body-md hover:opacity-90 transition-all shadow-lg">
+                            Book a demo
+                        </button>
+<button class="bg-surface-container-highest text-on-surface px-xl py-md rounded-xl font-semibold text-body-md hover:bg-surface-container-high transition-all">
+                            See pricing
+                        </button>
+</div>
+</div>
+<!-- Right: High-Fidelity UI Mockup -->
+<div class="relative lg:h-[520px] flex items-center justify-center">
+<div class="glass-card ambient-shadow rounded-xl w-full max-w-[480px] p-md border-outline-variant/10">
+<div class="flex justify-between items-center mb-md border-b border-surface-container-high pb-sm">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">security</span>
+                                Live Revenue Protection
+                            </h3>
+<span class="bg-secondary-container/20 text-on-secondary-container px-xs py-[2px] rounded text-label-md font-label-md">LIVE</span>
+</div>
+<div class="space-y-sm">
+<!-- Alert Card 1 -->
+<div class="bg-white/80 border-l-4 border-tertiary p-sm rounded-lg shadow-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-tertiary">edit_calendar</span>
+<div>
+<p class="font-body-md text-on-surface-variant">Table 7 bill edited 3 times before payment</p>
+<span class="text-label-md text-outline">Action flagged: Potential bill splitting manipulation</span>
+</div>
+</div>
+<!-- Alert Card 2 -->
+<div class="bg-white/80 border-l-4 border-amber-500 p-sm rounded-lg shadow-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-amber-600">person_off</span>
+<div>
+<p class="font-body-md text-on-surface-variant">Same cashier processed 5 refunds today</p>
+<span class="text-label-md text-outline">Action flagged: Unusual refund frequency threshold exceeded</span>
+</div>
+</div>
+<!-- Alert Card 3 -->
+<div class="bg-white/80 border-l-4 border-tertiary p-sm rounded-lg shadow-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-tertiary">account_balance_wallet</span>
+<div>
+<p class="font-body-md text-on-surface-variant font-semibold">Cash collected exceeds recorded sales by ₦12,400</p>
+<span class="text-label-md text-outline">Discrepancy detected at Shift Close</span>
+</div>
+</div>
+<!-- Alert Card 4 -->
+<div class="bg-white/80 border-l-4 border-primary p-sm rounded-lg shadow-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary">cancel_presentation</span>
+<div>
+<p class="font-body-md text-on-surface-variant">One waiter voids far more orders than the rest of the floor</p>
+<span class="text-label-md text-outline">Performance anomaly: Waiter ID #402 (John D.)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Bar -->
+<section class="bg-surface-container-low py-lg">
+<div class="max-w-7xl mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md text-center">
+<div class="flex flex-col gap-xs p-md">
+<span class="text-headline-md font-headline-md text-primary">100%</span>
+<p class="text-body-md font-body-md text-on-surface-variant">Orders traceable to a waiter</p>
+</div>
+<div class="flex flex-col gap-xs p-md border-y md:border-y-0 md:border-x border-outline-variant/30">
+<span class="text-headline-md font-headline-md text-primary">Zero Overlap</span>
+<p class="text-body-md font-body-md text-on-surface-variant">1 table, 1 waiter logic</p>
+</div>
+<div class="flex flex-col gap-xs p-md">
+<span class="text-headline-md font-headline-md text-primary">Live Visibility</span>
+<p class="text-body-md font-body-md text-on-surface-variant">Sales data from anywhere</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Grid -->
+<section class="py-xl bg-background">
+<div class="max-w-7xl mx-auto px-margin-desktop">
+<div class="text-center mb-xl">
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Designed for Complete Operational Precision</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant mt-sm">Eliminate disputes, track every kobo, and regain control.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Feature 1 -->
+<div class="bg-white p-lg rounded-xl ambient-shadow flex flex-col gap-md border border-surface-container-high hover:-translate-y-1 transition-transform">
+<div class="w-12 h-12 bg-primary-container/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[32px]">lock</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">One waiter, one table</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">
+                            Enforce strict table ownership. No more staff disputes over tables or confusion during peak hours. Each table is locked to an assigned server.
+                        </p>
+</div>
+<!-- Feature 2 -->
+<div class="bg-white p-lg rounded-xl ambient-shadow flex flex-col gap-md border border-surface-container-high hover:-translate-y-1 transition-transform">
+<div class="w-12 h-12 bg-primary-container/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[32px]">history</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">Every action, on record</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">
+                            Transparency at every touchpoint. Every edit, void, or discount is logged instantly with the staff member's name and a high-resolution timestamp.
+                        </p>
+</div>
+<!-- Feature 3 -->
+<div class="bg-white p-lg rounded-xl ambient-shadow flex flex-col gap-md border border-surface-container-high hover:-translate-y-1 transition-transform">
+<div class="w-12 h-12 bg-primary-container/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[32px]">mobile_friendly</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">Your restaurant, in your pocket</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">
+                            Freedom from the floor. Monitor live sales, staff performance, and inventory alerts directly from your mobile device, anywhere in the world.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Closing CTA Band -->
+<section class="bg-primary-container py-xl text-on-primary-container relative overflow-hidden">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_var(--tw-gradient-from)_0%,_transparent_50%)] from-secondary"></div>
+<div class="max-w-7xl mx-auto px-margin-desktop relative z-10 text-center">
+<h2 class="text-headline-xl font-headline-xl mb-sm">Stop guessing where the money goes.</h2>
+<p class="text-body-lg font-body-lg mb-lg opacity-90">14 day free trial. No card required to start.</p>
+<button class="bg-white text-primary-container px-xl py-md rounded-xl font-bold text-headline-md hover:bg-surface-container-lowest transition-all shadow-xl">
+                    Start free trial
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest py-xl">
+<div class="max-w-7xl mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="flex flex-col gap-md">
+<img alt="ServeIQ Logo" class="h-10 w-auto self-start" src="https://lh3.googleusercontent.com/aida/AP1WRLupmvEjBZMZYtyHmt4lmfF6ryspwqdp5m1ag6wBs-90Evchgx0UWf_584rYmo1GMtkAt34PHRtkvqgahlPwCHpCRnvkPY3TXzeFoQczw67a4yBg5ORhH35JoZpPpp7RtWN88PBf4K0o7xGMiP7TPIIlDCtLSAzCBXWdBi5tfUT1hKfE-VKiHeuvaUlgu2oY_pfeoI2MlcQnNcl_AEVcWeWjuleI1YWkjt3PKoUVoH5pER7iG4_d--_2CFBt"/>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                    Precision hospitality management software built for the modern restaurant. Recover your revenue and empower your team.
+                </p>
+<p class="text-body-sm font-body-sm text-outline mt-sm">© 2024 ServeIQ. Precision in Hospitality.</p>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-headline-md text-on-surface text-body-md">Platform</h4>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Point of Sale</a>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Inventory Control</a>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Staff Analytics</a>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Security Suite</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-headline-md text-on-surface text-body-md">Resources</h4>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Case Studies</a>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Pricing Plans</a>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">API Documentation</a>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Status</a>
+</div>
+<div class="flex flex-col gap-sm">
+<h4 class="font-headline-md text-on-surface text-body-md">Legal & Support</h4>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant text-body-sm hover:text-secondary transition-colors" href="#">Contact Support</a>
+<div class="flex gap-sm mt-md">
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">public</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">verified_user</span>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for hover effects on UI Mockup cards
+        const cards = document.querySelectorAll('.glass-card > div.space-y-sm > div');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('scale-[1.02]', 'transition-transform', 'duration-300');
+                card.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('scale-[1.02]');
+                card.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            });
+        });
+    </script>
+</body></html>

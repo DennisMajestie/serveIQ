@@ -1,9 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ENVIRONMENT_CONFIG, PosApiService } from '@serveiq/shared/data-access';
-import { firstValueFrom } from 'rxjs';
+import { PosApiService } from '@serveiq/shared/data-access';
+import Swal from 'sweetalert2';
 
 interface PosTerminal {
   id: string;
@@ -21,6 +20,7 @@ interface PosTerminal {
 export class PosManagementComponent implements OnInit {
   private posApi = inject(PosApiService);
 
+  isLoading = signal(true);
   terminals = signal<PosTerminal[]>([]);
   showModal = signal(false);
   editingTerminal = signal<PosTerminal | null>(null);
@@ -30,8 +30,16 @@ export class PosManagementComponent implements OnInit {
   ngOnInit() { this.loadTerminals(); }
 
   loadTerminals() {
-    this.posApi.getAll().subscribe(data => {
-      this.terminals.set(Array.isArray(data) ? data : []);
+    this.isLoading.set(true);
+    this.posApi.getAll().subscribe({
+      next: data => {
+        this.terminals.set(Array.isArray(data) ? data : []);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to Load Terminals', confirmButtonColor: '#F97316' });
+      }
     });
   }
 
@@ -54,14 +62,30 @@ export class PosManagementComponent implements OnInit {
     const obs = this.editingTerminal()
       ? this.posApi.update(this.editingTerminal()!.id, body)
       : this.posApi.create(body);
-    obs.subscribe(() => {
-      this.showModal.set(false);
-      this.loadTerminals();
+    obs.subscribe({
+      next: () => {
+        this.showModal.set(false);
+        this.loadTerminals();
+      },
+      error: () => Swal.fire({ icon: 'error', title: 'Save Failed', confirmButtonColor: '#F97316' })
     });
   }
 
   deleteTerminal(id: string) {
-    if (confirm('Delete this POS terminal?'))
-      this.posApi.remove(id).subscribe(() => this.loadTerminals());
+    Swal.fire({
+      title: 'Delete POS Terminal?',
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF4444',
+      confirmButtonText: 'Delete'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.posApi.remove(id).subscribe({
+          next: () => this.loadTerminals(),
+          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed', confirmButtonColor: '#EF4444' })
+        });
+      }
+    });
   }
 }

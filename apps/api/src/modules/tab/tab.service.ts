@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In } from 'typeorm';
 import { Tab } from './entities/tab.entity';
 import { Table, TableStatus } from '../table/entities/table.entity';
 import { User } from '../user/entities/user.entity';
@@ -74,15 +74,36 @@ export class TabService {
     }
 
     const enrichTabs = async (tabs: Tab[]) => {
-      const enriched = [];
-      for (const tab of tabs) {
-        const table = await this.tableRepository.findOne({ where: { id: tab.table_id } });
-        const waiter = await this.userRepository.findOne({ where: { id: tab.waiter_id } });
-        const orders = await this.orderRepository.find({ where: { tab_id: tab.id } });
-        const total = orders.reduce((sum, order) => sum + order.subtotal_kobo, 0);
-        enriched.push({ ...tab, table, waiter, orders, total_kobo: total });
+      if (tabs.length === 0) return [];
+      const tableIds = [...new Set(tabs.map(t => t.table_id))];
+      const waiterIds = [...new Set(tabs.map(t => t.waiter_id).filter(Boolean))];
+      const tabIds = tabs.map(t => t.id);
+
+      const [tables, waiters, orders] = await Promise.all([
+        this.tableRepository.find({ where: { id: In(tableIds) } }),
+        waiterIds.length ? this.userRepository.find({ where: { id: In(waiterIds) } }) : Promise.resolve([]),
+        this.orderRepository.find({ where: { tab_id: In(tabIds) } }),
+      ]);
+
+      const tableMap = new Map(tables.map(t => [t.id, t]));
+      const waiterMap = new Map(waiters.map(w => [w.id, w]));
+      const ordersByTab = new Map<string, Order[]>();
+      for (const order of orders) {
+        const list = ordersByTab.get(order.tab_id) || [];
+        list.push(order);
+        ordersByTab.set(order.tab_id, list);
       }
-      return enriched;
+
+      return tabs.map(tab => {
+        const tabOrders = ordersByTab.get(tab.id) || [];
+        return {
+          ...tab,
+          table: tableMap.get(tab.table_id) || null,
+          waiter: waiterMap.get(tab.waiter_id) || null,
+          orders: tabOrders,
+          total_kobo: tabOrders.reduce((sum, order) => sum + order.subtotal_kobo, 0),
+        };
+      });
     };
 
     if (page || perPage) {

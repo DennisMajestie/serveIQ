@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+const SUBSCRIPTION_ROUTES = ['/billing'];
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('token');
   const staffToken = localStorage.getItem('staffToken');
@@ -21,6 +23,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           localStorage.removeItem('businessId');
           localStorage.removeItem('businessName');
           window.location.href = '/login';
+        }
+        if (error.status === 402) {
+          const currentUrl = window.location.pathname;
+          const isSubscriptionRoute = SUBSCRIPTION_ROUTES.some(r => currentUrl.startsWith(r));
+          if (!isSubscriptionRoute) {
+            window.location.href = '/billing';
+          }
         }
         return throwError(() => error);
       })

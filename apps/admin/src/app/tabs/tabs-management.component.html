@@ -7,6 +7,10 @@
     <button class="btn-refresh" (click)="loadTabs()">Refresh</button>
   </div>
 
+  <div class="search-bar">
+    <input type="text" placeholder="Search tabs by ID, table or status..." [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" class="search-input" />
+  </div>
+
   <!-- Loading skeleton -->
   <ng-container *ngIf="isLoading()">
     <div class="skeleton-list">
@@ -18,15 +22,15 @@
   </ng-container>
 
   <!-- Empty state -->
-  <div class="empty-state" *ngIf="!isLoading() && tabs().length === 0">
-    <p class="empty-text">No tabs found.</p>
+  <div class="empty-state" *ngIf="!isLoading() && filteredTabs().length === 0">
+    <p class="empty-text">{{ searchQuery() ? 'No tabs match your search.' : 'No tabs found.' }}</p>
   </div>
 
   <!-- Tabs list -->
-  <div class="tabs-list" *ngIf="!isLoading() && tabs().length > 0">
+  <div class="tabs-list" *ngIf="!isLoading() && filteredTabs().length > 0">
     <div
       class="tab-card"
-      *ngFor="let tab of tabs(); trackBy: trackById; let i = index"
+      *ngFor="let tab of filteredTabs(); trackBy: trackById; let i = index"
       (click)="viewTab(tab)"
       [style.animation-delay.s]="i * 0.04"
     >

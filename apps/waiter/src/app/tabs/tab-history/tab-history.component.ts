@@ -1,8 +1,9 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TabsApiService } from '@serveiq/shared/data-access';
+import { TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
 import { Tab } from '@serveiq/shared/models';
+import Swal from 'sweetalert2';
 
 interface Transaction {
   id: string;
@@ -24,18 +25,22 @@ interface Transaction {
 export class TabHistoryComponent implements OnInit {
   private router = inject(Router);
   private tabsApi = inject(TabsApiService);
+  private tablesApi = inject(TablesApiService);
 
   isLoading = signal(true);
   closedTabs = signal<Tab[]>([]);
 
   currentDate = new Date().toLocaleDateString('en-NG', { month: 'long', day: 'numeric' });
 
+  tableNumbers = signal<Record<string, string>>({});
+
   transactions = computed<Transaction[]>(() => {
     const tabs = this.closedTabs();
+    const tableNums = this.tableNumbers();
     if (!Array.isArray(tabs)) return [];
     return tabs.map(t => ({
       id: t.id,
-      table: t.tableId ?? '—',
+      table: t.tableId ? (tableNums[t.tableId] || t.tableId.slice(0, 8)) : '—',
       customer: t.customerName ?? 'Walk-in',
       status: t.status === 'paid' ? 'Paid' : t.status === 'voided' ? 'Voided' : t.status,
       statusIcon: t.status === 'paid' ? 'check_circle' : t.status === 'voided' ? 'cancel' : 'help',
@@ -57,8 +62,24 @@ export class TabHistoryComponent implements OnInit {
         const arr = Array.isArray(tabs) ? tabs : [];
         this.closedTabs.set(arr.filter(t => t.status === 'paid' || t.status === 'voided'));
         this.isLoading.set(false);
+        this.loadTableNumbers();
       },
-      error: () => this.isLoading.set(false)
+      error: () => {
+        this.isLoading.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to Load History', background: '#1A1A1A', color: '#fff', confirmButtonColor: '#f97316' });
+      }
+    });
+  }
+
+  private loadTableNumbers() {
+    this.tablesApi.getAllTables().subscribe({
+      next: (tables) => {
+        const map: Record<string, string> = {};
+        (Array.isArray(tables) ? tables : []).forEach(t => {
+          if (t.id) map[t.id] = `Table ${t.tableNumber}`;
+        });
+        this.tableNumbers.set(map);
+      }
     });
   }
 

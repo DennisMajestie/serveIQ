@@ -1,0 +1,110 @@
+<header class="pulse-header">
+  <div class="header-brand">Lumina</div>
+  <nav class="header-nav">
+    <a class="nav-link active" href="#">Thinking Core</a>
+    <a class="nav-link" href="#">Reasoning Stream</a>
+    <a class="nav-link" href="#">Plan Manifest</a>
+  </nav>
+  <div class="header-actions">
+    <button class="icon-btn"><span class="material-symbols-outlined">settings</span></button>
+    <button class="icon-btn"><span class="material-symbols-outlined">account_circle</span></button>
+  </div>
+</header>
+
+<main class="pulse-main">
+  <div class="bento-grid">
+    <!-- Reasoning Stream -->
+    <section class="panel reasoning-panel">
+      <div class="scanner-line"></div>
+      <div class="panel-head">
+        <span class="material-symbols-outlined text-primary neon">psychology</span>
+        <h2 class="panel-title">Reasoning Stream</h2>
+      </div>
+      <div class="reasoning-stream">
+        @for (entry of reasoningEntries; track entry.title) {
+          <div class="stream-item" [class.active]="entry.active">
+            <h3 class="stream-title">{{ entry.title }}</h3>
+            <p class="stream-time">{{ entry.time }}</p>
+            <p class="stream-detail">{{ entry.detail }}</p>
+          </div>
+        }
+      </div>
+      <div class="stream-footer">
+        <span>Real-time Neural Stream</span>
+        <div class="stream-dots">
+          <div class="dot ping"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Thinking Core -->
+    <section class="panel core-panel">
+      <div class="core-container">
+        <div class="core-ring">
+          <div class="core-ring-inner pulsing-border"></div>
+          <div class="core-center">
+            <div class="core-label">Autopilot</div>
+            <div class="core-freq">CORE FREQUENCY: 4.2GHz</div>
+          </div>
+        </div>
+        <div class="core-metrics">
+          <div class="metric">
+            <div class="metric-value text-primary">98.4%</div>
+            <div class="metric-label">Efficiency</div>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric">
+            <div class="metric-value text-secondary">12ms</div>
+            <div class="metric-label">Latency</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Plan Manifest -->
+    <section class="panel manifest-panel">
+      <div class="scanner-line" style="animation-delay: 2s;"></div>
+      <div class="panel-head">
+        <span class="material-symbols-outlined text-primary neon">assignment_turned_in</span>
+        <h2 class="panel-title">Plan Manifest</h2>
+      </div>
+      <ul class="manifest-list">
+        @for (item of planManifest; track item.label) {
+          <li class="manifest-item" [class.completed]="item.completed">
+            @if (item.completed) {
+              <span class="material-symbols-outlined text-primary fill">check_circle</span>
+            } @else {
+              <span class="material-symbols-outlined text-muted">radio_button_unchecked</span>
+            }
+            <span class="manifest-label">{{ item.label }}</span>
+          </li>
+        }
+      </ul>
+      <button class="create-btn">
+        <span class="material-symbols-outlined">add</span>
+        Create Sequence
+      </button>
+    </section>
+  </div>
+</main>
+
+<footer class="pulse-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-version">NEMOTRON v1.0.4</span>
+      <span class="footer-badge">Luminous Edition</span>
+    </div>
+    <div class="footer-cmd">
+      <input class="cmd-input" placeholder="ISSUE SYSTEM COMMAND..." type="text">
+      <div class="cmd-actions">
+        <span class="material-symbols-outlined">mic</span>
+        <span class="material-symbols-outlined">send</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="#">SYSTEM_LOGS</a>
+      <a href="#">API_STATUS: 200</a>
+    </div>
+  </div>
+</footer>

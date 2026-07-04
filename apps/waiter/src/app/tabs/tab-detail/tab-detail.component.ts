@@ -57,7 +57,6 @@ export class TabDetailComponent implements OnInit {
     
     const state = history.state as { selectedItems?: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
     if (state?.selectedItems?.length) {
-      console.log('[TabDetail] Received selectedItems from history.state:', state.selectedItems);
       this.orderPosted = true;
       this.addItemsFromMenu(state.selectedItems);
     }
@@ -104,12 +103,11 @@ export class TabDetailComponent implements OnInit {
         const httpStatus = err.status ?? err.statusCode;
         if (httpStatus === 403) {
           const msg = err.message || 'This table is being served by another waiter';
-          console.warn('[TabDetail] Access denied:', msg);
           this.showToast(msg);
           setTimeout(() => this.router.navigate(['/tables']), 2500);
         } else {
-          console.error('[TabDetail] Failed to load tab:', err);
           this.isLoading.set(false);
+          Swal.fire({ icon: 'error', title: 'Failed to Load Tab', text: 'Could not load tab details.', background: '#1A1A1A', color: '#fff', confirmButtonColor: '#f97316' });
         }
       }
     });
@@ -118,11 +116,7 @@ export class TabDetailComponent implements OnInit {
   loadOrders(tabId: string) {
     this.orderService.getByTab(tabId).subscribe({
       next: (items) => { 
-        console.log('[TabDetail] Raw orders API response:', items);
         const raw = Array.isArray(items) ? items : [];
-        if (raw.length === 0) {
-          console.warn('[TabDetail] No order items returned from API for tab:', tabId);
-        }
         const normalized = raw.map((item: any) => ({
           ...item,
           menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? item.name ?? item.itemName ?? item.details?.name ?? '',
@@ -130,13 +124,12 @@ export class TabDetailComponent implements OnInit {
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
-        console.log('[TabDetail] Normalized ordered items:', normalized);
         this.items.set(normalized); 
         this.isLoading.set(false); 
       },
-      error: (err) => {
-        console.error('[TabDetail] Failed to load orders:', err);
+      error: () => {
         this.isLoading.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to Load Orders', text: 'Could not load order items.', background: '#1A1A1A', color: '#fff', confirmButtonColor: '#f97316' });
       }
     });
   }
@@ -201,10 +194,8 @@ export class TabDetailComponent implements OnInit {
       quantity: item.qty,
       notes: item.portionName ? `Portion: ${item.portionName}` : ''
     }));
-    console.log('[TabDetail] Posting orderItems to API:', orderItems);
     this.orderService.addItems(this.tabId(), orderItems).subscribe({
       next: (response) => {
-        console.log('[TabDetail] Add items response:', response);
         const normalized = (response || []).map((item: any) => ({
           ...item,
           menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
@@ -221,8 +212,7 @@ export class TabDetailComponent implements OnInit {
           showConfirmButton: false
         });
       },
-      error: (err) => {
-        console.error('[TabDetail] Failed to add order items:', err);
+      error: () => {
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -259,8 +249,7 @@ export class TabDetailComponent implements OnInit {
           next: (_result: any) => {
             this.router.navigate(['/tabs/bill', this.tabId()]);
           },
-          error: (err: any) => {
-            console.error('[TabDetail] Failed to close tab:', err);
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Error',
@@ -274,5 +263,9 @@ export class TabDetailComponent implements OnInit {
 
   formatKobo(kobo: number): string {
     return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+  }
+
+  padNumber(n: number | string | undefined | null, len: number = 2): string {
+    return String(n ?? '').padStart(len, '0');
   }
 }

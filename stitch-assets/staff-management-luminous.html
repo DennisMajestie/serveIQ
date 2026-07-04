@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ Admin | Staff Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#070d1f",
+                    "on-primary": "#003915",
+                    "surface-container-highest": "#2e3447",
+                    "outline": "#869585",
+                    "on-primary-fixed": "#002109",
+                    "inverse-primary": "#006e2f",
+                    "tertiary-container": "#ff8892",
+                    "on-tertiary-fixed": "#40000d",
+                    "on-surface-variant": "#bccbb9",
+                    "secondary-container": "#0566d9",
+                    "surface-dim": "#0c1324",
+                    "on-error": "#690005",
+                    "error": "#ffb4ab",
+                    "on-secondary-fixed": "#001a42",
+                    "inverse-surface": "#dce1fb",
+                    "inverse-on-surface": "#2a3043",
+                    "surface-tint": "#4ae176",
+                    "on-tertiary-container": "#840025",
+                    "surface-bright": "#33394c",
+                    "surface-container-high": "#23293c",
+                    "primary-fixed-dim": "#4ae176",
+                    "on-error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "error-container": "#93000a",
+                    "on-surface": "#dce1fb",
+                    "tertiary-fixed-dim": "#ffb2b7",
+                    "surface": "#0c1324",
+                    "primary-fixed": "#6bff8f",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-container-low": "#151b2d",
+                    "on-background": "#dce1fb",
+                    "outline-variant": "#3d4a3d",
+                    "surface-variant": "#2e3447",
+                    "surface-container": "#191f31",
+                    "background": "#0c1324",
+                    "tertiary-fixed": "#ffdadb",
+                    "primary-container": "#22c55e",
+                    "primary": "#4be277",
+                    "on-secondary-container": "#e6ecff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "tertiary": "#ffb3b7",
+                    "on-tertiary-fixed-variant": "#92002a",
+                    "on-secondary": "#002e6a",
+                    "secondary": "#adc6ff",
+                    "on-primary-fixed-variant": "#005321",
+                    "on-primary-container": "#004b1e",
+                    "on-tertiary": "#67001b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "bento-gap": "20px",
+                    "inner-padding": "24px",
+                    "container-padding": "32px"
+            },
+            "fontFamily": {
+                    "metric-sm": ["Space Grotesk"],
+                    "label-md": ["Inter"],
+                    "display-lg": ["Space Grotesk"],
+                    "headline-md": ["Space Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Space Grotesk"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "metric-sm": ["18px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0c1324;
+            color: #dce1fb;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .glow-primary {
+            box-shadow: 0 0 20px rgba(75, 226, 119, 0.15);
+        }
+
+        .glow-secondary {
+            box-shadow: 0 0 20px rgba(5, 102, 217, 0.2);
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen sticky left-0 w-64 bg-surface-container-low/30 backdrop-blur-[32px] p-inner-padding gap-bento-gap shadow-2xl z-50">
+<div class="flex flex-col gap-1 mb-8">
+<h1 class="font-headline-md text-headline-md text-primary">ServeIQ Admin</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant/60 uppercase tracking-widest">Premium Management</p>
+</div>
+<nav class="flex flex-col gap-2 flex-grow">
+<!-- Active Tab: Staff -->
+<a class="flex items-center gap-4 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl shadow-[0_0_15px_rgba(5,102,217,0.3)] transition-all duration-200 translate-x-1" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-md text-label-md">Staff</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/40 rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/40 rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">table_restaurant</span>
+<span class="font-label-md text-label-md">Tables</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/40 rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+<span class="font-label-md text-label-md">Menu</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/40 rounded-xl transition-all duration-200 mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-4 p-4 rounded-xl bg-surface-container-highest/20 text-primary text-center font-label-sm text-label-sm">
+            System Status: Active
+        </div>
+</aside>
+<!-- Main Content -->
+<main class="flex-grow relative min-h-screen overflow-y-auto custom-scrollbar">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-40 w-full px-container-padding py-4 bg-surface-container/40 backdrop-blur-[32px] flex justify-between items-center shadow-[0_0_20px_rgba(75,226,119,0.1)]">
+<div class="flex items-center gap-8">
+<h2 class="font-display-lg text-display-lg text-primary tracking-tight">Staff Management</h2>
+<div class="hidden lg:flex items-center bg-surface-container-highest/30 px-4 py-2 rounded-full min-w-[300px]">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none outline-none text-on-surface placeholder:text-on-surface-variant/50 w-full font-body-md text-body-md focus:ring-0" placeholder="Search roster..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="bg-primary/40 hover:bg-primary/80 text-on-primary-container px-6 py-2.5 rounded-full font-label-md text-label-md transition-all duration-300 shadow-[0_0_15px_rgba(75,226,119,0.3)] active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined">person_add</span>
+                    Add Waiter
+                </button>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">notifications</span>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-variant">
+<img alt="Manager Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a restaurant manager in a high-end corporate setting. The lighting is sophisticated with soft shadows and a neutral background. The manager is a middle-aged male with a confident smile, wearing a sharp dark suit. The image has a clean, high-contrast editorial look with a slight blue-ish cinematic tint." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8fD_eRLjAXg1RhxT8EErHk5YPLABapJlRBZDOfeMQ33_UxPhl5FqvdhmRbyx54OIOJsEfz60Sv4qMxDLxr3G82FewRPkTjEnqtKvBQX-fFL1aSeltNIlnO4NPOttQpHghIwnlENyd2oQChBORZ0GHf-B11lVaHvWpboNTgLB3ZpbXJ4Vg4KudHCVy-dJ0-ty2iE1Ov82AzaMKY5vMJV7aD0F6zexBNZ9mXf7Go34xincHEPirkegMYYESEnLr6hiRLkZEaPsj7pOQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-container-padding grid grid-cols-12 gap-bento-gap">
+<!-- 1. Staff Performance Bento (Span 8) -->
+<section class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-bento-gap">
+<div class="col-span-full mb-2">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Top Performers</h3>
+</div>
+<!-- Alex -->
+<div class="glass-card p-inner-padding rounded-[32px] flex items-center gap-6">
+<div class="relative">
+<div class="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl">
+<img alt="Alex" class="w-full h-full object-cover" data-alt="A close-up portrait of a young male waiter named Alex in a high-end restaurant environment. He is wearing a minimalist, modern uniform with a clean apron. The background is softly blurred with warm ambient lighting. The style is cinematic and professional, focusing on his friendly yet professional expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMbGFpOk9fsGhotjy4NwQyszIlJK8yW5-HE2LoVMOikNpEUJo2zP3YqY0Nk9BYEy0sJlBiOnaLfQ2-aLyHitr_fzezgW7pcvBOQUTyryQH4zD1QKfe67Em9VJzwun1CrYww2mcucxM8bSFnUdIvnDNd0go7Xc2KV7Y88Zfz4smRZGzjY5NEgg4tStq5WCQ6CGtGBtcKFz0kV5sLEJEgbdA24If7ebFkxct0p9n6Vri_XWlQSG9uaih5KYACBbLmDegF5aLS6xVarlP"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">1</div>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Alex</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-2">Senior Server</p>
+<div class="flex flex-col">
+<span class="font-metric-sm text-metric-sm text-primary">98%</span>
+<span class="text-[10px] text-on-surface-variant/60 uppercase tracking-tighter">Efficiency Rank</span>
+</div>
+</div>
+</div>
+<!-- Jessica -->
+<div class="glass-card p-inner-padding rounded-[32px] flex items-center gap-6">
+<div class="relative">
+<div class="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl">
+<img alt="Jessica" class="w-full h-full object-cover" data-alt="A professional headshot of Jessica, a high-performance restaurant staff member. She has a confident, welcoming expression and is wearing a sleek, dark hospitality uniform. The lighting is bright and modern, creating a clean Arctic White studio feel. The background is a minimalist, blurred interior of a luxury restaurant." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuKT9jEIsTKe9KbjTnmYSyBJue_dZ6-YFzLyqislgNnyDgiWGQ6mmbnIPa918DOgR7FoPloDNstvMSiWMxAKO2NRYG-t6dQCdBgT0P6dzQfFaay_X8KXMvOm7va-WQILEA3X6JLlRYLXTRA-aPUYo_jy4OfA1AVjYJQsOjkkHzIMULbBju_4oW8UAlIMnIYhNFUCxaU13V9IHFPxfO3fvGvY2_d9CUfPGD1M2GMW7Ea57lYOsbIOZSOwSk21IpJN_QBkifEvibPM8B"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-secondary text-on-secondary w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">2</div>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Jessica</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-2">Hostess</p>
+<div class="flex flex-col">
+<span class="font-metric-sm text-metric-sm text-secondary">94%</span>
+<span class="text-[10px] text-on-surface-variant/60 uppercase tracking-tighter">Efficiency Rank</span>
+</div>
+</div>
+</div>
+<!-- Marcus -->
+<div class="glass-card p-inner-padding rounded-[32px] flex items-center gap-6">
+<div class="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl">
+<img alt="Marcus" class="w-full h-full object-cover" data-alt="A portrait of Marcus, a lead staff member at a high-volume venue. He is captured in a mid-shot wearing a stylish contemporary uniform. The scene is illuminated by dramatic, high-contrast lighting that emphasizes a focused and determined personality. The overall aesthetic is dark, futuristic, and highly polished." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGlYXfLwk1YN1w_iFc8zQzJJD37Fj32nwMR869Ec-4ypzcSq6MiYb4MHqHdqsaj8qF7XBdSZVUok8HCqCp0k6b9iyKF2QJPdyN33ohqvInFCRZ-ckROCcnjaW8ESVbDWSb5dJwpaiM1ZO0VUcI0rNyhkn2iVceNPX4vRK2MC346glnAwIRdzrCQZy2AG1AubN2XvpcS5rthx4vavRk3VL6vjCUc3LzfdzdGZZDNHXFUn9r8-1tr8GsBqe2ViTTD8e9TQ3-Qzxu0OtG"/>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Marcus</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-2">Mixologist</p>
+<div class="flex flex-col">
+<span class="font-metric-sm text-metric-sm text-primary">91%</span>
+<span class="text-[10px] text-on-surface-variant/60 uppercase tracking-tighter">Efficiency Rank</span>
+</div>
+</div>
+</div>
+<!-- Elena -->
+<div class="glass-card p-inner-padding rounded-[32px] flex items-center gap-6">
+<div class="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl">
+<img alt="Elena" class="w-full h-full object-cover" data-alt="A vibrant professional portrait of Elena, a top-performing staff member. She is standing in a brightly lit, modern environment with soft focus details. She wears a clean-cut uniform that reflects a high-end service culture. The image uses a cool, refreshing color palette with light-mode aesthetics and sharp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6d0mnQIL-w4Fi4AUSUSE_KjLDyyrRubpZVSY1iHQy_qg1IdcDK6aUvBslhKV6tV5WLfOton1v7NxI97C0V05OmDXcwjnDcdJCgH0eS_Rgfgf7CfYt-1kxEKty8vyS9iPMoeuDYyoxI2c6FtT-kHgfo31R0aqR4o1DjLdDbDN8JgkwQ8vU7GLk0Guq9tDo6hQF6ehnv8B1ZywpsYnHUAs3Y5tuznEI4gQPKAwHHGfB2w5l3Z6HVrpOjYBj7596WAmiBGHoTEt-WdpQ"/>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Elena</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-2">Floor Captain</p>
+<div class="flex flex-col">
+<span class="font-metric-sm text-metric-sm text-tertiary">89%</span>
+<span class="text-[10px] text-on-surface-variant/60 uppercase tracking-tighter">Efficiency Rank</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. Real-time Duty State (Span 4) -->
+<aside class="col-span-12 lg:col-span-4 glass-card p-inner-padding rounded-[40px] flex flex-col gap-6">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Duty State</h3>
+<span class="text-primary font-label-sm px-2 py-1 bg-primary/10 rounded-lg">18 Active</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Status Item -->
+<div class="bg-primary/5 p-4 rounded-[24px] flex flex-col gap-2 group hover:bg-primary/10 transition-all">
+<div class="flex justify-between">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-[10px] font-bold text-primary/60">ACTIVE</span>
+</div>
+<p class="font-label-md text-label-md">Sarah W.</p>
+<p class="text-[10px] text-on-surface-variant/40">Station 4 • 2h 40m</p>
+</div>
+<div class="bg-tertiary/5 p-4 rounded-[24px] flex flex-col gap-2 group hover:bg-tertiary/10 transition-all">
+<div class="flex justify-between">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-[10px] font-bold text-tertiary/60">ON BREAK</span>
+</div>
+<p class="font-label-md text-label-md">Liam P.</p>
+<p class="text-[10px] text-on-surface-variant/40">Lounge • 15m left</p>
+</div>
+<div class="bg-surface-variant/20 p-4 rounded-[24px] flex flex-col gap-2">
+<div class="flex justify-between">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+<span class="text-[10px] font-bold text-on-surface-variant/60">OFF DUTY</span>
+</div>
+<p class="font-label-md text-label-md">Chloe J.</p>
+<p class="text-[10px] text-on-surface-variant/40">Next shift: 18:00</p>
+</div>
+<div class="bg-primary/5 p-4 rounded-[24px] flex flex-col gap-2 group hover:bg-primary/10 transition-all">
+<div class="flex justify-between">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-[10px] font-bold text-primary/60">ACTIVE</span>
+</div>
+<p class="font-label-md text-label-md">Daniel K.</p>
+<p class="text-[10px] text-on-surface-variant/40">Bar A • 4h 10m</p>
+</div>
+<div class="bg-primary/5 p-4 rounded-[24px] flex flex-col gap-2 group hover:bg-primary/10 transition-all">
+<div class="flex justify-between">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-[10px] font-bold text-primary/60">ACTIVE</span>
+</div>
+<p class="font-label-md text-label-md">Emma R.</p>
+<p class="text-[10px] text-on-surface-variant/40">Patio • 0h 45m</p>
+</div>
+<div class="bg-tertiary/5 p-4 rounded-[24px] flex flex-col gap-2 group hover:bg-tertiary/10 transition-all">
+<div class="flex justify-between">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-[10px] font-bold text-tertiary/60">ON BREAK</span>
+</div>
+<p class="font-label-md text-label-md">Tom H.</p>
+<p class="text-[10px] text-on-surface-variant/40">Main • 05m left</p>
+</div>
+</div>
+<button class="mt-auto w-full py-3 rounded-2xl bg-surface-container-highest text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors">
+                    View All Statuses
+                </button>
+</aside>
+<!-- 3. Shift Distribution (Span 4) -->
+<section class="col-span-12 lg:col-span-4 glass-card p-inner-padding rounded-[40px] flex flex-col gap-6">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Shift Load</h3>
+<div class="flex-grow flex items-end justify-between gap-2 h-40 pb-4">
+<!-- Simple Bar Chart Visualization -->
+<div class="w-full bg-primary/20 rounded-t-lg relative" style="height: 30%">
+<div class="absolute inset-0 bg-primary/40 rounded-t-lg blur-[4px]"></div>
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50">08:00</div>
+</div>
+<div class="w-full bg-primary/30 rounded-t-lg relative" style="height: 55%">
+<div class="absolute inset-0 bg-primary/50 rounded-t-lg blur-[6px]"></div>
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50">12:00</div>
+</div>
+<div class="w-full bg-primary/10 rounded-t-lg relative" style="height: 25%">
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50">15:00</div>
+</div>
+<div class="w-full bg-primary/60 rounded-t-lg relative" style="height: 85%">
+<div class="absolute inset-0 bg-primary/70 rounded-t-lg blur-[8px]"></div>
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50">19:00</div>
+</div>
+<div class="w-full bg-primary/40 rounded-t-lg relative" style="height: 65%">
+<div class="absolute inset-0 bg-primary/50 rounded-t-lg blur-[6px]"></div>
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-50">22:00</div>
+</div>
+</div>
+<div class="p-4 rounded-2xl bg-surface-container-low flex items-center justify-between">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Optimal Staffing</p>
+<p class="font-headline-md text-headline-md text-primary">Reached</p>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl">verified</span>
+</div>
+</section>
+<!-- 4. Staff Table (Span 8) -->
+<section class="col-span-12 lg:col-span-8 glass-card rounded-[40px] overflow-hidden">
+<div class="p-inner-padding border-b border-white/5 flex justify-between items-center">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Personnel Roster</h3>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-surface-variant/40 rounded-lg transition-colors"><span class="material-symbols-outlined text-on-surface-variant">filter_list</span></button>
+<button class="p-2 hover:bg-surface-variant/40 rounded-lg transition-colors"><span class="material-symbols-outlined text-on-surface-variant">download</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-highest/10">
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant/60">NAME</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant/60">ROLE</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant/60">BRANCH</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant/60">TREND</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md divide-y divide-white/5">
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="Staff" class="w-full h-full object-cover" data-alt="Close up thumbnail portrait of a male server with a professional expression for a staff management interface. Lighting is high-key and clean." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK3XN477Ki0c1i-q1Gaaxbj0WVms0-s1T8cPh1rpClZCnF6tF8rX5cCw-JtrGuCDIjHhBwgnlPWpKuy3bgx6-OLWLGohkOwx7pXfiVYsA8_7ZZVqcd5vLojOuyi3_B99jVk6g0LFobJ5HrAW_QKnjA-ZRi6wd-Icoo1o8Rq3NOd1c9lnW2_fxmqYNPUeWJWTM_dXOQywVvR5h2PTuGhLlsDnVG1c2atu2_Axt0KEb4LBpkNp0Wfz58Kkhk63dYToBA5-Lc_WctiXUZ"/>
+</div>
+<span>James Wilson</span>
+</td>
+<td class="px-6 py-5">Senior Waiter</td>
+<td class="px-6 py-5">Downtown Central</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs">+12.4%</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="Staff" class="w-full h-full object-cover" data-alt="Close up thumbnail portrait of a female staff member with a professional and friendly expression. Cool studio lighting on a neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAO32r4GYq5tkcsbOtPOJ_5JPdceVdRfvbad1w2-0QM8-OMfGSzLWv2m-dP2RlZOqrW-zA_QvDbyZnvImPM5L1YR5IRRPMeiamsActv4bvqXqJx0e-xrTgSThauCfVu5QbWcx_RmMEiI-z_14KyYwUMNTmVgl8Kv6ydakGfmDCKZyq6FDKF4bSytIrvipJYx0BxxCJlQyIad24SHYLd4wJD7_1cLWAm4ILk4wKaOxZR1rBRokCXU5rSJ1_vplutW4XdTlqfXJcsS4j5"/>
+</div>
+<span>Sophia Chen</span>
+</td>
+<td class="px-6 py-5">Supervisor</td>
+<td class="px-6 py-5">Harbor View</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs">+5.8%</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="Staff" class="w-full h-full object-cover" data-alt="A portrait of a young professional restaurant employee for a digital roster. High clarity, professional lighting, modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfDHSLWSsehaJgZyMTWGNseTMHxRnq9bj_73adlwN1hU6mfQjDOGkS6WKRwBZYTCGcs0b9KAXc-bvIQxI_I3WhhMZ9Rcms-NIAGoUYJQipLmWPvK6mc744tgIuEId5xjAwvIKTbgUND8c4BdTJIX8rIj5NFrkXCOhWea3f_a0nYi64ecTYFnsZ8pAblmN2SNqkHvjS47FiqwATwUmJFc9w3l02x0PvRxtqpkla40_2tmbQBDbOY83itE8MexlU3rpvc5RQSaMg1kpE"/>
+</div>
+<span>Leo Martinez</span>
+</td>
+<td class="px-6 py-5">Sommelier</td>
+<td class="px-6 py-5">Downtown Central</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">trending_flat</span>
+<span class="text-xs">Stable</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-6 py-5 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img alt="Staff" class="w-full h-full object-cover" data-alt="High quality headshot of a business-oriented restaurant staff member for a modern management app. Bright, clean lighting, Arctic White background aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOBdJZMUoNurpLNU1s5NeR34rOXduLzkSaiOfNWExGBvbjAZ6HIMSczTHAWOcYngig-QjBHACSVgupC3cxPJZbpAkJUF10pREQYiEq4NguWGCg8SxDgWRWGyQbtSbt34hY4Ora09Sa7cZGqsyjwA9C7-MNpdpfy5FAyBkfyvxT4stCvprkYRlcnktHOBu8Sy4Fxi7vYWiLm9pV373uB4f0mqtXw5ZAJDXPXKDglMbbk8uhR99ZmVWa_I4Zq2AscI4S5T_SEa1dlE7v"/>
+</div>
+<span>Monica Geller</span>
+</td>
+<td class="px-6 py-5">Head Chef</td>
+<td class="px-6 py-5">North Plaza</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs">+2.1%</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- FAB for Mobile (Implicit suppression on desktop via side nav) -->
+<button class="md:hidden fixed bottom-8 right-8 w-16 h-16 rounded-full bg-primary text-on-primary-container shadow-2xl flex items-center justify-center z-50 transition-transform active:scale-90">
+<span class="material-symbols-outlined">person_add</span>
+</button>
+<script>
+        // Subtle micro-interactions for the cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // Pulsing status effect script
+        const pulseItems = document.querySelectorAll('.animate-pulse');
+        setInterval(() => {
+            pulseItems.forEach(item => {
+                item.style.opacity = item.style.opacity === '0.5' ? '1' : '0.5';
+            });
+        }, 1000);
+    </script>
+</body></html>

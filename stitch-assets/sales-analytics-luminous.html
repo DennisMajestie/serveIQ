@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ | Sales Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#070d1f",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-primary-fixed": "#002109",
+                    "inverse-primary": "#006e2f",
+                    "tertiary-fixed-dim": "#ffb2b7",
+                    "on-secondary-container": "#e6ecff",
+                    "error": "#ffb4ab",
+                    "on-secondary-fixed-variant": "#004395",
+                    "outline": "#869585",
+                    "surface-variant": "#2e3447",
+                    "on-background": "#dce1fb",
+                    "surface-container": "#191f31",
+                    "on-primary": "#003915",
+                    "on-error": "#690005",
+                    "tertiary": "#ffb3b7",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-container-high": "#23293c",
+                    "on-tertiary-fixed": "#40000d",
+                    "primary": "#4be277",
+                    "surface-container-highest": "#2e3447",
+                    "surface-bright": "#33394c",
+                    "secondary-container": "#0566d9",
+                    "primary-fixed": "#6bff8f",
+                    "on-primary-container": "#004b1e",
+                    "outline-variant": "#3d4a3d",
+                    "inverse-surface": "#dce1fb",
+                    "error-container": "#93000a",
+                    "primary-container": "#22c55e",
+                    "on-tertiary-fixed-variant": "#92002a",
+                    "primary-fixed-dim": "#4ae176",
+                    "background": "#0c1324",
+                    "surface-container-low": "#151b2d",
+                    "on-surface-variant": "#bccbb9",
+                    "inverse-on-surface": "#2a3043",
+                    "on-secondary": "#002e6a",
+                    "tertiary-container": "#ff8892",
+                    "surface-tint": "#4ae176",
+                    "secondary": "#adc6ff",
+                    "on-surface": "#dce1fb",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#0c1324",
+                    "on-tertiary": "#67001b",
+                    "on-tertiary-container": "#840025",
+                    "tertiary-fixed": "#ffdadb",
+                    "on-primary-fixed-variant": "#005321",
+                    "surface": "#0c1324",
+                    "secondary-fixed-dim": "#adc6ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "24px",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "inner-padding": "24px",
+                    "bento-gap": "20px",
+                    "container-padding": "32px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Space Grotesk"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "metric-sm": ["Space Grotesk"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Space Grotesk"],
+                    "headline-lg": ["Space Grotesk"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "metric-sm": ["18px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      body {
+        background-color: #0c1324;
+        color: #dce1fb;
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+      }
+      
+      .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(32px);
+        -webkit-backdrop-filter: blur(32px);
+        border: none;
+      }
+
+      .glow-primary {
+        box-shadow: 0 0 20px rgba(75, 226, 119, 0.15);
+      }
+
+      .glow-text-primary {
+        text-shadow: 0 0 15px rgba(75, 226, 119, 0.4);
+      }
+
+      .mesh-gradient-bg {
+        background: radial-gradient(at 0% 0%, rgba(75, 226, 119, 0.05) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(5, 102, 217, 0.05) 0px, transparent 50%);
+      }
+
+      .chart-container svg {
+        filter: drop-shadow(0 0 8px rgba(75, 226, 119, 0.3));
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body class="dark selection:bg-primary/30">
+<!-- SideNavBar (Predicted Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 backdrop-blur-3xl bg-surface-container/40 dark:bg-surface-container/40 flex flex-col p-inner-padding gap-bento-gap z-50 border-r border-white/5">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center glow-primary">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+</div>
+<div>
+<h1 class="font-display-lg text-[24px] tracking-tighter text-primary leading-none">ServeIQ</h1>
+<p class="font-label-sm text-[10px] text-on-surface-variant/50 uppercase tracking-[0.2em]">Digital Nervous System</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 p-3 text-primary font-bold bg-primary/10 rounded-xl shadow-[inset_0_0_10px_rgba(75,226,119,0.2)] active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant/70 hover:text-on-surface hover:bg-white/10 hover:backdrop-blur-xl transition-all duration-300 rounded-xl" href="#">
+<span class="material-symbols-outlined">table_restaurant</span>
+<span class="font-label-md text-label-md">Tables</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant/70 hover:text-on-surface hover:bg-white/10 hover:backdrop-blur-xl transition-all duration-300 rounded-xl" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+<span class="font-label-md text-label-md">Menu</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant/70 hover:text-on-surface hover:bg-white/10 hover:backdrop-blur-xl transition-all duration-300 rounded-xl" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Staff</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant/70 hover:text-on-surface hover:bg-white/10 hover:backdrop-blur-xl transition-all duration-300 rounded-xl" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<button class="mt-auto bg-primary/20 text-primary p-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary/30 transition-all active:scale-95 glow-primary">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md">New Reservation</span>
+</button>
+</aside>
+<!-- TopNavBar (Predicted Component) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-20 backdrop-blur-3xl bg-surface-dim/30 dark:bg-surface-dim/30 z-40 px-container-padding flex justify-between items-center">
+<div class="flex items-center bg-white/5 rounded-full px-4 py-2 w-96">
+<span class="material-symbols-outlined text-on-surface-variant/50 mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/40" placeholder="Search analytics, staff, or orders..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-on-surface-variant hover:text-primary transition-colors duration-200 hover:brightness-125">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200 hover:brightness-125">
+<span class="material-symbols-outlined">apps</span>
+</button>
+<div class="h-8 w-[1px] bg-white/10"></div>
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="text-right">
+<p class="font-label-sm text-on-surface font-bold leading-tight">Marcus Chen</p>
+<p class="font-label-sm text-on-surface-variant/60 text-[10px] uppercase tracking-wider">Restaurant Manager</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/30 overflow-hidden group-hover:border-primary transition-all">
+<img alt="Manager Portrait" class="w-full h-full object-cover" data-alt="A professional portrait of a restaurant manager in a high-tech hospitality environment. The lighting is soft and modern with cool blue and emerald green ambient highlights. He is wearing a minimalist dark shirt, looking confident and focused. The background is a slightly blurred, high-end digital kitchen dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoIw4LFrvSZkECAgroMfRyfgrS5PsH_QZFX0Zz-ZyLWvKJjC3rnWQGcVtDmym7nCn5OowQ4cSgSTJZivn95Vh3jeKUbSQptnEYRe1b_CMIc_ziy5seR0B2J-VNkZ3TkwxPxtLUg4ZT_KCl0VdcVrv0FaPBV91tF4MD3VlC86U2wqeqEqilDFHPvH2kcDsUvJyfjjBwalitXg0DLI0mBoyNL239y_unsOO86A45WI7RWBJXOlMoIj6Hxk1LSF7gtUnyft5alHS4HQgV"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 p-container-padding min-h-screen">
+<!-- Hero Section: Revenue Metric -->
+<section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+<p class="font-label-md text-secondary uppercase tracking-[0.3em] mb-2 opacity-70">Global Revenue Pulse</p>
+<h2 class="font-display-lg text-[64px] font-bold text-white glow-text-primary leading-tight">₦1,240,500</h2>
+<div class="flex items-center gap-2 mt-2">
+<div class="flex items-center text-primary bg-primary/10 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+<span class="font-label-sm font-bold">+14.2%</span>
+</div>
+<span class="font-label-sm text-on-surface-variant/60">vs. last 24 hours</span>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-3 glass-card rounded-2xl flex items-center gap-2 hover:bg-white/10 transition-all border border-white/5 active:scale-95">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+<span class="font-label-md">Last 30 Days</span>
+</button>
+<button class="px-6 py-3 bg-primary text-on-primary-fixed rounded-2xl flex items-center gap-2 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(75,226,119,0.3)] font-bold active:scale-95">
+<span class="material-symbols-outlined">download</span>
+<span class="font-label-md">Export Report</span>
+</button>
+</div>
+</section>
+<!-- Revenue Pulse Area Chart -->
+<section class="mb-bento-gap">
+<div class="glass-card rounded-2xl p-8 mesh-gradient-bg min-h-[400px] relative overflow-hidden flex flex-col">
+<div class="flex justify-between items-center mb-12 relative z-10">
+<div>
+<h3 class="font-headline-md text-white">Revenue Velocity</h3>
+<p class="text-on-surface-variant text-sm">Real-time financial throughput monitoring</p>
+</div>
+<div class="flex gap-2">
+<span class="w-3 h-3 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-primary uppercase tracking-widest">Live Stream</span>
+</div>
+</div>
+<div class="flex-1 w-full chart-container relative min-h-[250px]">
+<!-- Abstract Visualization Representation -->
+<svg class="w-full h-full preserve-3d" viewbox="0 0 1000 300">
+<defs>
+<lineargradient id="chartGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#4be277" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#4be277" stop-opacity="0"></stop>
+</lineargradient>
+<lineargradient id="chartGradient2" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#0566d9" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#0566d9" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid Lines -->
+<line stroke="rgba(255,255,255,0.05)" stroke-width="1" x1="0" x2="1000" y1="50" y2="50"></line>
+<line stroke="rgba(255,255,255,0.05)" stroke-width="1" x1="0" x2="1000" y1="150" y2="150"></line>
+<line stroke="rgba(255,255,255,0.05)" stroke-width="1" x1="0" x2="1000" y1="250" y2="250"></line>
+<!-- Area 1 -->
+<path d="M0,250 Q150,220 300,100 T600,120 T1000,40 L1000,300 L0,300 Z" fill="url(#chartGradient)"></path>
+<path class="chart-line" d="M0,250 Q150,220 300,100 T600,120 T1000,40" fill="none" stroke="#4be277" stroke-width="3"></path>
+<!-- Area 2 -->
+<path d="M0,280 Q200,260 400,180 T700,200 T1000,120 L1000,300 L0,300 Z" fill="url(#chartGradient2)"></path>
+<path class="chart-line" d="M0,280 Q200,260 400,180 T700,200 T1000,120" fill="none" opacity="0.6" stroke="#0566d9" stroke-dasharray="8 4" stroke-width="2"></path>
+</svg>
+</div>
+<div class="grid grid-cols-6 gap-4 mt-6 text-on-surface-variant font-label-sm uppercase tracking-tighter opacity-50">
+<span>08:00 AM</span>
+<span>11:00 AM</span>
+<span>02:00 PM</span>
+<span>05:00 PM</span>
+<span>08:00 PM</span>
+<span>11:00 PM</span>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-12 gap-bento-gap">
+<!-- Category Pulse Bento Grid (Left Column) -->
+<div class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-bento-gap">
+<!-- Starters Card -->
+<div class="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:bg-white/5 transition-all cursor-default">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-xl">restaurant</span>
+<span class="text-xs font-bold text-primary">+8%</span>
+</div>
+<h4 class="font-headline-md text-white mb-1">Starters</h4>
+<p class="text-on-surface-variant text-sm mb-6">482 Units Sold</p>
+</div>
+<div>
+<div class="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-2 opacity-60">
+<span>Target</span>
+<span>82%</span>
+</div>
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full glow-primary transition-all duration-1000 ease-out" style="width: 82%"></div>
+</div>
+</div>
+</div>
+<!-- Mains Card -->
+<div class="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:bg-white/5 transition-all cursor-default">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-xl">dinner_dining</span>
+<span class="text-xs font-bold text-secondary">+22%</span>
+</div>
+<h4 class="font-headline-md text-white mb-1">Mains</h4>
+<p class="text-on-surface-variant text-sm mb-6">1,240 Units Sold</p>
+</div>
+<div>
+<div class="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-2 opacity-60">
+<span>Target</span>
+<span>95%</span>
+</div>
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full shadow-[0_0_15px_rgba(173,198,255,0.4)] transition-all duration-1000 ease-out" style="width: 95%"></div>
+</div>
+</div>
+</div>
+<!-- Drinks Card -->
+<div class="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:bg-white/5 transition-all cursor-default">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 rounded-xl">local_bar</span>
+<span class="text-xs font-bold text-tertiary">+5%</span>
+</div>
+<h4 class="font-headline-md text-white mb-1">Drinks</h4>
+<p class="text-on-surface-variant text-sm mb-6">894 Units Sold</p>
+</div>
+<div>
+<div class="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-2 opacity-60">
+<span>Target</span>
+<span>64%</span>
+</div>
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full shadow-[0_0_15px_rgba(255,179,183,0.4)] transition-all duration-1000 ease-out" style="width: 64%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Transactions (Right Column) -->
+<div class="col-span-12 lg:col-span-4">
+<div class="glass-card p-inner-padding rounded-2xl h-full flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-white">Live Transactions</h3>
+<a class="text-primary font-label-sm hover:underline" href="#">View All</a>
+</div>
+<div class="space-y-4 flex-1">
+<!-- Transaction 1 -->
+<div class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant group-hover:bg-primary/20 group-hover:text-primary transition-all">
+<span class="material-symbols-outlined text-lg">payments</span>
+</div>
+<div>
+<p class="font-body-md text-white font-medium">Table 12</p>
+<p class="text-[10px] text-on-surface-variant/60 uppercase">2 mins ago • Card</p>
+</div>
+</div>
+<p class="font-metric-sm text-primary">₦24,500</p>
+</div>
+<!-- Transaction 2 -->
+<div class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant group-hover:bg-primary/20 group-hover:text-primary transition-all">
+<span class="material-symbols-outlined text-lg">receipt_long</span>
+</div>
+<div>
+<p class="font-body-md text-white font-medium">Takeout #842</p>
+<p class="text-[10px] text-on-surface-variant/60 uppercase">5 mins ago • Digital</p>
+</div>
+</div>
+<p class="font-metric-sm text-primary">₦8,200</p>
+</div>
+<!-- Transaction 3 -->
+<div class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant group-hover:bg-primary/20 group-hover:text-primary transition-all">
+<span class="material-symbols-outlined text-lg">payments</span>
+</div>
+<div>
+<p class="font-body-md text-white font-medium">Table 04</p>
+<p class="text-[10px] text-on-surface-variant/60 uppercase">12 mins ago • Cash</p>
+</div>
+</div>
+<p class="font-metric-sm text-primary">₦56,900</p>
+</div>
+<!-- Transaction 4 -->
+<div class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant group-hover:bg-primary/20 group-hover:text-primary transition-all">
+<span class="material-symbols-outlined text-lg">contactless</span>
+</div>
+<div>
+<p class="font-body-md text-white font-medium">Table 09</p>
+<p class="text-[10px] text-on-surface-variant/60 uppercase">18 mins ago • Card</p>
+</div>
+</div>
+<p class="font-metric-sm text-primary">₦12,300</p>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-white/5">
+<div class="flex justify-between items-center opacity-70">
+<span class="text-xs">Processing Node: IQ-7</span>
+<span class="text-xs text-primary">Sync Active</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Global atmospheric overlay (Mesh Gradient) -->
+<div class="fixed inset-0 pointer-events-none z-[-1]">
+
+</div>
+<script>
+        // Micro-interactions for chart lines and pulses
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartLines = document.querySelectorAll('.chart-line');
+            chartLines.forEach(line => {
+                const length = line.getTotalLength();
+                line.style.strokeDasharray = length;
+                line.style.strokeDashoffset = length;
+                line.animate([
+                    { strokeDashoffset: length },
+                    { strokeDashoffset: 0 }
+                ], {
+                    duration: 2000,
+                    easing: 'ease-out',
+                    fill: 'forwards'
+                });
+            });
+
+            // Smooth pulse interaction for transaction items
+            const transactionItems = document.querySelectorAll('.group');
+            transactionItems.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    item.style.transform = 'translateX(8px)';
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body></html>

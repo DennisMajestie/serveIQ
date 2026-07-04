@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Branch Settings | Lumina Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#ffb3b7",
+                        "on-error": "#690005",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary": "#4be277",
+                        "tertiary-fixed-dim": "#ffb2b7",
+                        "surface": "#0c1324",
+                        "surface-tint": "#4ae176",
+                        "primary-fixed": "#6bff8f",
+                        "surface-dim": "#0c1324",
+                        "secondary-container": "#0566d9",
+                        "on-secondary-container": "#e6ecff",
+                        "surface-variant": "#2e3447",
+                        "tertiary-fixed": "#ffdadb",
+                        "primary-container": "#22c55e",
+                        "on-primary-container": "#004b1e",
+                        "on-secondary-fixed": "#001a42",
+                        "primary-fixed-dim": "#4ae176",
+                        "surface-container-low": "#151b2d",
+                        "surface-bright": "#33394c",
+                        "on-tertiary": "#67001b",
+                        "inverse-primary": "#006e2f",
+                        "error-container": "#93000a",
+                        "on-background": "#dce1fb",
+                        "surface-container": "#191f31",
+                        "surface-container-lowest": "#070d1f",
+                        "on-secondary": "#002e6a",
+                        "error": "#ffb4ab",
+                        "tertiary-container": "#ff8892",
+                        "on-secondary-fixed-variant": "#004395",
+                        "background": "#0c1324",
+                        "on-tertiary-fixed": "#40000d",
+                        "on-tertiary-fixed-variant": "#92002a",
+                        "on-tertiary-container": "#840025",
+                        "on-primary-fixed": "#002109",
+                        "secondary": "#adc6ff",
+                        "on-primary-fixed-variant": "#005321",
+                        "outline-variant": "#3d4a3d",
+                        "on-surface-variant": "#bccbb9",
+                        "surface-container-high": "#23293c",
+                        "on-surface": "#dce1fb",
+                        "outline": "#869585",
+                        "inverse-surface": "#dce1fb",
+                        "surface-container-highest": "#2e3447",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "inverse-on-surface": "#2a3043",
+                        "on-primary": "#003915",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "24px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inner-padding": "24px",
+                        "container-padding": "32px",
+                        "unit": "8px",
+                        "bento-gap": "24px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "metric-sm": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Space Grotesk"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                        "metric-sm": ["18px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0c1324;
+            color: #dce1fb;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(32px);
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 40px rgba(75, 226, 119, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .glass-input {
+            background: rgba(12, 19, 36, 0.4);
+            border: none;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            box-shadow: 0 4px 20px rgba(75, 226, 119, 0.15);
+            background: rgba(12, 19, 36, 0.6);
+            outline: none;
+        }
+
+        .glow-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(75, 226, 119, 0.2);
+        }
+
+        .glow-button:hover {
+            box-shadow: 0 0 25px rgba(75, 226, 119, 0.5);
+            transform: scale(1.02);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Custom slider thumb styling */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #4be277;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(75, 226, 119, 0.6);
+            margin-top: -8px;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- WebGL Background Overlay -->
+<div class="fixed inset-0 z-0 opacity-40 pointer-events-none">
+
+</div>
+<!-- Side Navigation (Shared Component) -->
+<nav class="h-screen w-64 fixed left-0 top-0 backdrop-blur-[32px] bg-white/5 shadow-[0_0_20px_rgba(75,226,119,0.1)] flex flex-col py-8 px-4 z-50">
+<div class="mb-12 px-4">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Lumina Studio</h1>
+<p class="text-on-surface-variant text-label-sm font-label-sm mt-1">Executive Admin</p>
+</div>
+<div class="space-y-2 flex-1">
+<a class="flex items-center gap-3 py-3 rounded-xl transition-all duration-300 hover:bg-primary/10 hover:translate-x-1 text-on-surface-variant font-medium pl-5" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 py-3 rounded-xl transition-all duration-300 hover:bg-primary/10 hover:translate-x-1 text-on-surface-variant font-medium pl-5" href="#">
+<span class="material-symbols-outlined">event_seat</span>
+                Floor Plan
+            </a>
+<a class="flex items-center gap-3 py-3 rounded-xl transition-all duration-300 hover:bg-primary/10 hover:translate-x-1 text-on-surface-variant font-medium pl-5" href="#">
+<span class="material-symbols-outlined">group</span>
+                Staffing
+            </a>
+<a class="flex items-center gap-3 py-3 rounded-xl transition-all duration-300 hover:bg-primary/10 hover:translate-x-1 text-on-surface-variant font-medium pl-5" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+                Inventory
+            </a>
+<a class="flex items-center gap-3 py-3 rounded-xl transition-all duration-300 hover:bg-primary/10 hover:translate-x-1 text-on-surface-variant font-medium pl-5" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 py-3 rounded-xl transition-all duration-300 text-primary font-bold border-l-4 border-primary pl-4 bg-primary/5" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</div>
+<div class="mt-auto space-y-2">
+<button class="w-full text-left flex items-center gap-3 py-3 px-5 text-on-surface-variant hover:text-primary transition-colors font-medium">
+<span class="material-symbols-outlined">help</span>
+                Help
+            </button>
+<button class="w-full text-left flex items-center gap-3 py-3 px-5 text-on-surface-variant hover:text-error transition-colors font-medium">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </button>
+</div>
+</nav>
+<!-- Top Navigation (Shared Component) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-20 backdrop-blur-[32px] bg-white/5 z-40 flex justify-between items-center px-container-padding h-full">
+<div class="flex items-center gap-8">
+<span class="font-headline-lg text-headline-lg font-black tracking-tighter text-primary">Lumina Management</span>
+<div class="hidden md:flex gap-6">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="#">Live View</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="#">Reports</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 mr-4">
+<button class="p-2 text-on-surface-variant hover:text-primary active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary active:scale-95 duration-200">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-md text-label-md glow-button">
+                Add Entry
+            </button>
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden border border-white/10">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjLXcTEQveBLAWeSYldQ3A7OrqS1Un4XCedWVmlDNelYcCcDEo1R8mFy1AF92LJfUg-8AJMBq3UkIoddIxi5ULo8xWXo93IFa2Pq9HkOb1kZnhMZ97V4phzeLBeiiXNwgdySqf2QVF4FR2CFucD2Dp-rlIiNJOp5sv8XtP-fX_ZZ9WMKZt8AkD5FM_mVa5obacn6xi-FS1knum01kyMeMbJGGE7oy3U-wd4ie4P70L2FLl1d_4fytGYu-GMqFpzLTiLdj00JmV7GHW"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-28 px-container-padding pb-12 relative z-10">
+<!-- Header Section -->
+<div class="mb-10">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Branch Settings</h2>
+<p class="text-on-surface-variant font-body-lg">Configure the digital DNA of your high-tech studio environment.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-bento-gap">
+<!-- Section 1: Branch Global Identity (Large Card) -->
+<div class="col-span-12 lg:col-span-8 glass-card p-inner-padding">
+<div class="flex items-center gap-3 mb-8">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">hub</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Branch Global Identity</h3>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="col-span-2 md:col-span-1 space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1">Branch Name</label>
+<input class="w-full h-14 px-6 rounded-2xl glass-input text-on-surface font-body-md focus:ring-1 focus:ring-primary/30" placeholder="Enter branch name" type="text" value="Lumina Studio - North District"/>
+</div>
+<div class="col-span-2 md:col-span-1 space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1">Branch ID</label>
+<input class="w-full h-14 px-6 rounded-2xl glass-input text-on-surface-variant font-body-md opacity-60 cursor-not-allowed" readonly="" type="text" value="LS-772-ND"/>
+</div>
+<div class="col-span-2 space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1">Physical Address</label>
+<input class="w-full h-14 px-6 rounded-2xl glass-input text-on-surface font-body-md focus:ring-1 focus:ring-primary/30" placeholder="Street address" type="text" value="404 Tech Corridor, Neon Plaza, Floor 12"/>
+</div>
+<div class="col-span-2 md:col-span-1 space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1">Support Email</label>
+<input class="w-full h-14 px-6 rounded-2xl glass-input text-on-surface font-body-md focus:ring-1 focus:ring-primary/30" placeholder="email@example.com" type="email" value="north@lumina.studio"/>
+</div>
+<div class="col-span-2 md:col-span-1 space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1">Contact Hotline</label>
+<input class="w-full h-14 px-6 rounded-2xl glass-input text-on-surface font-body-md focus:ring-1 focus:ring-primary/30" placeholder="+1 000 000 0000" type="tel" value="+1 (888) 555-TECH"/>
+</div>
+</div>
+<!-- Subtle Ambient Glow Element -->
+<div class="mt-8 p-6 bg-primary/5 rounded-2xl border border-primary/10">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="text-on-surface-variant text-label-md">Global identity changes take up to 5 minutes to propagate across all client-facing terminals.</p>
+</div>
+</div>
+</div>
+<!-- Section 3: Brand Tokens (Preview Card) -->
+<div class="col-span-12 lg:col-span-4 glass-card p-inner-padding flex flex-col">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-tertiary/10 rounded-lg">
+<span class="material-symbols-outlined text-tertiary">token</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Brand Tokens</h3>
+</div>
+<div class="flex-1 space-y-8">
+<!-- Logo Preview -->
+<div class="space-y-4">
+<label class="font-label-md text-label-md text-on-surface-variant">Active Branch Logo</label>
+<div class="h-32 bg-surface-container rounded-2xl flex items-center justify-center p-8 relative overflow-hidden group">
+<img alt="Branch Logo" class="h-full relative z-10 transition-transform group-hover:scale-110 duration-500" data-alt="A minimalist tech logo featuring geometric crystalline shapes in emerald green and neon blue on a transparent background. The design is sleek, modern, and perfectly suited for a high-end software company identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdWqZdZuW0RntoLwqZNruwhZ-KxG9GnfjDx0EPLLHP3wo3e0FwOWlL_ImG7-UPSxVQzsBHBbfZFhQ0EZ7hvCvW-wec_QVtlXH--jZ6h9qheYsciy6PL8jfRwpZ-uWDmUlXBnHvDIuZ5gjC-8bqKeBpib7ozULufteBQn0sBsWzqx-Nm3yaHqbcpeiGhHiLp27GcMSuMk2M3e1kxgIEnScqAZCPs0LVnkE4DV1JCqpaItXIYjajjEoDt0E86DZG618jkpqB1Qe2e6Og"/>
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<button class="absolute bottom-2 right-2 p-2 bg-surface/80 backdrop-blur-md rounded-lg text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+</div>
+<!-- Color Swatches -->
+<div class="space-y-4">
+<label class="font-label-md text-label-md text-on-surface-variant">Signature Color Palette</label>
+<div class="flex gap-4">
+<div class="group relative flex-1">
+<div class="h-16 rounded-xl bg-primary shadow-[0_0_15px_rgba(75,226,119,0.4)] cursor-pointer"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100 transition-opacity">#4BE277</span>
+</div>
+<div class="group relative flex-1">
+<div class="h-16 rounded-xl bg-secondary-container shadow-[0_0_15px_rgba(5,102,217,0.4)] cursor-pointer"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100 transition-opacity">#0566D9</span>
+</div>
+<div class="group relative flex-1">
+<div class="h-16 rounded-xl bg-tertiary-container shadow-[0_0_15px_rgba(255,136,146,0.4)] cursor-pointer"></div>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100 transition-opacity">#FF8892</span>
+</div>
+</div>
+</div>
+<!-- Dynamic Preview Section -->
+<div class="mt-4 pt-6 border-t border-white/5">
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest mb-4">UI Preview</p>
+<div class="bg-surface-container-high rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[16px]">done_all</span>
+</div>
+<span class="text-on-surface font-body-md">Connected</span>
+</div>
+<div class="h-1 w-12 bg-primary rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: Operational Pulse (Medium/Wide Card) -->
+<div class="col-span-12 glass-card p-inner-padding">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-secondary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary">bolt</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Operational Pulse</h3>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 rounded-lg bg-surface-variant/40 text-on-surface font-label-md hover:bg-surface-variant transition-colors">Standard View</button>
+<button class="px-4 py-2 rounded-lg bg-primary/20 text-primary font-label-md border border-primary/20">Advanced Config</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<!-- Opening Hours -->
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<h4 class="text-metric-sm font-metric-sm text-on-surface">Operating Window</h4>
+<span class="text-primary font-label-sm px-2 py-1 bg-primary/10 rounded">LIVE</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
+<span class="text-on-surface-variant font-medium">Weekdays</span>
+<span class="text-on-surface font-body-md">09:00 — 22:00</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer">
+<span class="text-on-surface-variant font-medium">Saturdays</span>
+<span class="text-on-surface font-body-md">10:00 — 23:00</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer">
+<span class="text-on-surface-variant font-medium">Sundays</span>
+<span class="text-primary font-bold">CLOSED</span>
+</div>
+</div>
+</div>
+<!-- Capacity Control -->
+<div class="space-y-6">
+<h4 class="text-metric-sm font-metric-sm text-on-surface">Studio Capacity</h4>
+<div class="p-6 bg-white/5 rounded-2xl space-y-8">
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-label-md font-label-md text-on-surface-variant">Table Density</label>
+<span class="text-primary font-bold" id="density-val">75%</span>
+</div>
+<input class="w-full accent-primary" oninput="document.getElementById('density-val').innerText = this.value + '%'" type="range"/>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-label-md font-label-md text-on-surface-variant">Max Occupancy</label>
+<span class="text-primary font-bold" id="occupancy-val">120</span>
+</div>
+<input class="w-full accent-primary" max="250" min="20" oninput="document.getElementById('occupancy-val').innerText = this.value" type="range" value="120"/>
+</div>
+</div>
+</div>
+<!-- Active Mode Selection -->
+<div class="space-y-6">
+<h4 class="text-metric-sm font-metric-sm text-on-surface">System Atmosphere</h4>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-primary text-on-primary shadow-[0_0_30px_rgba(75,226,119,0.3)] transition-all">
+<span class="material-symbols-outlined text-3xl">light_mode</span>
+<span class="font-label-md">High Velocity</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-white/5 text-on-surface-variant hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-3xl">bedtime</span>
+<span class="font-label-md">Deep Focus</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-white/5 text-on-surface-variant hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-3xl">auto_awesome</span>
+<span class="font-label-md">Adaptive</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-white/5 text-on-surface-variant hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-3xl">emergency</span>
+<span class="font-label-md">Safe State</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Footer Actions -->
+<div class="mt-12 flex items-center justify-end gap-4 p-6 glass-card">
+<button class="px-8 py-3 rounded-full text-on-surface-variant font-label-md hover:text-on-surface transition-colors">Discard Changes</button>
+<button class="px-10 py-3 rounded-full bg-primary text-on-primary font-label-md glow-button font-bold">Synchronize Branch</button>
+</div>
+</main>
+<script>
+        // Micro-interaction for hover states on inputs
+        document.querySelectorAll('.glass-input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.parentElement.classList.add('ring-offset-2');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.parentElement.classList.remove('ring-offset-2');
+            });
+        });
+    </script>
+</body></html>

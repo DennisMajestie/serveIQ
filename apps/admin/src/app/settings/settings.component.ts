@@ -24,6 +24,14 @@ export class SettingsComponent implements OnInit {
   activeSection = signal<Section>('branch-setup');
   branches = signal<Branch[]>([]);
   isLoading = signal(true);
+
+  navItems: { key: Section; label: string; icon: string }[] = [
+    { key: 'branch-setup', label: 'Branch Setup', icon: 'settings' },
+    { key: 'branding', label: 'Branding', icon: 'palette' },
+    { key: 'staff', label: 'Staff', icon: 'group' },
+    { key: 'security', label: 'Security', icon: 'lock' },
+    { key: 'verification', label: 'Verification', icon: 'verified' }
+  ];
   copiedBranchId = signal<string | null>(null);
   isEmailVerified = signal(false);
   profileName = signal('');

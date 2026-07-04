@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#070d1f",
+                    "tertiary-fixed-dim": "#ffb2b7",
+                    "on-error-container": "#ffdad6",
+                    "secondary": "#adc6ff",
+                    "primary": "#4be277",
+                    "on-primary-fixed": "#002109",
+                    "on-tertiary-container": "#840025",
+                    "secondary-container": "#0566d9",
+                    "primary-container": "#22c55e",
+                    "error": "#ffb4ab",
+                    "surface-container": "#191f31",
+                    "tertiary-container": "#ff8892",
+                    "on-secondary": "#002e6a",
+                    "on-tertiary-fixed-variant": "#92002a",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "error-container": "#93000a",
+                    "surface-bright": "#33394c",
+                    "outline": "#869585",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-container-low": "#151b2d",
+                    "on-background": "#dce1fb",
+                    "on-primary-container": "#004b1e",
+                    "surface-variant": "#2e3447",
+                    "tertiary-fixed": "#ffdadb",
+                    "on-error": "#690005",
+                    "inverse-surface": "#dce1fb",
+                    "background": "#0c1324",
+                    "surface-dim": "#0c1324",
+                    "surface": "#0c1324",
+                    "on-surface": "#dce1fb",
+                    "outline-variant": "#3d4a3d",
+                    "on-surface-variant": "#bccbb9",
+                    "inverse-on-surface": "#2a3043",
+                    "primary-fixed": "#6bff8f",
+                    "primary-fixed-dim": "#4ae176",
+                    "surface-container-high": "#23293c",
+                    "on-secondary-fixed": "#001a42",
+                    "on-tertiary-fixed": "#40000d",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-tertiary": "#67001b",
+                    "inverse-primary": "#006e2f",
+                    "surface-container-highest": "#2e3447",
+                    "tertiary": "#ffb3b7",
+                    "surface-tint": "#4ae176",
+                    "on-secondary-container": "#e6ecff",
+                    "on-primary": "#003915",
+                    "on-primary-fixed-variant": "#005321"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "bento-gap": "20px",
+                    "container-padding": "32px",
+                    "unit": "8px",
+                    "inner-padding": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Space Grotesk"],
+                    "label-sm": ["Inter"],
+                    "metric-sm": ["Space Grotesk"],
+                    "headline-md": ["Space Grotesk"],
+                    "display-lg": ["Space Grotesk"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "metric-sm": ["18px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #020617;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .mesh-gradient {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(75, 226, 119, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(5, 102, 217, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(75, 226, 119, 0.1) 0px, transparent 50%);
+        }
+
+        .azure-pulse {
+            animation: azure-pulse-anim 2s infinite ease-in-out;
+        }
+
+        @keyframes azure-pulse-anim {
+            0%, 100% { box-shadow: 0 0 0px 0px rgba(5, 102, 217, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(5, 102, 217, 0.6); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+        }
+
+        .active-glow {
+            box-shadow: 0 0 25px rgba(75, 226, 119, 0.25);
+        }
+
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="mesh-gradient min-h-screen text-on-background font-body-md">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full backdrop-blur-[32px] bg-white/10 dark:bg-surface-container/20 z-50 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+<div class="flex items-center justify-between px-container-padding py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/40">
+<img alt="Staff Member Portrait" class="w-full h-full object-cover" data-alt="A professional close-up portrait of a high-end restaurant staff member with a friendly and composed expression. The lighting is moody and cinematic, featuring cool blue and soft green highlights that reflect a futuristic hospitality environment. The background is softly blurred with hints of digital interfaces and elegant architectural details in a dark-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCm0kIVKhuMm9UcPnW5HJtzyl5XPNb9QbItGsVsOaGm87QRDmCQe7u4cYSpZvfSfghAcRGqaCNSa7GxKSDYcsLKH2WIs5evVzxAvaQ7rtUVcJWFmHIXZHBrdC8vOjSbT48oC9tdixsvbjGo88MNvse7LEq2m3H_gbp85V0pWxRmVFbp-SzM6cX1NKummxom6mnNFG-QDWG9lj88L--hFkouI__0P4wRte6CBHaY4a54fwzL41C1cEbrxIoFqats5PT5SxhRVlACy9eG"/>
+</div>
+<div class="hidden md:block">
+<p class="font-label-sm text-label-sm text-on-surface-variant/80">Staff ID: 882</p>
+</div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile tracking-tighter text-primary drop-shadow-[0_0_10px_rgba(75,226,119,0.4)]">LUMINA</h1>
+<button class="material-symbols-outlined text-primary active:scale-95 transition-transform p-2 bg-white/5 rounded-full" data-icon="notifications">
+                notifications
+            </button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pt-28 pb-32 px-6 max-w-lg mx-auto">
+<!-- Floor Status Bento -->
+<section class="grid grid-cols-2 gap-bento-gap mb-8">
+<div class="glass-card rounded-[32px] p-inner-padding flex flex-col justify-between aspect-square">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary" data-icon="room_service">room_service</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Live</span>
+</div>
+<div>
+<p class="font-metric-sm text-metric-sm text-primary">12/20</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tables Seated</p>
+</div>
+</div>
+<div class="glass-card rounded-[32px] p-inner-padding flex flex-col justify-between aspect-square azure-pulse">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-secondary" data-icon="payments">payments</span>
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<div>
+<p class="font-metric-sm text-metric-sm text-secondary">3</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Bills Pending</p>
+</div>
+</div>
+</section>
+<!-- Section Title -->
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Main Floor</h2>
+<div class="flex gap-2">
+<div class="flex items-center gap-1.5 glass-card px-3 py-1.5 rounded-full">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Busy</span>
+</div>
+</div>
+</div>
+<!-- Tables Grid (Asymmetric Bento) -->
+<div class="grid grid-cols-6 gap-bento-gap">
+<!-- Table Card: Occupied -->
+<button class="col-span-3 aspect-square glass-card rounded-full flex flex-col items-center justify-center p-4 active:scale-90 transition-all duration-300 active-glow group">
+<div class="mb-1">
+<span class="material-symbols-outlined text-primary opacity-60 group-hover:opacity-100" data-icon="group">group</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">T-01</span>
+<span class="font-label-sm text-label-sm text-primary/80">45m</span>
+</button>
+<!-- Table Card: Pending Bill (Azure Pulse) -->
+<button class="col-span-3 aspect-square glass-card rounded-full flex flex-col items-center justify-center p-4 active:scale-90 transition-all duration-300 azure-pulse group">
+<div class="mb-1">
+<span class="material-symbols-outlined text-secondary" data-icon="receipt_long">receipt_long</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">T-04</span>
+<span class="font-label-sm text-label-sm text-secondary">$142.50</span>
+</button>
+<!-- Table Card: Available -->
+<button class="col-span-2 aspect-square glass-card rounded-full flex flex-col items-center justify-center p-2 active:scale-90 transition-all duration-300 group">
+<span class="font-headline-md text-headline-md text-on-surface-variant/40 group-hover:text-on-surface transition-colors">T-08</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant/20">Empty</span>
+</button>
+<!-- Table Card: Occupied Small -->
+<button class="col-span-2 aspect-square glass-card rounded-full flex flex-col items-center justify-center p-2 active:scale-90 transition-all duration-300 active-glow group">
+<span class="font-headline-md text-headline-md text-on-surface">T-10</span>
+<div class="flex gap-0.5 mt-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary/60"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary/60"></div>
+</div>
+</button>
+<!-- Table Card: Available -->
+<button class="col-span-2 aspect-square glass-card rounded-full flex flex-col items-center justify-center p-2 active:scale-90 transition-all duration-300 group">
+<span class="font-headline-md text-headline-md text-on-surface-variant/40">T-12</span>
+</button>
+<!-- Large Area / Booth Map Segment -->
+<div class="col-span-6 h-48 glass-card rounded-[40px] relative overflow-hidden flex items-end p-6">
+<img alt="Booth View" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" data-alt="An ultra-modern restaurant booth setting featuring smooth, curved leather seating and dark stone tables. The space is illuminated by integrated neon green floor strips and floating azure pendant lights that cast a soft glow on the glass surfaces. The atmosphere is quiet, luxurious, and technologically advanced, resembling a high-end command center for dining. No people are visible, focusing on the architectural symmetry and light play." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABskZkGgTGtWdnspFb6L0ctF8WCM_G3biaifJ1Kh2q66UM1vigrXwJQX3xvf2McSPlr6kodZY9yWHeJIUvfF6PoYyaychbtiOL3u79jh_QILn4s-xz0KntpWY8saihsTr1XV7S2Oi05F0Y62VDUmpsGRWQXWlCXa6Hdjp0CusYH0kCVB1HwhSudiWx-BK-LdNRTdX2ly1eLjN7xuiACRHXg-rgFwAvXM59lp05_TbRUksnTK9uRI7Jd2m3P2JpAJV3oWItnYS8e7Rh"/>
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md text-white">VIP Lounge</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">3 Reservations arriving soon</p>
+</div>
+<div class="absolute top-6 right-6 flex gap-2">
+<div class="w-12 h-12 glass-card rounded-full flex items-center justify-center border border-primary/20">
+<span class="font-label-md text-label-md text-primary">V1</span>
+</div>
+<div class="w-12 h-12 glass-card rounded-full flex items-center justify-center bg-primary/20">
+<span class="font-label-md text-label-md text-on-primary">V2</span>
+</div>
+</div>
+</div>
+<!-- More Tables -->
+<button class="col-span-3 aspect-square glass-card rounded-full flex flex-col items-center justify-center p-4 active:scale-90 transition-all duration-300 group">
+<span class="font-headline-md text-headline-md text-on-surface-variant/40">T-15</span>
+</button>
+<button class="col-span-3 aspect-square glass-card rounded-full flex flex-col items-center justify-center p-4 active:scale-90 transition-all duration-300 active-glow group">
+<div class="mb-1">
+<span class="material-symbols-outlined text-primary" data-icon="restaurant">restaurant</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">T-18</span>
+<span class="font-label-sm text-label-sm text-primary/80">Just Seated</span>
+</button>
+</div>
+</main>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-8 left-0 right-0 mx-auto flex justify-around items-center p-2 z-50 fixed bottom-bento-gap left-1/2 -translate-x-1/2 w-[90%] max-w-md rounded-full backdrop-blur-[32px] bg-white/5 dark:bg-surface-container-low/30 shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] z-50 shadow-2xl shadow-primary/10">
+<!-- Tables (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary/40 dark:bg-primary-container text-on-primary-container rounded-full px-6 py-2 shadow-[0_0_15px_rgba(75,226,119,0.3)] active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-label-sm text-label-sm">Tables</span>
+</a>
+<!-- History -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 dark:text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-sm text-label-sm">History</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 dark:text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<!-- Floating Action Button - Contextual for Home Screen -->
+<button class="fixed bottom-28 right-8 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(75,226,119,0.5)] active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-on-primary text-3xl" data-icon="add">add</span>
+</button>
+<script>
+        // Micro-interaction for table cards
+        document.querySelectorAll('button.glass-card').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.style.transform = 'scale(0.95)';
+                card.style.filter = 'brightness(1.2)';
+            });
+            card.addEventListener('touchend', () => {
+                card.style.transform = 'scale(1)';
+                card.style.filter = 'brightness(1)';
+            });
+        });
+
+        // Atmospheric parallax effect on background
+        window.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX / window.innerWidth) * 20;
+            const moveY = (e.clientY / window.innerHeight) * 20;
+            document.body.style.backgroundPosition = `${moveX}px ${moveY}px`;
+        });
+    </script>
+</body></html>

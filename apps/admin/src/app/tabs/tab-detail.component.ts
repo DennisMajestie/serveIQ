@@ -193,8 +193,10 @@ export class TabDetailComponent implements OnInit {
       this.removeOrderItem(item);
       return;
     }
-    // Optimistic update for responsiveness
-    this.orders.update(os => os.map(o => o.id === item.id ? { ...o, quantity } : o));
+    this.ordersApi.updateItem(item.id, { quantity }).subscribe({
+      next: (updated) => this.orders.update(os => os.map(o => o.id === item.id ? updated : o)),
+      error: () => Swal.fire({ icon: 'error', title: 'Update Failed', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+    });
   }
 
   removeOrderItem(item: OrderItem) {
@@ -209,7 +211,10 @@ export class TabDetailComponent implements OnInit {
       color: '#fff'
     }).then(result => {
       if (result.isConfirmed) {
-        this.orders.update(os => os.filter(o => o.id !== item.id));
+        this.ordersApi.deleteItem(item.id).subscribe({
+          next: () => this.orders.update(os => os.filter(o => o.id !== item.id)),
+          error: () => Swal.fire({ icon: 'error', title: 'Remove Failed', text: 'Could not remove item. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
+        });
       }
     });
   }
@@ -249,23 +254,28 @@ export class TabDetailComponent implements OnInit {
   closeTab() {
     this.billsApi.generate(this.tabId).subscribe({
       next: (bill) => {
-        Swal.fire({
-          title: 'Bill Generated',
-          html: `
-            <div style="text-align:left;font-family:monospace;font-size:0.9rem">
-              <p><strong>Subtotal:</strong> ₦${(bill.subtotalKobo / 100).toLocaleString()}</p>
-              <p><strong>Service Charge:</strong> ${bill.serviceChargePercent}%</p>
-              <p><strong>Total:</strong> ₦${(bill.totalKobo / 100).toLocaleString()}</p>
-            </div>
-          `,
-          confirmButtonText: 'View Bill',
-          confirmButtonColor: '#F97316',
-          showCancelButton: true,
-          cancelButtonText: 'Close'
-        }).then(result => {
-          if (result.isConfirmed) {
-            this.router.navigate(['/bills']);
-          }
+        this.tabsApi.closeTab(this.tabId).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Tab Closed',
+              html: `
+                <div style="text-align:left;font-family:monospace;font-size:0.9rem">
+                  <p><strong>Subtotal:</strong> ₦${(bill.subtotalKobo / 100).toLocaleString()}</p>
+                  <p><strong>Service Charge:</strong> ${bill.serviceChargePercent}%</p>
+                  <p><strong>Total:</strong> ₦${(bill.totalKobo / 100).toLocaleString()}</p>
+                </div>
+              `,
+              confirmButtonText: 'View Bill',
+              confirmButtonColor: '#F97316',
+              showCancelButton: true,
+              cancelButtonText: 'Close'
+            }).then(result => {
+              if (result.isConfirmed) {
+                this.router.navigate(['/bills']);
+              }
+            });
+          },
+          error: () => Swal.fire({ icon: 'error', title: 'Failed to Close Tab', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })
         });
       },
       error: () => Swal.fire({ icon: 'error', title: 'Failed to Generate Bill', background: '#1e293b', color: '#fff', confirmButtonColor: '#F97316' })

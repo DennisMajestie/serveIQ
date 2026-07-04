@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ Admin - Menu Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Space+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0c1324; /* Base background for dark mode theme compatibility */
+            overflow-x: hidden;
+        }
+        .arctic-workspace {
+            background: radial-gradient(circle at top left, #f8f9ff 0%, #ecefff 100%);
+            min-height: 100vh;
+        }
+        /* Custom scrollbar for glassmorphic containers */
+        .glass-scroll::-webkit-scrollbar { width: 4px; }
+        .glass-scroll::-webkit-scrollbar-track { background: transparent; }
+        .glass-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        
+        .bento-card {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+        .bento-card:hover {
+            transform: translateY(-4px) scale(1.01);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#840025",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#40000d",
+                        "on-primary": "#003915",
+                        "surface-container-high": "#23293c",
+                        "on-secondary": "#002e6a",
+                        "surface-container-lowest": "#070d1f",
+                        "on-secondary-container": "#e6ecff",
+                        "on-secondary-fixed": "#001a42",
+                        "on-surface": "#dce1fb",
+                        "tertiary-container": "#ff8892",
+                        "error-container": "#93000a",
+                        "surface": "#0c1324",
+                        "on-primary-fixed-variant": "#005321",
+                        "inverse-on-surface": "#2a3043",
+                        "tertiary-fixed": "#ffdadb",
+                        "background": "#0c1324",
+                        "surface-container-highest": "#2e3447",
+                        "primary-fixed-dim": "#4ae176",
+                        "on-background": "#dce1fb",
+                        "surface-container-low": "#151b2d",
+                        "on-tertiary-fixed-variant": "#92002a",
+                        "primary-container": "#22c55e",
+                        "surface-container": "#191f31",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed": "#002109",
+                        "tertiary": "#ffb3b7",
+                        "outline-variant": "#3d4a3d",
+                        "on-primary-container": "#004b1e",
+                        "primary-fixed": "#6bff8f",
+                        "secondary-container": "#0566d9",
+                        "primary": "#4be277",
+                        "surface-variant": "#2e3447",
+                        "surface-bright": "#33394c",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "inverse-primary": "#006e2f",
+                        "surface-tint": "#4ae176",
+                        "secondary": "#adc6ff",
+                        "tertiary-fixed-dim": "#ffb2b7",
+                        "surface-dim": "#0c1324",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "outline": "#869585",
+                        "inverse-surface": "#dce1fb",
+                        "on-tertiary": "#67001b",
+                        "on-surface-variant": "#bccbb9",
+                        "error": "#ffb4ab"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "container-padding": "32px",
+                        "bento-gap": "20px",
+                        "inner-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Space Grotesk"],
+                        "metric-sm": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"],
+                        "display-lg": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "metric-sm": ["18px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- SIDEBAR ANCHOR: Lumina Studio -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col py-8 px-4 backdrop-blur-[32px] bg-white/5 shadow-[0_0_20px_rgba(75,226,119,0.1)] z-50">
+<div class="mb-12">
+<h1 class="font-headline-md text-headline-md font-bold text-primary mb-1">Lumina Studio</h1>
+<p class="font-label-md text-label-md text-on-surface-variant/70">Executive Admin</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-4 py-3 text-on-surface-variant font-medium pl-5 hover:bg-primary/10 transition-all duration-300 rounded-xl hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-on-surface-variant font-medium pl-5 hover:bg-primary/10 transition-all duration-300 rounded-xl hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">event_seat</span>
+<span class="font-label-md text-label-md">Floor Plan</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-on-surface-variant font-medium pl-5 hover:bg-primary/10 transition-all duration-300 rounded-xl hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Staffing</span>
+</a>
+<!-- Active State: Inventory -->
+<a class="flex items-center gap-4 py-3 text-primary font-bold border-l-4 border-primary pl-4 bg-primary/5 transition-all duration-300 rounded-r-xl" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-on-surface-variant font-medium pl-5 hover:bg-primary/10 transition-all duration-300 rounded-xl hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-on-surface-variant font-medium pl-5 hover:bg-primary/10 transition-all duration-300 rounded-xl hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-2">
+<a class="flex items-center gap-4 py-3 text-on-surface-variant font-medium pl-5 hover:bg-primary/10 transition-all duration-300 rounded-xl" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-on-surface-variant font-medium pl-5 hover:bg-primary/10 transition-all duration-300 rounded-xl" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- MAIN CONTENT CANVAS -->
+<main class="ml-64 arctic-workspace p-container-padding">
+<!-- TOP NAV ANCHOR: Lumina Management -->
+<header class="flex justify-between items-center mb-10">
+<div>
+<h2 class="font-headline-lg text-headline-lg font-black tracking-tighter text-surface-container-lowest">Inventory Studio</h2>
+<p class="font-label-md text-label-md text-surface-container-highest/60">Manage menu assets and real-time availability</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<input class="bg-white/50 backdrop-blur-md border-0 ring-0 focus:ring-2 focus:ring-primary/20 rounded-full py-3 px-6 pl-12 w-64 text-surface-container-lowest font-label-md placeholder:text-surface-container-highest/40" placeholder="Search menu items..." type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-surface-container-highest/60">search</span>
+</div>
+<button class="bg-surface-container-highest text-white p-3 rounded-full flex items-center justify-center hover:scale-105 transition-transform active:scale-95 shadow-lg">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-3 bg-white/80 p-2 pr-4 rounded-full shadow-sm border border-white/50">
+<img alt="User Avatar" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSLvS-JD-QAhDft4tFqiT_rgO2EQR94aL-PVfYo-v7pSCaWCE5zWFVvLIqVNbGrXeV73-0hExYF2zFdyxrsuBzST9KVumAPKZAOdCFWukyiAd-bAUJqCELlxfbgDs5sOmT2wStq18C5MPf7iLz8TbS2XClN4vizei1e2iTThjmDy1MsvZWuzigf9y4fXmlmgo8cZlPeRiQuMbSJSSSk7uBS6DcAon6v0589vaXK9K_DzedUu0o3t7IVbGiuuqKgjzEFuKUzBsK9v12"/>
+<span class="font-label-md text-label-md text-surface-container-lowest">Chef Ramsay</span>
+</div>
+</div>
+</header>
+<!-- BENTO GRID LAYOUT -->
+<div class="grid grid-cols-12 gap-bento-gap">
+<!-- Category: Starters (Span 4) -->
+<div class="col-span-12 md:col-span-4 bento-card relative h-[380px] rounded-[32px] overflow-hidden group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A high-end, close-up culinary shot of gourmet starters featuring delicate seared scallops with vibrant green herb oil and micro-greens. The plate is minimalist porcelain, set against a soft, bright arctic-white marble background. The lighting is crisp and airy, emphasizing the fresh textures and high-contrast colors of the ingredients." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8iaGyehUVn-T87_3CUI_g_DDf5ITPojSflkWdiqlBaAw42jN6PW6a1EDlAw3OF_0agENuRh9zSrS2BjszKSl1wyHwO59T1O2P5OPBG0n1cpxLqOLsnD34QOJxh7xkN-4etnhOK9fbTrFxmMZmLNI7-yvPQ5TJ8B3PSvvNSeagFIt5q4YkjcaN4NPr30V2Rt5FY1SW4aA8akW868LIzSeRgqVdo_EfugRBKqRtHHd2MewqnpjFbPxhSu_ZzUwbxw56fZCd2CdswL0k"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-inner-padding w-full">
+<div class="flex justify-between items-end">
+<div>
+<span class="bg-primary/20 backdrop-blur-md text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">Appetizers</span>
+<h3 class="font-headline-md text-headline-md text-white mb-1">Starters</h3>
+<p class="font-label-sm text-label-sm text-white/70">14 Active Items</p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-label-sm text-white/50 uppercase mb-1">Avg Price</p>
+<p class="font-metric-sm text-metric-sm text-white">$12.50</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Category: Mains (Span 8) -->
+<div class="col-span-12 md:col-span-8 bento-card relative h-[380px] rounded-[32px] overflow-hidden group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A premium wide shot of a signature main course featuring a perfectly grilled steak with roasted seasonal vegetables. The dish is presented on a dark slate plate which contrasts beautifully with the bright, diffused studio lighting of the arctic-white workspace. The focus is sharp on the meat's texture, with soft background bokeh highlighting the restaurant's modern interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBInHHulaodKxfkFRrN_DUEpk8W3cpXZZIWDKddK-rsnTy8xwOJ4PhcgT2hCfPvvxCIOupY0bJsBVh1kTzfOI0igIsW5Caj5xth5aPj-bpuCQLX_2A6X-ifk8REOLFaj_cmXnoKKCsZWP3Dj6Sh5UIbRx2gBaQJSZdhBXreab5KfE8y9kkk3-eGiefdGca9xbG_qNU6U7lSwkgDilThRUH5qYrnqEgzbnLnv_MjzuzrRBx9K45XAEL6IklUUvatJjCeD_9JEOk0SoOy"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute top-6 right-6">
+<div class="bg-white/10 backdrop-blur-xl p-4 rounded-2xl flex flex-col items-center">
+<span class="material-symbols-outlined text-primary mb-1">trending_up</span>
+<p class="font-metric-sm text-metric-sm text-white">92%</p>
+<p class="font-label-sm text-label-sm text-white/50 text-[10px]">DEMAND</p>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 p-inner-padding w-full">
+<div class="flex justify-between items-end">
+<div>
+<span class="bg-secondary/20 backdrop-blur-md text-secondary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">Entrées</span>
+<h3 class="font-headline-lg text-headline-lg text-white mb-1">Signature Mains</h3>
+<p class="font-label-sm text-label-sm text-white/70">28 Active Items • 4 Seasonal Specials</p>
+</div>
+<div class="text-right flex gap-8">
+<div>
+<p class="font-label-sm text-label-sm text-white/50 uppercase mb-1">Stock Level</p>
+<p class="font-metric-sm text-metric-sm text-primary">Healthy</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-white/50 uppercase mb-1">Avg Price</p>
+<p class="font-metric-sm text-metric-sm text-white">$34.00</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- LIVE PREVIEW MODULE (Glassmorphism Dark Pulse Preview) -->
+<div class="col-span-12 md:col-span-5 bento-card bg-surface-container-lowest rounded-[32px] p-inner-padding relative overflow-hidden shadow-2xl flex flex-col">
+
+<div class="flex justify-between items-center mb-8 relative z-10">
+<h3 class="font-headline-md text-headline-md text-white">Live Preview</h3>
+<div class="flex gap-2">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Active Sink</span>
+</div>
+</div>
+<!-- Preview Frame (Waiter App Dark Style) -->
+<div class="flex-1 rounded-2xl bg-surface p-6 backdrop-blur-[32px] border border-white/5 relative shadow-inner">
+<div class="flex justify-between items-start mb-6">
+<div class="space-y-1">
+<p class="font-label-sm text-label-sm text-primary uppercase tracking-tighter">Selected Item</p>
+<h4 class="font-headline-md text-headline-md text-on-surface">Jollof Rice Special</h4>
+</div>
+<p class="font-metric-sm text-metric-sm text-primary">$24.99</p>
+</div>
+<div class="aspect-video w-full rounded-xl overflow-hidden mb-6">
+<img class="w-full h-full object-cover" data-alt="A cinematic, low-key lighting food shot of vibrant Jollof rice served in a heavy dark ceramic bowl. The scene is moody with deep shadows and neon-like green highlights reflecting off the steam. It embodies a 'Dark Pulse' aesthetic for a luxury waiter application interface, focusing on high contrast and rich saturation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxRpvp6coKAhB-z3g23r5WSmGPqlnwxbNUK4SZxKEEA3S-mDQ4cZ38FAtA9YGeCFa-JY8EMv8jZshvULJ1cGG9ybONapvabPj-loTF5KBUDQCkRyMsSPBKmMApVtfI5U2J6U8WKnWJyXl_AYDN-0KfSiANrcwQGHkzU4p3XlHPs_g4eEHpM_hJd_oQIQvv3SAZBVnyL3NVxdw18uEmpQQwlRFzBKreN3mB8gxzcB7mZ1kI9lhSstdDEi5IpmymzXCmnyB-Y1QK1TnW"/>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-8">
+<div class="bg-surface-container-high/40 p-3 rounded-lg">
+<p class="font-label-sm text-label-sm text-on-surface-variant text-[10px] mb-1">KITCHEN ETA</p>
+<p class="font-metric-sm text-metric-sm text-white">12 MIN</p>
+</div>
+<div class="bg-surface-container-high/40 p-3 rounded-lg">
+<p class="font-label-sm text-label-sm text-on-surface-variant text-[10px] mb-1">ALLERGENS</p>
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-[14px] text-error">warning</span>
+<p class="font-metric-sm text-metric-sm text-white">SPICY</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary py-4 rounded-xl font-label-md text-on-primary font-bold shadow-[0_0_20px_rgba(75,226,119,0.3)] hover:scale-[1.02] transition-transform active:scale-95">
+                        SEND TO KITCHEN
+                    </button>
+</div>
+</div>
+<!-- Category: Drinks (Span 4) -->
+<div class="col-span-12 md:col-span-4 bento-card relative h-[500px] rounded-[32px] overflow-hidden group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A refreshing, brightly lit close-up of a botanical cocktail with condensation on the glass. The background is a soft-focus arctic-white luxury bar setting. The lighting is luminous, catching the translucent ice cubes and the vibrant green of a lime garnish. The visual style is crisp, clean, and high-fidelity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwaJqQzK6KUcaFWBmcPgEJ3zUVsY4O8YTlYPgmVh3dFkH4gfUlPeRcAmN4BrCiBVNmpqkZ3WY4nRVlIaXhvUEXejNlezzE0efxzrwkos7a_ePKqjH9R5pZGjL3ClgLKblPSEB-Yo7_Gz3YcUBUfobmHYvWG6rtmCy-4d48L53HDM7FrBq4fco-7P6iwvEnFH4YwnMQdRbKkQZww2jYWRjM8GFP06y1vncPnpp17UxxLJfLAETYTLzXKe4eO8zEOUkHjfA1YXSKJU4i"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-inner-padding w-full">
+<span class="bg-blue-400/20 backdrop-blur-md text-blue-300 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">Beverages</span>
+<h3 class="font-headline-md text-headline-md text-white mb-4">Cocktails &amp; Spirits</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-white/80">
+<span class="font-label-md text-label-md">House Gin</span>
+<span class="font-metric-sm text-metric-sm">$14</span>
+</div>
+<div class="flex justify-between items-center text-white/80">
+<span class="font-label-md text-label-md">Botanic Mist</span>
+<span class="font-metric-sm text-metric-sm">$18</span>
+</div>
+<div class="w-full bg-white/10 h-1 rounded-full overflow-hidden mt-4">
+<div class="bg-primary w-3/4 h-full"></div>
+</div>
+<p class="font-label-sm text-label-sm text-white/40">75% Stock Capacity</p>
+</div>
+</div>
+</div>
+<!-- Category: Desserts (Span 3) -->
+<div class="col-span-12 md:col-span-3 bento-card relative h-[500px] rounded-[32px] overflow-hidden group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="An exquisite dessert presentation featuring a chocolate fondant with a molten center, topped with a dusting of gold leaf and served with fresh raspberries. The plate is textured ceramic, set against a bright, airy white environment with subtle tonal depth. The lighting is soft and flattering, emphasizing the rich textures of the chocolate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmGM4HzZsAfteF6GYhkKtMcJ7FCb7rEqh5cdbMiVSpIYmS6fl4YfcNbBev9vaLUV-WJXJnxFwelpricS8FXmwncmc0faUpVet1TZJL5XkTCDapgLbyottMPJ1tOqy-JminKsrHipWaRtHyMmk8MlBfpXWNkYWZyl9SbGoQkD0LTGz_hcADe8D_eTVCbM1DMH0Z0q3fhOmKOOf2SkiHkVJO8YvmoHhjP4em1vV6O9Hc5n4o94XWU1zaDy2_4IFRVowu9bYAu04JgslN"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-inner-padding w-full">
+<span class="bg-tertiary-container/20 backdrop-blur-md text-tertiary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">Sweet</span>
+<h3 class="font-headline-md text-headline-md text-white mb-1">Desserts</h3>
+<p class="font-label-sm text-label-sm text-white/70 mb-6">9 Seasonal Pastries</p>
+<div class="bg-white/5 backdrop-blur-md p-4 rounded-2xl">
+<p class="font-label-sm text-label-sm text-white/50 uppercase mb-2">Inventory Health</p>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-error animate-pulse"></div>
+<p class="font-metric-sm text-metric-sm text-error">Low Stock Alert</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RECENT ACTIVITY / LIST SECTION -->
+<div class="mt-bento-gap bg-white/40 rounded-[32px] p-inner-padding shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-surface-container-lowest">Recent Inventory Shifts</h3>
+<button class="text-primary font-label-md hover:underline flex items-center gap-2">
+                    View Ledger <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-white/60 rounded-2xl hover:translate-x-1 transition-transform cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-surface-container-lowest">Restocked 'Wagyu Ribeye'</p>
+<p class="font-label-sm text-label-sm text-surface-container-highest/60">Updated by Kitchen Manager • 10m ago</p>
+</div>
+</div>
+<p class="font-metric-sm text-metric-sm text-surface-container-lowest">+50 Units</p>
+</div>
+<div class="flex items-center justify-between p-4 bg-white/60 rounded-2xl hover:translate-x-1 transition-transform cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-on-tertiary-container/10 flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">error</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-surface-container-lowest">Item Unavailable 'Mango Sorbet'</p>
+<p class="font-label-sm text-label-sm text-surface-container-highest/60">Sold Out • 45m ago</p>
+</div>
+</div>
+<p class="font-metric-sm text-metric-sm text-on-tertiary-container">Status: Null</p>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB: Add New Item -->
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-[0_10px_40px_rgba(34,197,94,0.4)] hover:scale-110 active:scale-95 transition-all group z-50">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform">add</span>
+<div class="absolute -top-12 right-0 bg-surface text-white px-4 py-2 rounded-xl text-[12px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            Add New Item
+        </div>
+</button>
+<script>
+        // Micro-interactions for bento cards
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Potential for adding JS triggered sounds or specific glow tracking
+            });
+        });
+
+        // Theme toggle simulation (page is locked to dark mode shell with arctic light content)
+        console.log("ServeIQ Luminous Engine Initialized.");
+    </script>
+</body></html>

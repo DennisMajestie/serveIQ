@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -26,6 +26,7 @@ export class PaymentComponent implements OnInit {
   tabId = signal('');
   table = signal<Table | null>(null);
   bill = signal<Bill | null>(null);
+  items = computed(() => this.bill()?.orderItems ?? []);
   isLoading = signal(true);
   selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos' = 'cash';
   currentAmount = signal('0');
@@ -205,6 +206,7 @@ export class PaymentComponent implements OnInit {
       },
       error: () => {
         this.isProcessing.set(false);
+        Swal.fire({ icon: 'error', title: 'Payment Failed', text: 'Could not process payment. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       }
     });
   }

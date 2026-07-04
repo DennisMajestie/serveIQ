@@ -1,115 +1,108 @@
-<div class="bill-container">
-  <!-- Top Navigation -->
-  <header class="top-nav">
-    <div class="nav-left">
-      <button class="back-btn" (click)="goBack()">
-        <span class="material-symbols-outlined">arrow_back</span>
+<div class="bg-[#0c1324] min-h-screen overflow-x-hidden pb-32">
+  <!-- TopAppBar -->
+  <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl bg-white/5 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+    <div class="flex items-center gap-4">
+      <button (click)="goBack()" class="w-10 h-10 rounded-full bg-[#4be277]/20 flex items-center justify-center overflow-hidden border border-[#4be277]/20 active:scale-95 transition-transform">
+        <span class="material-symbols-outlined text-[#4be277]">arrow_back</span>
       </button>
-      <h1 class="nav-title">Billing Review</h1>
+      <h1 class="text-[24px] leading-[1.3] font-bold tracking-widest text-[#4be277]" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 10px rgba(75,226,119,0.5)">LUMINA</h1>
     </div>
-    <div class="nav-avatar">
-      <span class="material-symbols-outlined">person</span>
+    <div class="flex items-center gap-2 px-4 py-1.5 glass-card rounded-full border border-white/5">
+      <span class="material-symbols-outlined text-[#adc6ff] text-[18px]">table_restaurant</span>
+      <span class="text-[14px] leading-none font-semibold text-[#dce1fb]" style="font-family:'Inter',sans-serif">Table {{ table()?.tableNumber || '—' }}</span>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="bill-main">
+  <main class="pt-24 px-4 max-w-2xl mx-auto space-y-6">
     @if (isLoading()) {
-      <!-- Shimmer: Bill Paper -->
-      <div class="shimmer-bill-paper">
-        <div style="text-align: center;">
-          <div class="shimmer" style="width: 120px; height: 14px; margin: 0 auto 8px; border-radius: 4px;"></div>
-          <div class="shimmer" style="width: 100px; height: 14px; margin: 0 auto 8px; border-radius: 4px;"></div>
-          <div class="shimmer" style="width: 80px; height: 24px; margin: 0 auto 8px; border-radius: 4px;"></div>
-          <div class="shimmer" style="width: 140px; height: 28px; margin: 0 auto 16px; border-radius: 9999px;"></div>
-        </div>
-        @for (i of [1,2,3,4]; track i) {
-          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <div class="shimmer" style="width: 60%; height: 16px; border-radius: 4px;"></div>
-            <div class="shimmer" style="width: 80px; height: 16px; border-radius: 4px;"></div>
-          </div>
-        }
-        <div class="shimmer" style="width: 100%; height: 1px; margin: 16px 0; border-radius: 0;"></div>
-        @for (i of [1,2,3,4]; track i) {
-          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <div class="shimmer" style="width: 40%; height: 16px; border-radius: 4px;"></div>
-            <div class="shimmer" style="width: 30%; height: 16px; border-radius: 4px;"></div>
-          </div>
-        }
-        <div class="shimmer" style="width: 100%; height: 44px; margin: 16px 0; border-radius: 8px;"></div>
-      </div>
+      <div class="skeleton-shimmer rounded-[24px] h-48 w-full"></div>
+      <div class="skeleton-shimmer rounded-[24px] h-64 w-full"></div>
     } @else {
-      <!-- Bill Paper -->
-      <div class="bill-paper">
-        <div class="bill-header">
-          <p class="waiter-info">Waiter: {{ waiterName() }} • {{ time() }}</p>
-          <p class="table-info">Table {{ table()?.tableNumber || '—' }}</p>
-          <h2>ServeIQ</h2>
-          <div class="premium-tag">PREMIUM SERVICE</div>
-          <div class="divider"></div>
+      <!-- Title Section -->
+      <div>
+        <h2 class="text-[32px] leading-[1.2] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Billing Review</h2>
+        <p class="text-[14px] leading-none font-medium text-[#bccbb9] mt-2" style="font-family:'Inter',sans-serif">Waiter: {{ waiterName() }} • {{ time() }}</p>
+      </div>
+
+      <!-- Receipt Card -->
+      <div class="glass-card rounded-[24px] p-6 relative border border-white/5">
+        <!-- Branding -->
+        <div class="flex flex-col items-center border-b border-white/5 pb-4 mb-4">
+          <h3 class="text-[24px] leading-[1.3] font-bold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">ServeIQ</h3>
+          <p class="text-[12px] leading-none font-medium text-[#bccbb9] uppercase tracking-widest mt-1" style="font-family:'Inter',sans-serif">Premium Service</p>
         </div>
 
-        <div class="bill-items">
+        <!-- Items List -->
+        <div class="space-y-4 mb-6">
           @for (item of items(); track item.menuItemName) {
-            <div class="item-line">
-              <span class="qty">{{ item.quantity > 1 ? item.quantity + 'x' : '' }}</span>
-              <span class="name">{{ item.menuItemName }}</span>
-              <span class="price">₦{{ ((item.priceKobo / 100) * item.quantity).toLocaleString() }}</span>
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <p class="text-[16px] leading-[1.5] font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ item.menuItemName || 'Unknown Item' }}</p>
+                <p class="text-[14px] leading-[1.4] text-[#bccbb9]" style="font-family:'JetBrains Mono',monospace">{{ item.quantity }}x @ ₦{{ formatNaira(item.priceKobo / 100) }}</p>
+              </div>
+              <p class="text-[14px] leading-[1.4] font-bold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira((item.priceKobo / 100) * item.quantity) }}</p>
             </div>
           }
         </div>
 
-        <div class="divider"></div>
+        <!-- Divider -->
+        <div class="border-t border-dashed border-white/10 my-4"></div>
 
-        <div class="bill-summary">
-          <div class="summary-line">
-            <span>Subtotal</span>
-            <span>₦{{ getSubtotal().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+        <!-- Calculations -->
+        <div class="space-y-2 mb-6">
+          <div class="flex justify-between text-[#bccbb9]">
+            <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">Subtotal</span>
+            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira(getSubtotal()) }}</span>
           </div>
-          <div class="summary-line">
-            <span>VAT (7.5%)</span>
-            <span>₦{{ getVat().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+          <div class="flex justify-between text-[#bccbb9]">
+            <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">VAT (7.5%)</span>
+            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira(getVat()) }}</span>
           </div>
-          <div class="summary-line">
-            <span>Service Charge</span>
-            <span>₦{{ getServiceCharge().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+          <div class="flex justify-between text-[#bccbb9]">
+            <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">Service Charge</span>
+            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira(getServiceCharge()) }}</span>
           </div>
           @if (hasDiscount) {
-            <div class="summary-line discount">
-              <span>Discount</span>
-              <span>-₦{{ discountNaira().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
+            <div class="flex justify-between text-[#ffb4ab]">
+              <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">Discount</span>
+              <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">-₦{{ formatNaira(discountNaira()) }}</span>
             </div>
           }
-          <div class="summary-line total">
-            <span>TOTAL AMOUNT</span>
-            <span>₦{{ getTotal().toLocaleString('en-US', {minimumFractionDigits: 2}) }}</span>
-          </div>
         </div>
 
-        @if (hasDiscount) {
-          <button class="discount-btn applied" (click)="removeDiscount()">
-            <span class="material-symbols-outlined">local_offer</span>
-            Remove Discount (₦{{ discountNaira().toLocaleString('en-US', {minimumFractionDigits: 2}) }})
-          </button>
-        } @else {
-          <button class="discount-btn" (click)="applyDiscount()">
-            <span class="material-symbols-outlined">local_offer</span>
-            Apply Discount
-          </button>
-        }
+        <!-- Grand Total -->
+        <div class="flex flex-col items-end pt-4 border-t border-white/5">
+          <p class="text-[14px] leading-none font-semibold text-[#4be277] uppercase tracking-widest mb-1" style="font-family:'Inter',sans-serif">Total Amount</p>
+          <p class="text-[32px] leading-[1.2] font-bold text-[#dce1fb] tracking-tight" style="font-family:'Space Grotesk',sans-serif">₦{{ formatNaira(getTotal()) }}</p>
+        </div>
+      </div>
 
-        <p class="split-info">
-          <span class="material-symbols-outlined">info</span>
-          Split billing is available on the payment screen.
-        </p>
+      <!-- Actions -->
+      @if (hasDiscount) {
+        <button (click)="removeDiscount()" class="w-full flex items-center justify-center gap-2 py-4 rounded-xl border border-[#ffb4ab]/30 text-[#ffb4ab] text-[14px] leading-none font-semibold active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+          <span class="material-symbols-outlined">local_offer</span>
+          Remove Discount (₦{{ formatNaira(discountNaira()) }})
+        </button>
+      } @else {
+        <button (click)="applyDiscount()" class="w-full flex items-center justify-center gap-2 py-4 rounded-xl border border-[#4be277]/30 text-[#4be277] text-[14px] leading-none font-semibold active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+          <span class="material-symbols-outlined">sell</span>
+          Apply Discount
+        </button>
+      }
+
+      <!-- Split Info -->
+      <div class="flex items-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5">
+        <span class="material-symbols-outlined text-[#adc6ff] text-sm">info</span>
+        <p class="text-[14px] leading-[1.4] text-[#bccbb9]" style="font-family:'Inter',sans-serif">Split billing is available on the payment screen.</p>
       </div>
     }
   </main>
 
-  <!-- Footer Actions -->
-  <footer class="bill-footer">
-    <button class="proceed-btn" (click)="proceedToPayment()">
-      Proceed to Payment
+  <!-- Footer Action -->
+  <footer class="fixed bottom-0 left-0 w-full p-4 glass-card bg-[#0c1324]/80 backdrop-blur-3xl border-t border-white/5">
+    <button (click)="proceedToPayment()" class="w-full py-5 rounded-2xl bg-[#4be277] text-[#003915] text-[24px] leading-[1.3] font-bold uppercase tracking-widest shadow-[0_0_25px_rgba(75,226,119,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-3" style="font-family:'Space Grotesk',sans-serif">
+      <span>Proceed to Payment</span>
+      <span class="material-symbols-outlined font-bold">arrow_forward</span>
     </button>
   </footer>
 </div>

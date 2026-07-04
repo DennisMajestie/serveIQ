@@ -5,14 +5,20 @@ import {
   UploadedFile,
   BadRequestException,
   InternalServerErrorException,
+  UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { v2 as cloudinary } from 'cloudinary';
 
 @ApiTags('Upload')
+@ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
 @Controller({ path: 'upload', version: '1' })
 export class UploadController {
+  private readonly logger = new Logger(UploadController.name);
   constructor() {
     // Configure Cloudinary from environment variables
     cloudinary.config({
@@ -57,7 +63,7 @@ export class UploadController {
 
       return { url: result.secure_url };
     } catch (error) {
-      console.error('[Upload] Cloudinary upload failed:', error);
+      this.logger.error('Cloudinary upload failed', error instanceof Error ? error.stack : undefined);
       throw new InternalServerErrorException('File upload failed. Please try again.');
     }
   }

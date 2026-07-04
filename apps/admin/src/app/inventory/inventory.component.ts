@@ -89,22 +89,54 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  // View stock movements (would need movements API - using placeholders for now)
+  // View stock movements
   viewMovements(inventory: InventoryItem) {
-    // In a real implementation, we would fetch movements via inventoryApi.getMovements(inventory.id)
     Swal.fire({
       title: 'Stock Movements',
       html: `<div style="max-height:300px;overflow-y:auto;">
-        <p style="text-align:center;color:#94a3b8;">Stock movement tracking would go here</p>
-        <div style="margin-top:16px;">
-          <p><strong>Item:</strong> ${inventory.menuItemName || 'Unknown'}</p>
-          <p><strong>Current Stock:</strong> ${inventory.quantityInStock}</p>
-          <p><strong>Reorder Level:</strong> ${inventory.reorderLevel}</p>
-          <p><strong>Low Stock:</strong> ${inventory.isLowStock ? 'Yes' : 'No'}</p>
-        </div>
+        <p style="text-align:center;color:#94a3b8;">Loading movements...</p>
       </div>`,
-      confirmButtonColor: '#F97316',
-      width: 480
+      showConfirmButton: false,
+      didOpen: () => {
+        this.inventoryApi.getMovements(inventory.id).subscribe({
+          next: (movements) => {
+            const rows = (Array.isArray(movements) ? movements : []).map(m => `
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                <span>${m.previousStock} → ${m.newStock}</span>
+                <span style="color:#94a3b8;">${m.notes || ''}</span>
+                <span style="color:#94a3b8;font-size:0.8rem;">${new Date(m.createdAt).toLocaleDateString()}</span>
+              </div>
+            `).join('');
+            Swal.update({
+              html: `<div style="max-height:300px;overflow-y:auto;">
+                ${rows || '<p style="text-align:center;color:#94a3b8;">No movements recorded yet.</p>'}
+                <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);">
+                  <p><strong>Item:</strong> ${inventory.menuItemName || 'Unknown'}</p>
+                  <p><strong>Current Stock:</strong> ${inventory.quantityInStock}</p>
+                  <p><strong>Reorder Level:</strong> ${inventory.reorderLevel}</p>
+                  <p><strong>Low Stock:</strong> ${inventory.isLowStock ? 'Yes' : 'No'}</p>
+                </div>
+              </div>`,
+              showConfirmButton: true,
+              confirmButtonColor: '#F97316'
+            });
+          },
+          error: () => {
+            Swal.update({
+              html: `<div style="max-height:300px;overflow-y:auto;">
+                <p style="text-align:center;color:#ef4444;">Failed to load movements.</p>
+                <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);">
+                  <p><strong>Item:</strong> ${inventory.menuItemName || 'Unknown'}</p>
+                  <p><strong>Current Stock:</strong> ${inventory.quantityInStock}</p>
+                  <p><strong>Reorder Level:</strong> ${inventory.reorderLevel}</p>
+                </div>
+              </div>`,
+              showConfirmButton: true,
+              confirmButtonColor: '#F97316'
+            });
+          }
+        });
+      }
     });
   }
 

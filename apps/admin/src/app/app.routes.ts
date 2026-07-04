@@ -4,6 +4,10 @@ import { authGuard } from './core/auth.guard';
 export const appRoutes: Route[] = [
   {
     path: '',
+    loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent)
+  },
+  {
+    path: 'app',
     loadComponent: () => import('./shell/admin-shell.component').then(m => m.AdminShellComponent),
     canActivate: [authGuard],
     children: [
@@ -70,8 +74,20 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)
       },
       {
+        path: 'billing',
+        loadComponent: () => import('./billing/billing.component').then(m => m.BillingComponent)
+      },
+      {
         path: 'settings',
         loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
+      },
+      {
+        path: 'pulse',
+        loadComponent: () => import('./pulse/pulse.component').then(m => m.PulseComponent)
+      },
+      {
+        path: 'premium-dashboard',
+        loadComponent: () => import('./premium-dashboard/premium-dashboard.component').then(m => m.PremiumDashboardComponent)
       },
       {
         path: 'admin/businesses',

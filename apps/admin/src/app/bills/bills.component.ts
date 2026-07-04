@@ -137,7 +137,7 @@ export class BillsComponent implements OnInit {
             next: (bill) => {
               billEntries.push({ bill, tab });
             },
-            error: () => {},
+            error: () => {}, // bill may not exist yet for open tabs — skip silently
             complete: () => {
               pending--;
               if (pending === 0) {

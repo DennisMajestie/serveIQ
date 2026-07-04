@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ | Payment Confirmed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e2e8f8",
+                    "primary-fixed-dim": "#ffb690",
+                    "primary-fixed": "#ffdbca",
+                    "inverse-on-surface": "#ebf1ff",
+                    "outline-variant": "#e0c0b1",
+                    "on-surface-variant": "#584237",
+                    "surface-dim": "#d3daea",
+                    "surface": "#0F0F0F", /* Waiter Mobile Dark Background */
+                    "on-surface": "#ffffff",
+                    "surface-tint": "#9d4300",
+                    "on-secondary-container": "#5c6274",
+                    "on-primary-fixed-variant": "#783200",
+                    "on-primary": "#ffffff",
+                    "inverse-primary": "#ffb690",
+                    "tertiary": "#006398",
+                    "surface-container-highest": "#dce2f3",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed-variant": "#404758",
+                    "on-tertiary-fixed": "#001d32",
+                    "on-secondary-fixed": "#141b2b",
+                    "on-primary-fixed": "#341100",
+                    "primary": "#F97316", /* Service Orange */
+                    "secondary-container": "#d9dff5",
+                    "on-tertiary-container": "#003554",
+                    "secondary": "#575e70",
+                    "tertiary-fixed-dim": "#93ccff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#2a313d",
+                    "background": "#0F0F0F",
+                    "on-background": "#ffffff",
+                    "surface-container-low": "#1A1A1A", /* Level 1 Surface */
+                    "secondary-fixed": "#dce2f7",
+                    "tertiary-fixed": "#cde5ff",
+                    "surface-variant": "#dce2f3",
+                    "on-primary-container": "#582200",
+                    "on-error": "#ffffff",
+                    "outline": "#8c7164",
+                    "surface-bright": "#f9f9ff",
+                    "secondary-fixed-dim": "#c0c6db",
+                    "on-tertiary-fixed-variant": "#004b74",
+                    "error-container": "#ffdad6",
+                    "error": "#ba1a1a",
+                    "primary-container": "#F97316",
+                    "tertiary-container": "#00a2f4",
+                    "surface-container": "#262626", /* Level 2 Surface */
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "tap-target-min": "48px",
+                    "stack-sm": "8px",
+                    "margin-page": "24px",
+                    "gutter-mobile": "16px",
+                    "stack-md": "16px",
+                    "gutter-web": "24px"
+            },
+            "fontFamily": {
+                    "mono-sm": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "mono-xs": ["JetBrains Mono"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "mono-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "mono-xs": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0F0F0F;
+            color: #FFFFFF;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .success-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen max-w-[390px] mx-auto overflow-x-hidden font-body-md">
+<!-- Confetti Background Effect -->
+<canvas class="confetti-canvas" id="confetti"></canvas>
+<!-- Top Navigation Suppression (Transactional Page) -->
+<main class="flex-grow flex flex-col items-center px-gutter-mobile pt-16 pb-32 z-10">
+<!-- Success Icon Container -->
+<div class="relative mb-8">
+<div class="absolute inset-0 bg-[#22C55E]/20 rounded-full scale-125 blur-xl"></div>
+<div class="w-24 h-24 bg-[#22C55E] rounded-full flex items-center justify-center relative shadow-[0_0_40px_rgba(34,197,94,0.3)]">
+<span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+</div>
+<!-- Headline & Subtext -->
+<div class="text-center mb-10">
+<h1 class="font-headline-md text-headline-md-mobile text-on-surface mb-2">Payment Confirmed</h1>
+<p class="font-body-md text-on-surface-variant/80">The transaction was processed successfully.</p>
+</div>
+<!-- Summary Card -->
+<div class="w-full bg-surface-container-low rounded-xl p-6 border border-white/5 shadow-2xl mb-8 space-y-5">
+<div class="flex justify-between items-center pb-4 border-b border-white/5">
+<span class="text-on-surface-variant font-label-md">Amount Paid</span>
+<span class="text-primary text-xl font-bold">N19,887.50</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md">Date</span>
+<span class="text-on-surface font-body-md">Oct 24, 2024 • 2:45 PM</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md">Table Number</span>
+<span class="text-on-surface font-body-md">Table 5</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md">Transaction ID</span>
+<span class="text-on-surface font-mono-sm">#SRV-1024-99</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full space-y-4">
+<button class="w-full h-tap-target-min bg-primary text-on-primary font-label-md rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">mail</span>
+                Email Receipt
+            </button>
+<button class="w-full h-tap-target-min bg-transparent border border-white/10 text-on-surface font-label-md rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">print</span>
+                Print Receipt
+            </button>
+</div>
+</main>
+<!-- Fixed Bottom Button -->
+<div class="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto p-gutter-mobile bg-surface/80 backdrop-blur-md z-20">
+<button class="w-full h-tap-target-min bg-primary text-on-primary font-label-md rounded-xl shadow-lg active:scale-95 transition-transform">
+            Back to Tables
+        </button>
+</div>
+<script>
+        // Simple Confetti Effect for Success Feedback
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = -10;
+                this.size = Math.random() * 6 + 4;
+                this.speedY = Math.random() * 3 + 2;
+                this.speedX = Math.random() * 2 - 1;
+                this.color = ['#F97316', '#22C55E', '#FFFFFF'][Math.floor(Math.random() * 3)];
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 10 - 5;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        function init() {
+            for(let i=0; i<50; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                if(p.y > canvas.height) particles.splice(index, 1);
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        init();
+        animate();
+
+        // Vibration Feedback (if supported)
+        if ('vibrate' in navigator) {
+            navigator.vibrate([100, 30, 100]);
+        }
+    </script>
+</body></html>

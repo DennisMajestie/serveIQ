@@ -9,6 +9,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../../common/shared';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Business } from '../business/entities/business.entity';
+import { UpdateBusinessDto } from '../business/dto/update-business.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth('access-token')
@@ -40,7 +41,7 @@ export class AdminController {
   @Patch('businesses/:id')
   @ApiOperation({ summary: 'Update a business (super admin)' })
   @ApiResponse({ status: 200, description: 'Business updated.' })
-  async updateBusiness(@Param('id') id: string, @Body() updateDto: any) {
+  async updateBusiness(@Param('id') id: string, @Body() updateDto: UpdateBusinessDto) {
     return this.adminService.updateBusiness(id, updateDto);
   }
 

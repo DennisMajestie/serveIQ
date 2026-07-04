@@ -122,7 +122,7 @@ export class TablesComponent implements OnInit, OnDestroy {
       next: (tabs) => {
         this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
       },
-      error: (err) => console.error('[Tables] loadOpenTabs error:', err)
+      error: () => {}  // poll will retry; errors are non-critical
     });
   }
 
@@ -167,26 +167,21 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   async onTableClick(table: Table) {
-    console.log(`[Tables] onTableClick: table=${table.id}, status=${table.status}`);
-
     let tab = this.getTabForTable(table.id);
 
-    // Fallback: table is occupied but no tab found — do a direct lookup
     if (!tab && table.status === 'occupied') {
-      console.log('[Tables] Table is occupied but no open tab found in list — querying API directly');
       try {
         const allTabs = await firstValueFrom(this.tabsApi.getAllTabs());
         const allOpen = Array.isArray(allTabs) ? allTabs.filter(t => t.status === 'open') : [];
         this.openTabs.set(allOpen);
         tab = allOpen.find(t => t.tableId === table.id);
-      } catch (err) {
-        console.error('[Tables] Direct tab lookup failed:', err);
+      } catch {
+        // Fallback — continue with null tab
       }
     }
 
     if (!tab) {
       if (table.status === 'occupied') {
-        console.warn('[Tables] Table is occupied but no open tab exists — data mismatch. Refusing to create duplicate.');
         const result = await Swal.fire({
           icon: 'error',
           title: 'Table Mismatch',
@@ -210,22 +205,18 @@ export class TablesComponent implements OnInit, OnDestroy {
         }
         return;
       }
-      console.log('[Tables] No open tab — navigating to create');
       await this.router.navigate(['/tabs/create', table.id]);
     } else {
       // Pre-flight: verify waiter ownership against backend (source of truth)
       try {
         await firstValueFrom(this.tabsApi.getTab(tab.id));
-        console.log('[Tables] Existing tab found — navigating to detail:', tab.id);
         await this.router.navigate(['/tabs/detail', tab.id]);
       } catch (err: any) {
         const httpStatus = err.status ?? err.statusCode;
         if (httpStatus === 403) {
           const msg = err.error?.message || err.message || 'This table is being served by another waiter';
-          console.warn('[Tables] Access denied by backend:', msg);
           this.showToast(msg);
         } else {
-          console.error('[Tables] Pre-flight tab check failed:', err);
           // Non-auth error — still try to navigate; detail component handles its own errors
           await this.router.navigate(['/tabs/detail', tab.id]);
         }
@@ -239,10 +230,8 @@ export class TablesComponent implements OnInit, OnDestroy {
     try {
       const tabs = await firstValueFrom(this.tabsApi.getAllTabs());
       this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
-      console.debug(`[Tables] refreshOpenTabs: ${this.openTabs().length} open tabs found`);
       return true;
-    } catch (err) {
-      console.error('[Tables] Failed to refresh open tabs:', err);
+    } catch {
       return false;
     }
   }

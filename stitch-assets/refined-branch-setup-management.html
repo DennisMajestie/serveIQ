@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServeIQ Admin - Settings</title>
+<!-- Google Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#dce2f3",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#e0c0b1",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "surface-container-high": "#e2e8f8",
+                        "outline": "#8c7164",
+                        "on-surface": "#151c27",
+                        "primary-fixed-dim": "#ffb690",
+                        "on-secondary-fixed-variant": "#404758",
+                        "secondary": "#575e70",
+                        "primary-fixed": "#ffdbca",
+                        "primary": "#9d4300",
+                        "on-tertiary-container": "#003554",
+                        "on-primary-fixed-variant": "#783200",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-fixed": "#141b2b",
+                        "tertiary": "#006398",
+                        "surface": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#341100",
+                        "on-secondary-container": "#5c6274",
+                        "surface-container-highest": "#dce2f3",
+                        "inverse-primary": "#ffb690",
+                        "surface-container": "#e7eefe",
+                        "on-tertiary-fixed": "#001d32",
+                        "surface-dim": "#d3daea",
+                        "inverse-surface": "#2a313d",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed": "#cde5ff",
+                        "tertiary-container": "#00a2f4",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#f97316",
+                        "secondary-fixed": "#dce2f7",
+                        "on-primary-container": "#582200",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#151c27",
+                        "surface-tint": "#9d4300",
+                        "secondary-container": "#d9dff5",
+                        "on-surface-variant": "#584237",
+                        "surface-container-low": "#f0f3ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "tap-target-min": "48px",
+                        "stack-md": "16px",
+                        "gutter-web": "24px",
+                        "gutter-mobile": "16px",
+                        "stack-sm": "8px",
+                        "margin-page": "24px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "mono-sm": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "mono-xs": ["JetBrains Mono"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "mono-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "mono-xs": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f9f9ff;
+            color: #151c27;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            user-select: none;
+        }
+        .custom-shadow {
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #f97316;
+        }
+        .toggle-checkbox:checked + .toggle-label::after {
+            left: calc(100% - 2px);
+            transform: translateX(-100%);
+        }
+    </style>
+</head>
+<body class="bg-background">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface border-r border-outline-variant flex flex-col p-4 space-y-stack-sm z-50">
+<div class="mb-8 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined">restaurant_menu</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">ServeIQ</h1>
+<p class="text-xs text-secondary opacity-70">Restaurant Management</p>
+</div>
+</div>
+<nav class="flex-grow space-y-1">
+<!-- Dashboard -->
+<a class="flex items-center gap-stack-md text-secondary hover:bg-surface-container-high transition-all rounded-lg px-4 py-3 font-label-md text-label-md duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Tables -->
+<a class="flex items-center gap-stack-md text-secondary hover:bg-surface-container-high transition-all rounded-lg px-4 py-3 font-label-md text-label-md duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">table_restaurant</span>
+<span>Tables</span>
+</a>
+<!-- Menu -->
+<a class="flex items-center gap-stack-md text-secondary hover:bg-surface-container-high transition-all rounded-lg px-4 py-3 font-label-md text-label-md duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+<span>Menu</span>
+</a>
+<!-- Staff -->
+<a class="flex items-center gap-stack-md text-secondary hover:bg-surface-container-high transition-all rounded-lg px-4 py-3 font-label-md text-label-md duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Staff</span>
+</a>
+<!-- Settings (Active) -->
+<a class="flex items-center gap-stack-md bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 font-label-md text-label-md duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="pt-4 border-t border-outline-variant space-y-1">
+<button class="w-full flex items-center gap-stack-md text-secondary hover:bg-surface-container-high rounded-lg px-4 py-3 font-label-md text-label-md transition-all duration-200">
+<span class="material-symbols-outlined">contact_support</span>
+<span>Support</span>
+</button>
+<button class="w-full flex items-center gap-stack-md text-secondary hover:bg-surface-container-high rounded-lg px-4 py-3 font-label-md text-label-md transition-all duration-200">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex flex-col min-h-screen bg-white">
+<!-- TopNavBar (Authority: JSON) -->
+<header class="flex justify-between items-center px-gutter-web w-full sticky top-0 z-40 bg-surface-container-lowest h-16 shadow-sm">
+<div class="flex items-center gap-4 flex-grow">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary-container text-body-md font-body-md text-on-surface" placeholder="Search settings..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">help</span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-surface leading-tight">Admin User</p>
+<p class="text-xs text-on-surface-variant">Super Admin</p>
+</div>
+<img alt="Admin User Profile" class="w-10 h-10 rounded-full border-2 border-primary-fixed shadow-sm object-cover" data-alt="A professional headshot of a middle-aged man with a friendly and confident expression, wearing a tailored business-casual shirt. The background is a brightly lit, modern office environment with soft focus, maintaining a clean and professional aesthetic. The lighting is high-key and flattering, consistent with a high-end corporate administrative software interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkTQgsawhQcc1moKHAsgtijXEbcV-zru4hpacUzWOrQzHdzWEltLIgrruox6SkfxzO-lYYKNz5DPIXtSgU0Axy2q9BBi8xTlGiAgUbKAa0nFoYJib6ZD4Frksnh9DAtYRrTpTW4-wRAjPeB_ur_d-XHvALmdiMDsqVtFTDRArBV3CZF22Pdia6g3PgFlvbZxm-bjPacQIuHk9fpBys68zkvILB2zngPVlNvoJU8o6Cjfuk4t9kiaCinI7RgKIqms3otWVcUBIJNJtK"/>
+</div>
+</div>
+</header>
+<!-- Content Area: Two Column Layout -->
+<div class="flex flex-grow p-gutter-web gap-gutter-web">
+<!-- Left Column: Settings Navigation -->
+<aside class="w-72 shrink-0">
+<div class="bg-surface-container-lowest rounded-xl custom-shadow overflow-hidden p-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-primary">tune</span>
+<span class="font-label-md text-label-md">General</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-primary">business</span>
+<span class="font-label-md text-label-md">Business Profile</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-fixed text-on-primary-container transition-colors font-bold shadow-sm" href="#">
+<span class="material-symbols-outlined text-[20px] text-primary">store</span>
+<span class="font-label-md text-label-md">Branch Setup</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-primary">receipt_long</span>
+<span class="font-label-md text-label-md">Tax &amp; VAT</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-primary">palette</span>
+<span class="font-label-md text-label-md">Branding</span>
+</a>
+</div>
+<!-- Subtle Help Card -->
+<div class="mt-gutter-web bg-secondary-container rounded-xl p-4 relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="font-label-md text-label-md text-on-secondary-container mb-1">Need assistance?</h4>
+<p class="text-xs text-on-secondary-variant leading-relaxed mb-3">Our support team is available 24/7 to help you configure your multi-branch ecosystem.</p>
+<button class="bg-surface-container-lowest text-on-surface text-xs font-bold py-2 px-4 rounded-lg shadow-sm hover:bg-white transition-all">
+                            Chat Support
+                        </button>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-7xl opacity-10 text-on-secondary-container pointer-events-none">support_agent</span>
+</div>
+</aside>
+<!-- Right Column: Branch Setup Detail View -->
+<div class="flex-grow">
+<div class="bg-surface-container-lowest rounded-xl custom-shadow min-h-[600px] flex flex-col">
+<!-- Detail Header -->
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-bright rounded-t-xl">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Branch Setup</h2>
+<p class="text-on-surface-variant text-body-md font-body-md">Manage your restaurant locations, addresses, and operational status.</p>
+</div>
+<button class="bg-primary-container text-white px-6 py-3 rounded-xl font-label-md text-label-md flex items-center gap-2 hover:opacity-90 transition-opacity active:scale-[0.98] shadow-sm">
+<span class="material-symbols-outlined">add</span>
+                            + Add Branch
+                        </button>
+</div>
+<!-- Branch List / Table -->
+<div class="p-6">
+<div class="w-full overflow-hidden border border-outline-variant rounded-xl">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low"><th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Branch Name</th><th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Manager</th><th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Hours / Sync</th><th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Capacity</th><th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Performance</th><th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Status</th><th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant text-right">Actions</th></tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Branch 1 -->
+<tr class="hover:bg-surface transition-colors"><td class="px-6 py-6"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-tertiary-container/10 flex items-center justify-center text-tertiary"><span class="material-symbols-outlined">home_work</span></div><div><span class="font-body-md text-body-md font-semibold text-on-surface block">Main Branch</span><span class="text-xs text-on-surface-variant">ID: BR-001</span></div></div></td><td class="px-6 py-6"><div class="flex items-center gap-2"><img class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJd81mua2q8zj6_uKMH1S8HhL8sziF6nx8svZRM_eNV6j9zX1OTv4KTB-gn0hLaBwgKNw4NcR2utQMPPqzoeixLw2U-4WpDbPEStHg_sNDRlJDNouWf-fNxuboIjumC1pxBK2L76gUnhU2wMFCk-A6N5sZDQyw08YlDoB2P9pI9SGLCbi4SRQt9vRyy4NUB9xrNJePy_7WohMbDEvQvMl-Zuor3i7hLILNgRlHC0_RbSPiORAxTWqyBrRkW7YUOpUzctLlkbwgX-p7"/><span class="text-xs font-medium">Sarah J.</span></div></td><td class="px-6 py-6"><div class="space-y-1"><p class="text-xs font-medium">08:00 - 22:00</p><p class="text-[10px] font-mono-sm text-on-surface-variant">Sync: 2m ago</p></div></td><td class="px-6 py-6"><div class="flex items-center gap-2"><div class="flex-grow h-1.5 w-12 bg-surface-container-high rounded-full overflow-hidden"><div class="bg-primary h-full" style="width: 85%"></div></div><span class="text-xs font-mono-sm">42/50</span></div></td><td class="px-6 py-6"><div class="flex items-end gap-0.5 h-6"><div class="w-1 bg-primary/20 h-2"></div><div class="w-1 bg-primary/40 h-3"></div><div class="w-1 bg-primary/60 h-4"></div><div class="w-1 bg-primary h-6"></div><div class="w-1 bg-primary/80 h-5"></div></div></td><td class="px-6 py-6"><div class="flex items-center gap-3"><div class="relative inline-block w-10 h-5"><input checked="" class="toggle-checkbox hidden" id="toggle-1" type="checkbox"/><label class="toggle-label block overflow-hidden h-5 rounded-full bg-outline-variant cursor-pointer transition-colors duration-200 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all" for="toggle-1"></label></div><span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">ACTIVE</span></div></td><td class="px-6 py-6 text-right"><button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors text-on-surface-variant"><span class="material-symbols-outlined">more_vert</span></button></td></tr>
+<!-- Branch 2 -->
+<!-- Branch 3 -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- Footer Content Area / Pagination / Stats -->
+<div class="mt-auto p-6 border-t border-outline-variant flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-4">
+<div class="flex -space-x-2">
+<img alt="Staff 1" class="w-8 h-8 rounded-full border-2 border-surface-container-lowest" data-alt="A professional headshot of a business woman of African descent, smiling warmly with a modern office background. High-key lighting, bright and airy professional photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJd81mua2q8zj6_uKMH1S8HhL8sziF6nx8svZRM_eNV6j9zX1OTv4KTB-gn0hLaBwgKNw4NcR2utQMPPqzoeixLw2U-4WpDbPEStHg_sNDRlJDNouWf-fNxuboIjumC1pxBK2L76gUnhU2wMFCk-A6N5sZDQyw08YlDoB2P9pI9SGLCbi4SRQt9vRyy4NUB9xrNJePy_7WohMbDEvQvMl-Zuor3i7hLILNgRlHC0_RbSPiORAxTWqyBrRkW7YUOpUzctLlkbwgX-p7"/>
+<img alt="Staff 2" class="w-8 h-8 rounded-full border-2 border-surface-container-lowest" data-alt="A high-quality portrait of a male corporate professional in his 30s, wearing a modern blue suit. The aesthetic is clean, bright, and professional with soft natural light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXq69SdwQOwOfD4dmN-21bVroLTcb7158n58z9IrvRzYe6mbS6dxmFvIvhl0YjQQMM3obYmseqQ0WFC3ru6Pxk6J1sVrNXTpbakVGKtqakOjU8qgwh5RpxI7IKc9_FwWp-oWv_MbiEqQsoVz_G9XzcS7JrL9H-TpD2uNFBSPpmp9orh3ZpHCS7jXepq0qc-XWDj_VDy0S3L4B1gxMtLTyu0gyvc5bnw2xT2BOGy-mneXiagQZcK5um5pIIiMs9u0lhBFeippru28Ae"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container-high flex items-center justify-center text-[10px] font-bold">+12</div>
+</div>
+<span class="text-xs font-medium">15 Total Staff across branches</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs">Page 1 of 1</span>
+<div class="flex border border-outline-variant rounded-lg overflow-hidden">
+<button class="p-1 px-2 bg-surface-container-low opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="p-1 px-2 border-l border-outline-variant hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Setting Cards -->
+<div class="mt-8 bg-surface-container-low rounded-xl p-6 border border-outline-variant"><h3 class="font-label-md text-label-md text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">public</span> Global Branch Configurations</h3><div class="grid grid-cols-3 gap-6"><div class="space-y-2"><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Default Tax Rate</label><div class="flex items-center gap-2 bg-white p-3 rounded-lg border border-outline-variant"><span class="font-mono-sm text-sm">7.5%</span><span class="material-symbols-outlined text-xs text-on-surface-variant ml-auto">edit</span></div></div><div class="space-y-2"><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Base Currency</label><div class="flex items-center gap-2 bg-white p-3 rounded-lg border border-outline-variant"><span class="font-mono-sm text-sm">NGN (₦)</span><span class="material-symbols-outlined text-xs text-on-surface-variant ml-auto">expand_more</span></div></div><div class="space-y-2"><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Timezone / Format</label><div class="flex items-center gap-2 bg-white p-3 rounded-lg border border-outline-variant"><span class="font-mono-sm text-sm">GMT+1 (24h)</span><span class="material-symbols-outlined text-xs text-on-surface-variant ml-auto">schedule</span></div></div></div></div><div class="mt-6 grid grid-cols-2 gap-6">
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow border-l-4 border-primary">
+<div class="flex items-start justify-between mb-4">
+<div>
+<h3 class="font-label-md text-label-md text-on-surface">Default Settings</h3>
+<p class="text-xs text-on-surface-variant">Inherited by new branches</p>
+</div>
+<span class="material-symbols-outlined text-primary">settings_backup_restore</span>
+</div>
+<button class="text-primary text-xs font-bold flex items-center gap-1 hover:underline">
+                            Configure defaults <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow border-l-4 border-tertiary">
+<div class="flex items-start justify-between mb-4">
+<div>
+<h3 class="font-label-md text-label-md text-on-surface">Regional Insights</h3>
+<p class="text-xs text-on-surface-variant">View performance by location</p>
+</div>
+<span class="material-symbols-outlined text-tertiary">insights</span>
+</div>
+<button class="text-tertiary text-xs font-bold flex items-center gap-1 hover:underline">
+                            Open Analytics <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Micro-interaction Script -->
+<script>
+        // Simple toggle logic for the demo visual state
+        document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+            toggle.addEventListener('change', (e) => {
+                const statusBadge = e.target.closest('td').querySelector('span');
+                if (e.target.checked) {
+                    statusBadge.innerText = 'ACTIVE';
+                    statusBadge.className = 'px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full';
+                } else {
+                    statusBadge.innerText = 'INACTIVE';
+                    statusBadge.className = 'px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-bold rounded-full';
+                }
+            });
+        });
+
+        // Hover effects for the sidebar navigation
+        const sideNavLinks = document.querySelectorAll('aside nav a');
+        sideNavLinks.forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                if (!link.classList.contains('bg-secondary-container')) {
+                    link.style.transform = 'translateX(4px)';
+                }
+            });
+            link.addEventListener('mouseleave', () => {
+                link.style.transform = 'translateX(0px)';
+            });
+        });
+    </script>
+</body></html>

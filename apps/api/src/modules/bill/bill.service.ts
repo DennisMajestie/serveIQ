@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { TableStatus } from '../../common/shared';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In } from 'typeorm';
 import { Bill } from './entities/bill.entity';
 import { Tab } from '../tab/entities/tab.entity';
 import { Order } from '../order/entities/order.entity';
@@ -69,6 +69,10 @@ export class BillService {
     const bill = await this.billRepository.findOne({ where: { tab_id: tabId } });
     if (!bill) throw new NotFoundException('Bill not found');
 
+    if (paymentDto.amount < bill.total_kobo) {
+      throw new BadRequestException(`Payment amount (${paymentDto.amount} kobo) is less than the bill total (${bill.total_kobo} kobo)`);
+    }
+
     bill.payment_method = paymentDto.method;
     bill.payment_amount_kobo = paymentDto.amount;
     if (paymentDto.reference) {
@@ -102,18 +106,20 @@ export class BillService {
 
     const orders = await this.orderRepository.find({ where: { tab_id: tabId } });
     
-    const orderItems = [];
-    for (const order of orders) {
-      const menuItem = await this.menuItemRepository.findOne({ where: { id: order.menu_item_id } });
-      orderItems.push({
-        ...order,
-        menu_item: menuItem,
-      });
+    let orderItems: any[] = [];
+    if (orders.length > 0) {
+      const menuItemIds = [...new Set(orders.map(o => o.menu_item_id))];
+      const menuItems = await this.menuItemRepository.find({ where: { id: In(menuItemIds) } });
+      const menuItemMap = new Map(menuItems.map(m => [m.id, m]));
+      orderItems = orders.map(order => ({ ...order, menu_item: menuItemMap.get(order.menu_item_id) || null }));
     }
 
-    const table = await this.tableRepository.findOne({ where: { id: tab.table_id } });
-    const waiter = await this.userRepository.findOne({ where: { id: tab.waiter_id } });
-    const branch = await this.branchRepository.findOne({ where: { id: tab.branch_id } });
+    const [table, waiter, branch] = await Promise.all([
+      this.tableRepository.findOne({ where: { id: tab.table_id } }),
+      tab.waiter_id ? this.userRepository.findOne({ where: { id: tab.waiter_id } }) : Promise.resolve(null),
+      this.branchRepository.findOne({ where: { id: tab.branch_id } }),
+    ]);
+
     const business = branch ? await this.businessRepository.findOne({ where: { id: branch.business_id } }) : null;
     let terminal = null;
     if (bill.terminal_id) {

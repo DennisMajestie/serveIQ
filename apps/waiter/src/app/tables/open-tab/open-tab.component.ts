@@ -88,7 +88,6 @@ export class OpenTabComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Failed to open tab:', err);
         if (err?.status === 400 && err?.error?.message?.includes('already exists')) {
           this.tabsApi.getAllTabs().subscribe((tabs) => {
             const existing = (Array.isArray(tabs) ? tabs : []).find(

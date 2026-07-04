@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { MenuItem } from '../menu/entities/menu-item.entity';
 
@@ -14,9 +14,13 @@ export class OrderService {
   ) {}
 
   async addOrderItems(tabId: string, items: any[], userId: string) {
+    const menuItemIds = [...new Set(items.map(i => i.menu_item_id))];
+    const menuItems = await this.menuRepository.find({ where: { id: In(menuItemIds) } });
+    const menuItemMap = new Map(menuItems.map(m => [m.id, m]));
+
     const orders = [];
     for (const item of items) {
-      const menuItem = await this.menuRepository.findOne({ where: { id: item.menu_item_id } });
+      const menuItem = menuItemMap.get(item.menu_item_id);
       if (!menuItem) throw new NotFoundException(`Menu item ${item.menu_item_id} not found`);
 
       const order = this.orderRepository.create({

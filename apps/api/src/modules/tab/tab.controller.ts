@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { OpenTabDto } from './dto/open-tab.dto';
 import { TransferTabDto } from './dto/transfer-tab.dto';
+import { UpdateTabDto } from './dto/update-tab.dto';
 import { Tab } from './entities/tab.entity';
 
 @ApiTags('Tabs')
@@ -88,7 +89,7 @@ export class TabController {
   @ApiResponse({ status: 200, description: 'Tab updated.' })
   @ApiResponse({ status: 404, description: 'Tab not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async update(@Param('id') id: string, @Request() req: any, @Body() updateDto: any) {
+  async update(@Param('id') id: string, @Request() req: any, @Body() updateDto: UpdateTabDto) {
     return this.tabService.update(id, req.user.branchId, updateDto);
   }
 

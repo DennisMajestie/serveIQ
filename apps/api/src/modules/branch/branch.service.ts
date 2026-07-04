@@ -1,15 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository, Between, In } from 'typeorm';
 import { Branch } from './entities/branch.entity';
 import { Table, TableStatus } from '../table/entities/table.entity';
 import { Tab } from '../tab/entities/tab.entity';
 import { Bill } from '../bill/entities/bill.entity';
 import { Order } from '../order/entities/order.entity';
 import { User } from '../user/entities/user.entity';
+import { UserRole } from '../../common/shared';
 
 @Injectable()
 export class BranchService {
+  private readonly logger = new Logger(BranchService.name);
+
   constructor(
     @InjectRepository(Branch)
     private branchRepository: Repository<Branch>,
@@ -99,31 +102,39 @@ export class BranchService {
       const dailyRevenue = todayBills.reduce((sum, bill) => sum + bill.total_kobo, 0);
       const todayTabsCount = todayBills.length;
 
-      // Waiter performance
-      const waiters = await this.userRepository.find({ where: { branch_id: branchId } });
-      const waiterPerformance = [];
+      // Waiter performance — batch queries instead of per-waiter loop
+      const waiters = await this.userRepository.find({
+        where: { branch_id: branchId, role: UserRole.WAITER },
+        select: ['id', 'full_name', 'email', 'avatar_url'],
+      });
 
-      for (const waiter of waiters) {
-        const waiterTabs = await this.tabRepository.find({
-          where: {
-            branch_id: branchId,
-            waiter_id: waiter.id,
-            closed_at: Between(today, tomorrow),
-          },
+      let waiterPerformance: any[] = [];
+      if (waiters.length > 0) {
+        const waiterIds = waiters.map(w => w.id);
+        const closedTabs = await this.tabRepository.find({
+          where: { branch_id: branchId, waiter_id: In(waiterIds), closed_at: Between(today, tomorrow) },
         });
 
-        let waiterRevenue = 0;
-        for (const tab of waiterTabs) {
-          const bill = await this.billRepository.findOne({ where: { tab_id: tab.id } });
-          if (bill) {
-            waiterRevenue += bill.total_kobo;
-          }
+        const bills = closedTabs.length > 0
+          ? await this.billRepository.find({ where: { tab_id: In(closedTabs.map(t => t.id)) } })
+          : [];
+
+        const tabsByWaiter = new Map<string, typeof closedTabs>();
+        for (const tab of closedTabs) {
+          const list = tabsByWaiter.get(tab.waiter_id) || [];
+          list.push(tab);
+          tabsByWaiter.set(tab.waiter_id, list);
         }
 
-        waiterPerformance.push({
-          waiter,
-          tabs_count: waiterTabs.length,
-          revenue_kobo: waiterRevenue,
+        const revenueByTab = new Map(bills.map(b => [b.tab_id, b.total_kobo]));
+
+        waiterPerformance = waiters.map(waiter => {
+          const waiterTabs = tabsByWaiter.get(waiter.id) || [];
+          return {
+            waiter,
+            tabs_count: waiterTabs.length,
+            revenue_kobo: waiterTabs.reduce((sum, t) => sum + (revenueByTab.get(t.id) || 0), 0),
+          };
         });
       }
 
@@ -147,7 +158,7 @@ export class BranchService {
         recent_orders: recentOrders,
       };
     } catch (error) {
-      console.error('Error fetching dashboard stats:', error);
+      this.logger.error('Error fetching dashboard stats', error instanceof Error ? error.stack : undefined);
       return {
         real_time_sales: 0,
         active_tables: 0,

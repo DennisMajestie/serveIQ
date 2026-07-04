@@ -1,73 +1,128 @@
-<div class="history-container">
-  <!-- Top Bar -->
-  <header class="top-bar">
-    <div class="top-bar-left">
-      <button class="back-btn" (click)="goBack()">
-        <span class="material-symbols-outlined">arrow_back</span>
+<div class="bg-[#0c1324] min-h-screen overflow-x-hidden pb-32 relative">
+  <!-- Atmospheric Background -->
+  <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#4be277]/10 blur-[120px] pulse-layer"></div>
+    <div class="absolute bottom-[-5%] right-[-10%] w-[40%] h-[40%] rounded-full bg-[#0566d9]/10 blur-[100px] pulse-layer" style="animation-delay: -4s;"></div>
+  </div>
+
+  <!-- Top App Bar -->
+  <header class="fixed top-0 w-full backdrop-blur-[32px] bg-white/5 h-20 flex justify-between items-center px-6 z-50 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+    <div class="flex items-center gap-3">
+      <button (click)="goBack()" class="w-10 h-10 rounded-full bg-[#4be277]/20 flex items-center justify-center overflow-hidden border border-[#4be277]/20 active:scale-95 transition-transform">
+        <span class="material-symbols-outlined text-[#4be277]">arrow_back</span>
       </button>
-      <h1 class="page-title">Shift History — {{ currentDate }}</h1>
+      <h1 class="text-[24px] leading-[1.3] font-bold tracking-widest text-[#4be277]" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 8px rgba(75,226,119,0.5)">LUMINA</h1>
     </div>
-    <div class="top-bar-right">
-      <div class="profile-avatar">
-        <span class="material-symbols-outlined">person</span>
-      </div>
+    <div class="active:scale-95 duration-200 transition-opacity hover:opacity-80 relative">
+      <span class="material-symbols-outlined text-[#bccbb9] text-2xl">notifications</span>
+      <span class="absolute top-0 right-0 w-2 h-2 bg-[#4be277] rounded-full"></span>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="history-main">
-    <!-- Search Bar -->
-    <div class="search-bar">
-      <span class="material-symbols-outlined search-icon">search</span>
-      <input 
-        type="text" 
-        placeholder="Search tables, names, or amounts..." 
-        class="search-input"
-      />
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-cards">
-      <div class="stat-card">
-        <p class="stat-label">Shift Total</p>
-        <p class="stat-value total">₦{{ shiftTotal().toLocaleString() }}</p>
+  <main class="pt-28 pb-32 px-4 max-w-lg mx-auto">
+    @if (isLoading()) {
+      <div class="skeleton-shimmer rounded-2xl h-14 w-full mb-6"></div>
+      <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="skeleton-shimmer rounded-3xl h-24"></div>
+        <div class="skeleton-shimmer rounded-3xl h-24"></div>
       </div>
-      <div class="stat-card">
-        <p class="stat-label">Transactions</p>
-        <p class="stat-value count">{{ transactionsCount() }}</p>
+      <div class="skeleton-shimmer rounded-[24px] h-32 mb-4"></div>
+      <div class="skeleton-shimmer rounded-[24px] h-32 mb-4"></div>
+    } @else {
+      <!-- Search Bar -->
+      <div class="mb-6">
+        <div class="glass-card rounded-2xl flex items-center px-4 py-3 focus-within:ring-1 ring-[#4be277]/40 transition-all">
+          <span class="material-symbols-outlined text-[#bccbb9]/60 mr-3">search</span>
+          <input type="text" class="bg-transparent border-none focus:ring-0 text-[#dce1fb] w-full text-[14px] leading-none font-semibold placeholder:text-[#bccbb9]/40 outline-none" placeholder="Search tables or waiters..." style="font-family:'Inter',sans-serif" />
+        </div>
       </div>
-    </div>
 
-    <!-- Recent Transactions Section -->
-    <div class="section-header">
-      <h3 class="section-title">Recent Transactions</h3>
-    </div>
-
-    <div class="transactions-list">
-      @for (transaction of transactions(); track transaction.id) {
-        <div class="transaction-card" (click)="openTransactionById(transaction.id)">
-          <div class="card-left">
-            <span class="table-badge">{{ transaction.table }}</span>
-            <div class="customer-info">
-              <h4 class="customer-name">{{ transaction.customer }}</h4>
-              <p class="transaction-status">
-                {{ transaction.status }} 
-                <span class="material-symbols-outlined status-icon">{{ transaction.statusIcon }}</span>
-              </p>
-            </div>
-          </div>
-          <div class="card-right">
-            <span class="transaction-amount">₦{{ transaction.amount.toLocaleString() }}</span>
-            <span class="payment-method-badge">{{ transaction.method }}</span>
+      <!-- Summary Grid -->
+      <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="glass-card p-4 rounded-3xl flex flex-col gap-1">
+          <span class="text-[12px] leading-none font-medium text-[#bccbb9]/70 uppercase tracking-widest" style="font-family:'Inter',sans-serif">Total Closed</span>
+          <div class="flex items-baseline gap-1">
+            <span class="text-[28px] leading-[1.2] font-semibold text-[#005321]" style="font-family:'Space Grotesk',sans-serif">{{ transactionsCount() }}</span>
           </div>
         </div>
-      }
-    </div>
+        <div class="glass-card p-4 rounded-3xl flex flex-col gap-1">
+          <span class="text-[12px] leading-none font-medium text-[#bccbb9]/70 uppercase tracking-widest" style="font-family:'Inter',sans-serif">Average Tab</span>
+          <div class="flex items-baseline gap-1">
+            <span class="text-[28px] leading-[1.2] font-semibold text-[#adc6ff]" style="font-family:'Space Grotesk',sans-serif">₦{{ transactionsCount() > 0 ? (shiftTotal() / transactionsCount()).toLocaleString('en-NG', { minimumFractionDigits: 1 }) + 'k' : '0' }}</span>
+          </div>
+        </div>
+      </div>
 
-    <!-- View All Button -->
-    <button class="view-all-btn">
-      View All Shift Records
-      <span class="material-symbols-outlined">chevron_right</span>
-    </button>
+      <!-- Section Header -->
+      <div class="flex justify-between items-center mb-4 px-1">
+        <h2 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Recent Settlements</h2>
+        <span class="text-[14px] leading-none font-semibold text-[#4be277] hover:underline cursor-pointer" style="font-family:'Inter',sans-serif">{{ currentDate }}</span>
+      </div>
+
+      <!-- History List -->
+      @if (transactions().length === 0) {
+        <div class="flex flex-col items-center justify-center py-16 text-[#bccbb9] gap-3">
+          <span class="material-symbols-outlined text-4xl">receipt_long</span>
+          <p class="text-sm" style="font-family:'Inter',sans-serif">No settled tabs yet today</p>
+        </div>
+      } @else {
+        <div class="space-y-4">
+          @for (transaction of transactions(); track transaction.id) {
+            <div class="glass-card p-6 rounded-[24px] active:scale-[0.98] transition-all cursor-pointer" (click)="openTransactionById(transaction.id)">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="bg-[#4be277]/20 text-[#4be277] px-3 py-1 rounded-full text-[18px] leading-none font-semibold tracking-wider border border-[#4be277]/20" style="font-family:'Space Grotesk',sans-serif">
+                    {{ transaction.table }}
+                  </div>
+                  <div>
+                    <p class="text-[16px] leading-[1.5] font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ transaction.customer }}</p>
+                    <p class="text-[12px] leading-none font-medium text-[#bccbb9]/60 flex items-center gap-1 mt-1" style="font-family:'Inter',sans-serif">
+                      <span class="material-symbols-outlined text-[14px]">schedule</span>
+                      {{ transaction.id.slice(0, 5) }}
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 bg-[#4be277]/10 text-[#4be277] px-3 py-1 rounded-full border border-[#4be277]/10">
+                  <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                  <span class="text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif">{{ transaction.status }}</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-end">
+                <div class="flex flex-col">
+                  <span class="text-[12px] leading-none font-medium text-[#bccbb9]/60 mb-1" style="font-family:'Inter',sans-serif">Final Amount</span>
+                  <span class="text-[28px] leading-[1.2] font-semibold text-[#adc6ff]" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 12px rgba(173,198,255,0.5)">₦{{ formatKobo(transaction.amount) }}</span>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+                  <span class="material-symbols-outlined text-[#bccbb9]">chevron_right</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
   </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-lg z-50">
+    <div class="glass-card rounded-full h-20 flex justify-around items-center px-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]">
+      <a class="flex flex-col items-center justify-center text-[#bccbb9]/70 hover:bg-white/5 rounded-full transition-all p-2 cursor-pointer" (click)="goBack()">
+        <span class="material-symbols-outlined text-2xl">grid_view</span>
+        <span class="text-[12px] leading-none font-medium mt-1" style="font-family:'Inter',sans-serif">Tables</span>
+      </a>
+      <a class="flex flex-col items-center justify-center text-[#4be277] drop-shadow-[0_0_10px_rgba(75,226,119,0.6)] font-bold transition-all p-2 scale-110 cursor-pointer">
+        <span class="material-symbols-outlined text-2xl">receipt_long</span>
+        <span class="text-[12px] leading-none font-medium mt-1" style="font-family:'Inter',sans-serif">Orders</span>
+      </a>
+      <a class="flex flex-col items-center justify-center text-[#bccbb9]/70 hover:bg-white/5 rounded-full transition-all p-2 cursor-pointer">
+        <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
+        <span class="text-[12px] leading-none font-medium mt-1" style="font-family:'Inter',sans-serif">Menu</span>
+      </a>
+      <a class="flex flex-col items-center justify-center text-[#bccbb9]/70 hover:bg-white/5 rounded-full transition-all p-2 cursor-pointer">
+        <span class="material-symbols-outlined text-2xl">account_circle</span>
+        <span class="text-[12px] leading-none font-medium mt-1" style="font-family:'Inter',sans-serif">Profile</span>
+      </a>
+    </div>
+  </nav>
 </div>

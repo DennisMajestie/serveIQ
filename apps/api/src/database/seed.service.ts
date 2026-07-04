@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../modules/user/entities/user.entity';
@@ -9,12 +9,8 @@ import { MenuItem } from '../modules/menu/entities/menu-item.entity';
 import { TableStatus, UserRole } from '../common/shared';
 
 @Injectable()
-export class SeedService implements OnModuleInit {
+export class SeedService {
   constructor(private dataSource: DataSource) {}
-
-  async onModuleInit() {
-    await this.seed();
-  }
 
   async seed() {
     const userRepository = this.dataSource.getRepository(User);
@@ -89,15 +85,16 @@ export class SeedService implements OnModuleInit {
     const existingTableCount = await tableRepository.count();
     const existingMenuItemCount = await menuItemRepository.count();
 
+    let seedBranch: Branch | null = null;
     if (existingTableCount === 0 || existingMenuItemCount === 0) {
-      const branch = await branchRepository.findOne({ where: { is_active: true } });
-      if (!branch) {
+      seedBranch = await branchRepository.findOne({ where: { is_active: true } });
+      if (!seedBranch) {
         console.log('[SeedService] No active branch found. Skipping table/menu seed.');
         return;
       }
     }
 
-    if (existingTableCount === 0) {
+    if (existingTableCount === 0 && seedBranch) {
       console.log('[SeedService] Seeding tables...');
 
       const tables = [
@@ -112,11 +109,11 @@ export class SeedService implements OnModuleInit {
       ];
 
       for (const t of tables) {
-        const existing = await tableRepository.findOne({ where: { table_number: t.table_number, branch_id: branch!.id } });
+        const existing = await tableRepository.findOne({ where: { table_number: t.table_number, branch_id: seedBranch.id } });
         if (!existing) {
           await tableRepository.save(
             tableRepository.create({
-              branch_id: branch!.id,
+              branch_id: seedBranch.id,
               table_number: t.table_number,
               label: t.label,
               capacity: t.capacity,
@@ -129,7 +126,7 @@ export class SeedService implements OnModuleInit {
       console.log(`[SeedService] Seeded ${tables.length} tables.`);
     }
 
-    if (existingMenuItemCount === 0) {
+    if (existingMenuItemCount === 0 && seedBranch) {
       console.log('[SeedService] Seeding menu items...');
 
       const admin = await this.dataSource.getRepository(User).findOne({ where: { email: 'demo@serveiq.com' } });
@@ -156,11 +153,11 @@ export class SeedService implements OnModuleInit {
       ];
 
       for (const m of menuItems) {
-        const existing = await menuItemRepository.findOne({ where: { name: m.name, branch_id: branch!.id } });
+        const existing = await menuItemRepository.findOne({ where: { name: m.name, branch_id: seedBranch.id } });
         if (!existing) {
           await menuItemRepository.save(
             menuItemRepository.create({
-              branch_id: branch!.id,
+              branch_id: seedBranch.id,
               name: m.name,
               category: m.category,
               price_kobo: m.price_kobo,

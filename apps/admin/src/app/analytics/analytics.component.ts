@@ -54,6 +54,7 @@ export class AnalyticsComponent implements OnInit {
   peakHoursData = signal<PeakHoursData[]>([]);
 
   isLoading = signal(true);
+  isUsingMockData = signal(false);
   dateFrom = signal('');
   dateTo = signal('');
 
@@ -79,7 +80,7 @@ export class AnalyticsComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        // Fallback to mock data
+        this.isUsingMockData.set(true);
         this.setMockData();
       }
     });
@@ -144,12 +145,18 @@ export class AnalyticsComponent implements OnInit {
 
     const totalOrders = Object.values(orderCounts).reduce((sum: number, count: number) => sum + count, 0);
 
-    // Mock categories for demo - in real implementation, this would come from menu categories
-    this.categoryROI.set([
-      { name: 'Food & Entrees', value: '3,240,500', percentage: 65, color: '#00D166' },
-      { name: 'Beverages', value: '1,120,000', percentage: 22, color: '#0059bb' },
-      { name: 'Desserts', value: '479,500', percentage: 13, color: '#FF7043' }
-    ]);
+    const itemNames = Object.keys(orderCounts);
+    const totalItems = totalOrders || 1;
+    const segments = itemNames.length <= 3
+      ? itemNames.map((name, i) => ({ name, pct: Math.round((orderCounts[name] / totalItems) * 100), colors: ['#00D166', '#0059bb', '#FF7043'] }))
+      : [{ name: 'Top Items', pct: 100, colors: ['#00D166'] }];
+    const firstValue = parseInt(this.kpiMetrics()[0]?.value?.replace(/[^0-9]/g, '') || '0', 10);
+    this.categoryROI.set(segments.map((s, i) => ({
+      name: s.name,
+      value: Math.round(firstValue * s.pct / 100).toLocaleString(),
+      percentage: s.pct,
+      color: s.colors[i] || '#00D166'
+    })));
   }
 
   setMockData() {

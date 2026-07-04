@@ -17,21 +17,21 @@ export class PosTerminalService {
 
   async findAll(branchId: string) {
     return this.posTerminalRepository.find({
-      where: { branch_id: branchId, deleted_at: null },
+      where: { branch_id: branchId },
       order: { created_at: 'ASC' },
     });
   }
 
   async findActive(branchId: string) {
     return this.posTerminalRepository.find({
-      where: { branch_id: branchId, is_active: true, deleted_at: null },
+      where: { branch_id: branchId, is_active: true },
       order: { created_at: 'ASC' },
     });
   }
 
   async findOne(id: string, branchId: string) {
     const terminal = await this.posTerminalRepository.findOne({
-      where: { id, branch_id: branchId, deleted_at: null },
+      where: { id, branch_id: branchId },
     });
     if (!terminal) throw new NotFoundException('POS terminal not found');
     return terminal;

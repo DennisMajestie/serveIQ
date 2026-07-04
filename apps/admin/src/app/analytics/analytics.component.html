@@ -1,119 +1,149 @@
-<div class="analytics-page">
-  <!-- High-Level KPI Row -->
-  <section class="metrics-bento">
-    <article class="metric-card" *ngFor="let metric of kpiMetrics()">
-      <div class="metric-icon-box" [style.background]="metric.color + '15'">
-        <mat-icon [style.color]="metric.color">{{ metric.icon }}</mat-icon>
-      </div>
-      <div class="metric-info">
-        <span class="metric-label inter-font">{{ metric.label }}</span>
-        <div class="metric-row">
-          <span class="metric-value space-font">{{ metric.value }}</span>
-          <span class="metric-trend" [class.up]="metric.trend === 'up'" [class.down]="metric.trend === 'down'">
-            <mat-icon>{{ metric.trend === 'up' ? 'trending_up' : 'trending_down' }}</mat-icon>
-            <span>{{ metric.change }}</span>
-          </span>
-        </div>
-      </div>
-    </article>
-  </section>
+<div class="min-h-screen bg-[#0c1324] text-[#dce1fb] font-['Inter'] overflow-x-hidden">
+  @if (isUsingMockData()) {
+    <div class="flex items-center gap-3 px-6 py-3 bg-[#ffb4ab]/10 border border-[#ffb4ab]/20 rounded-xl mb-6 text-[#ffb4ab] text-sm">
+      <span class="material-symbols-outlined text-sm">info</span>
+      <span>Unable to load live data. Showing estimated figures.</span>
+    </div>
+  }
 
-  <!-- Main Analytics Grid -->
-  <div class="analytics-grid">
-    <!-- Left Col: Revenue & ROI (2/3) -->
-    <div class="primary-col">
-      <!-- Category ROI Card -->
-      <article class="luminous-card category-card">
-        <div class="card-header">
-          <h2 class="card-title space-font">Category ROI Breakdown</h2>
-          <button class="icon-btn-sm"><mat-icon>more_vert</mat-icon></button>
-        </div>
-        <div class="category-viz">
-          <div class="radial-container">
-            <svg viewBox="0 0 100 100" class="radial-chart">
-              <circle cx="50" cy="50" r="45" class="bg-circle" />
-              <circle cx="50" cy="50" r="45" class="fg-circle food" [style.stroke-dasharray]="'180 283'" />
-              <circle cx="50" cy="50" r="45" class="fg-circle drinks" [style.stroke-dasharray]="'70 283'" [style.stroke-dashoffset]="'-180'" />
-            </svg>
-            <div class="radial-center">
-              <span class="total-label inter-font">Avg. Margin</span>
-              <span class="total-value space-font">68%</span>
-            </div>
+  <!-- Revenue Hero -->
+  @if (isLoading()) {
+    <div class="skeleton-shimmer rounded-2xl h-32 w-full mb-8"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div class="lg:col-span-8 skeleton-shimmer rounded-2xl h-96"></div>
+      <div class="lg:col-span-4 skeleton-shimmer rounded-2xl h-96"></div>
+    </div>
+  } @else {
+    <section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div>
+        <p class="text-[14px] leading-none font-semibold text-[#adc6ff] uppercase tracking-[0.3em] mb-2 opacity-70" style="font-family:'Inter',sans-serif">Global Revenue Pulse</p>
+        <h2 class="text-[64px] font-bold text-white leading-tight" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 15px rgba(75,226,119,0.4)">₦{{ (kpiMetrics()[0]?.value || '0').replace('₦', '') }}</h2>
+        <div class="flex items-center gap-2 mt-2">
+          <div class="flex items-center text-[#4be277] bg-[#4be277]/10 px-3 py-1 rounded-full">
+            <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+            <span class="text-[12px] leading-none font-bold" style="font-family:'Inter',sans-serif">{{ kpiMetrics()[0]?.change || '+0%' }}</span>
           </div>
-          <div class="category-legend">
-            <div class="legend-item" *ngFor="let cat of categoryROI()">
-              <span class="dot" [style.background]="cat.color"></span>
-              <div class="legend-info">
-                <span class="cat-name inter-font">{{ cat.name }}</span>
-                <span class="cat-val space-font">₦{{ cat.value }}</span>
-              </div>
-              <span class="cat-perc inter-font">{{ cat.percentage }}%</span>
-            </div>
-          </div>
+          <span class="text-[12px] leading-none font-medium text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">vs. last 30 days</span>
         </div>
-      </article>
+      </div>
+      <div class="flex gap-4">
+        <button class="px-6 py-3 glass-card rounded-2xl flex items-center gap-2 hover:bg-white/10 transition-all border border-white/5 active:scale-95">
+          <span class="material-symbols-outlined text-[#4be277]">calendar_today</span>
+          <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Last 30 Days</span>
+        </button>
+        <button class="px-6 py-3 bg-[#4be277] text-[#002109] rounded-2xl flex items-center gap-2 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(75,226,119,0.3)] font-bold active:scale-95">
+          <span class="material-symbols-outlined">download</span>
+          <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Export Report</span>
+        </button>
+      </div>
+    </section>
 
-      <!-- Revenue Trend Chart -->
-      <article class="luminous-card trend-card">
-        <div class="card-header">
-          <h2 class="card-title space-font">Revenue vs Forecast</h2>
-          <div class="legend-simple">
-            <span class="legend-badge current inter-font">Current</span>
-            <span class="legend-badge forecast inter-font">Forecast</span>
+    <!-- Revenue Velocity Chart -->
+    <section class="mb-5">
+      <div class="glass-card rounded-2xl p-8 mesh-gradient-bg min-h-[400px] relative overflow-hidden flex flex-col">
+        <div class="flex justify-between items-center mb-12 relative z-10">
+          <div>
+            <h3 class="text-[24px] leading-[1.3] font-medium text-white" style="font-family:'Space Grotesk',sans-serif">Revenue Velocity</h3>
+            <p class="text-[#bccbb9] text-sm" style="font-family:'Inter',sans-serif">Real-time financial throughput monitoring</p>
+          </div>
+          <div class="flex gap-2 items-center">
+            <span class="w-3 h-3 rounded-full bg-[#4be277] animate-pulse"></span>
+            <span class="text-[12px] leading-none font-semibold text-[#4be277] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Live Stream</span>
           </div>
         </div>
-        <div class="trend-viz">
-          <svg viewBox="0 0 600 200" preserveAspectRatio="none" class="pulse-chart">
-              <path class="area-fill" d="M0,180 Q150,140 300,160 Q450,180 600,60 L600,200 L0,200 Z" fill="url(#neonGradient)" />
-              <path class="line-trace" d="M0,180 Q150,140 300,160 Q450,180 600,60" stroke="#00D166" stroke-width="4" fill="none" />
-              <defs>
-                <linearGradient id="neonGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#00D166" stop-opacity="0.3" />
-                  <stop offset="100%" stop-color="#00D166" stop-opacity="0" />
-                </linearGradient>
-              </defs>
+        <div class="flex-1 w-full relative min-h-[250px]">
+          <svg class="w-full h-full preserve-3d" viewBox="0 0 1000 300">
+            <defs>
+              <linearGradient id="chartGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#4be277" stop-opacity="0.3"></stop>
+                <stop offset="100%" stop-color="#4be277" stop-opacity="0"></stop>
+              </linearGradient>
+              <linearGradient id="chartGradient2" x1="0%" x2="0%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#0566d9" stop-opacity="0.2"></stop>
+                <stop offset="100%" stop-color="#0566d9" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <line stroke="rgba(255,255,255,0.05)" stroke-width="1" x1="0" x2="1000" y1="50" y2="50"></line>
+            <line stroke="rgba(255,255,255,0.05)" stroke-width="1" x1="0" x2="1000" y1="150" y2="150"></line>
+            <line stroke="rgba(255,255,255,0.05)" stroke-width="1" x1="0" x2="1000" y1="250" y2="250"></line>
+            <path d="M0,250 Q150,220 300,100 T600,120 T1000,40 L1000,300 L0,300 Z" fill="url(#chartGradient)"></path>
+            <path d="M0,250 Q150,220 300,100 T600,120 T1000,40" fill="none" stroke="#4be277" stroke-width="3" class="chart-line"></path>
+            <path d="M0,280 Q200,260 400,180 T700,200 T1000,120 L1000,300 L0,300 Z" fill="url(#chartGradient2)"></path>
+            <path d="M0,280 Q200,260 400,180 T700,200 T1000,120" fill="none" opacity="0.6" stroke="#0566d9" stroke-dasharray="8 4" stroke-width="2" class="chart-line"></path>
           </svg>
         </div>
-      </article>
-    </div>
-
-    <!-- Right Col: Staff Efficiency (1/3) -->
-    <div class="secondary-col">
-      <article class="luminous-card leaderboard-card">
-        <div class="card-header">
-          <h2 class="card-title space-font">Staff Performance</h2>
-          <a class="view-all inter-font">Leaderboard</a>
+        <div class="grid grid-cols-6 gap-4 mt-6 text-[#bccbb9] text-[12px] leading-none uppercase tracking-tighter opacity-50" style="font-family:'Inter',sans-serif">
+          <span>08:00 AM</span>
+          <span>11:00 AM</span>
+          <span>02:00 PM</span>
+          <span>05:00 PM</span>
+          <span>08:00 PM</span>
+          <span>11:00 PM</span>
         </div>
-        <div class="staff-list">
-          <div class="staff-row" *ngFor="let staff of staffData()">
-            <div class="staff-avatar" [style.background]="staff.avatar">
-              {{ staff.name.charAt(0) }}
+      </div>
+    </section>
+
+    <!-- Bottom Grid -->
+    <div class="grid grid-cols-12 gap-5">
+      <!-- Category Pulse + Staff -->
+      <div class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-5">
+        @for (cat of categoryROI(); track cat.name; let i = $index) {
+          <div class="glass-card p-6 rounded-2xl flex flex-col justify-between hover:bg-white/5 transition-all">
+            <div>
+              <div class="flex justify-between items-start mb-4">
+                <span class="material-symbols-outlined text-[#4be277] bg-[#4be277]/10 p-2 rounded-xl">{{ i === 0 ? 'restaurant' : i === 1 ? 'local_bar' : 'icecream' }}</span>
+                <span class="text-xs font-bold text-[#4be277]" style="font-family:'Inter',sans-serif">+{{ cat.percentage }}%</span>
+              </div>
+              <h4 class="text-[24px] leading-[1.3] font-medium text-white mb-1" style="font-family:'Space Grotesk',sans-serif">{{ cat.name }}</h4>
+              <p class="text-[#bccbb9] text-sm mb-6" style="font-family:'Inter',sans-serif">₦{{ cat.value }} Revenue</p>
             </div>
-            <div class="staff-main">
-              <span class="staff-name space-font">{{ staff.name }}</span>
-              <span class="staff-role inter-font">{{ staff.role }}</span>
-            </div>
-            <div class="staff-metrics">
-              <span class="staff-sales space-font">₦{{ staff.sales }}k</span>
-              <div class="efficiency-bar">
-                <div class="bar-fill" [style.width.%]="staff.efficiency"></div>
+            <div>
+              <div class="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-2 opacity-60" style="font-family:'Inter',sans-serif">
+                <span>Target</span>
+                <span>{{ cat.percentage }}%</span>
+              </div>
+              <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-1000 ease-out" [style.width.%]="cat.percentage" [style.background]="cat.color" style="box-shadow:0 0 15px rgba(75,226,119,0.4)"></div>
               </div>
             </div>
           </div>
-        </div>
-      </article>
+        }
+      </div>
 
-      <!-- Operational Insights -->
-      <article class="luminous-card insight-card">
-        <div class="insight-header">
-          <mat-icon>auto_awesome</mat-icon>
-          <h3 class="space-font">Operational Insights</h3>
+      <!-- Live Transactions -->
+      <div class="col-span-12 lg:col-span-4">
+        <div class="glass-card p-6 rounded-2xl h-full flex flex-col">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-[24px] leading-[1.3] font-medium text-white" style="font-family:'Space Grotesk',sans-serif">Staff Performance</h3>
+            <a class="text-[#4be277] text-[12px] leading-none font-semibold hover:underline" style="font-family:'Inter',sans-serif">View All</a>
+          </div>
+          <div class="space-y-4 flex-1">
+            @for (staff of staffData(); track staff.name) {
+              <div class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-full bg-[#2e3447] flex items-center justify-center text-[#bccbb9] group-hover:bg-[#4be277]/20 group-hover:text-[#4be277] transition-all text-sm font-bold">{{ staff.name.charAt(0) }}</div>
+                  <div>
+                    <p class="text-[16px] leading-[1.5] font-medium text-white" style="font-family:'Inter',sans-serif">{{ staff.name }}</p>
+                    <p class="text-[10px] text-[#bccbb9]/60 uppercase" style="font-family:'Inter',sans-serif">{{ staff.role }} • {{ staff.sales }} Orders</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-[18px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">{{ staff.efficiency }}%</p>
+                  <div class="h-1 w-16 bg-white/5 rounded-full mt-1 overflow-hidden">
+                    <div class="h-full bg-[#4be277] rounded-full transition-all" [style.width.%]="staff.efficiency"></div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5">
+            <div class="flex justify-between items-center opacity-70">
+              <span class="text-xs" style="font-family:'Inter',sans-serif">Processing Node: IQ-7</span>
+              <span class="text-xs text-[#4be277]" style="font-family:'Inter',sans-serif">Sync Active</span>
+            </div>
+          </div>
         </div>
-        <ul class="insight-list">
-          <li class="inter-font">High volume detected in <strong>Section B</strong>.</li>
-          <li class="inter-font">Top item: <strong>Grilled Sea Bass</strong>.</li>
-        </ul>
-      </article>
+      </div>
     </div>
-  </div>
+  }
 </div>

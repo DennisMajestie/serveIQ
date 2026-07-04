@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
     if (!this.adminEmail || !this.adminPassword) return;
     
     this.isActivating.set(true);
-    this.authService.login(this.adminEmail, this.adminPassword).subscribe({
+    this.authService.activateTerminal(this.adminEmail, this.adminPassword).subscribe({
       next: (res: any) => {
         this.isActivated.set(true);
         this.businessName.set(res.data?.businessName || res.data?.business?.name || 'ServeIQ Business');
