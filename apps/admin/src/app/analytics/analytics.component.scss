@@ -1,5 +1,10 @@
 :host { display: block; }
 
+.analytics-canvas {
+  padding: 32px;
+  min-height: 100%;
+}
+
 .glass-card {
   background: color-mix(in srgb, var(--on-surface) 3%, transparent);
   backdrop-filter: blur(32px);

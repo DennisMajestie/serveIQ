@@ -1,23 +1,8 @@
-<div class="space-y-8">
-  <!-- TopNavBar -->
-  <header class="sticky top-0 z-40 w-full flex justify-between items-center">
-    <div class="flex items-center gap-8">
-      <h2 class="text-[48px] leading-[1.1] font-bold text-[var(--primary)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Staff Management</h2>
-      <div class="hidden lg:flex items-center bg-surface-container-high-30 px-4 py-2 rounded-full min-w-[300px]">
-        <span class="material-symbols-outlined text-[var(--on-surface-variant)] mr-2">search</span>
-        <input class="bg-transparent border-none outline-none text-[var(--on-background)] placeholder:text-on-surface-variant-50 w-full text-[16px] leading-[1.5]" placeholder="Search roster..." type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
-      </div>
-    </div>
-    <div class="flex items-center gap-6">
-      <button class="bg-primary-40 hover-bg-primary-80 text-[var(--on-primary)] px-6 py-2.5 rounded-full text-[14px] leading-none font-semibold transition-all duration-300 shadow-[0_0_15px_color-mix(in srgb, var(--primary) 30%, transparent)] active:scale-95 flex items-center gap-2" (click)="openAddStaffModal()">
-        <span class="material-symbols-outlined">person_add</span>
-        Add Waiter
-      </button>
-      <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-[var(--on-surface-variant)] hover:text-[var(--primary)] cursor-pointer transition-colors">notifications</span>
-        <div class="w-10 h-10 rounded-full overflow-hidden bg-[var(--surface-variant)] flex items-center justify-center text-[var(--on-background)] font-bold text-sm">{{ getInitials('Admin') }}</div>
-      </div>
-    </div>
+<div class="waiter-canvas space-y-8">
+  <!-- Header -->
+  <header class="flex flex-col gap-1">
+    <h2 class="text-[32px] leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Staff Management</h2>
+    <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Manage your staff roster and performance</p>
   </header>
 
   <ng-container *ngIf="!isLoading(); else skeleton">

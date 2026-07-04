@@ -1,9 +1,9 @@
-<div class="space-y-8">
+<div class="tables-canvas space-y-8">
   <!-- Header Section -->
-  <div class="flex justify-between items-end">
-    <div>
-      <h2 class="text-[32px] leading-[1.2] font-semibold tracking-tight text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Floor Management</h2>
-      <p class="text-[18px] leading-[1.6] text-[var(--secondary)] opacity-80" style="font-family:'Inter',sans-serif">Arctic White Command Suite</p>
+  <header class="flex justify-between items-start">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-[32px] leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Floor Management</h2>
+      <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Manage your floor plan and table assignments</p>
     </div>
     <div class="flex gap-4">
       <div class="glass-card px-6 py-3 rounded-xl flex flex-col items-end">
@@ -14,7 +14,7 @@
         <span class="material-symbols-outlined text-[18px]">add</span> Add Table
       </button>
     </div>
-  </div>
+  </header>
 
   <ng-container *ngIf="!isLoading(); else skeleton">
     <!-- Asymmetric Bento Grid -->

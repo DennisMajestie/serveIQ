@@ -1,4 +1,10 @@
-<div class="min-h-screen bg-[var(--background)] text-[var(--on-background)] font-['Inter'] overflow-x-hidden">
+<div class="analytics-canvas space-y-8">
+  <!-- Header -->
+  <header class="flex flex-col gap-1">
+    <h2 class="text-[32px] leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Analytics</h2>
+    <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Real-time revenue intelligence and staff performance metrics</p>
+  </header>
+
   @if (isUsingMockData()) {
     <div class="flex items-center gap-3 px-6 py-3 rounded-xl mb-6 text-[var(--error)] text-sm" style="background: color-mix(in srgb, var(--error) 10%, transparent); border-color: color-mix(in srgb, var(--error) 20%, transparent)">
       <span class="material-symbols-outlined text-sm">info</span>
