@@ -1,9 +1,21 @@
 :host { display: block; }
 
+main {
+  padding-top: 6rem;
+}
+
 .glass-card {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
+}
+
+.card-content {
+  padding: 1rem;
+}
+
+.action-btn {
+  background: #4be277;
 }
 
 .material-symbols-outlined {

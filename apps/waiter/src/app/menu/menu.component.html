@@ -42,7 +42,7 @@
               <span class="material-symbols-outlined text-[#4be277] mb-auto">restaurant_menu</span>
               <span class="text-[14px] leading-none font-semibold mt-2" style="font-family:'Inter',sans-serif"
                 [class.text-[#4be277]]="selectedCategory === cat"
-                [class.text-[#bccbb9]]="selectedCategory !== cat">{{ cat }}</span>
+                [class.text-[#dce1fb]/60]="selectedCategory !== cat">{{ cat }}</span>
             </button>
           }
         </div>
@@ -55,7 +55,7 @@
           <span class="text-[12px] leading-none font-semibold text-[#4be277] uppercase tracking-wider" style="font-family:'Inter',sans-serif">{{ filteredItems.length }} items</span>
         </div>
         @if (filteredItems.length === 0) {
-          <div class="flex flex-col items-center justify-center py-16 text-[#bccbb9] gap-3">
+          <div class="flex flex-col items-center justify-center py-16 text-[#dce1fb]/60 gap-3">
             <span class="material-symbols-outlined text-4xl">restaurant_menu</span>
             <p class="text-sm" style="font-family:'Inter',sans-serif">No items in this category</p>
           </div>
@@ -66,10 +66,10 @@
                 <div class="h-36 overflow-hidden">
                   <img [src]="item.image" [alt]="item.name" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                 </div>
-                <div class="p-4 space-y-3">
+                <div class="card-content p-4 space-y-3">
                   <h3 class="text-[16px] leading-[1.5] font-medium text-[#dce1fb] line-clamp-1" style="font-family:'Inter',sans-serif">{{ item.name }}</h3>
                   <div class="flex justify-between items-center">
-                    <span class="text-[18px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">₦{{ getDisplayPrice(item).toLocaleString() }}</span>
+                    <span class="text-[18px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">₦{{ getDisplayPrice(item).toLocaleString('en-NG', {minimumFractionDigits: 2}) }}</span>
                     @if (getItemQty(item.id) === 0) {
                       <button (click)="addToSelection(item)" class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center active:scale-90 transition-transform hover:bg-white/20">
                         <span class="material-symbols-outlined text-sm">add</span>
@@ -94,7 +94,7 @@
                           [class.bg-[#4be277]/30]="getSelectedPortion(item.id) === portion.id"
                           [class.bg-white/5]="getSelectedPortion(item.id) !== portion.id"
                           [class.text-[#4be277]]="getSelectedPortion(item.id) === portion.id"
-                          [class.text-[#bccbb9]]="getSelectedPortion(item.id) !== portion.id">
+                          [class.text-[#dce1fb]/60]="getSelectedPortion(item.id) !== portion.id">
                           {{ portion.name }}
                         </button>
                       }
@@ -120,10 +120,10 @@
           </div>
           <div>
             <span class="block text-[12px] leading-none font-medium text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">@if (tableNumber) { Table {{ tableNumber }} } @else { Menu Items }</span>
-            <span class="block text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">₦{{ selectionTotal.toLocaleString() }} Total</span>
+            <span class="block text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">₦{{ selectionTotal.toLocaleString('en-NG', {minimumFractionDigits: 2}) }} Total</span>
           </div>
         </div>
-        <button (click)="confirmSelection()" class="bg-[#4be277] text-[#003915] px-6 py-3 rounded-xl text-[14px] leading-none font-semibold font-bold active:scale-95 transition-transform shadow-[0_0_15px_rgba(75,226,119,0.4)]" style="font-family:'Inter',sans-serif">
+        <button (click)="confirmSelection()" class="action-btn bg-[#4be277] text-[#003915] px-6 py-3 rounded-xl text-[14px] leading-none font-semibold font-bold active:scale-95 transition-transform shadow-[0_0_15px_rgba(75,226,119,0.4)]" style="font-family:'Inter',sans-serif">
           SEND TO KITCHEN
         </button>
       </div>
