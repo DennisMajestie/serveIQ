@@ -94,11 +94,11 @@ export class WaiterManagementComponent implements OnInit {
     if (!fullName) return;
     this.isSubmitting.set(true);
 
-    let avatarUrl: string | undefined;
+    let avatar_url: string | undefined;
     if (this.selectedFile()) {
       try {
         const uploaded = await this.uploadService.uploadFile(this.selectedFile()!).toPromise();
-        avatarUrl = uploaded?.url;
+        avatar_url = uploaded?.url;
       } catch { /* silently skip photo */ }
     }
 
@@ -108,7 +108,7 @@ export class WaiterManagementComponent implements OnInit {
       email: this.formEmail().trim(),
       phone: this.formPhone().trim(),
       branchId,
-      ...(avatarUrl ? { avatarUrl } : {})
+      ...(avatar_url ? { avatar_url } : {})
     };
 
     this.staffService.createWaiter(payload).subscribe({

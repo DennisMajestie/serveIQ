@@ -312,12 +312,12 @@ export interface Shift {
 }
 
 export interface OpenShiftRequest {
-  startingCashKobo: number;
+  starting_cash_kobo: number;
   note?: string;
 }
 
 export interface CloseShiftRequest {
-  actualCashKobo: number;
+  actual_cash_kobo: number;
   note?: string;
 }
 

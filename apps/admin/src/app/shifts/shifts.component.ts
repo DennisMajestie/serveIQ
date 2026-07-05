@@ -57,14 +57,15 @@ export class ShiftsComponent implements OnInit {
   }
 
   openShift() {
-    if (this.startingCash() <= 0) {
+    const cashNaira = this.startingCash();
+    if (cashNaira <= 0) {
       Swal.fire({ icon: 'error', title: 'Starting cash must be greater than 0' });
       return;
     }
 
     this.isSaving.set(true);
     const payload: OpenShiftRequest = {
-      startingCashKobo: this.startingCash(),
+      starting_cash_kobo: Math.round(cashNaira * 100),
       note: ''
     };
 
@@ -85,34 +86,36 @@ export class ShiftsComponent implements OnInit {
   }
 
   closeShift(shift: Shift) {
-    if (this.closeCash() <= 0) {
+    const actualCashNaira = this.closeCash();
+    if (actualCashNaira <= 0) {
       Swal.fire({ icon: 'error', title: 'Actual cash must be greater than 0' });
       return;
     }
 
-    if (this.closeCash() < (shift.expectedCashKobo || 0)) {
+    const actualCashKobo = Math.round(actualCashNaira * 100);
+    if (actualCashKobo < (shift.expectedCashKobo || 0)) {
       Swal.fire({
         icon: 'warning',
         title: 'Cash variance detected!',
-        text: `Expected: ${(shift.expectedCashKobo || 0) / 100} | Actual: ${this.closeCash() / 100}. Continue?`,
+        text: `Expected: ₦${((shift.expectedCashKobo || 0) / 100).toFixed(2)} | Actual: ₦${actualCashNaira.toFixed(2)}. Continue?`,
         showCancelButton: true,
         confirmButtonText: 'Yes, close shift',
 
       }).then((result) => {
         if (result.isConfirmed) {
-          this.performCloseShift(shift);
+          this.performCloseShift(shift, actualCashKobo);
         }
       });
       return;
     }
 
-    this.performCloseShift(shift);
+    this.performCloseShift(shift, actualCashKobo);
   }
 
-  performCloseShift(shift: Shift) {
+  performCloseShift(shift: Shift, actualCashKobo: number) {
     this.isSaving.set(true);
     const payload: CloseShiftRequest = {
-      actualCashKobo: this.closeCash(),
+      actual_cash_kobo: actualCashKobo,
       note: this.closeNote() || ''
     };
 
@@ -124,7 +127,7 @@ export class ShiftsComponent implements OnInit {
         this.closeNote.set('');
         this.loadShifts();
         this.loadCurrentShift();
-        const variance = this.closeCash() - (shift.expectedCashKobo || 0);
+        const variance = actualCashKobo - (shift.expectedCashKobo || 0);
         if (variance !== 0) {
           Swal.fire({
             icon: 'info',
