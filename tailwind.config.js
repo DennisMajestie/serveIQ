@@ -2,6 +2,7 @@
 module.exports = {
   content: [
     './apps/admin/src/**/*.{html,ts}',
+    './apps/waiter/src/**/*.{html,ts}',
     './libs/**/*.{html,ts}',
   ],
   theme: {
