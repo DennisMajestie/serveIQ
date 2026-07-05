@@ -178,4 +178,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     const hour12 = hour % 12 || 12;
     return `${hour12}${ampm}`;
   }
+
+  getInitials(name: string | undefined | null): string {
+    if (!name) return '?';
+    return name.split(' ').filter(n => !!n).map(n => n[0]).join('').toUpperCase();
+  }
 }

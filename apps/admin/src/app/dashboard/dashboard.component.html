@@ -61,9 +61,13 @@
           <div class="flex items-center gap-[-8px]">
             <span class="text-5xl font-bold text-[var(--on-background)] mr-4" style="font-family:'Space Grotesk',sans-serif">{{ staffOnDuty() }}</span>
             <div class="flex -space-x-3">
-              <div class="w-10 h-10 rounded-full bg-[var(--secondary-container)] border-2 border-[var(--surface-container-low)] flex items-center justify-center text-sm font-bold text-[var(--secondary)]">T</div>
-              <div class="w-10 h-10 rounded-full bg-[var(--secondary-fixed-dim)] border-2 border-[var(--surface-container-low)] flex items-center justify-center text-sm font-bold text-[var(--on-secondary)]">C</div>
-              <div class="w-10 h-10 rounded-full bg-[var(--surface-container-high)] border-2 border-[var(--surface-container-low)] flex items-center justify-center text-[10px] font-bold text-[var(--secondary)]">+{{ staffOnDuty() <= 2 ? 0 : staffOnDuty() - 2 }}</div>
+              <ng-container *ngFor="let wp of waiterPerformance().slice(0, 2); let i = index">
+                <div class="w-10 h-10 rounded-full border-2 border-[var(--surface-container-low)] overflow-hidden flex-shrink-0" [style.background]="i === 0 ? 'var(--secondary-container)' : 'var(--secondary-fixed-dim)'">
+                  <img *ngIf="wp.waiter.avatarUrl" [src]="wp.waiter.avatarUrl" alt="" class="w-full h-full object-cover" />
+                  <div *ngIf="!wp.waiter.avatarUrl" class="w-full h-full flex items-center justify-center text-sm font-bold" [style.color]="i === 0 ? 'var(--secondary)' : 'var(--on-secondary)'">{{ getInitials(wp.waiter.fullName) }}</div>
+                </div>
+              </ng-container>
+              <div *ngIf="staffOnDuty() > 2" class="w-10 h-10 rounded-full bg-[var(--surface-container-high)] border-2 border-[var(--surface-container-low)] flex items-center justify-center text-[10px] font-bold text-[var(--secondary)]">+{{ staffOnDuty() - 2 }}</div>
             </div>
           </div>
         </div>
