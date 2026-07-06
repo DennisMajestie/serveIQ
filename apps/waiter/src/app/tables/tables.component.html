@@ -7,7 +7,7 @@
           <img alt="Staff" class="w-full h-full object-cover" [src]="currentUser()?.avatarUrl || 'https://ui-avatars.com/api/?name=' + (currentUser()?.fullName || 'Staff') + '&background=4be277&color=fff'">
         </div>
       </div>
-      <h1 class="text-[28px] leading-[1.2] font-semibold tracking-tighter text-[#4be277]" style="text-shadow:0 0 10px rgba(75,226,119,0.4);font-family:'Space Grotesk',sans-serif">LUMINA</h1>
+      <h1 class="text-[28px] leading-[1.2] font-semibold tracking-tighter text-[#4be277]" style="text-shadow:0 0 10px rgba(75,226,119,0.4);font-family:'Space Grotesk',sans-serif">{{ branchName() || 'LUMINA' }}</h1>
       <button class="material-symbols-outlined text-[#4be277] active:scale-95 transition-transform p-2 bg-white/5 rounded-full">notifications</button>
     </div>
   </header>
@@ -61,7 +61,7 @@
 
       <!-- Section Title -->
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ branchName }}</h2>
+          <h2 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ branchName() }}</h2>
         <div class="flex items-center gap-2">
           <button class="glass-card px-3 py-1.5 rounded-full flex items-center gap-1.5 active:scale-90 transition-transform">
             <span class="material-symbols-outlined text-[14px] text-[#bccbb9]">filter_list</span>

@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { TablesApiService, TabsApiService, UserApiService, AuthService } from '@serveiq/shared/data-access';
-import { Table, Tab, User } from '@serveiq/shared/models';
+import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService } from '@serveiq/shared/data-access';
+import { Table, Tab, User, Business } from '@serveiq/shared/models';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
@@ -21,8 +21,9 @@ export class TablesComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
+  private businessApi = inject(BusinessApiService);
 
-  branchName = 'Main Dining Room';
+  branchName = signal('');
   isSynced = signal(false);
   isLoading = signal(true);
   toastMessage = signal<string | null>(null);
@@ -93,6 +94,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.loadTables();
     this.loadOpenTabs();
     this.loadCurrentUser();
+    this.loadBusiness();
     this.pollSub = interval(30000).pipe(
       switchMap(() => this.tablesApi.getAllTables())
     ).subscribe(tables => {
@@ -131,6 +133,20 @@ export class TablesComponent implements OnInit, OnDestroy {
   loadCurrentUser(): void {
     this.userApi.getMe().subscribe({
       next: (user) => this.currentUser.set(user),
+    });
+  }
+
+  loadBusiness(): void {
+    const cached = localStorage.getItem('businessName');
+    if (cached) { this.branchName.set(cached); return; }
+    this.businessApi.getBusiness().subscribe({
+      next: (biz) => {
+        const name = biz?.name || '';
+        if (name) {
+          this.branchName.set(name);
+          localStorage.setItem('businessName', name);
+        }
+      },
     });
   }
 
