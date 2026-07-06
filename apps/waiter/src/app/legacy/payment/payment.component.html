@@ -12,6 +12,15 @@
 
   <!-- Main Content -->
   <main class="payment-main">
+    @if (isLoading()) {
+      <div class="skeleton-shimmer" style="height:120px; margin-bottom: 16px;"></div>
+      <div class="methods-grid">
+        <div class="skeleton-shimmer" style="height:64px;"></div>
+        <div class="skeleton-shimmer" style="height:64px;"></div>
+        <div class="skeleton-shimmer" style="height:64px;"></div>
+        <div class="skeleton-shimmer" style="height:64px;"></div>
+      </div>
+    } @else {
     <!-- Total Amount Display -->
     <section class="total-section">
       <p class="total-label">Total Due</p>
@@ -95,8 +104,29 @@
           <span class="material-symbols-outlined method-icon" [class.selected-icon]="selectedMethod === 'ussd'">dialpad</span>
           <span class="method-text">USSD</span>
         </button>
+
+        <button
+          class="method-btn"
+          [class.selected]="selectedMethod === 'pos'"
+          (click)="selectMethod('pos')">
+          <span class="material-symbols-outlined method-icon" [class.selected-icon]="selectedMethod === 'pos'">point_of_sale</span>
+          <span class="method-text">POS</span>
+        </button>
       </div>
     </section>
+
+    <!-- POS Terminal Selector -->
+    @if (selectedMethod === 'card' || selectedMethod === 'pos') {
+      <section class="pos-section">
+        <label class="pos-label">POS Terminal</label>
+        <select [(ngModel)]="selectedTerminalId" class="pos-select">
+          <option value="" disabled>Select terminal</option>
+          @for (t of terminals(); track t.id) {
+            <option [value]="t.id">{{ t.label }}</option>
+          }
+        </select>
+      </section>
+    }
 
     <!-- Amount Entry Field -->
     <section class="amount-section">
@@ -132,6 +162,7 @@
         </button>
       </div>
     </section>
+    }
   </main>
 
   <!-- Confirmation Action -->

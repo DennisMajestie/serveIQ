@@ -23,6 +23,7 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
   branchName = 'Main Dining Room';
   isSynced = signal(false);
   isLoading = signal(true);
+  toastMessage = signal<string | null>(null);
 
   tables = signal<Table[]>([]);
   openTabs = signal<Tab[]>([]);
@@ -153,6 +154,23 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  getWaiterName(tableId: string): string | null {
+    const tab = this.openTabs().find(t => t.tableId === tableId);
+    if (!tab) return null;
+    return ((tab as any).waiter?.fullName) || null;
+  }
+
+  isTabLockedByOther(table: Table): boolean {
+    const tab = this.openTabs().find(t => t.tableId === table.id);
+    if (!tab) return false;
+    return tab.status === 'open' && !!tab.waiterId && tab.waiterId !== this.currentUserId;
+  }
+
+  showToast(message: string): void {
+    this.toastMessage.set(message);
+    setTimeout(() => this.toastMessage.set(null), 5000);
   }
 
   async onSeatTable(table: Table) {

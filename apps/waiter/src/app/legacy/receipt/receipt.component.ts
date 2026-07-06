@@ -23,6 +23,8 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
   receipt = signal<any>(null);
   table = signal<Table | null>(null);
   isLoading = signal(true);
+  hasError = signal(false);
+  errorMessage = signal('');
 
   businessName = computed(() => this.receipt()?.business?.name ?? 'ServeIQ');
   branchName = computed(() => this.receipt()?.branch?.name ?? '');
@@ -73,7 +75,15 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
               });
             }
           },
-          error: () => this.isLoading.set(false)
+          error: (err) => {
+            this.isLoading.set(false);
+            this.hasError.set(true);
+            if (err?.status === 404) {
+              this.errorMessage.set('No receipt found for this order. The bill may not have been paid yet.');
+            } else {
+              this.errorMessage.set('Failed to load receipt. Please try again.');
+            }
+          }
         });
       }
     });

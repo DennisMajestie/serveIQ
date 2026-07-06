@@ -371,3 +371,93 @@
 .footer-btn:active {
   transform: scale(0.98);
 }
+
+/* Top Bar */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--background);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+}
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--on-surface);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+}
+.app-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-container);
+  margin: 0;
+}
+.icon-secondary {
+  color: var(--on-surface-variant);
+  font-size: 24px;
+}
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-container-high) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Error State */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60vh;
+  gap: 16px;
+}
+.error-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(239, 68, 68, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.error-icon .material-symbols-outlined {
+  font-size: 40px;
+  color: #EF4444;
+}
+.error-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+.error-message {
+  font-size: 14px;
+  color: var(--secondary);
+  max-width: 280px;
+  margin: 0;
+}

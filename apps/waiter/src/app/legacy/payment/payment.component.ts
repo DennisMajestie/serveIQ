@@ -1,14 +1,15 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BillsApiService, TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
+import { BillsApiService, TabsApiService, TablesApiService, PosApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-legacy-payment',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss']
 })
@@ -18,15 +19,19 @@ export class LegacyPaymentComponent implements OnInit {
   private billsApi = inject(BillsApiService);
   private tabService = inject(TabsApiService);
   private tableService = inject(TablesApiService);
+  private posApi = inject(PosApiService);
 
   tabId = signal('');
   table = signal<Table | null>(null);
   bill = signal<Bill | null>(null);
-  selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' = 'cash';
+  isLoading = signal(true);
+  selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos' = 'cash';
   currentAmount = signal('0');
   isEditingAmount = false;
   isProcessing = signal(false);
   isSuccess = signal(false);
+  terminals = signal<any[]>([]);
+  selectedTerminalId = signal('');
 
   isSplit = signal(false);
   splitCount = signal(2);
@@ -39,7 +44,15 @@ export class LegacyPaymentComponent implements OnInit {
         this.tabId.set(id);
         this.loadTableInfo(id);
         this.loadBill(id);
+        this.loadTerminals();
       }
+    });
+  }
+
+  private loadTerminals() {
+    this.posApi.getAll().subscribe({
+      next: (terminals) => this.terminals.set(Array.isArray(terminals) ? terminals : []),
+      error: () => {}
     });
   }
 
@@ -61,7 +74,9 @@ export class LegacyPaymentComponent implements OnInit {
         const b = receipt.bill as Bill;
         this.bill.set(b);
         this.currentAmount.set((b.totalKobo / 100).toFixed(2));
-      }
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false)
     });
   }
 
@@ -76,7 +91,7 @@ export class LegacyPaymentComponent implements OnInit {
     return parts.join('.');
   }
 
-  selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd') {
+  selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos') {
     this.selectedMethod = method;
   }
 

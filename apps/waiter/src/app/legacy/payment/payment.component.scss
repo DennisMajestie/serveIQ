@@ -525,3 +525,52 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* POS Terminal Selector */
+.pos-section {
+  margin-bottom: 0;
+}
+.pos-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 12px 4px;
+  display: block;
+}
+.pos-select {
+  width: 100%;
+  background: var(--surface);
+  border: 2px solid rgba(64, 71, 88, 0.2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--on-surface);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.pos-select:focus {
+  border-color: var(--primary-container);
+}
+.pos-select option {
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-container-high) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

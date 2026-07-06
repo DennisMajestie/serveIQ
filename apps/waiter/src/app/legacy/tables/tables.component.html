@@ -1,4 +1,12 @@
 <div class="tables-container">
+  <!-- Toast Notification -->
+  @if (toastMessage(); as msg) {
+    <div class="toast-notification" (click)="toastMessage.set(null)">
+      <span class="material-symbols-outlined text-sm">lock</span>
+      <span class="text-sm">{{ msg }}</span>
+    </div>
+  }
+
   <!-- Top App Bar -->
   <header class="top-bar">
     <div class="top-bar-left">
@@ -8,6 +16,7 @@
       <h1 class="app-title">ServeIQ</h1>
     </div>
     <div class="top-bar-right">
+      <span class="material-symbols-outlined icon-secondary">notifications</span>
       <div class="profile-avatar">
         <img alt="User Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDERyoik6wC9viKHAGUBrP6h3aTLSHEH0zRa25brzSonbwMabTx07ChzW9BR0zsbOO1mb7XQIeh56oKNONAZxIPAKSHlBs6KHIzvVr4oH0wp1uwxCU_gBreIbUYtXOcGlecII4AOCtFN_VhWyIpseV5FOs1xc0iaHJCfa2bj1jrs1Zm0RZt6V7HYO9nk1tbZgHGcO--W68sKJC3VzTJszUZpj87qXDPv0ePJI2T8TvHe0IR3kQQxdgy1Bt_g7xevecdRnRpZXVqK7u7">
       </div>
@@ -59,6 +68,10 @@
               <span class="text-on-surface-variant font-label-md text-xs">Capacity: {{ table.capacity }}</span>
             </div>
 
+            @if (isTabLockedByOther(table)) {
+              <div class="locked-by">Locked by {{ getWaiterName(table.id) }}</div>
+            }
+
             @if (table.status === 'available') {
               <button class="seat-table-btn" (click)="$event.stopPropagation(); onSeatTable(table)">
                 Seat Table
@@ -67,6 +80,14 @@
           </div>
         </div>
       }
+    </div>
+
+    <!-- VIP Lounge Section -->
+    <div class="vip-section">
+      <div class="vip-content">
+        <h3 class="vip-title">VIP Lounge</h3>
+        <p class="vip-subtitle">Reservations available</p>
+      </div>
     </div>
   </main>
 

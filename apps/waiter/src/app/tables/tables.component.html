@@ -62,36 +62,50 @@
       <!-- Section Title -->
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-[24px] leading-[1.3] font-medium text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ branchName }}</h2>
-        <div class="glass-card px-3 py-1.5 rounded-full flex items-center gap-1.5">
-          <div class="w-2 h-2 rounded-full bg-[#4be277]"></div>
-          <span class="text-[12px] leading-none font-medium text-[#bccbb9]" style="font-family:'Inter',sans-serif">{{ stats().available > 0 ? 'Available' : 'Busy' }}</span>
+        <div class="flex items-center gap-2">
+          <button class="glass-card px-3 py-1.5 rounded-full flex items-center gap-1.5 active:scale-90 transition-transform">
+            <span class="material-symbols-outlined text-[14px] text-[#bccbb9]">filter_list</span>
+            <span class="text-[12px] leading-none font-medium text-[#bccbb9]" style="font-family:'Inter',sans-serif">Filter</span>
+          </button>
+          <div class="glass-card px-3 py-1.5 rounded-full flex items-center gap-1.5">
+            <div class="w-2 h-2 rounded-full bg-[#4be277]"></div>
+            <span class="text-[12px] leading-none font-medium text-[#bccbb9]" style="font-family:'Inter',sans-serif">{{ stats().available > 0 ? 'Available' : 'Busy' }}</span>
+          </div>
         </div>
       </div>
 
       <!-- Tables Grid -->
       <div class="grid grid-cols-6 gap-5">
         @for (table of tables(); track table.id) {
-          <button class="col-span-3 aspect-square glass-card rounded-full flex flex-col items-center justify-center p-4 active:scale-90 transition-all duration-300 group"
-                  [class.active-glow]="table.status === 'occupied'"
-                  [class.azure-pulse]="table.status === 'occupied' && isTabLockedByOther(table)"
-                  (click)="onTableClick(table)">
-            @if (table.status === 'occupied') {
-              <div class="mb-1">
-                <span class="material-symbols-outlined text-[#4be277] opacity-60 group-hover:opacity-100">group</span>
-              </div>
+          <div class="col-span-3 flex flex-col items-center">
+            <button class="w-full aspect-square glass-card rounded-full flex flex-col items-center justify-center p-4 active:scale-90 transition-all duration-300 group relative"
+                    [class.active-glow]="table.status === 'occupied'"
+                    [class.azure-pulse]="table.status === 'occupied' && isTabLockedByOther(table)"
+                    (click)="onTableClick(table)">
+              @if (table.status === 'occupied') {
+                <div class="mb-1">
+                  <span class="material-symbols-outlined text-[#4be277] opacity-60 group-hover:opacity-100">group</span>
+                </div>
+              }
+              <span class="text-[24px] leading-[1.3] font-medium" [class.text-[#dce1fb]]="table.status === 'occupied'" [class.text-[#bccbb9]/40]="table.status !== 'occupied'" style="font-family:'Space Grotesk',sans-serif">{{ table.label || table.tableNumber }}</span>
+              @if (table.status === 'occupied') {
+                <span class="text-[12px] leading-none font-medium text-[#4be277]/80" style="font-family:'Inter',sans-serif">{{ getTabForTable(table.id) ? 'Active' : 'Seated' }}</span>
+              } @else if (table.status === 'available') {
+                <span class="text-[12px] leading-none font-medium text-[#bccbb9]/20" style="font-family:'Inter',sans-serif">Empty</span>
+              } @else {
+                <span class="text-[12px] leading-none font-medium text-[#ffb3b7]/60" style="font-family:'Inter',sans-serif">{{ table.status }}</span>
+              }
+              <span class="text-[10px] leading-none font-medium text-[#bccbb9]/40 mt-0.5" style="font-family:'Inter',sans-serif">Cap: {{ table.capacity || '?' }}</span>
+              @if (isTabLockedByOther(table)) {
+                <div class="text-[10px] text-[#ffb4ab] font-medium mt-1">{{ getWaiterName(table.id) }}</div>
+              }
+            </button>
+            @if (table.status === 'available') {
+              <button class="mt-2 px-4 py-1.5 rounded-full bg-[#4be277]/20 text-[#4be277] text-[11px] leading-none font-semibold active:scale-90 transition-transform border border-[#4be277]/30" style="font-family:'Inter',sans-serif" (click)="onSeatTable(table)">
+                Seat Table
+              </button>
             }
-            <span class="text-[24px] leading-[1.3] font-medium" [class.text-[#dce1fb]]="table.status === 'occupied'" [class.text-[#bccbb9]/40]="table.status !== 'occupied'" style="font-family:'Space Grotesk',sans-serif">{{ table.label || table.tableNumber }}</span>
-            @if (table.status === 'occupied') {
-              <span class="text-[12px] leading-none font-medium text-[#4be277]/80" style="font-family:'Inter',sans-serif">{{ getTabForTable(table.id) ? 'Active' : 'Seated' }}</span>
-            } @else if (table.status === 'available') {
-              <span class="text-[12px] leading-none font-medium text-[#bccbb9]/20" style="font-family:'Inter',sans-serif">Empty</span>
-            } @else {
-              <span class="text-[12px] leading-none font-medium text-[#ffb3b7]/60" style="font-family:'Inter',sans-serif">{{ table.status }}</span>
-            }
-            @if (isTabLockedByOther(table)) {
-              <div class="text-[10px] text-[#ffb4ab] font-medium mt-1">{{ getWaiterName(table.id) }}</div>
-            }
-          </button>
+          </div>
         }
       </div>
 
@@ -115,6 +129,10 @@
     <a class="flex flex-col items-center justify-center text-[#bccbb9]/60 hover:text-[#4be277] transition-colors active:scale-90 transition-transform duration-200" routerLink="/tabs/history" routerLinkActive="active">
       <span class="material-symbols-outlined">history</span>
       <span class="text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif">History</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-[#bccbb9]/60 hover:text-[#4be277] transition-colors active:scale-90 transition-transform duration-200" routerLink="/menu" routerLinkActive="active">
+      <span class="material-symbols-outlined">restaurant_menu</span>
+      <span class="text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif">Menu</span>
     </a>
     <a class="flex flex-col items-center justify-center text-[#bccbb9]/60 hover:text-[#4be277] transition-colors active:scale-90 transition-transform duration-200" routerLink="/profile" routerLinkActive="active">
       <span class="material-symbols-outlined">person</span>

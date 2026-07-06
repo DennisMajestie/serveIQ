@@ -8,14 +8,19 @@
       <h1 class="page-title">Shift History — {{ currentDate }}</h1>
     </div>
     <div class="top-bar-right">
-      <div class="profile-avatar">
-        <span class="material-symbols-outlined">person</span>
-      </div>
+      <span class="material-symbols-outlined icon-secondary">notifications</span>
     </div>
   </header>
 
   <!-- Main Content -->
   <main class="history-main">
+    @if (isLoading()) {
+      <div class="skeleton-shimmer" style="height:48px; border-radius: 12px; margin-bottom: 16px;"></div>
+      <div class="stats-cards">
+        <div class="skeleton-shimmer" style="height:80px; border-radius: 12px;"></div>
+        <div class="skeleton-shimmer" style="height:80px; border-radius: 12px;"></div>
+      </div>
+    } @else {
     <!-- Search Bar -->
     <div class="search-bar">
       <span class="material-symbols-outlined search-icon">search</span>
@@ -69,5 +74,6 @@
       View All Shift Records
       <span class="material-symbols-outlined">chevron_right</span>
     </button>
+    }
   </main>
 </div>

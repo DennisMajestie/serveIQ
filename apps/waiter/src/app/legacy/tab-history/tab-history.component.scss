@@ -206,6 +206,23 @@
   margin: 0;
 }
 
+.icon-secondary {
+  color: var(--on-surface-variant);
+  font-size: 24px;
+}
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-container-high) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .stat-value.count {
   color: var(--on-surface);
 }

@@ -15,6 +15,13 @@
 
   <!-- Main Content -->
   <main class="main-content">
+    @if (isLoading()) {
+      <section class="menu-grid">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="skeleton-shimmer" style="height:240px; border-radius: 12px;"></div>
+        }
+      </section>
+    } @else {
     <!-- Category Navigation -->
     <nav class="category-nav">
       <button
@@ -60,6 +67,7 @@
         </div>
       </div>
     </div>
+    }
   </main>
 
   <!-- Cart Summary Bar -->
