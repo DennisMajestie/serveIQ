@@ -197,6 +197,23 @@
     </button>
   </div>
   <div class="modal-body">
+    <!-- Avatar Upload -->
+    <div class="avatar-upload-zone">
+      <input type="file" id="sw-edit-file" accept="image/jpeg,image/png,image/webp" class="file-input-hidden" (change)="onEditAvatarSelected($event)">
+      <div class="avatar-preview-wrap">
+        <div class="avatar-circle" *ngIf="!editAvatarPreview()">
+          <img [src]="editWaiter()?.avatarUrl || 'https://ui-avatars.com/api/?name=' + (editWaiter()?.fullName || '?') + '&background=9d4300&color=fff'" class="avatar-img" alt="Current">
+        </div>
+        <img [src]="editAvatarPreview()!" class="avatar-img" alt="Preview" *ngIf="editAvatarPreview()">
+        <label for="sw-edit-file" class="avatar-upload-btn">
+          <span class="material-symbols-outlined text-white text-sm">upload</span>
+        </label>
+      </div>
+      <div>
+        <p class="avatar-label">Profile Photo</p>
+        <p class="avatar-hint">Optional · JPG, PNG, WebP</p>
+      </div>
+    </div>
     <div class="form-grid">
       <div class="form-field full-width">
         <label class="field-label">Full Name <span class="required">*</span></label>

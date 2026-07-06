@@ -34,6 +34,8 @@ export class WaiterManagementComponent implements OnInit {
   editFullName = signal('');
   editEmail = signal('');
   editPhone = signal('');
+  editAvatarPreview = signal<string | null>(null);
+  editSelectedFile = signal<File | null>(null);
   isEditing = signal(false);
 
   filteredWaiters = computed(() => {
@@ -170,22 +172,47 @@ export class WaiterManagementComponent implements OnInit {
     this.editFullName.set(waiter.fullName || '');
     this.editEmail.set(waiter.email || '');
     this.editPhone.set((waiter as any).phone || '');
+    this.editAvatarPreview.set(null);
+    this.editSelectedFile.set(null);
   }
 
   closeEditModal() {
     this.editWaiter.set(null);
+    this.editAvatarPreview.set(null);
+    this.editSelectedFile.set(null);
   }
 
-  saveEdit() {
+  onEditAvatarSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.editSelectedFile.set(file);
+    const reader = new FileReader();
+    reader.onload = (e) => this.editAvatarPreview.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  async saveEdit() {
     if (!this.editFullName() || !this.editWaiter()) return;
     this.isEditing.set(true);
-    this.staffService.updateUser(this.editWaiter()!.id, {
+
+    let avatar_url: string | undefined;
+    if (this.editSelectedFile()) {
+      try {
+        const uploaded = await this.uploadService.uploadFile(this.editSelectedFile()!).toPromise();
+        avatar_url = uploaded?.url;
+      } catch { /* silently skip photo */ }
+    }
+
+    const payload: any = {
       fullName: this.editFullName(),
       email: this.editEmail(),
-    } as any).subscribe({
+      ...(avatar_url ? { avatar_url } : {}),
+    };
+
+    this.staffService.updateUser(this.editWaiter()!.id, payload).subscribe({
       next: (updated: any) => {
         this.isEditing.set(false);
-        this.waiters.update(ws => ws.map(w => w.id === updated.id ? { ...w, fullName: updated.fullName || this.editFullName(), email: updated.email || this.editEmail() } : w));
+        this.waiters.update(ws => ws.map(w => w.id === updated.id ? { ...w, fullName: updated.fullName || this.editFullName(), email: updated.email || this.editEmail(), avatarUrl: updated.avatarUrl || updated.avatar_url || avatar_url || w.avatarUrl } : w));
         this.closeEditModal();
         Swal.fire({ icon: 'success', title: 'Waiter Updated', timer: 1500, showConfirmButton: false });
       },
