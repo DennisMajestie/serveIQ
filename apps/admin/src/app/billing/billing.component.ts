@@ -205,7 +205,8 @@ export class BillingComponent implements OnInit {
         this.subService.cancel().subscribe({
           next: () => {
             Swal.fire({ icon: 'success', title: 'Subscription canceled' });
-            this.subService.load();
+    this.subService.load();
+    this.subService.loadPlans();
           },
             error: () => Swal.fire({ icon: 'error', title: 'Failed to cancel' }),
         });

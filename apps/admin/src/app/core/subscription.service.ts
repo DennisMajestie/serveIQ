@@ -8,36 +8,9 @@ export class SubscriptionService {
 
   subscription = signal<Subscription | null>(null);
   loading = signal(false);
+  plansLoading = signal(false);
   error = signal<string | null>(null);
-  plans = signal<SubscriptionPlan[]>([
-    {
-      id: '',
-      name: 'Basic',
-      price: 0,
-      currency: 'NGN',
-      billingInterval: 'monthly',
-      features: { maxTables: 5, maxWaiters: 3, reportingEnabled: false },
-      isActive: true,
-    },
-    {
-      id: '',
-      name: 'Pro',
-      price: 2500000,
-      currency: 'NGN',
-      billingInterval: 'monthly',
-      features: { maxTables: 20, maxWaiters: 15, reportingEnabled: true },
-      isActive: true,
-    },
-    {
-      id: '',
-      name: 'Enterprise',
-      price: 7500000,
-      currency: 'NGN',
-      billingInterval: 'monthly',
-      features: { maxTables: 100, maxWaiters: 50, reportingEnabled: true },
-      isActive: true,
-    },
-  ]);
+  plans = signal<SubscriptionPlan[]>([]);
 
   get status(): SubscriptionStatus | null {
     return this.subscription()?.status ?? null;
@@ -67,6 +40,19 @@ export class SubscriptionService {
           this.error.set('Failed to load subscription');
         }
         this.loading.set(false);
+      },
+    });
+  }
+
+  loadPlans(): void {
+    this.plansLoading.set(true);
+    this.subscriptionsApi.getPlans().subscribe({
+      next: (plans) => {
+        this.plans.set(plans);
+        this.plansLoading.set(false);
+      },
+      error: () => {
+        this.plansLoading.set(false);
       },
     });
   }

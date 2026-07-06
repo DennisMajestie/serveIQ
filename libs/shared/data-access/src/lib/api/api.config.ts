@@ -138,7 +138,7 @@ export const API_CONFIG = {
     },
     // Plans
     plans: {
-      list: '/api/v1/plans',
+      list: '/api/v1/subscriptions/plans',
     },
     admin: {
       businesses: '/api/v1/admin/businesses',

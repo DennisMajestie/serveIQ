@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { Subscription, InitializeSubscriptionResponse } from '@serveiq/shared/models';
+import { Subscription, SubscriptionPlan, InitializeSubscriptionResponse } from '@serveiq/shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionsApiService extends BaseApiService {
@@ -14,6 +14,10 @@ export class SubscriptionsApiService extends BaseApiService {
 
   getCurrent(): Observable<Subscription> {
     return this.get<Subscription>(API_CONFIG.endpoints.subscriptions.current);
+  }
+
+  getPlans(): Observable<SubscriptionPlan[]> {
+    return this.get<SubscriptionPlan[]>(API_CONFIG.endpoints.plans.list);
   }
 
   initialize(planId: string): Observable<InitializeSubscriptionResponse> {
