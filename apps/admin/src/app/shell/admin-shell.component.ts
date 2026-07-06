@@ -646,6 +646,6 @@ export class AdminShellComponent implements OnInit {
   }
 
   openNotifications() {
-    this.router.navigate(['/settings']);
+    this.router.navigate(['/app/settings']);
   }
 }
