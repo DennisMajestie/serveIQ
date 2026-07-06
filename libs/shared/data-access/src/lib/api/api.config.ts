@@ -66,6 +66,8 @@ export const API_CONFIG = {
       get: '/api/v1/tabs/:id',
       open: '/api/v1/tabs/open',
       close: '/api/v1/tabs/:id/close',
+      void: '/api/v1/tabs/:id/void',
+      transfer: '/api/v1/tabs/:id/transfer',
       delete: '/api/v1/tabs/:id',
     },
     // Orders

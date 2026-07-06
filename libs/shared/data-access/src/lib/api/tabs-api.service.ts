@@ -37,7 +37,7 @@ export class TabsApiService extends BaseApiService {
 
   // Close a tab
   closeTab(id: string): Observable<Tab> {
-    return this.post<Tab>(API_CONFIG.endpoints.tabs.close, { id });
+    return this.post<Tab>(buildUrl(API_CONFIG.endpoints.tabs.close, { id }), {});
   }
 
   // Delete a tab
@@ -52,11 +52,11 @@ export class TabsApiService extends BaseApiService {
 
   // Void a tab
   voidTab(id: string): Observable<Tab> {
-    return this.post<Tab>(buildUrl(API_CONFIG.endpoints.tabs.close, { id }), {});
+    return this.post<Tab>(buildUrl(API_CONFIG.endpoints.tabs.void, { id }), {});
   }
 
   // Transfer a tab to another table
   transferTab(id: string, targetTableId: string): Observable<Tab> {
-    return this.patch<Tab>(buildUrl(API_CONFIG.endpoints.tabs.get, { id }), { tableId: targetTableId });
+    return this.post<Tab>(buildUrl(API_CONFIG.endpoints.tabs.transfer, { id }), { targetTableId });
   }
 }
