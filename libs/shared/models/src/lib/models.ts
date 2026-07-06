@@ -2,6 +2,8 @@
 // Domain Models — aligned with API types.ts
 // ==========================================
 
+export type UiThemeVariant = 'current' | 'legacy';
+
 export interface User {
   id: string;
   businessId?: string;
@@ -11,6 +13,7 @@ export interface User {
   pin?: string;
   avatarUrl?: string;
   isActive?: boolean;
+  uiThemeVariant?: UiThemeVariant;
 }
 
 export type Waiter = User;

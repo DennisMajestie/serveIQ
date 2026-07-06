@@ -3,21 +3,19 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService, UserApiService } from '@serveiq/shared/data-access';
 import { User, UiThemeVariant } from '@serveiq/shared/models';
-import { ThemePreferenceService } from '../core/theme-preference.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-legacy-profile',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
-  private authService = inject(AuthService);
+export class LegacyProfileComponent implements OnInit {
   private userService = inject(UserApiService);
+  private authService = inject(AuthService);
   private router = inject(Router);
-  private themePref = inject(ThemePreferenceService);
 
   user = signal<User | null>(null);
   isLoading = signal(true);
@@ -52,7 +50,6 @@ export class ProfileComponent implements OnInit {
     this.userService.updateMe({ uiThemeVariant: newVariant } as any).subscribe({
       next: (updated) => {
         this.user.set(updated);
-        this.themePref.setPreference(newVariant);
         Swal.fire({
           icon: 'success',
           title: newVariant === 'legacy' ? 'Classic Theme' : 'Modern Theme',
