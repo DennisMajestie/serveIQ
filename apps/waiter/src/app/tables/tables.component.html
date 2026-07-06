@@ -91,11 +91,11 @@
               @if (table.status === 'occupied') {
                 <span class="text-[12px] leading-none font-medium text-[#4be277]/80" style="font-family:'Inter',sans-serif">{{ getTabForTable(table.id) ? 'Active' : 'Seated' }}</span>
               } @else if (table.status === 'available') {
-                <span class="text-[12px] leading-none font-medium text-[#bccbb9]/20" style="font-family:'Inter',sans-serif">Empty</span>
+                <span class="text-[12px] leading-none font-medium text-[#bccbb9]/20" style="font-family:'Inter',sans-serif">Free</span>
               } @else {
                 <span class="text-[12px] leading-none font-medium text-[#ffb3b7]/60" style="font-family:'Inter',sans-serif">{{ table.status }}</span>
               }
-              <span class="text-[10px] leading-none font-medium text-[#bccbb9]/40 mt-0.5" style="font-family:'Inter',sans-serif">Cap: {{ table.capacity || '?' }}</span>
+              <span class="text-[10px] leading-none font-medium text-[#bccbb9]/40 mt-0.5" style="font-family:'Inter',sans-serif">Seats {{ table.capacity || '?' }}</span>
               @if (isTabLockedByOther(table)) {
                 <div class="text-[10px] text-[#ffb4ab] font-medium mt-1">{{ getWaiterName(table.id) }}</div>
               }
