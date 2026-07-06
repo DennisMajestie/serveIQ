@@ -16,16 +16,8 @@ export class ThemePreferenceService {
 
   refreshFromApi(): Observable<UiThemeVariant> {
     return this.userApi.getMe().pipe(
-      map(user => {
-        if (user.uiThemeVariant) {
-          localStorage.setItem(STORAGE_KEY, user.uiThemeVariant);
-          return user.uiThemeVariant;
-        }
-        return this.getPreference();
-      }),
-      catchError(() => {
-        return of(this.getPreference());
-      })
+      map(user => user.uiThemeVariant || this.getPreference()),
+      catchError(() => of(this.getPreference()))
     );
   }
 
