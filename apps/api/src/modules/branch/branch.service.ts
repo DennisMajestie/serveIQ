@@ -6,6 +6,7 @@ import { Table, TableStatus } from '../table/entities/table.entity';
 import { Tab } from '../tab/entities/tab.entity';
 import { Bill } from '../bill/entities/bill.entity';
 import { Order } from '../order/entities/order.entity';
+import { MenuItem } from '../menu/entities/menu-item.entity';
 import { User } from '../user/entities/user.entity';
 import { UserRole } from '../../common/shared';
 
@@ -142,10 +143,16 @@ export class BranchService {
       const recentOrders = await this.orderRepository
         .createQueryBuilder('o')
         .innerJoin(Tab, 'tab', '"tab"."id"::varchar = "o"."tab_id"::varchar')
+        .innerJoin(MenuItem, 'mi', '"mi"."id"::varchar = "o"."menu_item_id"::varchar')
         .where('"tab"."branch_id"::varchar = :branchId', { branchId })
+        .select([
+          'o.id', 'o.tab_id', 'o.menu_item_id', 'o.quantity',
+          'o.unit_price_kobo', 'o.subtotal_kobo', 'o.created_at',
+          'mi.name AS menu_item_name',
+        ])
         .orderBy('"o"."created_at"', 'DESC')
         .limit(20)
-        .getMany();
+        .getRawMany();
 
       return {
         real_time_sales: dailyRevenue,
