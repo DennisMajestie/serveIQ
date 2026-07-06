@@ -2,13 +2,15 @@
   "installCommand": "npm install",
   "buildCommand": "npx nx build admin --configuration=production",
   "outputDirectory": "../../dist/apps/admin/browser",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
       "destination": "https://serveiq-backend.onrender.com/api/v1/$1"
     },
     {
-      "source": "/([^.]+)",
+      "source": "/((?!.*\\.).*)",
       "destination": "/"
     }
   ],
