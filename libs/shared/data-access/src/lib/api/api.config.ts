@@ -80,6 +80,7 @@ export const API_CONFIG = {
     // Bills
     bills: {
       generate: '/api/v1/bills/tab/:tabId/generate',
+      applyDiscount: '/api/v1/bills/tab/:tabId/apply-discount',
       pay: '/api/v1/bills/tab/:tabId/pay',
       receipt: '/api/v1/bills/tab/:tabId/receipt',
     },
@@ -112,12 +113,33 @@ export const API_CONFIG = {
       bestsellers: '/api/v1/inventory/bestsellers',
       stockVariance: '/api/v1/reports/stock-variance',
     },
+    // Recipe / BOM
+    recipe: {
+      list: '/api/v1/menu-items/:menuItemId/recipe',
+      create: '/api/v1/menu-items/:menuItemId/recipe',
+    },
+    recipeItems: {
+      update: '/api/v1/recipe-items/:id',
+      delete: '/api/v1/recipe-items/:id',
+    },
     // Reports
     reports: {
+      sales: '/api/v1/reports/sales',
+      items: '/api/v1/reports/items',
       peakHours: '/api/v1/reports/peak-hours',
       tableVelocity: '/api/v1/reports/table-velocity',
       peakEfficiency: '/api/v1/reports/peak-efficiency',
     },
+    // Notifications
+    notifications: {
+      list: '/api/v1/notifications',
+      read: '/api/v1/notifications/:id/read',
+      readAll: '/api/v1/notifications/read-all',
+    },
+
+    // Menu extras
+    menuImport: '/api/v1/menu/import',
+    menuToggle: '/api/v1/menu/:id/toggle',
     // Nemotron
     nemotron: {
       completions: '/v1/chat/completions',

@@ -5,4 +5,8 @@ import { bootstrapSwal } from '@serveiq/shared/models';
 
 bootstrapSwal();
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
 bootstrapApplication(App, appConfig).catch((err) => console.error(err));

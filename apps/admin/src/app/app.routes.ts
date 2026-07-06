@@ -67,12 +67,28 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./inventory/inventory.component').then(m => m.InventoryComponent)
       },
       {
+        path: 'recipe/:menuItemId',
+        loadComponent: () => import('./recipe-builder/recipe-builder.component').then(m => m.RecipeBuilderComponent)
+      },
+      {
+        path: 'recipe',
+        loadComponent: () => import('./recipe-builder/recipe-builder.component').then(m => m.RecipeBuilderComponent)
+      },
+      {
         path: 'bills',
         loadComponent: () => import('./bills/bills.component').then(m => m.BillsComponent)
       },
       {
         path: 'pos',
         loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)
+      },
+      {
+        path: 'reports',
+        loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
+      },
+      {
+        path: 'notifications',
+        loadComponent: () => import('./notifications/notifications.component').then(m => m.NotificationsComponent)
       },
       {
         path: 'billing',
@@ -100,11 +116,19 @@ export const appRoutes: Route[] = [
         canActivate: [superAdminGuard]
       },
       {
+        path: 'setup',
+        loadComponent: () => import('./business-setup/business-setup.component').then(m => m.BusinessSetupComponent)
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
       }
     ]
+  },
+  {
+    path: 'setup',
+    loadComponent: () => import('./business-setup/business-setup.component').then(m => m.BusinessSetupComponent)
   },
   {
     path: 'register',

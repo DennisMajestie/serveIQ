@@ -86,7 +86,7 @@ export class RegisterBusinessComponent {
 
         this.authService.login(this.email(), this.pin()).subscribe({
           next: () => {
-            setTimeout(() => this.router.navigate(['/app/dashboard']), 1000);
+            setTimeout(() => this.router.navigate(['/app/setup']), 1000);
           },
           error: () => {
             this.router.navigate(['/login']);

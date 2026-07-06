@@ -234,6 +234,11 @@ export interface GenerateBillRequest {
   discountKobo?: number;
 }
 
+export interface ApplyDiscountRequest {
+  discountKobo: number;
+  reason?: string;
+}
+
 export interface RecordPaymentRequest {
   amount: number;
   method: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos';
@@ -337,32 +342,77 @@ export interface CloseShiftRequest {
   note?: string;
 }
 
-// ===== Inventory =====
-export interface InventoryItem {
-  id: string;
-  businessId: string;
-  branchId?: string;
-  menuItemId: string;
-  menuItemName?: string;
-  quantityInStock: number;
-  reorderLevel: number;
-  isLowStock: boolean;
-  unit?: string;
-  updatedAt: Date;
+// ===== Ingredient =====
+export enum IngredientUnit {
+  KG = 'kg',
+  G = 'g',
+  L = 'l',
+  ML = 'ml',
+  PIECE = 'piece',
+  DOZEN = 'dozen',
+  PACK = 'pack',
+  CRATE = 'crate',
 }
 
-export interface CreateInventoryRequest {
-  menuItemId: string;
+export interface Ingredient {
+  id: string;
+  branchId: string;
+  name: string;
+  unit: IngredientUnit;
   quantityInStock: number;
   reorderLevel: number;
+  conversionToBase?: number;
+  baseUnit?: IngredientUnit;
+  costPerUnit?: number;
+  menuItemId?: string;
+  supplierId?: string;
+  supplier?: Supplier;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
+}
+
+export interface CreateIngredientRequest {
+  name: string;
+  unit: IngredientUnit;
+  quantityInStock: number;
+  reorderLevel: number;
+  conversionToBase?: number;
+  baseUnit?: IngredientUnit;
+  costPerUnit?: number;
+  menuItemId?: string;
+  supplierId?: string;
+}
+
+export interface UpdateIngredientRequest {
+  name?: string;
+  unit?: IngredientUnit;
+  quantityInStock?: number;
+  reorderLevel?: number;
+  conversionToBase?: number;
+  baseUnit?: IngredientUnit;
+  costPerUnit?: number;
+  menuItemId?: string;
+  supplierId?: string | null;
+}
+
+export enum StockMovementType {
+  MANUAL_ADJUSTMENT = 'manual_adjustment',
+  ORDER_CONSUMPTION = 'order_consumption',
+  WASTE = 'waste',
+  TRANSFER = 'transfer',
+  PURCHASE = 'purchase',
 }
 
 export interface StockMovement {
   id: string;
-  inventoryId: string;
-  quantity: number;
-  previousStock: number;
-  newStock: number;
+  branchId: string;
+  ingredientId: string;
+  type: StockMovementType;
+  quantityChange: number;
+  quantityAfter: number;
+  orderId?: string;
+  referenceId?: string;
   notes?: string;
   createdAt: Date;
 }
@@ -376,6 +426,32 @@ export interface BestsellerReport {
   bestsellers: Array<{ menuItemId: string; name: string; quantitySold: number; revenueKobo: number }>;
   slowMovers: Array<{ menuItemId: string; name: string; quantitySold: number }>;
   outOfStock: Array<{ menuItemId: string; name: string }>;
+}
+
+// ===== Recipe / BOM =====
+export interface RecipeItem {
+  id: string;
+  menuItemId: string;
+  ingredientId: string;
+  ingredient?: Ingredient;
+  quantityRequired: number;
+  unit: IngredientUnit;
+  wastePercent?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AddRecipeItemRequest {
+  ingredientId: string;
+  quantityRequired: number;
+  unit: IngredientUnit;
+  wastePercent?: number;
+}
+
+export interface UpdateRecipeItemRequest {
+  quantityRequired?: number;
+  unit?: IngredientUnit;
+  wastePercent?: number | null;
 }
 
 export type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'canceled' | 'expired';
@@ -414,4 +490,31 @@ export interface InitializeSubscriptionResponse {
   authorizationUrl: string;
   accessCode: string;
   reference: string;
+}
+
+// ===== Reports =====
+export interface SalesEntry {
+  date: string;
+  revenueKobo: number;
+  orderCount: number;
+  paymentMethod: string;
+}
+
+export interface TopItemEntry {
+  menuItemId: string;
+  name: string;
+  quantitySold: number;
+  revenueKobo: number;
+  category: string;
+}
+
+// ===== Notifications =====
+export interface Notification {
+  id: string;
+  branchId: string;
+  title: string;
+  message: string;
+  type: 'low_stock' | 'shift_reminder' | 'payment' | 'system';
+  isRead: boolean;
+  createdAt: Date;
 }

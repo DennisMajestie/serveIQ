@@ -10,6 +10,9 @@
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant-60">search</span>
         <input class="bg-white/5 backdrop-blur-md border-0 rounded-full py-3 px-6 pl-12 w-64 text-[var(--on-background)] text-[14px] leading-none font-semibold placeholder:text-on-surface-variant-40" placeholder="Search menu items..." type="text" />
       </div>
+      <button class="bg-white/5 backdrop-blur-md border border-white/10 px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:bg-white/10 transition-all" (click)="importCsv()">
+        <span class="material-symbols-outlined">upload_file</span> Import CSV
+      </button>
       <button class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 shadow-lg" (click)="addItem()">
         <span class="material-symbols-outlined">add</span> Add Item
       </button>

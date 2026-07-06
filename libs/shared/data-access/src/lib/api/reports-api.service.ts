@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry } from '@serveiq/shared/models';
+import { PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry, SalesEntry, TopItemEntry } from '@serveiq/shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class ReportsApiService extends BaseApiService {
@@ -13,6 +13,22 @@ export class ReportsApiService extends BaseApiService {
     @Inject(ENVIRONMENT_CONFIG) env: EnvironmentConfig
   ) {
     super(http, env);
+  }
+
+  getSales(dateFrom?: string, dateTo?: string, paymentMethod?: string): Observable<SalesEntry[]> {
+    const queryParams: Record<string, string> = {};
+    if (dateFrom) queryParams['dateFrom'] = dateFrom;
+    if (dateTo) queryParams['dateTo'] = dateTo;
+    if (paymentMethod) queryParams['paymentMethod'] = paymentMethod;
+    return this.get<SalesEntry[]>(API_CONFIG.endpoints.reports.sales, undefined, queryParams);
+  }
+
+  getTopItems(dateFrom?: string, dateTo?: string, category?: string): Observable<TopItemEntry[]> {
+    const queryParams: Record<string, string> = {};
+    if (dateFrom) queryParams['dateFrom'] = dateFrom;
+    if (dateTo) queryParams['dateTo'] = dateTo;
+    if (category) queryParams['category'] = category;
+    return this.get<TopItemEntry[]>(API_CONFIG.endpoints.reports.items, undefined, queryParams);
   }
 
   getPeakHours(branchId?: string, dateFrom?: string, dateTo?: string): Observable<PeakHoursEntry[]> {

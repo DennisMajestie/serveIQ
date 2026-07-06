@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { SyncStore } from '@serveiq/data-access';
-import { AuthService, UserApiService, TablesApiService, TabsApiService, User, SubscriptionsApiService } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService, TablesApiService, TabsApiService, User, SubscriptionsApiService, NotificationsApiService } from '@serveiq/shared/data-access';
 import { SubscriptionService } from '../core/subscription.service';
 import { ThemeService } from '../core/theme.service';
 import { of, forkJoin } from 'rxjs';
@@ -66,6 +66,12 @@ interface NavItem {
               <a class="nav-link" routerLink="/app/bills" routerLinkActive="active">
                 <span class="material-symbols-outlined">receipt_long</span>
                 <span>Bills</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/reports" routerLinkActive="active">
+                <span class="material-symbols-outlined">bar_chart</span>
+                <span>Reports</span>
               </a>
             </li>
             <li class="nav-item">
@@ -568,6 +574,7 @@ export class AdminShellComponent implements OnInit {
   private userApi = inject(UserApiService);
   private tablesApi = inject(TablesApiService);
   private tabsApi = inject(TabsApiService);
+  private notificationsApi = inject(NotificationsApiService);
   private router = inject(Router);
   subService = inject(SubscriptionService);
   themeService = inject(ThemeService);
@@ -582,6 +589,11 @@ export class AdminShellComponent implements OnInit {
     this.subService.load();
     this.userApi.getMe().subscribe({
       next: (user: any) => this.profile.set({ fullName: user.fullName, role: user.role, avatarUrl: user.avatarUrl || user.avatar_url }),
+      error: () => {}
+    });
+
+    this.notificationsApi.list().subscribe({
+      next: (notifications) => this.hasNotifications.set(notifications.some(n => !n.isRead)),
       error: () => {}
     });
 
@@ -646,6 +658,6 @@ export class AdminShellComponent implements OnInit {
   }
 
   openNotifications() {
-    this.router.navigate(['/app/settings']);
+    this.router.navigate(['/app/notifications']);
   }
 }

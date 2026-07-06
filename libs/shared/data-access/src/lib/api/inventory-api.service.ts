@@ -4,7 +4,17 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { InventoryItem, CreateInventoryRequest, StockMovement, AddStockRequest, BestsellerReport } from '@serveiq/shared/models';
+import {
+  Ingredient,
+  CreateIngredientRequest,
+  UpdateIngredientRequest,
+  StockMovement,
+  AddStockRequest,
+  BestsellerReport,
+  RecipeItem,
+  AddRecipeItemRequest,
+  UpdateRecipeItemRequest,
+} from '@serveiq/shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryApiService extends BaseApiService {
@@ -12,20 +22,20 @@ export class InventoryApiService extends BaseApiService {
     super(http, env);
   }
 
-  list(): Observable<InventoryItem[]> {
-    return this.get<InventoryItem[]>(API_CONFIG.endpoints.inventory.list);
+  list(): Observable<Ingredient[]> {
+    return this.get<Ingredient[]>(API_CONFIG.endpoints.inventory.list);
   }
 
-  getById(id: string): Observable<InventoryItem> {
-    return this.get<InventoryItem>(buildUrl(API_CONFIG.endpoints.inventory.get, { id }));
+  getById(id: string): Observable<Ingredient> {
+    return this.get<Ingredient>(buildUrl(API_CONFIG.endpoints.inventory.get, { id }));
   }
 
-  create(data: CreateInventoryRequest): Observable<InventoryItem> {
-    return this.post<InventoryItem>(API_CONFIG.endpoints.inventory.create, data);
+  create(data: CreateIngredientRequest): Observable<Ingredient> {
+    return this.post<Ingredient>(API_CONFIG.endpoints.inventory.create, data);
   }
 
-  update(id: string, data: Partial<CreateInventoryRequest>): Observable<InventoryItem> {
-    return this.patch<InventoryItem>(buildUrl(API_CONFIG.endpoints.inventory.update, { id }), data);
+  update(id: string, data: UpdateIngredientRequest): Observable<Ingredient> {
+    return this.patch<Ingredient>(buildUrl(API_CONFIG.endpoints.inventory.update, { id }), data);
   }
 
   removeById(id: string): Observable<void> {
@@ -40,8 +50,8 @@ export class InventoryApiService extends BaseApiService {
     return this.get<StockMovement[]>(buildUrl(API_CONFIG.endpoints.inventory.movements, { id }));
   }
 
-  getAlerts(): Observable<InventoryItem[]> {
-    return this.get<InventoryItem[]>(API_CONFIG.endpoints.inventory.alerts);
+  getAlerts(): Observable<Ingredient[]> {
+    return this.get<Ingredient[]>(API_CONFIG.endpoints.inventory.alerts);
   }
 
   getBestsellers(dateFrom?: string, dateTo?: string): Observable<BestsellerReport> {
@@ -50,5 +60,22 @@ export class InventoryApiService extends BaseApiService {
 
   getStockVariance(): Observable<any> {
     return this.get<any>(API_CONFIG.endpoints.inventory.stockVariance);
+  }
+
+  // Recipe / BOM
+  getRecipe(menuItemId: string): Observable<RecipeItem[]> {
+    return this.get<RecipeItem[]>(buildUrl(API_CONFIG.endpoints.recipe.list, { menuItemId }));
+  }
+
+  addRecipeItem(menuItemId: string, data: AddRecipeItemRequest): Observable<RecipeItem> {
+    return this.post<RecipeItem>(buildUrl(API_CONFIG.endpoints.recipe.create, { menuItemId }), data);
+  }
+
+  updateRecipeItem(id: string, data: UpdateRecipeItemRequest): Observable<RecipeItem> {
+    return this.patch<RecipeItem>(buildUrl(API_CONFIG.endpoints.recipeItems.update, { id }), data);
+  }
+
+  removeRecipeItem(id: string): Observable<void> {
+    return this.delete<void>(buildUrl(API_CONFIG.endpoints.recipeItems.delete, { id }));
   }
 }

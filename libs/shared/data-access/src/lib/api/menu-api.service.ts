@@ -39,4 +39,18 @@ export class MenuApiService extends BaseApiService {
   deleteItem(id: string): Observable<void> {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.menu.delete, { id }));
   }
+
+  /** Bulk import menu items from CSV. */
+  importCsv(file: File): Observable<{ imported: number; errors: string[] }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ imported: number; errors: string[] }>(
+      `${this.apiUrl}${API_CONFIG.endpoints.menuImport}`, formData
+    );
+  }
+
+  /** Toggle menu item availability without deleting. */
+  toggleAvailability(id: string): Observable<any> {
+    return this.patch<any>(buildUrl(API_CONFIG.endpoints.menuToggle, { id }), {});
+  }
 }

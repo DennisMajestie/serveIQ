@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { Bill, Receipt, GenerateBillRequest, RecordPaymentRequest } from '@serveiq/shared/models';
+import { Bill, Receipt, GenerateBillRequest, RecordPaymentRequest, ApplyDiscountRequest } from '@serveiq/shared/models';
 import { snakeToCamel } from '@serveiq/shared/models';
 
 /** Manages bill generation, payment recording and receipts. */
@@ -21,6 +21,11 @@ export class BillsApiService extends BaseApiService {
   /** Generate (or re-generate) a bill for a tab. */
   generate(tabId: string, options: GenerateBillRequest = {}): Observable<Bill> {
     return this.post<Bill>(buildUrl(API_CONFIG.endpoints.bills.generate, { tabId }), options);
+  }
+
+  /** Apply a discount to a pending bill. */
+  applyDiscount(tabId: string, discount: ApplyDiscountRequest): Observable<Bill> {
+    return this.post<Bill>(buildUrl(API_CONFIG.endpoints.bills.applyDiscount, { tabId }), discount);
   }
 
   /** Record a payment against a bill, closing the tab. */

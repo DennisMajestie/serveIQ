@@ -108,10 +108,32 @@ export class MenuManagementComponent implements OnInit {
   }
 
   toggleAvailability(item: MenuItem) {
-    this.menuService.updateItem(item.id, { isAvailable: !item.isAvailable })
+    this.menuService.toggleAvailability(item.id)
       .subscribe((updated: any) => {
         this.items.update(is => is.map(i => i.id === updated.id ? updated : i));
       });
+  }
+
+  importCsv() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      this.menuService.importCsv(file).subscribe({
+        next: (result) => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Import Complete',
+            text: `${result.imported} items imported.${result.errors?.length ? '\nErrors: ' + result.errors.join(', ') : ''}`,
+          });
+          this.loadMenu();
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Import Failed', text: 'Could not import menu items.' })
+      });
+    };
+    input.click();
   }
 
   deleteItem(item: MenuItem) {

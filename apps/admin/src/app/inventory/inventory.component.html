@@ -2,56 +2,140 @@
   <div class="page-header">
     <div class="title-group">
       <h1 class="page-title">Inventory</h1>
-      <p class="page-subtitle">Manage stock levels and alerts</p>
+      <p class="page-subtitle">Manage ingredients and stock levels</p>
     </div>
     <div class="header-actions">
       <label class="toggle-label">
         <input type="checkbox" [checked]="lowStockOnly()" (change)="lowStockOnly.set($any($event.target).checked)">
         Show Low Stock Only
       </label>
+      <button class="btn-primary" (click)="openCreateModal()">+ Add Ingredient</button>
       <button class="btn-refresh" (click)="loadInventory()">Refresh</button>
     </div>
   </div>
 
-  <!-- Loading -->
   <div *ngIf="isLoading()" class="loading-state">
     <div class="spinner"></div>
   </div>
 
-  <!-- Empty -->
-  <div *ngIf="!isLoading() && inventory().length === 0" class="empty-state">
-    <p>No inventory items found</p>
+  <div *ngIf="!isLoading() && filteredInventory().length === 0" class="empty-state">
+    <p>No ingredients found</p>
   </div>
 
-  <!-- Inventory List -->
-  <div *ngIf="!isLoading() && inventory().length > 0" class="inventory-grid">
-    <div class="inventory-card" *ngFor="let item of inventory()">
+  <div *ngIf="!isLoading() && filteredInventory().length > 0" class="inventory-grid">
+    <div class="inventory-card" *ngFor="let item of filteredInventory(); trackBy: trackById">
       <div class="card-header">
         <div class="item-info">
-          <h3 class="item-name">{{ item.menuItemName || 'Unknown Item' }}</h3>
+          <h3 class="item-name">{{ item.name }}</h3>
+          <span class="item-unit">{{ item.unit }}</span>
+          <span *ngIf="getLinkBadge(item)" class="link-badge" [class]="getLinkBadge(item)!.cssClass">
+            {{ getLinkBadge(item)!.text }}
+          </span>
         </div>
-        <span class="stock-status" [class]="getStockStatusClass(item.isLowStock)">
-          {{ getStockStatusText(item.isLowStock) }}
+        <span class="stock-status" [class.alert-low-stock]="isLowStock(item)" [class.alert-normal]="!isLowStock(item)">
+          {{ isLowStock(item) ? 'Low Stock' : 'In Stock' }}
         </span>
       </div>
+
       <div class="card-body">
         <div class="stat-row">
           <span class="stat-label">In Stock</span>
-          <span class="stat-value">{{ item.quantityInStock }}</span>
+          <span [class]="quantityClass(item)">{{ item.quantityInStock }}</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">Reorder Level</span>
           <span class="stat-value">{{ item.reorderLevel }}</span>
         </div>
+        <div class="stat-row" *ngIf="item.costPerUnit != null">
+          <span class="stat-label">Cost/Unit</span>
+          <span class="stat-value stat-cost">{{ formatCurrency(item.costPerUnit) }}</span>
+        </div>
       </div>
+
+      <div class="card-supplier" *ngIf="item.supplier">
+        <span class="supplier-label">Supplier:</span>
+        <span class="supplier-name">{{ item.supplier.name }}</span>
+      </div>
+
       <div class="card-footer">
-        <button class="btn-secondary" (click)="viewMovements(item)">
-          View History
-        </button>
-        <button class="btn-primary" (click)="openStockModal(item)">
-          Add Stock
-        </button>
+        <button class="btn-secondary" (click)="openEditModal(item)">Edit</button>
+        <button class="btn-secondary" (click)="viewMovements(item)">History</button>
+        <button class="btn-primary" (click)="openStockModal(item)">Add Stock</button>
+        <button class="btn-danger" (click)="deleteIngredient(item)">Delete</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit Ingredient Modal -->
+<div *ngIf="showFormModal()" class="modal-overlay" (click)="closeFormModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">{{ isEditing() ? 'Edit Ingredient' : 'Add Ingredient' }}</h3>
+      <button class="modal-close" (click)="closeFormModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-error" *ngIf="formError()">{{ formError() }}</div>
+
+      <div class="form-group">
+        <label class="form-label" for="ing-name">Name</label>
+        <input type="text" id="ing-name" class="form-input" [value]="formName()" (change)="formName.set($any($event.target).value)" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ing-unit">Unit</label>
+        <select id="ing-unit" class="form-input" [value]="formUnit()" (change)="onUnitChange($any($event.target).value)">
+          <option *ngFor="let u of unitOptions" [value]="u">{{ u }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="ing-qty">Quantity In Stock</label>
+          <input type="number" id="ing-qty" class="form-input" [value]="formQuantity()" (change)="formQuantity.set($any($event.target).valueAsNumber)">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ing-reorder">Reorder Level</label>
+          <input type="number" id="ing-reorder" class="form-input" [value]="formReorderLevel()" (change)="formReorderLevel.set($any($event.target).valueAsNumber)">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ing-cost">Cost Per Unit (kobo)</label>
+        <input type="number" id="ing-cost" class="form-input" [value]="formCostPerUnit()" (change)="formCostPerUnit.set($any($event.target).valueAsNumber || undefined)">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ing-menu">Linked Menu Item ID (optional)</label>
+        <input type="text" id="ing-menu" class="form-input" [value]="formMenuItemId()" (change)="formMenuItemId.set(($any($event.target).value || undefined))" placeholder="Direct-linked menu item">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ing-supplier">Supplier</label>
+        <select id="ing-supplier" class="form-input" [value]="formSupplierId()" (change)="formSupplierId.set($any($event.target).value || undefined)">
+          <option [value]="undefined">None</option>
+          <option *ngFor="let s of suppliers()" [value]="s.id">{{ s.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="discreteUnits.has(formUnit())">
+        <label class="form-label">Conversion (1 {{ formUnit() }} = ?)</label>
+        <div class="form-row">
+          <input type="number" class="form-input" [value]="formConversionToBase()" (change)="formConversionToBase.set($any($event.target).valueAsNumber || undefined)" placeholder="Quantity">
+          <select class="form-input" [value]="formBaseUnit()" (change)="formBaseUnit.set($any($event.target).value || undefined)">
+            <option [value]="undefined">Select base unit</option>
+            <option *ngFor="let u of unitOptions" [value]="u">{{ u }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeFormModal()" [disabled]="formSubmitting()">Cancel</button>
+      <button class="btn-primary" (click)="submitForm()" [disabled]="formSubmitting()">
+        {{ formSubmitting() ? 'Saving...' : isEditing() ? 'Save Changes' : 'Add Ingredient' }}
+      </button>
     </div>
   </div>
 </div>
@@ -68,15 +152,15 @@
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">Item</label>
-        <p class="form-value">{{ selectedInventory()?.menuItemName }}</p>
+        <p class="form-value">{{ selectedIngredient()?.name }}</p>
       </div>
       <div class="form-group">
-        <label class="form-label" for="quantity">Quantity to Add</label>
-        <input type="number" id="quantity" class="form-input" [value]="stockQuantity()" (change)="stockQuantity.set($any($event.target).valueAsNumber)" min="1">
+        <label class="form-label" for="stock-qty">Quantity to Add</label>
+        <input type="number" id="stock-qty" class="form-input" [value]="stockQuantity()" (change)="stockQuantity.set($any($event.target).valueAsNumber)" min="1">
       </div>
       <div class="form-group">
-        <label class="form-label" for="notes">Notes (Optional)</label>
-        <textarea id="notes" class="form-textarea" [value]="stockNotes()" (change)="stockNotes.set($any($event.target).value)"></textarea>
+        <label class="form-label" for="stock-notes">Notes (Optional)</label>
+        <textarea id="stock-notes" class="form-textarea" [value]="stockNotes()" (change)="stockNotes.set($any($event.target).value)"></textarea>
       </div>
     </div>
     <div class="modal-footer">

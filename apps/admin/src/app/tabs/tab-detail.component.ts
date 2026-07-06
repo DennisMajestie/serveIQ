@@ -3,7 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService } from '@serveiq/shared/data-access';
-import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
+import { Tab, OrderItem, Table, MenuItem, ApplyDiscountRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -41,6 +41,11 @@ export class TabDetailComponent implements OnInit {
   menuItems = signal<MenuItem[]>([]);
   categories = signal<string[]>(['All']);
   isLoadingMenu = signal(false);
+
+  // Discount
+  discountKobo = signal(0);
+  discountReason = signal('');
+  showDiscountInput = signal(false);
 
   ngOnInit() {
     this.tabId = this.route.snapshot.paramMap.get('id') || '';
@@ -240,33 +245,64 @@ export class TabDetailComponent implements OnInit {
     });
   }
 
-  closeTab() {
-    this.billsApi.generate(this.tabId).subscribe({
-      next: (bill) => {
-        this.tabsApi.closeTab(this.tabId).subscribe({
-          next: () => {
-            Swal.fire({
-              title: 'Tab Closed',
-              html: `
-                <div style="text-align:left;font-family:monospace;font-size:0.9rem">
-                  <p><strong>Subtotal:</strong> ₦${(bill.subtotalKobo / 100).toLocaleString()}</p>
-                  <p><strong>Service Charge:</strong> ${bill.serviceChargePercent}%</p>
-                  <p><strong>Total:</strong> ₦${(bill.totalKobo / 100).toLocaleString()}</p>
-                </div>
-              `,
-              confirmButtonText: 'View Bill',
-              showCancelButton: true,
-              cancelButtonText: 'Close'
-            }).then(result => {
-              if (result.isConfirmed) {
-                this.router.navigate(['/bills']);
-              }
-            });
-          },
-          error: () => Swal.fire({ icon: 'error', title: 'Failed to Close Tab' })
-        });
+  applyDiscountToTab() {
+    if (this.discountKobo() <= 0) return;
+    const payload: ApplyDiscountRequest = {
+      discountKobo: this.discountKobo(),
+      reason: this.discountReason() || undefined,
+    };
+    this.billsApi.applyDiscount(this.tabId, payload).subscribe({
+      next: () => {
+        Swal.fire({ icon: 'success', title: 'Discount Applied', timer: 1500, showConfirmButton: false });
+        this.showDiscountInput.set(false);
       },
-      error: () => Swal.fire({ icon: 'error', title: 'Failed to Generate Bill' })
+      error: () => Swal.fire({ icon: 'error', title: 'Failed to apply discount' }),
+    });
+  }
+
+  closeTab() {
+    Swal.fire({
+      title: 'Generate Bill',
+      html: `
+        <div style="text-align:left;font-size:0.9rem">
+          <p><strong>Subtotal:</strong> ₦${this.formatKobo(this.getSubtotal())}</p>
+          <p><strong>VAT (7.5%):</strong> ₦${this.formatKobo(this.getVat())}</p>
+          <p><strong>Total:</strong> ₦${this.formatKobo(this.getGrandTotal())}</p>
+        </div>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Generate Bill & Close',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if (!result.isConfirmed) return;
+
+      this.billsApi.generate(this.tabId, { discountKobo: this.discountKobo() || undefined }).subscribe({
+        next: (bill) => {
+          this.tabsApi.closeTab(this.tabId).subscribe({
+            next: () => {
+              Swal.fire({
+                title: 'Tab Closed',
+                html: `
+                  <div style="text-align:left;font-family:monospace;font-size:0.9rem">
+                    <p><strong>Subtotal:</strong> ₦${this.formatKobo(bill.subtotalKobo)}</p>
+                    <p><strong>Service Charge:</strong> ${bill.serviceChargePercent}%</p>
+                    <p><strong>Discount:</strong> ₦${this.formatKobo(bill.discountKobo)}</p>
+                    <p><strong>Total:</strong> ₦${this.formatKobo(bill.totalKobo)}</p>
+                  </div>
+                `,
+                confirmButtonText: 'View Bills',
+                showCancelButton: true,
+                cancelButtonText: 'Close'
+              }).then(r => {
+                if (r.isConfirmed) this.router.navigate(['/app/bills']);
+              });
+            },
+            error: () => Swal.fire({ icon: 'error', title: 'Failed to Close Tab' })
+          });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Failed to Generate Bill' })
+      });
     });
   }
 
