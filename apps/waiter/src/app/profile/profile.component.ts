@@ -44,7 +44,7 @@ export class ProfileComponent implements OnInit {
   }
 
   get uiThemeVariant(): UiThemeVariant {
-    return this.user()?.uiThemeVariant || 'current';
+    return this.themePref.getPreference();
   }
 
   toggleTheme() {
