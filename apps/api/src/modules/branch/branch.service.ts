@@ -104,7 +104,7 @@ export class BranchService {
 
       // Waiter performance — batch queries instead of per-waiter loop
       const waiters = await this.userRepository.find({
-        where: { branch_id: branchId, role: UserRole.WAITER },
+        where: { branch_id: branchId, role: UserRole.WAITER, is_active: true },
         select: ['id', 'full_name', 'email', 'avatar_url'],
       });
 
