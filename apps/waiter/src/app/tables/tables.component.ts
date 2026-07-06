@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
-import { Table, Tab } from '@serveiq/shared/models';
+import { TablesApiService, TabsApiService, UserApiService, AuthService } from '@serveiq/shared/data-access';
+import { Table, Tab, User } from '@serveiq/shared/models';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { AuthService } from '@serveiq/shared/data-access';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -21,6 +20,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   private tabsApi = inject(TabsApiService);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private userApi = inject(UserApiService);
 
   branchName = 'Main Dining Room';
   isSynced = signal(false);
@@ -29,6 +29,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   tables = signal<Table[]>([]);
   openTabs = signal<Tab[]>([]);
+  currentUser = signal<User | null>(null);
 
   stats = computed(() => {
     const t = this.tables();
@@ -91,6 +92,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadTables();
     this.loadOpenTabs();
+    this.loadCurrentUser();
     this.pollSub = interval(30000).pipe(
       switchMap(() => this.tablesApi.getAllTables())
     ).subscribe(tables => {
@@ -123,6 +125,12 @@ export class TablesComponent implements OnInit, OnDestroy {
         this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
       },
       error: () => {}  // poll will retry; errors are non-critical
+    });
+  }
+
+  loadCurrentUser(): void {
+    this.userApi.getMe().subscribe({
+      next: (user) => this.currentUser.set(user),
     });
   }
 

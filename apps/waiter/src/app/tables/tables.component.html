@@ -4,7 +4,7 @@
     <div class="flex items-center justify-between px-6 py-4 w-full">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#4be277]/40">
-          <img alt="Staff" class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name=Waiter&background=4be277&color=fff">
+          <img alt="Staff" class="w-full h-full object-cover" [src]="currentUser()?.avatarUrl || 'https://ui-avatars.com/api/?name=' + (currentUser()?.fullName || 'Staff') + '&background=4be277&color=fff'">
         </div>
       </div>
       <h1 class="text-[28px] leading-[1.2] font-semibold tracking-tighter text-[#4be277]" style="text-shadow:0 0 10px rgba(75,226,119,0.4);font-family:'Space Grotesk',sans-serif">LUMINA</h1>
