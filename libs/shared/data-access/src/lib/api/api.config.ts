@@ -115,6 +115,8 @@ export const API_CONFIG = {
     // Reports
     reports: {
       peakHours: '/api/v1/reports/peak-hours',
+      tableVelocity: '/api/v1/reports/table-velocity',
+      peakEfficiency: '/api/v1/reports/peak-efficiency',
     },
     // Nemotron
     nemotron: {

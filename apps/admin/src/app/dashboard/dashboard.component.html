@@ -39,12 +39,16 @@
         </div>
         <div class="mt-4">
           <div class="flex items-baseline gap-2">
-            <span class="text-5xl font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ tableVelocity() }}</span>
+            <span class="text-5xl font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ avgTableVelocity() }}</span>
             <span class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">avg.</span>
           </div>
           <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 text-[var(--tertiary)] font-bold rounded-full text-xs" style="background: color-mix(in srgb, var(--tertiary-container) 10%, transparent)">
             <span class="w-2 h-2 bg-[var(--tertiary)] rounded-full animate-pulse"></span>
-            Peak Efficiency
+            @if (peakEfficiencyLabel()) {
+              Peak {{ peakEfficiencyLabel() }}
+            } @else {
+              Peak Efficiency
+            }
           </div>
         </div>
       </div>

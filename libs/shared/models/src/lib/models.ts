@@ -278,6 +278,19 @@ export interface PeakHoursEntry {
   revenueKobo: number;
 }
 
+export interface TableVelocityEntry {
+  tableId: string;
+  tableNumber: string;
+  avgDurationMinutes: number;
+  totalCovers: number;
+}
+
+export interface PeakEfficiencyEntry {
+  hour: number;
+  totalCovers: number;
+  avgDurationMinutes: number;
+}
+
 // ===== Suppliers =====
 export interface Supplier {
   id: string;

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { PeakHoursEntry } from '@serveiq/shared/models';
+import { PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry } from '@serveiq/shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class ReportsApiService extends BaseApiService {
@@ -21,5 +21,20 @@ export class ReportsApiService extends BaseApiService {
     if (dateFrom) { queryParams['dateFrom'] = dateFrom; }
     if (dateTo) { queryParams['dateTo'] = dateTo; }
     return this.get<PeakHoursEntry[]>(API_CONFIG.endpoints.reports.peakHours, undefined, queryParams);
+  }
+
+  getTableVelocity(branchId?: string, dateFrom?: string, dateTo?: string): Observable<TableVelocityEntry[]> {
+    const queryParams: Record<string, string> = {};
+    if (branchId) { queryParams['branchId'] = branchId; }
+    if (dateFrom) { queryParams['dateFrom'] = dateFrom; }
+    if (dateTo) { queryParams['dateTo'] = dateTo; }
+    return this.get<TableVelocityEntry[]>(API_CONFIG.endpoints.reports.tableVelocity, undefined, queryParams);
+  }
+
+  getPeakEfficiency(dateFrom?: string, dateTo?: string): Observable<PeakEfficiencyEntry[]> {
+    const queryParams: Record<string, string> = {};
+    if (dateFrom) { queryParams['dateFrom'] = dateFrom; }
+    if (dateTo) { queryParams['dateTo'] = dateTo; }
+    return this.get<PeakEfficiencyEntry[]>(API_CONFIG.endpoints.reports.peakEfficiency, undefined, queryParams);
   }
 }

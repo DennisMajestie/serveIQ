@@ -2,7 +2,7 @@ import { Component, signal, computed, inject, OnInit, OnDestroy, AfterViewInit }
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BranchesApiService, ReportsApiService, DashboardStats } from '@serveiq/shared/data-access';
-import { PeakHoursEntry } from '@serveiq/shared/models';
+import { PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry } from '@serveiq/shared/models';
 import { Subscription, interval } from 'rxjs';
 
 @Component({
@@ -19,6 +19,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoading = signal(true);
   branchName = signal('');
   peakHours = signal<PeakHoursEntry[]>([]);
+  tableVelocity = signal<TableVelocityEntry[]>([]);
+  peakEfficiency = signal<PeakEfficiencyEntry[]>([]);
   stats = signal<DashboardStats>({
     realTimeSales: 0,
     activeTables: 0,
@@ -37,9 +39,13 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadBranchName();
     this.loadStats();
     this.loadPeakHours();
+    this.loadTableVelocity();
+    this.loadPeakEfficiency();
     this.pollingSub = interval(30000).subscribe(() => {
       this.loadStats();
       this.loadPeakHours();
+      this.loadTableVelocity();
+      this.loadPeakEfficiency();
     });
   }
 
@@ -83,6 +89,22 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.peakHours.set(entries || []);
         this.updateSparkline();
       },
+      error: () => {}
+    });
+  }
+
+  loadTableVelocity() {
+    const branchId = this.getBranchId();
+    if (!branchId) return;
+    this.reportsService.getTableVelocity(branchId).subscribe({
+      next: (entries) => this.tableVelocity.set(entries || []),
+      error: () => {}
+    });
+  }
+
+  loadPeakEfficiency() {
+    this.reportsService.getPeakEfficiency().subscribe({
+      next: (entries) => this.peakEfficiency.set(entries || []),
       error: () => {}
     });
   }
@@ -154,12 +176,19 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   revenueDisplay = computed(() => `₦${(this.stats().realTimeSales / 100).toLocaleString()}`);
   staffCount = computed(() => (this.stats().waiterPerformance || []).length);
   staffOnDuty = computed(() => this.staffCount());
-  tableVelocity = computed(() => {
-    const orders = this.recentOrders();
-    if (orders.length === 0) return '—';
-    const avg = orders.reduce((s, o) => s + (o.quantity || 1), 0) / orders.length;
-    const minutes = Math.round(avg * 8 + 20);
-    return `${minutes}m`;
+  avgTableVelocity = computed(() => {
+    const entries = this.tableVelocity();
+    if (entries.length === 0) return '—';
+    const avg = entries.reduce((s, e) => s + e.avgDurationMinutes, 0) / entries.length;
+    return `${Math.round(avg)}m`;
+  });
+  peakEfficiencyLabel = computed(() => {
+    const entries = this.peakEfficiency();
+    if (entries.length === 0) return '';
+    const best = entries.reduce((a, b) => a.totalCovers > b.totalCovers ? a : b);
+    const ampm = best.hour >= 12 ? 'PM' : 'AM';
+    const hour12 = best.hour % 12 || 12;
+    return `${hour12}${ampm}`;
   });
   occupancyPercent = computed(() => {
     const total = this.totalTables();
