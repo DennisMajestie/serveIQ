@@ -1,7 +1,7 @@
 import { Component, signal, computed, inject, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { BranchesApiService, ReportsApiService, DashboardStats } from '@serveiq/shared/data-access';
+import { RouterModule, Router } from '@angular/router';
+import { BranchesApiService, ReportsApiService, DashboardStats, UserApiService } from '@serveiq/shared/data-access';
 import { PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry } from '@serveiq/shared/models';
 import { Subscription, interval } from 'rxjs';
 
@@ -15,6 +15,8 @@ import { Subscription, interval } from 'rxjs';
 export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private branchService = inject(BranchesApiService);
   private reportsService = inject(ReportsApiService);
+  private userApi = inject(UserApiService);
+  private router = inject(Router);
 
   isLoading = signal(true);
   branchName = signal('');
@@ -36,6 +38,21 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private chartCanvas?: HTMLCanvasElement;
 
   ngOnInit() {
+    this.userApi.getMe().subscribe({
+      next: (user) => {
+        if (user.role === 'super_admin') {
+          this.router.navigate(['/app/admin/dashboard']);
+        } else {
+          this.initializeDashboard();
+        }
+      },
+      error: () => {
+        this.initializeDashboard();
+      }
+    });
+  }
+
+  private initializeDashboard() {
     this.loadBranchName();
     this.loadStats();
     this.loadPeakHours();

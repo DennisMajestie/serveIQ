@@ -36,7 +36,30 @@ interface NavItem {
           <p class="brand-subtitle">Management Portal</p>
         </div>
         <nav class="sidebar-nav">
-          <ul class="nav-list">
+          <ul class="nav-list" *ngIf="profile().role === 'super_admin'">
+
+            <li class="nav-section-label">System</li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/admin/dashboard" routerLinkActive="active">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Platform Overview</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/admin/businesses" routerLinkActive="active">
+                <span class="material-symbols-outlined">business</span>
+                <span>Businesses</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/autopilot" routerLinkActive="active">
+                <span class="material-symbols-outlined">smart_toy</span>
+                <span>Autopilot AI</span>
+              </a>
+            </li>
+          </ul>
+
+          <ul class="nav-list" *ngIf="profile().role !== 'super_admin'">
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/dashboard" routerLinkActive="active">
                 <span class="material-symbols-outlined">dashboard</span>
@@ -116,20 +139,8 @@ interface NavItem {
                 <span>Settings</span>
               </a>
             </li>
-            <li class="nav-section-label" *ngIf="profile().role === 'super_admin'">System</li>
-            <li class="nav-item" *ngIf="profile().role === 'super_admin'">
-              <a class="nav-link" routerLink="/app/admin/businesses" routerLinkActive="active">
-                <span class="material-symbols-outlined">business</span>
-                <span>Businesses</span>
-              </a>
-            </li>
-            <li class="nav-item" *ngIf="profile().role === 'super_admin'">
-              <a class="nav-link" routerLink="/app/autopilot" routerLinkActive="active">
-                <span class="material-symbols-outlined">smart_toy</span>
-                <span>Autopilot</span>
-              </a>
-            </li>
           </ul>
+
         </nav>
         <div class="sidebar-footer">
           <button class="logout-btn" (click)="logout()">

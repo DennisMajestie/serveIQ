@@ -107,8 +107,14 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./premium-dashboard/premium-dashboard.component').then(m => m.PremiumDashboardComponent)
       },
       {
+        path: 'admin/dashboard',
+        loadComponent: () => import('./admin/dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+        canActivate: [superAdminGuard]
+      },
+      {
         path: 'admin/businesses',
-        loadComponent: () => import('./admin/businesses/businesses.component').then(m => m.BusinessesComponent)
+        loadComponent: () => import('./admin/businesses/businesses.component').then(m => m.BusinessesComponent),
+        canActivate: [superAdminGuard]
       },
       {
         path: 'autopilot',
