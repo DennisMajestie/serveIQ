@@ -140,9 +140,11 @@ export const API_CONFIG = {
     // Menu extras
     menuImport: '/api/v1/menu/import',
     menuToggle: '/api/v1/menu/:id/toggle',
-    // Nemotron
-    nemotron: {
-      completions: '/v1/chat/completions',
+    // AI / Nemotron
+    ai: {
+      generateLogic: '/api/v1/ai/generate-logic',
+      analyzeApi: '/api/v1/ai/analyze-api',
+      directCompletions: '/v1/chat/completions',
     },
     // POS Terminals
     pos: {
