@@ -17,9 +17,11 @@ export class ThemePreferenceService {
   refreshFromApi(): Observable<UiThemeVariant> {
     return this.userApi.getMe().pipe(
       map(user => {
-        const variant = user.uiThemeVariant || 'current';
-        localStorage.setItem(STORAGE_KEY, variant);
-        return variant;
+        if (user.uiThemeVariant) {
+          localStorage.setItem(STORAGE_KEY, user.uiThemeVariant);
+          return user.uiThemeVariant;
+        }
+        return this.getPreference();
       }),
       catchError(() => {
         return of(this.getPreference());

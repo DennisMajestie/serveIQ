@@ -49,27 +49,21 @@ export class ProfileComponent implements OnInit {
 
   toggleTheme() {
     const newVariant: UiThemeVariant = this.uiThemeVariant === 'legacy' ? 'current' : 'legacy';
+    this.themePref.setPreference(newVariant);
     this.userService.updateMe({ uiThemeVariant: newVariant } as any).subscribe({
       next: (updated) => {
         this.user.set(updated);
-        this.themePref.setPreference(newVariant);
-        Swal.fire({
-          icon: 'success',
-          title: newVariant === 'legacy' ? 'Classic Theme' : 'Modern Theme',
-          text: 'Theme updated. Reloading...',
-          timer: 1500,
-          showConfirmButton: false
-        }).then(() => {
-          window.location.reload();
-        });
       },
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Failed',
-          text: 'Could not update theme preference.'
-        });
-      }
+      error: () => {}
+    });
+    Swal.fire({
+      icon: 'success',
+      title: newVariant === 'legacy' ? 'Classic Theme' : 'Modern Theme',
+      text: 'Theme updated. Reloading...',
+      timer: 1500,
+      showConfirmButton: false
+    }).then(() => {
+      window.location.reload();
     });
   }
 
