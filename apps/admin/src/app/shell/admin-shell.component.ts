@@ -575,7 +575,7 @@ interface NavItem {
 })
 export class AdminShellComponent implements OnInit {
   sidebarCollapsed = signal(false);
-  profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: 'owner' });
+  profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: localStorage.getItem('userRole') || 'owner' });
   hasNotifications = signal(false);
   searchControl = new FormControl('');
   searchResults = signal<SearchResult[]>([]);
@@ -599,7 +599,12 @@ export class AdminShellComponent implements OnInit {
   ngOnInit() {
     this.subService.load();
     this.userApi.getMe().subscribe({
-      next: (user: any) => this.profile.set({ fullName: user.fullName, role: user.role, avatarUrl: user.avatarUrl || user.avatar_url }),
+      next: (user: any) => {
+        const role = user.role || localStorage.getItem('userRole') || 'owner';
+        // Keep localStorage in sync with verified API response
+        if (user.role) localStorage.setItem('userRole', user.role);
+        this.profile.set({ fullName: user.fullName, role, avatarUrl: user.avatarUrl || user.avatar_url });
+      },
       error: () => {}
     });
 
