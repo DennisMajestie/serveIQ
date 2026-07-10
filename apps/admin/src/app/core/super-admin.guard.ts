@@ -10,14 +10,18 @@ export const superAdminGuard: CanActivateFn = () => {
 
   // Fast path: check localStorage role (set on login by auth.service)
   const cachedRole = localStorage.getItem('userRole');
+  if (cachedRole === 'super_admin') {
+    return true;
+  }
   if (cachedRole && cachedRole !== 'super_admin') {
     return of(router.createUrlTree(['/app/dashboard']));
   }
 
-  // Authoritative check: verify role via API
+  // Authoritative check: verify role via API (fallback when nothing cached)
   return userApi.getMe().pipe(
     map(user => {
       if (user.role === 'super_admin') {
+        localStorage.setItem('userRole', 'super_admin');
         return true;
       }
       return router.createUrlTree(['/app/dashboard']);
