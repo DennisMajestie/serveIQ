@@ -263,7 +263,7 @@ interface NavItem {
 
     /* Sidebar */
     .sidebar {
-      width: 256px;
+      width: 280px;
       height: 100vh;
       position: sticky;
       top: 0;
@@ -278,6 +278,7 @@ interface NavItem {
 
     .sidebar-header {
       padding: 32px 24px;
+      flex-shrink: 0;
     }
 
     .brand-name {
@@ -298,6 +299,8 @@ interface NavItem {
 
     .sidebar-nav {
       flex: 1;
+      overflow-y: auto;
+      min-height: 0;
     }
 
     .nav-list {
@@ -353,6 +356,7 @@ interface NavItem {
     .sidebar-footer {
       padding: 24px;
       margin-top: auto;
+      flex-shrink: 0;
     }
 
     .logout-btn {
