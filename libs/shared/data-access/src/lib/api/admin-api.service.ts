@@ -19,13 +19,12 @@ export interface AdminBusiness {
   is_active: boolean;
   created_at: string;
   branches?: { id: string; name: string }[];
-  owner?: { id: string; full_name: string; email: string };
+  owner?: { id: string; full_name?: string; fullName?: string; email?: string };
 
   // camelCase aliases (optional) used after client-side conversion
   subscriptionPlan?: string;
   isActive?: boolean;
   createdAt?: string;
-  owner?: { id: string; full_name?: string; fullName?: string; email?: string };
 }
 
 export interface AdminStats {
