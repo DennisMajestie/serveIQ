@@ -26,7 +26,7 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
           </div>
           <div class="stat-content">
             <p class="stat-label">Total Businesses</p>
-            <p class="stat-value">{{ stats()?.total_businesses }}</p>
+            <p class="stat-value">{{ stats()?.totalBusinesses ?? stats()?.total_businesses }}</p>
           </div>
         </article>
         <article class="stat-card">
@@ -35,7 +35,7 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
           </div>
           <div class="stat-content">
             <p class="stat-label">Active</p>
-            <p class="stat-value">{{ stats()?.active_businesses }}</p>
+            <p class="stat-value">{{ stats()?.activeBusinesses ?? stats()?.active_businesses }}</p>
           </div>
         </article>
         <article class="stat-card">
@@ -44,7 +44,7 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
           </div>
           <div class="stat-content">
             <p class="stat-label">Branches</p>
-            <p class="stat-value">{{ stats()?.total_branches }}</p>
+            <p class="stat-value">{{ stats()?.totalBranches ?? stats()?.total_branches }}</p>
           </div>
         </article>
         <article class="stat-card">
@@ -53,7 +53,7 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
           </div>
           <div class="stat-content">
             <p class="stat-label">Waiters</p>
-            <p class="stat-value">{{ stats()?.total_waiters }}</p>
+            <p class="stat-value">{{ stats()?.totalWaiters ?? stats()?.total_waiters }}</p>
           </div>
         </article>
       </section>
@@ -86,12 +86,12 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
                   </div>
                 </td>
                 <td><span class="type-pill">{{ biz.type }}</span></td>
-                <td>{{ biz.owner?.full_name || '—' }}</td>
+                <td>{{ biz.owner?.fullName ?? biz.owner?.full_name || '—' }}</td>
                 <td>{{ biz.branches?.length || 0 }}</td>
-                <td>{{ biz.subscription_plan }}</td>
+                <td>{{ biz.subscriptionPlan ?? biz.subscription_plan }}</td>
                 <td>
-                  <span class="status-badge" [class.active]="biz.is_active" [class.inactive]="!biz.is_active">
-                    {{ biz.is_active ? 'Active' : 'Inactive' }}
+                  <span class="status-badge" [class.active]="(biz.isActive ?? biz.is_active)" [class.inactive]="!(biz.isActive ?? biz.is_active)">
+                    {{ (biz.isActive ?? biz.is_active) ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
                 <td class="cell-actions">
@@ -186,7 +186,12 @@ export class BusinessesComponent implements OnInit {
     this.isLoading.set(true);
     this.adminApi.listBusinesses().subscribe({
       next: (res) => {
-        this.businesses.set(Array.isArray(res.data) ? res.data : []);
+        // `BaseApiService` may unwrap nested `data` and return either an array
+        // or an object like `{ data: [...], meta: {...} }`. Handle both shapes.
+        const list = Array.isArray(res)
+          ? res
+          : (res && Array.isArray((res as any).data) ? (res as any).data : []);
+        this.businesses.set(list);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
@@ -197,7 +202,7 @@ export class BusinessesComponent implements OnInit {
     this.adminApi.toggleBusinessActive(biz.id).subscribe({
       next: (updated) => {
         this.businesses.update(list =>
-          list.map(b => b.id === updated.id ? { ...b, is_active: updated.is_active } : b)
+          list.map(b => b.id === updated.id ? { ...b, ...updated } : b)
         );
       },
     });
