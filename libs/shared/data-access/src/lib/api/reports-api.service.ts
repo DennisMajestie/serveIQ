@@ -36,8 +36,12 @@ export class ReportsApiService extends BaseApiService {
           const avgBill = (res.averageBillKobo ?? res.average_bill_kobo) as number | undefined;
           const breakdown = (res.breakdownByMethod ?? res.breakdown_by_method) as Record<string, number> | undefined;
 
+          // Use a single ISO date string so Angular's DatePipe can parse it.
+          // Prefer `dateFrom` when available, otherwise `dateTo`, otherwise today.
+          const isoDate = (dateFrom ?? dateTo) ?? new Date().toISOString();
+
           const entry: SalesEntry = {
-            date: dateFrom && dateTo ? `${dateFrom} - ${dateTo}` : (dateFrom ?? dateTo ?? ''),
+            date: isoDate,
             revenueKobo: totalRevenue ?? 0,
             orderCount: transactionCount ?? 0,
             paymentMethod: breakdown ? Object.keys(breakdown).join(',') : (paymentMethod ?? 'all'),
