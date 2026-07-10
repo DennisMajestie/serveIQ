@@ -1,6 +1,7 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService } from '@serveiq/shared/data-access';
 import { Branch, User, Business } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
@@ -20,6 +21,7 @@ export class SettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
   private businessApi = inject(BusinessApiService);
+  private router = inject(Router);
   private uploadService = inject(UploadApiService);
   activeSection = signal<Section>('branch-setup');
   branches = signal<Branch[]>([]);
@@ -293,8 +295,31 @@ export class SettingsComponent implements OnInit {
   }
 
   setActiveBranch(branchId: string) {
-    this.activeBranchId.set(branchId);
-    localStorage.setItem('activeBranchId', branchId);
+    const branch = this.branches().find(b => b.id === branchId);
+    const branchName = branch?.name || 'All Branches';
+    Swal.fire({
+      title: 'Switch Branch?',
+      text: `Switch to ${branchName}? All views will now show data for this branch.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Switch',
+      cancelButtonText: 'Cancel',
+    }).then(result => {
+      if (!result.isConfirmed) {
+        this.activeBranchId.set(localStorage.getItem('branchId') || '');
+        return;
+      }
+      this.activeBranchId.set(branchId);
+      localStorage.setItem('activeBranchId', branchId);
+      if (branchId) {
+        localStorage.setItem('branchId', branchId);
+        localStorage.setItem('branchName', branchName);
+      } else {
+        localStorage.removeItem('branchId');
+        localStorage.removeItem('branchName');
+      }
+      this.router.navigate(['/app/dashboard']);
+    });
   }
 
   copyBranchId(branchId: string) {
