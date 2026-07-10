@@ -20,7 +20,9 @@ export const superAdminGuard: CanActivateFn = () => {
   // Authoritative check: verify role via API (fallback when nothing cached)
   return userApi.getMe().pipe(
     map(user => {
-      if (user.role === 'super_admin') {
+      let role: string = user.role;
+      if (role === 'superadmin') role = 'super_admin';
+      if (role === 'super_admin') {
         localStorage.setItem('userRole', 'super_admin');
         return true;
       }

@@ -618,12 +618,20 @@ export class AdminShellComponent implements OnInit {
     this.subService.load();
     this.userApi.getMe().subscribe({
       next: (user: any) => {
-        const role = user.role || localStorage.getItem('userRole') || 'owner';
+        // Normalise backend role values: 'superadmin' → 'super_admin'
+        let apiRole = user.role;
+        if (apiRole === 'superadmin') apiRole = 'super_admin';
+        const role = apiRole || localStorage.getItem('userRole') || 'owner';
         // Keep localStorage in sync with verified API response
-        if (user.role) localStorage.setItem('userRole', user.role);
+        if (apiRole) localStorage.setItem('userRole', apiRole);
         this.profile.set({ fullName: user.fullName, role, avatarUrl: user.avatarUrl || user.avatar_url });
       },
-      error: () => {}
+      error: () => {
+        const cachedRole = localStorage.getItem('userRole');
+        if (cachedRole) {
+          this.profile.update(p => ({ ...p, role: cachedRole }));
+        }
+      }
     });
 
     this.notificationsApi.list().subscribe({

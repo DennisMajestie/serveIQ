@@ -86,7 +86,8 @@ export class AuthService {
                              data.user?.business_id;
 
           // Store user role for fast client-side role-based routing
-          const userRole = data.user?.role || data.role;
+          let userRole = data.user?.role || data.role;
+          if (userRole === 'superadmin') userRole = 'super_admin';
           if (userRole) {
             localStorage.setItem('userRole', userRole);
           }

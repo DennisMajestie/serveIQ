@@ -40,7 +40,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.userApi.getMe().subscribe({
       next: (user) => {
-        if (user.role === 'super_admin') {
+        let role: string = user.role;
+        if (role === 'superadmin') role = 'super_admin';
+        if (role === 'super_admin') {
           this.router.navigate(['/app/admin/dashboard']);
         } else {
           this.initializeDashboard();
