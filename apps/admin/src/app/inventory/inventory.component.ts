@@ -198,9 +198,11 @@ export class InventoryComponent implements OnInit {
           next: (movements) => {
             const rows = (Array.isArray(movements) ? movements : []).map((m: any) => {
               const changeCls = m.quantityChange < 0 ? 'color:#ef4444' : 'color:#22c55e';
+              const costStr = m.costAtPurchaseKobo != null ? `@ ${this.formatCurrency(m.costAtPurchaseKobo)}` : '';
               return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
                 <span style="${changeCls}">${m.quantityChange >= 0 ? '+' : ''}${m.quantityChange} &rarr; ${m.quantityAfter}</span>
                 <span style="color:#94a3b8;">${(m.type || '').replace('_', ' ')}</span>
+                <span style="color:#94a3b8;">${costStr}</span>
                 <span style="color:#94a3b8;">${m.notes || ''}</span>
                 <span style="color:#94a3b8;font-size:0.8rem;">${new Date(m.createdAt).toLocaleDateString()}</span>
               </div>`;

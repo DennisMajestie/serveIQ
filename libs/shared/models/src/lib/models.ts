@@ -359,12 +359,12 @@ export interface StockMovement {
   id: string;
   branchId: string;
   menuItemId: string;
-  ingredientId?: string;
   type: string;
   quantityChange: number;
   quantityAfter: number;
   orderId?: string;
   notes?: string;
+  costAtPurchaseKobo?: number;
   createdAt: Date;
 }
 
