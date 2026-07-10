@@ -381,7 +381,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     
     this.adminApi.listBusinesses().subscribe({
       next: res => {
-        this.businesses.set(Array.isArray(res.data) ? res.data : []);
+        const businesses = Array.isArray(res)
+          ? res
+          : (res && Array.isArray((res as any).data) ? (res as any).data : []);
+        this.businesses.set(businesses);
         this.loading.set(false);
       },
       error: () => this.loading.set(false)
