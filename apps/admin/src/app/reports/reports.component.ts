@@ -122,7 +122,7 @@ import Swal from 'sweetalert2';
               </thead>
               <tbody>
                 <tr *ngFor="let entry of velocityData()">
-                  <td>{{ entry.tableNumber || 'Table ' + entry.tableId?.slice(0, 8) }}</td>
+                  <td>{{ entry.tableNumber || 'Table ' + entry.tableId.slice(0, 8) }}</td>
                   <td>{{ entry.avgDurationMinutes }} min</td>
                   <td>{{ entry.totalCovers }}</td>
                   <td>—</td>

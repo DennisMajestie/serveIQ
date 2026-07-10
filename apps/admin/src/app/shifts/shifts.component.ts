@@ -29,6 +29,10 @@ export class ShiftsComponent implements OnInit {
   closeCash = signal<number>(0);
   closeNote = signal('');
 
+  get closeCashKobo(): number {
+    return Math.round(this.closeCash() * 100);
+  }
+
   varianceExplanationFor(shift: Shift, actualKoboOverride?: number): string {
     const actualKobo = actualKoboOverride ?? shift.actualCashKobo ?? 0;
     const expectedKobo = shift.expectedCashKobo || 0;
