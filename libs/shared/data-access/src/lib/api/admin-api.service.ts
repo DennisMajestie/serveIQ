@@ -69,10 +69,8 @@ export class AdminApiService extends BaseApiService {
     return this.patch<AdminBusiness>(buildUrl(API_CONFIG.endpoints.admin.business, { id }), data);
   }
 
-  toggleBusinessActive(id: string): Observable<AdminBusiness> {
-    return this.post<AdminBusiness>(
-      buildUrl(API_CONFIG.endpoints.admin.toggleBusinessActive, { id }),
-    );
+  toggleBusinessActive(id: string, isActive: boolean): Observable<AdminBusiness> {
+    return this.updateBusiness(id, { is_active: isActive } as Partial<AdminBusiness>);
   }
 
   getStats(): Observable<AdminStats> {

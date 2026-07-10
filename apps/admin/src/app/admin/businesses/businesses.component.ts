@@ -199,7 +199,8 @@ export class BusinessesComponent implements OnInit {
   }
 
   toggleActive(biz: AdminBusiness) {
-    this.adminApi.toggleBusinessActive(biz.id).subscribe({
+    const newActiveState = !(biz.isActive ?? biz.is_active);
+    this.adminApi.toggleBusinessActive(biz.id, newActiveState).subscribe({
       next: (updated) => {
         this.businesses.update(list =>
           list.map(b => b.id === updated.id ? { ...b, ...updated } : b)
