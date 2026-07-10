@@ -59,7 +59,12 @@ import Swal from 'sweetalert2';
           <h3>{{ subService.subscription() ? 'Upgrade Your Plan' : 'Choose a Plan' }}</h3>
           <p class="plans-subtitle" *ngIf="!subService.subscription()">Select a plan to start using ServeIQ</p>
 
-          <div class="plans-grid">
+          <div *ngIf="subService.plansLoading()" class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading plans...</p>
+          </div>
+
+          <div class="plans-grid" *ngIf="!subService.plansLoading()">
             <div class="plan-card" *ngFor="let plan of subService.plans()" [class.featured]="plan.name === 'Pro'" [class.current-plan]="subService.subscription()?.plan?.name === plan.name">
               <div class="plan-name">{{ plan.name }}</div>
               <div class="plan-price">
@@ -141,6 +146,7 @@ export class BillingComponent implements OnInit {
 
   ngOnInit() {
     this.subService.load();
+    this.subService.loadPlans();
   }
 
   selectPlan(plan: any): void {
@@ -205,10 +211,10 @@ export class BillingComponent implements OnInit {
         this.subService.cancel().subscribe({
           next: () => {
             Swal.fire({ icon: 'success', title: 'Subscription canceled' });
-    this.subService.load();
-    this.subService.loadPlans();
+            this.subService.load();
+            this.subService.loadPlans();
           },
-            error: () => Swal.fire({ icon: 'error', title: 'Failed to cancel' }),
+          error: () => Swal.fire({ icon: 'error', title: 'Failed to cancel' }),
         });
       }
     });

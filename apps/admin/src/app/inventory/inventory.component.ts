@@ -1,9 +1,10 @@
 import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { InventoryApiService, SuppliersApiService } from '@serveiq/shared/data-access';
-import { Ingredient, IngredientUnit, AddStockRequest, CreateIngredientRequest, UpdateIngredientRequest, Supplier } from '@serveiq/shared/models';
+import { MenuItem, Supplier, RestockRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -16,12 +17,9 @@ import Swal from 'sweetalert2';
 export class InventoryComponent implements OnInit {
   private inventoryApi = inject(InventoryApiService);
   private suppliersApi = inject(SuppliersApiService);
+  private router = inject(Router);
 
-  IngredientUnit = IngredientUnit;
-  unitOptions = Object.values(IngredientUnit);
-  discreteUnits = new Set([IngredientUnit.PACK, IngredientUnit.CRATE]);
-
-  inventory = signal<Ingredient[]>([]);
+  inventory = signal<MenuItem[]>([]);
   suppliers = signal<Supplier[]>([]);
   isLoading = signal(true);
   lowStockOnly = signal(false);
@@ -32,27 +30,27 @@ export class InventoryComponent implements OnInit {
     return items.filter(i => i.quantityInStock <= i.reorderLevel);
   });
 
-  // Form modal
+  // Form modal (create / edit) — values in Naira, converted to kobo on submit
   showFormModal = signal(false);
   isEditing = signal(false);
   formSubmitting = signal(false);
   formError = signal('');
   formName = signal('');
-  formUnit = signal<IngredientUnit>(IngredientUnit.KG);
-  formQuantity = signal(0);
+  formQuantityInStock = signal(0);
   formReorderLevel = signal(0);
-  formConversionToBase = signal<number | undefined>(undefined);
-  formBaseUnit = signal<IngredientUnit | undefined>(undefined);
-  formCostPerUnit = signal<number | undefined>(undefined);
-  formMenuItemId = signal<string | undefined>(undefined);
+  formCostPriceNaira = signal<number | undefined>(undefined);
+  formSellingPriceNaira = signal<number | undefined>(undefined);
   formSupplierId = signal<string | undefined>(undefined);
+  formTrackStock = signal(true);
+  formBarcode = signal('');
   editId = signal('');
 
-  // Stock modal
-  showAddStockModal = signal(false);
-  selectedIngredient = signal<Ingredient | null>(null);
-  stockQuantity = signal(0);
-  stockNotes = signal('');
+  // Restock modal
+  showRestockModal = signal(false);
+  selectedItem = signal<MenuItem | null>(null);
+  restockQuantity = signal(0);
+  restockCostPriceNaira = signal<number | undefined>(undefined);
+  restockBarcode = signal('');
 
   ngOnInit() {
     this.loadInventory();
@@ -71,46 +69,52 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  isLowStock(item: Ingredient): boolean {
+  isLowStock(item: MenuItem): boolean {
     return item.quantityInStock <= item.reorderLevel;
   }
 
-  getLinkBadge(item: Ingredient): { text: string; cssClass: string } | null {
-    return item.menuItemId
-      ? { text: 'Direct-linked', cssClass: 'badge-direct' }
-      : { text: 'Used in recipes', cssClass: 'badge-recipe' };
-  }
-
-  quantityClass(item: Ingredient): string {
-    return item.quantityInStock < 0 ? 'stat-value stat-negative' : 'stat-value';
-  }
-
-  // Create / Edit
+  // Create / Edit — values in Naira, converted to kobo for API
   openCreateModal() {
-    this.formName.set(''); this.formUnit.set(IngredientUnit.KG);
-    this.formQuantity.set(0); this.formReorderLevel.set(0);
-    this.formConversionToBase.set(undefined); this.formBaseUnit.set(undefined);
-    this.formCostPerUnit.set(undefined); this.formMenuItemId.set(undefined);
-    this.formSupplierId.set(undefined); this.editId.set('');
-    this.formError.set(''); this.isEditing.set(false); this.showFormModal.set(true);
+    this.formName.set('');
+    this.formQuantityInStock.set(0);
+    this.formReorderLevel.set(0);
+    this.formCostPriceNaira.set(undefined);
+    this.formSellingPriceNaira.set(undefined);
+    this.formSupplierId.set(undefined);
+    this.formTrackStock.set(true);
+    this.formBarcode.set('');
+    this.editId.set('');
+    this.formError.set('');
+    this.isEditing.set(false);
+    this.showFormModal.set(true);
   }
 
-  openEditModal(item: Ingredient) {
-    this.editId.set(item.id); this.formName.set(item.name);
-    this.formUnit.set(item.unit); this.formQuantity.set(item.quantityInStock);
+  openEditModal(item: MenuItem) {
+    this.editId.set(item.id);
+    this.formName.set(item.name);
+    this.formQuantityInStock.set(item.quantityInStock);
     this.formReorderLevel.set(item.reorderLevel);
-    this.formConversionToBase.set(item.conversionToBase);
-    this.formBaseUnit.set(item.baseUnit); this.formCostPerUnit.set(item.costPerUnit);
-    this.formMenuItemId.set(item.menuItemId); this.formSupplierId.set(item.supplierId);
-    this.formError.set(''); this.isEditing.set(true); this.showFormModal.set(true);
+    this.formCostPriceNaira.set(item.costPriceKobo != null ? item.costPriceKobo / 100 : undefined);
+    this.formSellingPriceNaira.set(item.priceKobo != null ? item.priceKobo / 100 : undefined);
+    this.formSupplierId.set(item.supplierId);
+    this.formTrackStock.set(item.trackStock);
+    this.formBarcode.set(item.barcode || '');
+    this.formError.set('');
+    this.isEditing.set(true);
+    this.showFormModal.set(true);
   }
 
   closeFormModal() { this.showFormModal.set(false); this.formError.set(''); }
 
+  private nairaToKobo(naira?: number): number | undefined {
+    return naira != null ? Math.round(naira * 100) : undefined;
+  }
+
   submitForm() {
     const name = this.formName().trim();
     if (!name) return;
-    this.formSubmitting.set(true); this.formError.set('');
+    this.formSubmitting.set(true);
+    this.formError.set('');
 
     const done = () => this.formSubmitting.set(false);
     const onError = (err: HttpErrorResponse) => {
@@ -122,26 +126,23 @@ export class InventoryComponent implements OnInit {
       }
     };
 
+    const payload: any = {
+      name,
+      quantityInStock: this.formQuantityInStock(),
+      reorderLevel: this.formReorderLevel(),
+      costPriceKobo: this.nairaToKobo(this.formCostPriceNaira()),
+      priceKobo: this.nairaToKobo(this.formSellingPriceNaira()),
+      supplierId: this.formSupplierId() ?? null,
+      trackStock: this.formTrackStock(),
+      barcode: this.formBarcode() || undefined,
+    };
+
     if (this.isEditing()) {
-      const payload: UpdateIngredientRequest = {
-        name, unit: this.formUnit(),
-        quantityInStock: this.formQuantity(), reorderLevel: this.formReorderLevel(),
-        conversionToBase: this.formConversionToBase(), baseUnit: this.formBaseUnit(),
-        costPerUnit: this.formCostPerUnit(), menuItemId: this.formMenuItemId(),
-        supplierId: this.formSupplierId() ?? null,
-      };
       this.inventoryApi.update(this.editId(), payload).subscribe({
         next: (updated) => { done(); this.inventory.update(is => is.map(i => i.id === updated.id ? updated : i)); this.closeFormModal(); },
         error: onError,
       });
     } else {
-      const payload: CreateIngredientRequest = {
-        name, unit: this.formUnit(),
-        quantityInStock: this.formQuantity(), reorderLevel: this.formReorderLevel(),
-        conversionToBase: this.formConversionToBase(), baseUnit: this.formBaseUnit(),
-        costPerUnit: this.formCostPerUnit(), menuItemId: this.formMenuItemId(),
-        supplierId: this.formSupplierId(),
-      };
       this.inventoryApi.create(payload).subscribe({
         next: (created) => { done(); this.inventory.update(is => [...is, created]); this.closeFormModal(); },
         error: onError,
@@ -149,57 +150,57 @@ export class InventoryComponent implements OnInit {
     }
   }
 
-  onUnitChange(unit: IngredientUnit) {
-    this.formUnit.set(unit);
-    if (!this.discreteUnits.has(unit)) {
-      this.formConversionToBase.set(undefined);
-      this.formBaseUnit.set(undefined);
-    }
+  // Restock — values in Naira, converted to kobo for API
+  openRestockModal(item: MenuItem) {
+    this.selectedItem.set(item);
+    this.restockQuantity.set(0);
+    this.restockCostPriceNaira.set(undefined);
+    this.restockBarcode.set('');
+    this.showRestockModal.set(true);
   }
 
-  // Stock movement
-  openStockModal(ingredient: Ingredient) {
-    this.selectedIngredient.set(ingredient);
-    this.stockQuantity.set(0); this.stockNotes.set('');
-    this.showAddStockModal.set(true);
+  closeRestockModal() {
+    this.showRestockModal.set(false);
+    this.selectedItem.set(null);
+    this.restockQuantity.set(0);
+    this.restockCostPriceNaira.set(undefined);
+    this.restockBarcode.set('');
   }
 
-  closeStockModal() {
-    this.showAddStockModal.set(false);
-    this.selectedIngredient.set(null);
-    this.stockQuantity.set(0); this.stockNotes.set('');
-  }
-
-  addStock() {
-    if (!this.selectedIngredient() || this.stockQuantity() <= 0) {
-      Swal.fire({ icon: 'error', title: 'Stock quantity must be greater than 0' });
+  submitRestock() {
+    if (!this.selectedItem() || this.restockQuantity() <= 0) {
+      Swal.fire({ icon: 'error', title: 'Quantity must be greater than 0' });
       return;
     }
-    const payload: AddStockRequest = { quantity: this.stockQuantity(), notes: this.stockNotes() || undefined };
-    this.inventoryApi.addStock(this.selectedIngredient()!.id, payload).subscribe({
-      next: () => {
+    const payload: RestockRequest = {
+      added_quantity: this.restockQuantity(),
+      cost_price_kobo: this.nairaToKobo(this.restockCostPriceNaira()),
+      barcode: this.restockBarcode() || undefined,
+    };
+    this.inventoryApi.restock(this.selectedItem()!.id, payload).subscribe({
+      next: (updated) => {
         Swal.fire({ icon: 'success', title: 'Stock Added', timer: 1500, showConfirmButton: false });
-        this.closeStockModal();
-        this.loadInventory();
+        this.inventory.update(is => is.map(i => i.id === updated.id ? updated : i));
+        this.closeRestockModal();
       },
-      error: () => Swal.fire({ icon: 'error', title: 'Failed to add stock' })
+      error: () => Swal.fire({ icon: 'error', title: 'Failed to restock' })
     });
   }
 
-  viewMovements(ingredient: Ingredient) {
-    const qtyStyle = ingredient.quantityInStock < 0 ? 'color:#ef4444;font-weight:700' : '';
+  // Movements history
+  viewMovements(item: MenuItem) {
     Swal.fire({
       title: 'Stock Movements',
       html: '<div style="max-height:300px;overflow-y:auto;"><p style="text-align:center;color:#94a3b8;">Loading...</p></div>',
       showConfirmButton: false,
       didOpen: () => {
-        this.inventoryApi.getMovements(ingredient.id).subscribe({
+        this.inventoryApi.getMovements(item.id).subscribe({
           next: (movements) => {
-            const rows = (Array.isArray(movements) ? movements : []).map(m => {
+            const rows = (Array.isArray(movements) ? movements : []).map((m: any) => {
               const changeCls = m.quantityChange < 0 ? 'color:#ef4444' : 'color:#22c55e';
               return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                <span style="${changeCls}">${m.quantityChange >= 0 ? '+' : ''}${m.quantityChange} \u2192 ${m.quantityAfter}</span>
-                <span style="color:#94a3b8;">${m.type.replace('_', ' ')}</span>
+                <span style="${changeCls}">${m.quantityChange >= 0 ? '+' : ''}${m.quantityChange} &rarr; ${m.quantityAfter}</span>
+                <span style="color:#94a3b8;">${(m.type || '').replace('_', ' ')}</span>
                 <span style="color:#94a3b8;">${m.notes || ''}</span>
                 <span style="color:#94a3b8;font-size:0.8rem;">${new Date(m.createdAt).toLocaleDateString()}</span>
               </div>`;
@@ -208,9 +209,9 @@ export class InventoryComponent implements OnInit {
               html: `<div style="max-height:300px;overflow-y:auto;">
                 ${rows || '<p style="text-align:center;color:#94a3b8;">No movements recorded yet.</p>'}
                 <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);">
-                  <p><strong>Item:</strong> ${ingredient.name}</p>
-                  <p><strong>Current Stock:</strong> <span style="${qtyStyle}">${ingredient.quantityInStock}</span> ${ingredient.unit}</p>
-                  <p><strong>Reorder Level:</strong> ${ingredient.reorderLevel}</p>
+                  <p><strong>Item:</strong> ${item.name}</p>
+                  <p><strong>Current Stock:</strong> ${item.quantityInStock}</p>
+                  <p><strong>Reorder Level:</strong> ${item.reorderLevel}</p>
                 </div>
               </div>`,
               showConfirmButton: true, confirmButtonColor: '#F97316'
@@ -222,9 +223,9 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  deleteIngredient(item: Ingredient) {
+  deleteItem(item: MenuItem) {
     Swal.fire({
-      title: 'Delete ingredient?',
+      title: 'Delete item?',
       text: `Remove "${item.name}" from inventory?`,
       icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete',
     }).then(r => {
@@ -248,5 +249,10 @@ export class InventoryComponent implements OnInit {
     return (amount / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  trackById(_: number, item: Ingredient) { return item.id; }
+  // Navigate to full-page views
+  openAudit() { this.router.navigate(['/app/inventory/audit']); }
+  openReconcile() { this.router.navigate(['/app/inventory/reconcile']); }
+  openDailyTally() { this.router.navigate(['/app/inventory/daily-tally']); }
+
+  trackById(_: number, item: MenuItem | any) { return item.id; }
 }

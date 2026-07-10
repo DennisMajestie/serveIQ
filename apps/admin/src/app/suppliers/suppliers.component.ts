@@ -30,6 +30,8 @@ export class SuppliersComponent implements OnInit {
   formEmail = signal('');
   formAddress = signal('');
   formNote = signal('');
+  formError = signal('');
+  formSubmitting = signal(false);
 
   ngOnInit() {
     this.loadSuppliers();
@@ -57,6 +59,7 @@ export class SuppliersComponent implements OnInit {
     this.formEmail.set('');
     this.formAddress.set('');
     this.formNote.set('');
+    this.formError.set('');
     this.showCreateModal.set(true);
   }
 
@@ -68,6 +71,7 @@ export class SuppliersComponent implements OnInit {
     this.formEmail.set(supplier.email || '');
     this.formAddress.set(supplier.address || '');
     this.formNote.set(supplier.note || '');
+    this.formError.set('');
     this.showEditModal.set(true);
   }
 
@@ -78,7 +82,12 @@ export class SuppliersComponent implements OnInit {
   }
 
   saveSupplier() {
-    if (!this.formName()) return;
+    if (!this.formName()) {
+      this.formError.set('Name is required');
+      return;
+    }
+    this.formSubmitting.set(true);
+    this.formError.set('');
 
     const payload: CreateSupplierRequest = {
       name: this.formName(),
@@ -93,13 +102,30 @@ export class SuppliersComponent implements OnInit {
       ? this.suppliersApi.update(this.editingSupplier()!.id, payload)
       : this.suppliersApi.create(payload);
 
-    this.suppliersApi.list().subscribe({
-      next: (data) => this.suppliers.set(data),
-      error: () => Swal.fire({ icon: 'error', title: 'Failed to save supplier' })
+    request.subscribe({
+      next: (saved) => {
+        this.formSubmitting.set(false);
+        if (this.editingSupplier()) {
+          this.suppliers.update(list => list.map(s => s.id === saved.id ? saved : s));
+        } else {
+          this.suppliers.update(list => [...list, saved]);
+        }
+        this.closeModals();
+        this.saveSwal(this.editingSupplier() ? 'Supplier Updated' : 'Supplier Created');
+      },
+      error: (err) => {
+        this.formSubmitting.set(false);
+        const status = err.status;
+        if (status === 422 && err.error?.errors) {
+          const fieldErrors = Object.values(err.error.errors).flat().join('; ');
+          this.formError.set(fieldErrors || 'Validation error');
+        } else if (status === 400 && err.error?.message) {
+          this.formError.set(err.error.message);
+        } else {
+          Swal.fire({ icon: 'error', title: 'Failed to save', text: err.error?.message || 'Please try again.' });
+        }
+      }
     });
-
-    this.closeModals();
-    this.saveSwal(this.editingSupplier() ? 'Supplier Updated' : 'Supplier Created');
   }
 
   deleteSupplier(supplier: Supplier) {

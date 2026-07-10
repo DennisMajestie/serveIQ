@@ -68,6 +68,7 @@
       </button>
     </div>
     <div class="modal-body">
+      <div class="form-error" *ngIf="formError()">{{ formError() }}</div>
       <div class="form-group">
         <label class="form-label" for="name">Name *</label>
         <input type="text" id="name" class="form-input" [value]="formName()" (change)="formName.set($any($event.target).value)">
@@ -95,7 +96,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" (click)="closeModals()">Cancel</button>
-      <button class="btn-primary" (click)="saveSupplier()">Save</button>
+      <button class="btn-primary" (click)="saveSupplier()" [disabled]="formSubmitting()">{{ formSubmitting() ? 'Saving...' : 'Save' }}</button>
     </div>
   </div>
 </div>
@@ -110,6 +111,7 @@
       </button>
     </div>
     <div class="modal-body">
+      <div class="form-error" *ngIf="formError()">{{ formError() }}</div>
       <div class="form-group">
         <label class="form-label" for="edit-name">Name *</label>
         <input type="text" id="edit-name" class="form-input" [value]="formName()" (change)="formName.set($any($event.target).value)">
@@ -137,7 +139,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" (click)="closeModals()">Cancel</button>
-      <button class="btn-primary" (click)="saveSupplier()">Save</button>
+      <button class="btn-primary" (click)="saveSupplier()" [disabled]="formSubmitting()">{{ formSubmitting() ? 'Saving...' : 'Save' }}</button>
     </div>
   </div>
 </div>

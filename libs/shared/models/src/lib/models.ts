@@ -58,6 +58,12 @@ export interface MenuItem {
   barcode?: string;
   imageUrl?: string;
   isAvailable: boolean;
+  quantityInStock: number;
+  reorderLevel: number;
+  costPriceKobo?: number;
+  trackStock: boolean;
+  supplierId?: string;
+  supplier?: Supplier;
 }
 
 export type TableStatus = 'available' | 'occupied' | 'reserved';
@@ -206,6 +212,12 @@ export interface CreateMenuItemRequest {
   priceKobo: number;
   unit?: string;
   imageUrl?: string;
+  quantityInStock?: number;
+  reorderLevel?: number;
+  costPriceKobo?: number;
+  trackStock?: boolean;
+  supplierId?: string;
+  barcode?: string;
 }
 
 export interface CreateTableRequest {
@@ -342,116 +354,81 @@ export interface CloseShiftRequest {
   note?: string;
 }
 
-// ===== Ingredient =====
-export enum IngredientUnit {
-  KG = 'kg',
-  G = 'g',
-  L = 'l',
-  ML = 'ml',
-  PIECE = 'piece',
-  DOZEN = 'dozen',
-  PACK = 'pack',
-  CRATE = 'crate',
-}
-
-export interface Ingredient {
-  id: string;
-  branchId: string;
-  name: string;
-  unit: IngredientUnit;
-  quantityInStock: number;
-  reorderLevel: number;
-  conversionToBase?: number;
-  baseUnit?: IngredientUnit;
-  costPerUnit?: number;
-  menuItemId?: string;
-  supplierId?: string;
-  supplier?: Supplier;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
-}
-
-export interface CreateIngredientRequest {
-  name: string;
-  unit: IngredientUnit;
-  quantityInStock: number;
-  reorderLevel: number;
-  conversionToBase?: number;
-  baseUnit?: IngredientUnit;
-  costPerUnit?: number;
-  menuItemId?: string;
-  supplierId?: string;
-}
-
-export interface UpdateIngredientRequest {
-  name?: string;
-  unit?: IngredientUnit;
-  quantityInStock?: number;
-  reorderLevel?: number;
-  conversionToBase?: number;
-  baseUnit?: IngredientUnit;
-  costPerUnit?: number;
-  menuItemId?: string;
-  supplierId?: string | null;
-}
-
-export enum StockMovementType {
-  MANUAL_ADJUSTMENT = 'manual_adjustment',
-  ORDER_CONSUMPTION = 'order_consumption',
-  WASTE = 'waste',
-  TRANSFER = 'transfer',
-  PURCHASE = 'purchase',
-}
-
+// ===== Stock Movement (read-only from API) =====
 export interface StockMovement {
   id: string;
   branchId: string;
-  ingredientId: string;
-  type: StockMovementType;
+  menuItemId: string;
+  ingredientId?: string;
+  type: string;
   quantityChange: number;
   quantityAfter: number;
   orderId?: string;
-  referenceId?: string;
   notes?: string;
   createdAt: Date;
 }
 
-export interface AddStockRequest {
-  quantity: number;
-  notes?: string;
+// ===== Inventory (menu-item stock model) =====
+export interface RestockRequest {
+  added_quantity: number;
+  cost_price_kobo?: number;
+  barcode?: string;
 }
 
-export interface BestsellerReport {
-  bestsellers: Array<{ menuItemId: string; name: string; quantitySold: number; revenueKobo: number }>;
-  slowMovers: Array<{ menuItemId: string; name: string; quantitySold: number }>;
-  outOfStock: Array<{ menuItemId: string; name: string }>;
-}
-
-// ===== Recipe / BOM =====
-export interface RecipeItem {
+export interface AuditEntry {
   id: string;
+  itemName: string;
+  initialStock: number;
+  totalRestocked: number;
+  totalIn: number;
+  totalSold: number;
+  bookBalance: number;
+  actualBalance: number;
+  slippage: number;
+  lastRestockDate: string;
+  status: 'Balanced' | 'Shortage' | 'Surplus' | 'Unreviewed';
+}
+
+export interface ReconcileRequest {
+  reconciliation_id: string;
+  counts: Array<{ menu_item_id: string; physical_count: number }>;
+}
+
+export interface ReconcileAdjustment {
   menuItemId: string;
-  ingredientId: string;
-  ingredient?: Ingredient;
-  quantityRequired: number;
-  unit: IngredientUnit;
-  wastePercent?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  delta: number;
+  movementId: string;
 }
 
-export interface AddRecipeItemRequest {
-  ingredientId: string;
-  quantityRequired: number;
-  unit: IngredientUnit;
-  wastePercent?: number;
+export interface DailyTallySummary {
+  date: string;
+  summaryStatement: string;
+  totalOpeningValue: number;
+  totalRevenue: number;
+  totalClosingValue: number;
+  totalItemsSold: number;
+  totalItemsRestocked: number;
+  isAllBalanced: boolean;
 }
 
-export interface UpdateRecipeItemRequest {
-  quantityRequired?: number;
-  unit?: IngredientUnit;
-  wastePercent?: number | null;
+export interface DailyTallyItem {
+  id: string;
+  itemName: string;
+  openingStock: number;
+  restockedToday: number;
+  soldToday: number;
+  closingStock: number;
+  revenueToday: number;
+  unitPrice: number;
+  openingValue: number;
+  closingValue: number;
+  isTallyValid: boolean;
+  explanation: string;
+}
+
+export interface DailyTallyReport {
+  summary: DailyTallySummary;
+  items: DailyTallyItem[];
 }
 
 export type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'canceled' | 'expired';

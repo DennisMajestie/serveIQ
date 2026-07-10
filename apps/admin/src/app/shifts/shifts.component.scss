@@ -292,6 +292,13 @@
   font-weight: 600;
 }
 
+.form-hint {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  color: var(--secondary);
+  line-height: 1.4;
+}
+
 .modal-footer {
   display: flex;
   gap: 12px;

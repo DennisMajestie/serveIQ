@@ -67,12 +67,16 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./inventory/inventory.component').then(m => m.InventoryComponent)
       },
       {
-        path: 'recipe/:menuItemId',
-        loadComponent: () => import('./recipe-builder/recipe-builder.component').then(m => m.RecipeBuilderComponent)
+        path: 'inventory/audit',
+        loadComponent: () => import('./inventory/audit/audit.component').then(m => m.AuditComponent)
       },
       {
-        path: 'recipe',
-        loadComponent: () => import('./recipe-builder/recipe-builder.component').then(m => m.RecipeBuilderComponent)
+        path: 'inventory/reconcile',
+        loadComponent: () => import('./inventory/reconcile/reconcile.component').then(m => m.ReconcileComponent)
+      },
+      {
+        path: 'inventory/daily-tally',
+        loadComponent: () => import('./inventory/daily-tally/daily-tally.component').then(m => m.DailyTallyComponent)
       },
       {
         path: 'bills',

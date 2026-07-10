@@ -32,6 +32,7 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .toggle-label {
@@ -112,33 +113,25 @@
   color: var(--on-surface);
 }
 
-.item-unit {
-  font-size: 0.8rem;
+.item-barcode {
+  display: block;
+  font-size: 0.75rem;
   color: var(--secondary);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-weight: 500;
+  margin-top: 2px;
 }
 
-.link-badge {
+.item-track {
   display: inline-block;
-  margin-top: 6px;
-  padding: 2px 10px;
+  margin-top: 4px;
+  padding: 2px 8px;
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-}
-
-.badge-direct {
-  background: color-mix(in srgb, var(--primary) 15%, transparent);
-  color: var(--primary);
-}
-
-.badge-recipe {
-  background: color-mix(in srgb, #8b5cf6 15%, transparent);
-  color: #8b5cf6;
+  background: color-mix(in srgb, #94a3b8 15%, transparent);
+  color: #94a3b8;
 }
 
 .stock-status {
@@ -161,11 +154,12 @@
 
 .card-body {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
-.stat-row { flex: 1; }
+.stat-row { flex: 1; min-width: 80px; }
 
 .stat-label {
   display: block;
@@ -177,13 +171,9 @@
 }
 
 .stat-value {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--on-surface);
-}
-
-.stat-negative {
-  color: #ef4444;
 }
 
 .stat-cost {
@@ -268,6 +258,10 @@
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 
+.modal-wide {
+  max-width: 800px;
+}
+
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -292,6 +286,18 @@
 }
 
 .modal-body { padding: 24px; }
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.modal-hint {
+  color: var(--secondary);
+  font-size: 0.875rem;
+  margin: 0 0 16px;
+}
 
 .form-group { margin-bottom: 20px; }
 
@@ -363,16 +369,130 @@ select.form-input {
   font-weight: 600;
 }
 
-.modal-footer {
+/* Audit table */
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.audit-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--secondary);
+  border-bottom: 2px solid var(--outline-variant);
+}
+
+.audit-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--outline-variant);
+  color: var(--on-surface);
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-balanced {
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  color: var(--primary);
+}
+
+.badge-shortage {
+  background: color-mix(in srgb, #ef4444 15%, transparent);
+  color: #ef4444;
+}
+
+.badge-surplus {
+  background: color-mix(in srgb, #f59e0b 15%, transparent);
+  color: #f59e0b;
+}
+
+.badge-unreviewed {
+  background: color-mix(in srgb, #94a3b8 15%, transparent);
+  color: #94a3b8;
+}
+
+.text-positive { color: var(--primary); }
+.text-negative { color: #ef4444; }
+
+/* Reconcile list */
+.reconcile-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.reconcile-row {
   display: flex;
+  align-items: center;
   gap: 12px;
-  padding: 20px 24px;
-  border-top: 1px solid #f1f5f9;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+.reconcile-name {
+  flex: 1;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.reconcile-book {
+  font-size: 0.8rem;
+  color: var(--secondary);
+  white-space: nowrap;
+}
+
+.reconcile-input {
+  width: 100px !important;
+  text-align: center;
+}
+
+/* Daily tally summary */
+.tally-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tally-stat {
+  padding: 12px;
+  background: var(--surface-container-low);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.tally-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--secondary);
+  margin-bottom: 4px;
+}
+
+.tally-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--on-surface);
 }
 
 @media (max-width: 768px) {
   .inventory-container { padding: 16px; }
   .page-header { flex-direction: column; gap: 16px; }
+  .header-actions { flex-wrap: wrap; }
   .inventory-grid { grid-template-columns: 1fr; }
   .card-body { flex-direction: column; gap: 12px; }
+  .tally-summary { grid-template-columns: repeat(2, 1fr); }
 }

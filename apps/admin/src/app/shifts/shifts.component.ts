@@ -29,6 +29,23 @@ export class ShiftsComponent implements OnInit {
   closeCash = signal<number>(0);
   closeNote = signal('');
 
+  varianceExplanationFor(shift: Shift, actualKoboOverride?: number): string {
+    const actualKobo = actualKoboOverride ?? shift.actualCashKobo ?? 0;
+    const expectedKobo = shift.expectedCashKobo || 0;
+    const startKobo = shift.startingCashKobo;
+    const varianceKobo = actualKobo - expectedKobo;
+    const fs = this.formatKobo(startKobo);
+    const fe = this.formatKobo(expectedKobo);
+    const fa = this.formatKobo(actualKobo);
+    if (varianceKobo === 0) {
+      return `Started with \u20A6${fs}. Expected \u20A6${fe}. Actual matched exactly.`;
+    } else if (varianceKobo > 0) {
+      return `Started with \u20A6${fs}. Expected \u20A6${fe}. Actual \u20A6${fa} — \u20A6${this.formatKobo(varianceKobo)} over.`;
+    } else {
+      return `Started with \u20A6${fs}. Expected \u20A6${fe}. Actual \u20A6${fa} — \u20A6${this.formatKobo(Math.abs(varianceKobo))} short.`;
+    }
+  }
+
   ngOnInit() {
     this.loadShifts();
     this.loadCurrentShift();
@@ -93,14 +110,15 @@ export class ShiftsComponent implements OnInit {
     }
 
     const actualCashKobo = Math.round(actualCashNaira * 100);
-    if (actualCashKobo < (shift.expectedCashKobo || 0)) {
+    const expectedKobo = shift.expectedCashKobo || 0;
+    if (actualCashKobo !== expectedKobo) {
+      const explanation = this.varianceExplanationFor(shift, actualCashKobo);
       Swal.fire({
         icon: 'warning',
         title: 'Cash variance detected!',
-        text: `Expected: ₦${((shift.expectedCashKobo || 0) / 100).toFixed(2)} | Actual: ₦${actualCashNaira.toFixed(2)}. Continue?`,
+        html: `<p>${explanation}</p><p style="margin-top:8px;">Continue closing?</p>`,
         showCancelButton: true,
         confirmButtonText: 'Yes, close shift',
-
       }).then((result) => {
         if (result.isConfirmed) {
           this.performCloseShift(shift, actualCashKobo);
@@ -127,19 +145,14 @@ export class ShiftsComponent implements OnInit {
         this.closeNote.set('');
         this.loadShifts();
         this.loadCurrentShift();
-        const variance = actualCashKobo - (shift.expectedCashKobo || 0);
-        if (variance !== 0) {
-          Swal.fire({
-            icon: 'info',
-            title: 'Shift Closed with Variance',
-            text: `Variance: ${variance > 0 ? '+' : ''}${(variance / 100).toFixed(2)}`,
-            timer: 3000,
-            showConfirmButton: false,
-
-          });
-        } else {
-          Swal.fire({ icon: 'success', title: 'Shift Closed', timer: 1500, showConfirmButton: false });
-        }
+        const explanation = this.varianceExplanationFor({ ...shift, actualCashKobo });
+        Swal.fire({
+          icon: actualCashKobo === (shift.expectedCashKobo || 0) ? 'success' : 'info',
+          title: actualCashKobo === (shift.expectedCashKobo || 0) ? 'Shift Closed' : 'Shift Closed with Variance',
+          html: `<p>${explanation}</p>`,
+          timer: 3000,
+          showConfirmButton: false,
+        });
       },
       error: () => {
         this.isSaving.set(false);

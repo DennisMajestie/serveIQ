@@ -100,27 +100,20 @@ export const API_CONFIG = {
       list: '/api/v1/shifts',
       reports: '/api/v1/reports/shifts',
     },
-    // Inventory
+    // Inventory (menu-item stock model)
     inventory: {
-      list: '/api/v1/inventory',
-      get: '/api/v1/inventory/:id',
-      create: '/api/v1/inventory',
-      update: '/api/v1/inventory/:id',
-      delete: '/api/v1/inventory/:id',
-      stock: '/api/v1/inventory/:id/stock',
-      movements: '/api/v1/inventory/:id/movements',
+      list: '/api/v1/menu-items',
+      get: '/api/v1/menu-items/:id',
+      create: '/api/v1/menu-items',
+      update: '/api/v1/menu-items/:id',
+      delete: '/api/v1/menu-items/:id',
+      restock: '/api/v1/menu-items/:id/restock',
+      movements: '/api/v1/menu-items/:id/movements',
       alerts: '/api/v1/inventory/alerts',
       bestsellers: '/api/v1/inventory/bestsellers',
       stockVariance: '/api/v1/reports/stock-variance',
-    },
-    // Recipe / BOM
-    recipe: {
-      list: '/api/v1/menu-items/:menuItemId/recipe',
-      create: '/api/v1/menu-items/:menuItemId/recipe',
-    },
-    recipeItems: {
-      update: '/api/v1/recipe-items/:id',
-      delete: '/api/v1/recipe-items/:id',
+      audit: '/api/v1/inventory/audit',
+      reconcile: '/api/v1/inventory/reconcile',
     },
     // Reports
     reports: {
@@ -129,6 +122,7 @@ export const API_CONFIG = {
       peakHours: '/api/v1/reports/peak-hours',
       tableVelocity: '/api/v1/reports/table-velocity',
       peakEfficiency: '/api/v1/reports/peak-efficiency',
+      dailyTally: '/api/v1/reports/daily-tally',
     },
     // Notifications
     notifications: {

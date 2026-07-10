@@ -122,6 +122,24 @@ interface NavItem {
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" routerLink="/app/inventory/audit" routerLinkActive="active">
+                <span class="material-symbols-outlined">fact_check</span>
+                <span>Audit</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/inventory/reconcile" routerLinkActive="active">
+                <span class="material-symbols-outlined">balance</span>
+                <span>Reconcile</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/inventory/daily-tally" routerLinkActive="active">
+                <span class="material-symbols-outlined">summarize</span>
+                <span>Daily Tally</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" routerLink="/app/pos" routerLinkActive="active">
                 <span class="material-symbols-outlined">point_of_sale</span>
                 <span>POS</span>

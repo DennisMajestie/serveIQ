@@ -7,8 +7,8 @@ export class SubscriptionService {
   private subscriptionsApi = inject(SubscriptionsApiService);
 
   subscription = signal<Subscription | null>(null);
-  loading = signal(false);
-  plansLoading = signal(false);
+  loading = signal(true);
+  plansLoading = signal(true);
   error = signal<string | null>(null);
   plans = signal<SubscriptionPlan[]>([]);
 
