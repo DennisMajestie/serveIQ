@@ -8,6 +8,7 @@ import { SubscriptionService } from '../core/subscription.service';
 import { ThemeService } from '../core/theme.service';
 import { of, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 
 interface SearchResult {
   type: 'table' | 'staff' | 'order';
@@ -699,8 +700,21 @@ export class AdminShellComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    Swal.fire({
+      title: 'Logout?',
+      text: 'You will be redirected to the login screen.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#F97316',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   openNotifications() {
