@@ -165,7 +165,7 @@ interface ConsoleLog {
             <div class="biz-list" *ngIf="!loading()">
               <div class="biz-row" *ngFor="let biz of recentBusinesses(); trackBy: trackById">
                 <div class="biz-avatar" [style.background-color]="avatarColor(biz.name)">
-                  {{ biz.name?.[0]?.toUpperCase() }}
+                  {{ (biz.name && biz.name[0]) ? biz.name[0].toUpperCase() : '' }}
                 </div>
                 <div class="biz-info">
                   <span class="biz-name">{{ biz.name }}</span>

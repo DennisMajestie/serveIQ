@@ -14,18 +14,32 @@ export interface AdminBusiness {
   phone?: string;
   address?: string;
   currency: string;
+  // snake_case (from API)
   subscription_plan: string;
   is_active: boolean;
   created_at: string;
   branches?: { id: string; name: string }[];
   owner?: { id: string; full_name: string; email: string };
+
+  // camelCase aliases (optional) used after client-side conversion
+  subscriptionPlan?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  owner?: { id: string; full_name?: string; fullName?: string; email?: string };
 }
 
 export interface AdminStats {
+  // snake_case (from API)
   total_businesses: number;
   active_businesses: number;
   total_branches: number;
   total_waiters: number;
+
+  // camelCase equivalents (optional)
+  totalBusinesses?: number;
+  activeBusinesses?: number;
+  totalBranches?: number;
+  totalWaiters?: number;
 }
 
 @Injectable({ providedIn: 'root' })

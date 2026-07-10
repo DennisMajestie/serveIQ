@@ -86,7 +86,7 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
                   </div>
                 </td>
                 <td><span class="type-pill">{{ biz.type }}</span></td>
-                <td>{{ biz.owner?.fullName ?? biz.owner?.full_name || '—' }}</td>
+                <td>{{ (biz.owner?.fullName ?? biz.owner?.full_name) || '—' }}</td>
                 <td>{{ biz.branches?.length || 0 }}</td>
                 <td>{{ biz.subscriptionPlan ?? biz.subscription_plan }}</td>
                 <td>
