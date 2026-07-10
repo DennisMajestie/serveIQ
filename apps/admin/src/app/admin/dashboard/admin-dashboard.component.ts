@@ -43,7 +43,7 @@ interface ConsoleLog {
             <span class="material-symbols-outlined">store</span>
           </div>
           <div class="kpi-body">
-            <span class="kpi-value">{{ stats()?.total_businesses ?? '—' }}</span>
+            <span class="kpi-value">{{ stats()?.totalBusinesses ?? stats()?.total_businesses ?? '—' }}</span>
             <span class="kpi-label">Active Tenants</span>
           </div>
         </div>
@@ -54,7 +54,7 @@ interface ConsoleLog {
             <span class="material-symbols-outlined">check_circle</span>
           </div>
           <div class="kpi-body">
-            <span class="kpi-value">{{ stats()?.active_businesses ?? '—' }}</span>
+            <span class="kpi-value">{{ stats()?.activeBusinesses ?? stats()?.active_businesses ?? '—' }}</span>
             <span class="kpi-label">Operational</span>
           </div>
         </div>
@@ -65,7 +65,7 @@ interface ConsoleLog {
             <span class="material-symbols-outlined">corporate_fare</span>
           </div>
           <div class="kpi-body">
-            <span class="kpi-value">{{ stats()?.total_branches ?? '—' }}</span>
+            <span class="kpi-value">{{ stats()?.totalBranches ?? stats()?.total_branches ?? '—' }}</span>
             <span class="kpi-label">Total Outlets</span>
           </div>
         </div>
@@ -76,7 +76,7 @@ interface ConsoleLog {
             <span class="material-symbols-outlined">groups</span>
           </div>
           <div class="kpi-body">
-            <span class="kpi-value">{{ stats()?.total_waiters ?? '—' }}</span>
+            <span class="kpi-value">{{ stats()?.totalWaiters ?? stats()?.total_waiters ?? '—' }}</span>
             <span class="kpi-label">Active Waiters</span>
           </div>
         </div>
@@ -169,11 +169,11 @@ interface ConsoleLog {
                 </div>
                 <div class="biz-info">
                   <span class="biz-name">{{ biz.name }}</span>
-                  <span class="biz-meta">{{ biz.type }} · {{ biz.branches?.length || 0 }} Branch{{ biz.branches?.length === 1 ? '' : 'es' }}</span>
+                  <span class="biz-meta">{{ biz.type }} · {{ biz.branches?.length ?? 0 }} Branch{{ biz.branches?.length === 1 ? '' : 'es' }}</span>
                 </div>
                 <div class="biz-right">
-                  <span class="status-pill" [class.active]="biz.is_active" [class.inactive]="!biz.is_active">
-                    {{ biz.is_active ? 'Active' : 'Locked' }}
+                  <span class="status-pill" [class.active]="(biz.isActive ?? biz.is_active)" [class.inactive]="!(biz.isActive ?? biz.is_active)">
+                    {{ (biz.isActive ?? biz.is_active) ? 'Active' : 'Locked' }}
                   </span>
                 </div>
               </div>
