@@ -136,15 +136,16 @@ export class DailyTallyComponent implements OnInit {
     });
   }
 
-  summaryStats(report: DailyTallyReport) {
+  summaryStats(report: DailyTallyReport | null) {
+    if (!report?.summary) return [];
     const s = report.summary;
     return [
-      { label: 'Date', value: s.date, highlight: '' },
+      { label: 'Date', value: s.date || '\u2014', highlight: '' },
       { label: 'Opening Value', value: this.formatCurrency(s.totalOpeningValue), highlight: '' },
       { label: 'Revenue', value: this.formatCurrency(s.totalRevenue), highlight: 'positive' },
       { label: 'Closing Value', value: this.formatCurrency(s.totalClosingValue), highlight: '' },
-      { label: 'Items Sold', value: `${s.totalItemsSold}`, highlight: '' },
-      { label: 'Items Restocked', value: `${s.totalItemsRestocked}`, highlight: '' },
+      { label: 'Items Sold', value: `${s.totalItemsSold ?? '\u2014'}`, highlight: '' },
+      { label: 'Items Restocked', value: `${s.totalItemsRestocked ?? '\u2014'}`, highlight: '' },
       { label: 'All Balanced', value: s.isAllBalanced ? 'Yes' : 'No', highlight: s.isAllBalanced ? 'positive' : 'negative' },
     ];
   }
