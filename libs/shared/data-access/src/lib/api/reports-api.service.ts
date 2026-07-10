@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
@@ -20,7 +21,34 @@ export class ReportsApiService extends BaseApiService {
     if (dateFrom) queryParams['dateFrom'] = dateFrom;
     if (dateTo) queryParams['dateTo'] = dateTo;
     if (paymentMethod) queryParams['paymentMethod'] = paymentMethod;
-    return this.get<SalesEntry[]>(API_CONFIG.endpoints.reports.sales, undefined, queryParams);
+
+    return this.get<any>(API_CONFIG.endpoints.reports.sales, undefined, queryParams).pipe(
+      map((res) => {
+        // Normalise API responses that return either an array of sales entries
+        // or an aggregated summary object (e.g. { totalRevenueKobo, transactionCount, ... }).
+        if (Array.isArray(res)) {
+          return res as SalesEntry[];
+        }
+
+        if (res && typeof res === 'object') {
+          const totalRevenue = (res.totalRevenueKobo ?? res.total_revenue_kobo) as number | undefined;
+          const transactionCount = (res.transactionCount ?? res.transaction_count) as number | undefined;
+          const avgBill = (res.averageBillKobo ?? res.average_bill_kobo) as number | undefined;
+          const breakdown = (res.breakdownByMethod ?? res.breakdown_by_method) as Record<string, number> | undefined;
+
+          const entry: SalesEntry = {
+            date: dateFrom && dateTo ? `${dateFrom} - ${dateTo}` : (dateFrom ?? dateTo ?? ''),
+            revenueKobo: totalRevenue ?? 0,
+            orderCount: transactionCount ?? 0,
+            paymentMethod: breakdown ? Object.keys(breakdown).join(',') : (paymentMethod ?? 'all'),
+          };
+
+          return [entry];
+        }
+
+        return [] as SalesEntry[];
+      })
+    );
   }
 
   getTopItems(dateFrom?: string, dateTo?: string, category?: string): Observable<TopItemEntry[]> {
