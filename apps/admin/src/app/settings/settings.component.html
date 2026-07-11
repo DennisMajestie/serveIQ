@@ -130,10 +130,39 @@
                         <div>
                           <p class="text-[var(--on-background)] font-semibold text-sm" style="font-family:'Inter',sans-serif">{{ branch.name }}</p>
                           <p class="text-[var(--on-surface-variant)] text-xs" style="font-family:'Inter',sans-serif">{{ branch.address }}{{ branch.phoneNumber ? ' · ' + branch.phoneNumber : '' }}</p>
-                        </div>
-                      </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  @if (showQrModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" (click)="closeQrModal()">
+      <div class="glass-card rounded-2xl w-[420px] max-w-[90vw] p-8" (click)="$event.stopPropagation()">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-[20px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ qrBranchName() }} — Menu QR</h3>
+          <button (click)="closeQrModal()" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--on-surface-variant)] hover:bg-white/10 transition-all">
+            <span class="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+        <div class="flex flex-col items-center gap-4">
+          @if (qrBlobUrl()) {
+            <img [src]="qrBlobUrl()" alt="QR Code" class="w-56 h-56 rounded-xl bg-white p-2" />
+          }
+          <p class="text-[var(--on-surface-variant)] text-[12px] leading-[1.4] text-center" style="font-family:'Inter',sans-serif">
+            Customers scan this QR to view your menu.
+          </p>
+        </div>
+        <div class="flex justify-center gap-3 mt-8">
+          <button (click)="closeQrModal()" class="px-6 py-3 rounded-full bg-white/5 text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold hover:bg-white/10 transition-all" style="font-family:'Inter',sans-serif">Close</button>
+          <button (click)="saveQrCode()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">Download PNG</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
                       <div class="flex items-center gap-3">
                         <span class="px-3 py-1 rounded-full bg-primary-20 text-[var(--primary)] text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Active</span>
+                        <button (click)="downloadQrCode(branch.id, branch.name)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--primary)] hover:bg-white/10 transition-all" title="Download QR Code">
+                          <span class="material-symbols-outlined text-sm">qr_code</span>
+                        </button>
                         <button (click)="showEditBranch(branch)" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--on-surface-variant)] hover:bg-white/10 transition-all">
                           <span class="material-symbols-outlined text-sm">edit</span>
                         </button>

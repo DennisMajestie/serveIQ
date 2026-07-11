@@ -217,7 +217,7 @@ interface NavItem {
         </header>
 
         <!-- Subscription Banner -->
-        <div class="sub-banner" *ngIf="subService.subscription() as sub">
+        <div class="sub-banner" *ngIf="subService.subscription() as sub && profile().role !== 'super_admin'">
           <div class="sub-banner-inner status-{{ sub.status }}" *ngIf="sub.status === 'trialing'">
             <span class="material-symbols-outlined">info</span>
             <span>Free trial — {{ daysLeft(sub.trialEndsAt) }} days remaining. <a routerLink="/app/billing">Choose a plan</a> to keep access.</span>

@@ -41,6 +41,7 @@ export const API_CONFIG = {
       update: '/api/v1/branches/:id',
       delete: '/api/v1/branches/:id',
       stats: '/api/v1/branches/dashboard/stats',
+      generateQr: '/api/v1/branches/:id/generate-qr',
     },
     // Menu
     menu: {
@@ -135,6 +136,8 @@ export const API_CONFIG = {
     // Menu extras
     menuImport: '/api/v1/menu/import',
     menuToggle: '/api/v1/menu/:id/toggle',
+    // Public menu (no auth)
+    publicMenu: '/api/v1/public/menu/:branchId',
     // AI / Nemotron
     ai: {
       generateLogic: '/api/v1/ai/generate-logic',

@@ -151,5 +151,9 @@ export const appRoutes: Route[] = [
   {
     path: 'reset-password',
     loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+  },
+  {
+    path: 'public/menu/:branchId',
+    loadComponent: () => import('./public-menu/public-menu.component').then(m => m.PublicMenuComponent)
   }
 ];

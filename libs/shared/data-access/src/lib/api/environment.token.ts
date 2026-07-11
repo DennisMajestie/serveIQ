@@ -3,6 +3,7 @@ import { InjectionToken } from '@angular/core';
 export interface EnvironmentConfig {
   apiUrl: string;
   nemotronUrl: string;
+  publicMenuBaseUrl: string;
   production: boolean;
 }
 

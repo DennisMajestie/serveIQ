@@ -45,4 +45,10 @@ export class BranchesApiService extends BaseApiService {
   removeBranch(id: string): Observable<void> {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.branches.delete, { id }));
   }
+
+  /** Generate a QR code PNG for the public menu page. */
+  generateQrCode(id: string): Observable<Blob> {
+    const url = `${this.apiUrl}${buildUrl(API_CONFIG.endpoints.branches.generateQr, { id })}`;
+    return this.http.post(url, {}, { responseType: 'blob' });
+  }
 }

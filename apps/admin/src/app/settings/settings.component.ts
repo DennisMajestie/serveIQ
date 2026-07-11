@@ -2,7 +2,7 @@ import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService } from '@serveiq/shared/data-access';
+import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
 import { Branch, User, Business } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -23,9 +23,14 @@ export class SettingsComponent implements OnInit {
   private businessApi = inject(BusinessApiService);
   private router = inject(Router);
   private uploadService = inject(UploadApiService);
+  private env = inject<EnvironmentConfig>(ENVIRONMENT_CONFIG);
   activeSection = signal<Section>('branch-setup');
   branches = signal<Branch[]>([]);
   isLoading = signal(true);
+  showQrModal = signal(false);
+  qrBranchName = signal('');
+  qrBlobUrl = signal<string | null>(null);
+  isDownloadingQr = signal<string | null>(null);
 
   navItems: { key: Section; label: string; icon: string }[] = [
     { key: 'branch-setup', label: 'Branch Setup', icon: 'settings' },
@@ -485,5 +490,46 @@ export class SettingsComponent implements OnInit {
         Swal.fire({ icon: 'error', title: 'Verification Failed', text: 'Invalid or expired code.' });
       }
     });
+  }
+
+  // ===== QR Code =====
+
+  downloadQrCode(branchId: string, branchName: string): void {
+    this.isDownloadingQr.set(branchId);
+    this.branchesApi.generateQrCode(branchId).subscribe({
+      next: (blob) => {
+        this.isDownloadingQr.set(null);
+        const url = URL.createObjectURL(blob);
+        this.qrBranchName.set(branchName);
+        this.qrBlobUrl.set(url);
+        this.showQrModal.set(true);
+      },
+      error: () => {
+        this.isDownloadingQr.set(null);
+        Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not generate QR code.' });
+      }
+    });
+  }
+
+  closeQrModal(): void {
+    this.showQrModal.set(false);
+    if (this.qrBlobUrl()) {
+      URL.revokeObjectURL(this.qrBlobUrl()!);
+    }
+    this.qrBlobUrl.set(null);
+  }
+
+  saveQrCode(): void {
+    const url = this.qrBlobUrl();
+    const name = this.qrBranchName();
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name.replace(/\s+/g, '-').toLowerCase()}-menu-qr.png`;
+    a.click();
+  }
+
+  getPublicMenuUrl(branchId: string): string {
+    return `${this.env.publicMenuBaseUrl}/public/menu/${branchId}`;
   }
 }
