@@ -63,4 +63,8 @@ export class InventoryApiService extends BaseApiService {
   getDailyTally(date: string): Observable<DailyTallyReport> {
     return this.get<DailyTallyReport>(API_CONFIG.endpoints.reports.dailyTally, undefined, { date });
   }
+
+  getUntrackedItems(): Observable<MenuItem[]> {
+    return this.get<MenuItem[]>(API_CONFIG.endpoints.inventory.untrackedItems);
+  }
 }

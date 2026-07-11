@@ -1,6 +1,7 @@
 import { Component, signal, computed, inject, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { MenuApiService, UploadApiService, MenuItem, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
 import { resolveImageUrl } from '@serveiq/shared/models';
@@ -17,6 +18,7 @@ export class MenuManagementComponent implements OnInit {
   private menuService = inject(MenuApiService);
   private uploadService = inject(UploadApiService);
   private env = inject(ENVIRONMENT_CONFIG);
+  private router = inject(Router);
   
   selectedCategory = signal('All');
   isLoading = signal(true);
@@ -153,65 +155,6 @@ export class MenuManagementComponent implements OnInit {
           },
           error: () => Swal.fire({ title: 'Error', text: 'Failed to delete item.', icon: 'error' })
         });
-      }
-    });
-  }
-
-  addItem() {
-    this.resetForm();
-    this.showAddModal.set(true);
-  }
-
-  closeModal() {
-    this.showAddModal.set(false);
-  }
-
-  onImageSelected(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-    this.selectedFile.set(file);
-    const reader = new FileReader();
-    reader.onload = (e) => this.imagePreview.set(e.target?.result as string);
-    reader.readAsDataURL(file);
-  }
-
-  async submitItem() {
-    const name = this.formName().trim();
-    const category = this.formCategory().trim();
-    const priceNaira = this.formPrice();
-
-    if (!name || !category || !priceNaira) return;
-
-    this.isSubmitting.set(true);
-    let imageUrl: string | undefined;
-
-    if (this.selectedFile()) {
-      try {
-        const uploaded = await this.uploadService.uploadFile(this.selectedFile()!).toPromise();
-        imageUrl = uploaded?.url;
-      } catch (e) {
-        // Upload failed silently — item can still be created without image
-      }
-    }
-
-    const payload: any = {
-      name,
-      category,
-      price_kobo: Math.round(priceNaira * 100),
-      unit: this.formUnit().trim() || undefined,
-      is_available: this.formIsAvailable(),
-      ...(imageUrl ? { image_url: imageUrl } : {})
-    };
-
-    this.menuService.createItem(payload).subscribe({
-      next: (item) => {
-        this.items.update(is => [...is, item as any]);
-        this.isSubmitting.set(false);
-        this.closeModal();
-      },
-      error: () => {
-        this.isSubmitting.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to Create Item', text: 'Could not add menu item. Please try again.' });
       }
     });
   }

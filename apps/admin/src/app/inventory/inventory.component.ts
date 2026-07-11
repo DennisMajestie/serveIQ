@@ -23,6 +23,9 @@ export class InventoryComponent implements OnInit {
   suppliers = signal<Supplier[]>([]);
   isLoading = signal(true);
   lowStockOnly = signal(false);
+  showUntracked = signal(false);
+  untrackedItems = signal<MenuItem[]>([]);
+  isLoadingUntracked = signal(false);
 
   filteredInventory = computed(() => {
     const items = this.inventory();
@@ -41,7 +44,7 @@ export class InventoryComponent implements OnInit {
   formCostPriceNaira = signal<number | undefined>(undefined);
   formSellingPriceNaira = signal<number | undefined>(undefined);
   formSupplierId = signal<string | undefined>(undefined);
-  formTrackStock = signal(true);
+  formTrackStock = signal<boolean | null>(null);
   formBarcode = signal('');
   editId = signal('');
 
@@ -81,7 +84,7 @@ export class InventoryComponent implements OnInit {
     this.formCostPriceNaira.set(undefined);
     this.formSellingPriceNaira.set(undefined);
     this.formSupplierId.set(undefined);
-    this.formTrackStock.set(true);
+    this.formTrackStock.set(null);
     this.formBarcode.set('');
     this.editId.set('');
     this.formError.set('');
@@ -113,6 +116,17 @@ export class InventoryComponent implements OnInit {
   submitForm() {
     const name = this.formName().trim();
     if (!name) return;
+
+    const trackStock = this.formTrackStock();
+    if (trackStock === null) {
+      this.formError.set('Choose whether this item is stock-tracked.');
+      return;
+    }
+    if (trackStock && this.formQuantityInStock() < 0) {
+      this.formError.set('Starting quantity must be 0 or more.');
+      return;
+    }
+
     this.formSubmitting.set(true);
     this.formError.set('');
 
@@ -128,14 +142,17 @@ export class InventoryComponent implements OnInit {
 
     const payload: any = {
       name,
-      quantityInStock: this.formQuantityInStock(),
-      reorderLevel: this.formReorderLevel(),
-      costPriceKobo: this.nairaToKobo(this.formCostPriceNaira()),
+      trackStock,
       priceKobo: this.nairaToKobo(this.formSellingPriceNaira()),
       supplierId: this.formSupplierId() ?? null,
-      trackStock: this.formTrackStock(),
       barcode: this.formBarcode() || undefined,
     };
+
+    if (trackStock) {
+      payload.quantityInStock = this.formQuantityInStock();
+      payload.reorderLevel = this.formReorderLevel();
+      payload.costPriceKobo = this.nairaToKobo(this.formCostPriceNaira());
+    }
 
     if (this.isEditing()) {
       this.inventoryApi.update(this.editId(), payload).subscribe({
@@ -255,6 +272,68 @@ export class InventoryComponent implements OnInit {
   openAudit() { this.router.navigate(['/app/inventory/audit']); }
   openReconcile() { this.router.navigate(['/app/inventory/reconcile']); }
   openDailyTally() { this.router.navigate(['/app/inventory/daily-tally']); }
+
+  // Untracked items
+  toggleUntracked() {
+    this.showUntracked.set(!this.showUntracked());
+    if (this.showUntracked() && this.untrackedItems().length === 0) {
+      this.loadUntrackedItems();
+    }
+  }
+
+  loadUntrackedItems() {
+    this.isLoadingUntracked.set(true);
+    this.inventoryApi.getUntrackedItems().subscribe({
+      next: (items) => { this.untrackedItems.set(items); this.isLoadingUntracked.set(false); },
+      error: () => { this.isLoadingUntracked.set(false); Swal.fire({ icon: 'error', title: 'Failed to load untracked items' }); }
+    });
+  }
+
+  startTracking(item: MenuItem) {
+    Swal.fire({
+      title: 'Enable Tracking?',
+      text: `Start tracking stock for "${item.name}"? You'll need to set a starting quantity and reorder level.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Enable Tracking',
+    }).then(r => {
+      if (!r.isConfirmed) return;
+      Swal.fire({
+        title: 'Set Starting Quantity',
+        html: `
+          <input id="swal-qty" class="swal2-input" type="number" min="0" placeholder="Quantity in stock" value="0">
+          <input id="swal-reorder" class="swal2-input" type="number" min="0" placeholder="Reorder level" value="0">
+        `,
+        preConfirm: () => {
+          const qty = parseInt((document.getElementById('swal-qty') as HTMLInputElement).value, 10);
+          const reorder = parseInt((document.getElementById('swal-reorder') as HTMLInputElement).value, 10);
+          if (isNaN(qty) || qty < 0 || isNaN(reorder) || reorder < 0) {
+            Swal.showValidationMessage('Both values must be 0 or more');
+            return false;
+          }
+          return { quantityInStock: qty, reorderLevel: reorder };
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Save',
+      }).then(result => {
+        if (!result.isConfirmed || !result.value) return;
+        const { quantityInStock, reorderLevel } = result.value;
+        this.inventoryApi.update(item.id, {
+          trackStock: true,
+          quantityInStock,
+          reorderLevel,
+          costPriceKobo: item.costPriceKobo,
+        } as any).subscribe({
+          next: (updated) => {
+            Swal.fire({ icon: 'success', title: 'Tracking Enabled', timer: 1500, showConfirmButton: false });
+            this.untrackedItems.update(items => items.filter(i => i.id !== item.id));
+            this.inventory.update(items => items.map(i => i.id === updated.id ? updated : i));
+          },
+          error: () => Swal.fire({ icon: 'error', title: 'Failed to update item' })
+        });
+      });
+    });
+  }
 
   trackById(_: number, item: MenuItem | any) { return item.id; }
 }

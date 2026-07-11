@@ -114,6 +114,7 @@ export const API_CONFIG = {
       stockVariance: '/api/v1/reports/stock-variance',
       audit: '/api/v1/inventory/audit',
       reconcile: '/api/v1/inventory/reconcile',
+      untrackedItems: '/api/v1/inventory/untracked-items',
     },
     // Reports
     reports: {

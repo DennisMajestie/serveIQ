@@ -70,6 +70,38 @@
       </div>
     </div>
   </div>
+
+  <!-- Untracked Items -->
+  <div class="untracked-section">
+    <button class="untracked-toggle" (click)="toggleUntracked()">
+      <span class="material-symbols-outlined">visibility_off</span>
+      <span>Untracked Items ({{ untrackedItems().length }})</span>
+      <span class="material-symbols-outlined" [class.rotate]="showUntracked()">expand_more</span>
+    </button>
+
+    <div *ngIf="showUntracked()" class="untracked-content">
+      <div *ngIf="isLoadingUntracked()" class="loading-state"><div class="spinner"></div></div>
+      <div *ngIf="!isLoadingUntracked() && untrackedItems().length === 0" class="empty-state">
+        <p>All items are stock-tracked. No untracked items found.</p>
+      </div>
+      <div *ngIf="!isLoadingUntracked() && untrackedItems().length > 0" class="untracked-grid">
+        <div class="inventory-card" *ngFor="let item of untrackedItems(); trackBy: trackById">
+          <div class="card-header">
+            <div class="item-info">
+              <h3 class="item-name">{{ item.name }}</h3>
+              <span class="item-track">Not tracked</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="untracked-desc">This item has unlimited availability. No stock deductions will occur on orders.</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn-primary" (click)="startTracking(item)">Enable Tracking</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Add / Edit Item Modal -->
@@ -89,42 +121,58 @@
         <input type="text" id="item-name" class="form-input" [value]="formName()" (change)="formName.set($any($event.target).value)" required>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="item-qty">Quantity In Stock</label>
-          <input type="number" id="item-qty" class="form-input" [value]="formQuantityInStock()" (change)="formQuantityInStock.set($any($event.target).valueAsNumber)" min="0">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="item-reorder">Reorder Level</label>
-          <input type="number" id="item-reorder" class="form-input" [value]="formReorderLevel()" (change)="formReorderLevel.set($any($event.target).valueAsNumber)" min="0">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="item-cost">Cost Price (&#x20A6;)</label>
-          <input type="number" id="item-cost" class="form-input" [value]="formCostPriceNaira()" (change)="formCostPriceNaira.set($any($event.target).valueAsNumber || undefined)" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="item-selling">Selling Price (&#x20A6;)</label>
-          <input type="number" id="item-selling" class="form-input" [value]="formSellingPriceNaira()" (change)="formSellingPriceNaira.set($any($event.target).valueAsNumber || undefined)" min="0" step="0.01">
-        </div>
-      </div>
-
       <div class="form-group">
-        <label class="form-label" for="item-supplier">Supplier</label>
-        <select id="item-supplier" class="form-input" [value]="formSupplierId()" (change)="formSupplierId.set($any($event.target).value || undefined)">
-          <option [value]="undefined">None</option>
-          <option *ngFor="let s of suppliers()" [value]="s.id">{{ s.name }}</option>
-        </select>
+        <label class="form-label">Stock Tracking *</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="trackStock" [checked]="formTrackStock() === true" (change)="formTrackStock.set(true)">
+            <span>Tracked — deduct stock on orders, show alerts</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="trackStock" [checked]="formTrackStock() === false" (change)="formTrackStock.set(false)">
+            <span>Not tracked — unlimited availability</span>
+          </label>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label checkbox-label">
-          <input type="checkbox" [checked]="formTrackStock()" (change)="formTrackStock.set($any($event.target).checked)">
-          Track Stock
-        </label>
-      </div>
+      <ng-container *ngIf="formTrackStock() === true">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="item-qty">Quantity In Stock *</label>
+            <input type="number" id="item-qty" class="form-input" [value]="formQuantityInStock()" (change)="formQuantityInStock.set($any($event.target).valueAsNumber)" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="item-reorder">Reorder Level</label>
+            <input type="number" id="item-reorder" class="form-input" [value]="formReorderLevel()" (change)="formReorderLevel.set($any($event.target).valueAsNumber)" min="0">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="item-cost">Cost Price (&#x20A6;)</label>
+            <input type="number" id="item-cost" class="form-input" [value]="formCostPriceNaira()" (change)="formCostPriceNaira.set($any($event.target).valueAsNumber || undefined)" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="item-selling">Selling Price (&#x20A6;)</label>
+            <input type="number" id="item-selling" class="form-input" [value]="formSellingPriceNaira()" (change)="formSellingPriceNaira.set($any($event.target).valueAsNumber || undefined)" min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="item-supplier">Supplier</label>
+          <select id="item-supplier" class="form-input" [value]="formSupplierId()" (change)="formSupplierId.set($any($event.target).value || undefined)">
+            <option [value]="undefined">None</option>
+            <option *ngFor="let s of suppliers()" [value]="s.id">{{ s.name }}</option>
+          </select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="formTrackStock() === false">
+        <div class="form-notice">
+          <span class="material-symbols-outlined" style="font-size:16px;">info</span>
+          <span>This item will not be tracked in inventory. It can be ordered in unlimited quantity.</span>
+        </div>
+      </ng-container>
 
       <div class="form-group">
         <label class="form-label" for="item-barcode">Barcode (optional)</label>
