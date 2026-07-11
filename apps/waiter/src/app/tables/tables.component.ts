@@ -186,7 +186,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     const result = await Swal.fire({
       icon: 'warning',
       title: 'Release Table?',
-      text: `Force-release "${table.label || table.tableNumber}"? Any open tab will be voided.`,
+      text: `Force-release "${table.label || table.tableNumber}"? Any open tab will be voided and stock restored.`,
       showCancelButton: true,
       confirmButtonText: 'Release',
       cancelButtonText: 'Cancel',

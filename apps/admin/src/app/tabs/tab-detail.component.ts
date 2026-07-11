@@ -226,9 +226,14 @@ export class TabDetailComponent implements OnInit {
   }
 
   voidTab() {
+    const orderCount = this.orders().length;
+    const itemsText = orderCount > 0
+      ? `This will void the tab, release the table, and restore stock for ${orderCount} ordered item${orderCount > 1 ? 's' : ''}. Cannot be undone.`
+      : 'This will void the tab and release the table. Cannot be undone.';
+
     Swal.fire({
       title: 'Void Tab?',
-      text: 'This will void the tab and release the table. Cannot be undone.',
+      text: itemsText,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Void',
@@ -236,7 +241,10 @@ export class TabDetailComponent implements OnInit {
       if (result.isConfirmed) {
         this.tabsApi.voidTab(this.tabId).subscribe({
           next: () => {
-            Swal.fire({ icon: 'success', title: 'Tab Voided', timer: 1500, showConfirmButton: false });
+            const successText = orderCount > 0
+              ? `Tab Voided — stock restored for ${orderCount} item${orderCount > 1 ? 's' : ''}`
+              : 'Tab Voided';
+            Swal.fire({ icon: 'success', title: successText, timer: 2000, showConfirmButton: false });
             this.router.navigate(['/tables']);
           },
           error: () => Swal.fire({ icon: 'error', title: 'Void Failed' })
