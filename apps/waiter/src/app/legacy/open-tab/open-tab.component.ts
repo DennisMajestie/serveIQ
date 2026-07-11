@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
+import { TabsApiService, TablesApiService, showApiErrorToast } from '@serveiq/shared/data-access';
 import { OpenTabRequest, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
@@ -70,9 +70,7 @@ export class LegacyOpenTabComponent implements OnInit {
           this.router.navigate(['/tabs/detail', newTab.id]);
         }
       },
-      error: (err) => {
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to open tab' });
-      }
+      error: (err) => showApiErrorToast(err, 'Failed to open tab')
     });
   }
 }

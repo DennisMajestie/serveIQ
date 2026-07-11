@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
+import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, ENVIRONMENT_CONFIG, showApiErrorToast } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table, MenuItem, resolveImageUrl } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
@@ -212,13 +212,7 @@ export class TabDetailComponent implements OnInit {
           showConfirmButton: false
         });
       },
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to add order items'
-        });
-      }
+      error: (err) => showApiErrorToast(err, 'Failed to add order items')
     });
   }
 

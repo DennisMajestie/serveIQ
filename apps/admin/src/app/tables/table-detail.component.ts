@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService } from '@serveiq/shared/data-access';
+import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, showApiErrorToast } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
@@ -669,9 +669,9 @@ export class TableDetailComponent implements OnInit {
         Swal.fire({ icon: 'success', title: 'Items Added', timer: 1500, showConfirmButton: false });
         this.loadOrders(tab.id);
       },
-      error: () => {
+      error: (err) => {
         this.isAddingItems.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to add items' });
+        showApiErrorToast(err, 'Failed to add items');
       }
     });
   }

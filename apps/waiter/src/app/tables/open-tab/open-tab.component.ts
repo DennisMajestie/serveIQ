@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, TablesApiService } from '@serveiq/shared/data-access';
+import { TabsApiService, TablesApiService, showApiErrorToast } from '@serveiq/shared/data-access';
 import { OpenTabRequest, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
@@ -88,7 +88,7 @@ export class OpenTabComponent implements OnInit {
         }
       },
       error: (err) => {
-        if (err?.status === 400 && err?.error?.message?.includes('already exists')) {
+        if (err?.statusCode === 400 && err?.details?.message?.includes('already exists')) {
           this.tabsApi.getAllTabs().subscribe((tabs) => {
             const existing = (Array.isArray(tabs) ? tabs : []).find(
               (t: Tab) => t.tableId === this.tableId && t.status === 'open'
@@ -100,7 +100,7 @@ export class OpenTabComponent implements OnInit {
           });
           return;
         }
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to open tab' });
+        showApiErrorToast(err, 'Failed to open tab');
       }
     });
   }
