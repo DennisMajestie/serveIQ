@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -217,7 +217,7 @@ interface NavItem {
         </header>
 
         <!-- Subscription Banner -->
-        <div class="sub-banner" *ngIf="subService.subscription() as sub && profile().role !== 'super_admin'">
+        <div class="sub-banner" *ngIf="subForBanner() as sub">
           <div class="sub-banner-inner status-{{ sub.status }}" *ngIf="sub.status === 'trialing'">
             <span class="material-symbols-outlined">info</span>
             <span>Free trial — {{ daysLeft(sub.trialEndsAt) }} days remaining. <a routerLink="/app/billing">Choose a plan</a> to keep access.</span>
@@ -603,6 +603,11 @@ export class AdminShellComponent implements OnInit {
   searchControl = new FormControl('');
   searchResults = signal<SearchResult[]>([]);
   showDropdown = signal(false);
+  subForBanner = computed(() => {
+    const sub = this.subService.subscription();
+    if (!sub || this.profile().role === 'super_admin') return null;
+    return sub;
+  });
 
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
