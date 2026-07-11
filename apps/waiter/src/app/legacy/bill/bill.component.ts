@@ -67,29 +67,21 @@ export class LegacyBillComponent implements OnInit {
   }
 
   private loadBill(tabId: string) {
-    this.billService.getReceipt(tabId).pipe(
-      catchError(() =>
-        this.billService.generate(tabId, { serviceChargePercent: 5 }).pipe(
-          switchMap(() => this.billService.getReceipt(tabId)),
-          catchError(() => of(null))
-        )
-      )
-    ).subscribe((result: any) => {
-      if (!result) {
+    this.billService.generate(tabId, { serviceChargePercent: 5 }).pipe(
+      catchError(() => of(null))
+    ).subscribe((bill: Bill | null) => {
+      if (!bill) {
         this.error.set('Could not generate bill. Please try again.');
         this.isLoading.set(false);
         return;
       }
-      const bill: any = result.bill || {};
-      bill.branchId = bill.branchId || '';
-      bill.serviceChargePercent = bill.serviceChargePercent ?? 10;
-      bill.orderItems = (result.orderItems || []).map((o: any) => ({
+      bill.orderItems = bill.orderItems?.map((o: any) => ({
         ...o,
         menuItemName: o.menuItemName || o.menuItem?.name || '',
         menuItemId: o.menuItemId || o.menuItem?.id || '',
         priceKobo: o.priceKobo || o.unitPriceKobo || 0,
-      }));
-      this.bill.set(bill as Bill);
+      })) || [];
+      this.bill.set(bill);
       this.isLoading.set(false);
     });
   }
@@ -186,24 +178,20 @@ export class LegacyBillComponent implements OnInit {
       serviceChargePercent: 5,
       discountKobo
     }).pipe(
-      switchMap(() => this.billService.getReceipt(this.tabId())),
       catchError(() => of(null))
-    ).subscribe((result: any) => {
-      if (!result) {
+    ).subscribe((bill: Bill | null) => {
+      if (!bill) {
         this.error.set('Could not apply discount. Please try again.');
         this.isLoading.set(false);
         return;
       }
-      const bill: any = result.bill || {};
-      bill.branchId = bill.branchId || '';
-      bill.serviceChargePercent = bill.serviceChargePercent ?? 10;
-      bill.orderItems = (result.orderItems || []).map((o: any) => ({
+      bill.orderItems = bill.orderItems?.map((o: any) => ({
         ...o,
         menuItemName: o.menuItemName || o.menuItem?.name || '',
         menuItemId: o.menuItemId || o.menuItem?.id || '',
         priceKobo: o.priceKobo || o.unitPriceKobo || 0,
-      }));
-      this.bill.set(bill as Bill);
+      })) || [];
+      this.bill.set(bill);
       this.isLoading.set(false);
     });
   }
