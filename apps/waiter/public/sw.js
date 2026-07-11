@@ -43,7 +43,7 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-async function networkFirstWithCache(request: Request, cacheName: string): Promise<Response> {
+async function networkFirstWithCache(request, cacheName) {
   try {
     const response = await fetch(request);
     const clone = response.clone();
