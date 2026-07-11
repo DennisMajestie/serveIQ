@@ -83,7 +83,7 @@ export class BillComponent implements OnInit {
       const bill: any = result.bill || {};
       bill.branchId = bill.branchId || '';
       bill.serviceChargePercent = bill.serviceChargePercent ?? 10;
-      bill.orderItems = (result.orders || []).map((o: any) => ({
+      bill.orderItems = (result.orderItems || []).map((o: any) => ({
         ...o,
         menuItemName: o.menuItemName || o.menuItem?.name || '',
         menuItemId: o.menuItemId || o.menuItem?.id || '',
@@ -197,7 +197,7 @@ export class BillComponent implements OnInit {
       const bill: any = result.bill || {};
       bill.branchId = bill.branchId || '';
       bill.serviceChargePercent = bill.serviceChargePercent ?? 10;
-      bill.orderItems = (result.orders || []).map((o: any) => ({
+      bill.orderItems = (result.orderItems || []).map((o: any) => ({
         ...o,
         menuItemName: o.menuItemName || o.menuItem?.name || '',
         menuItemId: o.menuItemId || o.menuItem?.id || '',
