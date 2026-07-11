@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { TablesApiService, TabsApiService, AuthService } from '@serveiq/shared/data-access';
-import { Table, Tab } from '@serveiq/shared/models';
+import { TablesApiService, TabsApiService, AuthService, ShiftsApiService } from '@serveiq/shared/data-access';
+import { Table, Tab, Shift } from '@serveiq/shared/models';
 import { interval, Subscription, firstValueFrom } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -19,11 +19,14 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
   private tabsApi = inject(TabsApiService);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private shiftsApi = inject(ShiftsApiService);
 
   branchName = 'Main Dining Room';
   isSynced = signal(false);
   isLoading = signal(true);
   toastMessage = signal<string | null>(null);
+  currentShift = signal<Shift | null>(null);
+  hasOpenShift = computed(() => !!(this.currentShift() && this.currentShift()!.status === 'open'));
 
   tables = signal<Table[]>([]);
   openTabs = signal<Tab[]>([]);
@@ -54,12 +57,14 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadTables();
     this.loadOpenTabs();
+    this.loadCurrentShift();
     this.pollSub = interval(5000).pipe(
       switchMap(() => this.tablesApi.getAllTables())
     ).subscribe(tables => {
       this.tables.set(tables);
       this.isSynced.set(true);
       this.loadOpenTabs();
+      this.loadCurrentShift();
     });
   }
 
@@ -139,6 +144,14 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
         }
         return;
       }
+      if (!this.hasOpenShift()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'No Shift Open',
+          text: 'No shift is currently open — ask a manager to open one before seating tables.',
+        });
+        return;
+      }
       await this.router.navigate(['/tabs/create', table.id]);
     } else {
       try {
@@ -171,6 +184,13 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
   showToast(message: string): void {
     this.toastMessage.set(message);
     setTimeout(() => this.toastMessage.set(null), 5000);
+  }
+
+  loadCurrentShift(): void {
+    this.shiftsApi.getCurrent().subscribe({
+      next: (shift) => this.currentShift.set(shift),
+      error: () => this.currentShift.set(null),
+    });
   }
 
   async onSeatTable(table: Table) {

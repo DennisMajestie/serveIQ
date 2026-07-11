@@ -22,6 +22,16 @@
       </div>
     }
 
+    @if (!hasOpenShift()) {
+      <div class="mb-6 p-4 rounded-2xl bg-[#ffb4ab]/10 border border-[#ffb4ab]/30 flex items-start gap-3">
+        <span class="material-symbols-outlined text-[#ffb4ab]">schedule</span>
+        <div>
+          <p class="text-[#ffb4ab] text-[14px] leading-[1.4] font-semibold" style="font-family:'Inter',sans-serif">No Shift Open</p>
+          <p class="text-[#bccbb9] text-[12px] leading-[1.4]" style="font-family:'Inter',sans-serif">Ask a manager to open a shift before seating tables.</p>
+        </div>
+      </div>
+    }
+
     @if (isLoading()) {
       <!-- Shimmer -->
       <div class="grid grid-cols-2 gap-5 mb-8">
@@ -101,7 +111,17 @@
               }
             </button>
             @if (table.status === 'available') {
-              <button class="mt-2 px-4 py-1.5 rounded-full bg-[#4be277]/20 text-[#4be277] text-[11px] leading-none font-semibold active:scale-90 transition-transform border border-[#4be277]/30" style="font-family:'Inter',sans-serif" (click)="onSeatTable(table)">
+              <button class="mt-2 px-4 py-1.5 rounded-full text-[11px] leading-none font-semibold transition-transform border"
+                      [class.bg-[#4be277]/20]="hasOpenShift()"
+                      [class.text-[#4be277]]="hasOpenShift()"
+                      [class.border-[#4be277]/30]="hasOpenShift()"
+                      [class.active:scale-90]="hasOpenShift()"
+                      [class.bg-white/5]="!hasOpenShift()"
+                      [class.text-[#bccbb9]/30]="!hasOpenShift()"
+                      [class.border-white/5]="!hasOpenShift()"
+                      [class.cursor-not-allowed]="!hasOpenShift()"
+                      (click)="hasOpenShift() && onSeatTable(table)"
+                      style="font-family:'Inter',sans-serif">
                 Seat Table
               </button>
             }

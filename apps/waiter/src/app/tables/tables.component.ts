@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService } from '@serveiq/shared/data-access';
-import { Table, Tab, User, Business } from '@serveiq/shared/models';
+import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService, ShiftsApiService } from '@serveiq/shared/data-access';
+import { Table, Tab, User, Business, Shift } from '@serveiq/shared/models';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
@@ -22,11 +22,14 @@ export class TablesComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
   private businessApi = inject(BusinessApiService);
+  private shiftsApi = inject(ShiftsApiService);
 
   branchName = signal('');
   isSynced = signal(false);
   isLoading = signal(true);
   toastMessage = signal<string | null>(null);
+  currentShift = signal<Shift | null>(null);
+  hasOpenShift = computed(() => !!(this.currentShift() && this.currentShift()!.status === 'open'));
 
   tables = signal<Table[]>([]);
   openTabs = signal<Tab[]>([]);
@@ -95,12 +98,15 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.loadOpenTabs();
     this.loadCurrentUser();
     this.loadBusiness();
-    this.pollSub = interval(30000).pipe(
-      switchMap(() => this.tablesApi.getAllTables())
-    ).subscribe(tables => {
-      if (Array.isArray(tables)) this.tables.set(tables);
-      this.isSynced.set(true);
-      this.refreshOpenTabs();
+    this.loadCurrentShift();
+    this.pollSub = interval(30000).subscribe(async () => {
+      try {
+        const tables = await firstValueFrom(this.tablesApi.getAllTables());
+        if (Array.isArray(tables)) this.tables.set(tables);
+        this.isSynced.set(true);
+        this.refreshOpenTabs();
+      } catch {}
+      this.loadCurrentShift();
     });
   }
 
@@ -147,6 +153,13 @@ export class TablesComponent implements OnInit, OnDestroy {
           localStorage.setItem('businessName', name);
         }
       },
+    });
+  }
+
+  loadCurrentShift(): void {
+    this.shiftsApi.getCurrent().subscribe({
+      next: (shift) => this.currentShift.set(shift),
+      error: () => this.currentShift.set(null),
     });
   }
 
@@ -227,6 +240,14 @@ export class TablesComponent implements OnInit, OnDestroy {
           this.loadTables();
           this.loadOpenTabs();
         }
+        return;
+      }
+      if (!this.hasOpenShift()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'No Shift Open',
+          text: 'No shift is currently open — ask a manager to open one before seating tables.',
+        });
         return;
       }
       await this.router.navigate(['/tabs/create', table.id]);

@@ -24,6 +24,16 @@
   </header>
 
   <main class="main-content">
+    @if (!hasOpenShift()) {
+      <div class="shift-banner">
+        <span class="material-symbols-outlined" style="color:#ffb4ab;">schedule</span>
+        <div>
+          <p style="color:#ffb4ab;font-weight:600;font-size:14px;">No Shift Open</p>
+          <p style="color:#94a3b8;font-size:12px;">Ask a manager to open a shift before seating tables.</p>
+        </div>
+      </div>
+    }
+
     <!-- Dashboard Summary -->
     <div class="stats-row">
       <div class="stat-card">
@@ -73,7 +83,7 @@
             }
 
             @if (table.status === 'available') {
-              <button class="seat-table-btn" (click)="$event.stopPropagation(); onSeatTable(table)">
+              <button class="seat-table-btn" [class.disabled]="!hasOpenShift()" (click)="$event.stopPropagation(); hasOpenShift() && onSeatTable(table)">
                 Seat Table
               </button>
             }
