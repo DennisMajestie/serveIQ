@@ -6,10 +6,6 @@ import { TabsApiService, TablesApiService, showApiErrorToast } from '@serveiq/sh
 import { OpenTabRequest, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
-function getBranchId(): string | null {
-  return localStorage.getItem('branchId');
-}
-
 @Component({
   selector: 'app-legacy-open-tab',
   standalone: true,
@@ -60,7 +56,6 @@ export class LegacyOpenTabComponent implements OnInit {
     const request: OpenTabRequest = {
       table_id: this.tableId,
       party_size: this.numPeople,
-      branch_id: getBranchId() || undefined,
       customer_name: this.customerName || undefined,
     };
 

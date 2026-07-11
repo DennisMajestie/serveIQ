@@ -231,10 +231,8 @@ export interface CreateTableRequest {
 export interface OpenTabRequest {
   table_id: string;
   party_size: number;
-  branch_id?: string;
   customer_name?: string;
   notes?: string;
-  shift_id?: string;
 }
 
 export interface AddOrderItemsRequest {
