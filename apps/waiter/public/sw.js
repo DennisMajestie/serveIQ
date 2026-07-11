@@ -9,7 +9,19 @@ const STATIC_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      for (const url of STATIC_ASSETS) {
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            await cache.put(url, response);
+          }
+        } catch {
+          // skip assets that fail to fetch
+        }
+      }
+    })()
   );
   self.skipWaiting();
 });
