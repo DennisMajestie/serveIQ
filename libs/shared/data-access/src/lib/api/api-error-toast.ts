@@ -16,6 +16,9 @@ export function showApiErrorToast(err: any, fallbackMessage: string): void {
       message = err.details;
     } else if (err.details?.detail) {
       message = err.details.detail;
+    } else if (err.details?.meta?.message) {
+      const msg = err.details.meta.message;
+      message = Array.isArray(msg) ? msg[0] : msg;
     } else if (err.details?.errors && Array.isArray(err.details.errors)) {
       const first = err.details.errors[0];
       message = typeof first === 'string' ? first : first.message || first.detail || first.msg || message;

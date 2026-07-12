@@ -31,6 +31,9 @@ export function handleApiError(error: HttpErrorResponse): Observable<never> {
           serverMessage = body.error.message;
         } else if (typeof body.error === 'string') {
           serverMessage = body.error;
+        } else if (body.meta?.message) {
+          const msg = body.meta.message;
+          serverMessage = Array.isArray(msg) ? msg[0] : msg;
         } else if (Array.isArray(body.errors) && body.errors.length > 0) {
           const first = body.errors[0];
           serverMessage = typeof first === 'string' ? first : first.message || first.detail || first.msg;
