@@ -14,8 +14,11 @@ export function showApiErrorToast(err: any, fallbackMessage: string): void {
       message = err.details.error;
     } else if (typeof err.details === 'string') {
       message = err.details;
-    } else if (err.message && !err.message.startsWith('An unknown error')) {
-      message = err.message;
+    } else if (err.details?.detail) {
+      message = err.details.detail;
+    } else if (err.details?.errors && Array.isArray(err.details.errors)) {
+      const first = err.details.errors[0];
+      message = typeof first === 'string' ? first : first.message || first.detail || message;
     }
   }
 

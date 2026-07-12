@@ -20,17 +20,22 @@ export function handleApiError(error: HttpErrorResponse): Observable<never> {
   } else {
     errorMessage = `Server Error ${error.status}: ${error.message || error.statusText}`;
     const body = error.error;
-    if (body) {
-      if (typeof body === 'string') {
-        serverMessage = body;
-      } else if (body.message) {
-        serverMessage = body.message;
-      } else if (body.error?.message) {
-        serverMessage = body.error.message;
-      } else if (typeof body.error === 'string') {
-        serverMessage = body.error;
+      if (body) {
+        if (typeof body === 'string') {
+          serverMessage = body;
+        } else if (body.message) {
+          serverMessage = body.message;
+        } else if (body.detail) {
+          serverMessage = body.detail;
+        } else if (body.error?.message) {
+          serverMessage = body.error.message;
+        } else if (typeof body.error === 'string') {
+          serverMessage = body.error;
+        } else if (Array.isArray(body.errors) && body.errors.length > 0) {
+          const first = body.errors[0];
+          serverMessage = typeof first === 'string' ? first : first.message || first.detail;
+        }
       }
-    }
   }
 
   console.error('API Error:', {
