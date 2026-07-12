@@ -57,6 +57,7 @@ export class LegacyTabDetailComponent implements OnInit {
     if (state?.selectedItems?.length) {
       this.orderPosted = true;
       this.addItemsFromMenu(state.selectedItems);
+      history.replaceState({ ...history.state, selectedItems: undefined }, '');
     }
   }
 
