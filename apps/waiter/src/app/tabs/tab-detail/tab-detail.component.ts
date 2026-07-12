@@ -75,7 +75,7 @@ export class TabDetailComponent implements OnInit {
   }
 
   getItemName(item: OrderItem): string {
-    const directName = item.menuItemName ?? (item as any).menu_item_name ?? '';
+    const directName = item.menuItemName || (item as any).menu_item_name || '';
     if (directName) return directName;
 
     const menuItemId = item.menuItemId ?? (item as any).menu_item_id ?? '';
@@ -117,6 +117,7 @@ export class TabDetailComponent implements OnInit {
   loadOrders(tabId: string) {
     this.orderService.getByTab(tabId).subscribe({
       next: (items) => { 
+        console.debug('loadOrders raw:', items);
         const raw = Array.isArray(items) ? items : [];
         const normalized = raw.map((item: any) => ({
           ...item,
@@ -125,6 +126,7 @@ export class TabDetailComponent implements OnInit {
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
+        console.debug('loadOrders normalized:', normalized);
         this.items.set(normalized); 
         this.isLoading.set(false); 
       },

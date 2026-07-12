@@ -73,7 +73,7 @@ export class LegacyTabDetailComponent implements OnInit {
   }
 
   getItemName(item: OrderItem): string {
-    const directName = item.menuItemName ?? (item as any).menu_item_name ?? '';
+    const directName = item.menuItemName || (item as any).menu_item_name || '';
     if (directName) return directName;
 
     const menuItemId = item.menuItemId ?? (item as any).menu_item_id ?? '';
@@ -107,6 +107,7 @@ export class LegacyTabDetailComponent implements OnInit {
   loadOrders(tabId: string) {
     this.orderService.getByTab(tabId).subscribe({
       next: (items) => {
+        console.debug('loadOrders raw:', items);
         const normalized = (items || []).map((item: any) => ({
           ...item,
           menuItemName: item.menuItemName || item.menu_item_name || item.menuItem?.name || item.menuItem?.menuItemName || item.menu_item?.name || item.menu_item?.menu_item_name || item.name || item.itemName || item.details?.name || 'Unknown Item',
