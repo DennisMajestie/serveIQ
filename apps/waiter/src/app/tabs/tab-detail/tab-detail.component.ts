@@ -212,7 +212,10 @@ export class TabDetailComponent implements OnInit {
           showConfirmButton: false
         });
       },
-      error: (err) => showApiErrorToast(err, 'Failed to add order items')
+      error: (err) => {
+        console.error('addItems error:', err);
+        showApiErrorToast(err, 'Not enough stock or item unavailable');
+      }
     });
   }
 
