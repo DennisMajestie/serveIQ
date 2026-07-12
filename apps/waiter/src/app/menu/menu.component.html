@@ -63,9 +63,9 @@
             <p class="text-sm" style="font-family:'Inter',sans-serif">No items in this category</p>
           </div>
         } @else {
-          <div class="grid grid-cols-2 md:grid-cols-12 gap-5">
+          <div class="grid grid-cols-2 gap-5">
             @for (item of filteredItems; track item.id) {
-              <div class="col-span-2 md:col-span-6 glass-card rounded-3xl overflow-hidden group">
+              <div class="glass-card rounded-3xl overflow-hidden group">
                 <div class="h-36 overflow-hidden">
                   <img [src]="item.image" [alt]="item.name" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                 </div>
