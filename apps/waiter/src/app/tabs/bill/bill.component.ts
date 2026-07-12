@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BillsApiService, TablesApiService, TabsApiService } from '@serveiq/shared/data-access';
+import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
-import { catchError, of, switchMap } from 'rxjs';
+import { catchError, of, switchMap, map } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -19,6 +19,7 @@ export class BillComponent implements OnInit {
   private billService = inject(BillsApiService);
   private tableService = inject(TablesApiService);
   private tabService = inject(TabsApiService);
+  private ordersService = inject(OrdersApiService);
 
   tabId = signal('');
   bill = signal<Bill | null>(null);
@@ -68,6 +69,20 @@ export class BillComponent implements OnInit {
 
   private loadBill(tabId: string) {
     this.billService.generate(tabId, { serviceChargePercent: 5 }).pipe(
+      switchMap((bill) =>
+        this.ordersService.getByTab(tabId).pipe(
+          map((items) => {
+            bill.orderItems = items?.map((o: any) => ({
+              ...o,
+              menuItemName: o.menuItemName || o.menuItem?.name || '',
+              menuItemId: o.menuItemId || o.menuItem?.id || '',
+              priceKobo: o.priceKobo || o.unitPriceKobo || 0,
+            })) || [];
+            return bill;
+          }),
+          catchError(() => of(bill))
+        )
+      ),
       catchError(() => of(null))
     ).subscribe((bill: Bill | null) => {
       if (!bill) {
@@ -75,12 +90,6 @@ export class BillComponent implements OnInit {
         this.isLoading.set(false);
         return;
       }
-      bill.orderItems = bill.orderItems?.map((o: any) => ({
-        ...o,
-        menuItemName: o.menuItemName || o.menuItem?.name || '',
-        menuItemId: o.menuItemId || o.menuItem?.id || '',
-        priceKobo: o.priceKobo || o.unitPriceKobo || 0,
-      })) || [];
       this.bill.set(bill);
       this.isLoading.set(false);
     });
@@ -178,6 +187,20 @@ export class BillComponent implements OnInit {
       serviceChargePercent: 5,
       discountKobo
     }).pipe(
+      switchMap((bill) =>
+        this.ordersService.getByTab(this.tabId()).pipe(
+          map((items) => {
+            bill.orderItems = items?.map((o: any) => ({
+              ...o,
+              menuItemName: o.menuItemName || o.menuItem?.name || '',
+              menuItemId: o.menuItemId || o.menuItem?.id || '',
+              priceKobo: o.priceKobo || o.unitPriceKobo || 0,
+            })) || [];
+            return bill;
+          }),
+          catchError(() => of(bill))
+        )
+      ),
       catchError(() => of(null))
     ).subscribe((bill: Bill | null) => {
       if (!bill) {
@@ -185,12 +208,6 @@ export class BillComponent implements OnInit {
         this.isLoading.set(false);
         return;
       }
-      bill.orderItems = bill.orderItems?.map((o: any) => ({
-        ...o,
-        menuItemName: o.menuItemName || o.menuItem?.name || '',
-        menuItemId: o.menuItemId || o.menuItem?.id || '',
-        priceKobo: o.priceKobo || o.unitPriceKobo || 0,
-      })) || [];
       this.bill.set(bill);
       this.isLoading.set(false);
     });
