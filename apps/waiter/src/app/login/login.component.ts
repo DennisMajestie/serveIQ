@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
   pin = signal<string>('');
   pinError = signal<boolean>(false);
   isActivated = signal<boolean>(false);
-  businessName = signal<string>('');
+  businessName = signal(localStorage.getItem('businessName') || 'ServeIQ');
   
   // Login Form
   adminEmail = '';

@@ -23,6 +23,7 @@ interface Transaction {
   styleUrls: ['./tab-history.component.scss']
 })
 export class TabHistoryComponent implements OnInit {
+  businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private router = inject(Router);
   private tabsApi = inject(TabsApiService);
   private tablesApi = inject(TablesApiService);

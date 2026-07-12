@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./open-tab.component.scss']
 })
 export class OpenTabComponent implements OnInit {
+  businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private tabsApi = inject(TabsApiService);

@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./payment.component.scss']
 })
 export class PaymentComponent implements OnInit {
+  businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private billsApi = inject(BillsApiService);

@@ -31,6 +31,7 @@ interface CartItem extends LocalMenuItem {
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
+  businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly menuApi = inject(MenuApiService);

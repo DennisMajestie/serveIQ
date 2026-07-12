@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./bill.component.scss']
 })
 export class LegacyBillComponent implements OnInit {
+  businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private billService = inject(BillsApiService);

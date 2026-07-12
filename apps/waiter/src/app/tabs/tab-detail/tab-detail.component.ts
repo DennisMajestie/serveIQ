@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./tab-detail.component.scss']
 })
 export class TabDetailComponent implements OnInit {
+  businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private tabService = inject(TabsApiService);

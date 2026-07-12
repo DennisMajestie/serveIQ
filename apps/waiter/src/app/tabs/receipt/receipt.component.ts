@@ -26,7 +26,7 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   hasError = signal(false);
   errorMessage = signal('');
 
-  businessName = computed(() => this.receipt()?.business?.name ?? 'ServeIQ');
+  businessName = computed(() => this.receipt()?.business?.name || localStorage.getItem('businessName') || 'ServeIQ');
   branchName = computed(() => this.receipt()?.branch?.name ?? '');
   waiterName = computed(() => this.receipt()?.waiter?.fullName ?? this.receipt()?.waiter?.fullName ?? 'Waiter');
   paymentMethod = computed(() => {
