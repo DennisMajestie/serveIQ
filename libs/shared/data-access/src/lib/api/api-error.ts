@@ -33,8 +33,15 @@ export function handleApiError(error: HttpErrorResponse): Observable<never> {
           serverMessage = body.error;
         } else if (Array.isArray(body.errors) && body.errors.length > 0) {
           const first = body.errors[0];
-          serverMessage = typeof first === 'string' ? first : first.message || first.detail;
+          serverMessage = typeof first === 'string' ? first : first.message || first.detail || first.msg;
+        } else if (typeof body === 'object') {
+          const vals = Object.values(body);
+          const strVal = vals.find(v => typeof v === 'string');
+          if (strVal) serverMessage = strVal;
         }
+      }
+      if (!serverMessage) {
+        console.error('Raw server error body:', JSON.stringify(error.error));
       }
   }
 

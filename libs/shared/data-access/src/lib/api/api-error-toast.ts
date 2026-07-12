@@ -18,7 +18,11 @@ export function showApiErrorToast(err: any, fallbackMessage: string): void {
       message = err.details.detail;
     } else if (err.details?.errors && Array.isArray(err.details.errors)) {
       const first = err.details.errors[0];
-      message = typeof first === 'string' ? first : first.message || first.detail || message;
+      message = typeof first === 'string' ? first : first.message || first.detail || first.msg || message;
+    } else if (err.details && typeof err.details === 'object') {
+      const vals = Object.values(err.details);
+      const strVal = vals.find(v => typeof v === 'string');
+      if (strVal) message = strVal;
     }
   }
 
