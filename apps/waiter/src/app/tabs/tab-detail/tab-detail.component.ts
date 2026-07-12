@@ -55,7 +55,7 @@ export class TabDetailComponent implements OnInit {
   private readRouterStateOnce() {
     if (this.orderPosted) return;
     
-    const state = history.state as { selectedItems?: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
+    const state = history.state as { selectedItems?: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
     if (state?.selectedItems?.length) {
       this.orderPosted = true;
       this.addItemsFromMenu(state.selectedItems);
@@ -188,7 +188,7 @@ export class TabDetailComponent implements OnInit {
     });
   }
 
-  private addItemsFromMenu(selectedItems: Array<{ id: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }>) {
+  private addItemsFromMenu(selectedItems: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }>) {
     const orderItems = selectedItems.map(item => ({
       menu_item_id: item.id,
       quantity: item.qty,
@@ -214,7 +214,9 @@ export class TabDetailComponent implements OnInit {
       },
       error: (err) => {
         console.error('addItems error:', err);
-        showApiErrorToast(err, 'Not enough stock or item unavailable');
+        const names = selectedItems.map(i => i.name).filter(Boolean);
+        const fallback = names.length ? `${names.join(', ')} out of stock, retocking in 5min` : 'Item unavailable';
+        showApiErrorToast(err, fallback);
       }
     });
   }
