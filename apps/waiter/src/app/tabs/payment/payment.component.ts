@@ -192,6 +192,11 @@ export class PaymentComponent implements OnInit {
   }
 
   confirmPayment() {
+    if ((this.selectedMethod === 'card' || this.selectedMethod === 'pos') && !this.selectedTerminalId()) {
+      Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal before processing a card payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      return;
+    }
+
     this.isProcessing.set(true);
     const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
 

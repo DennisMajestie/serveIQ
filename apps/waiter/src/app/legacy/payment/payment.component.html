@@ -170,7 +170,7 @@
     <button
       class="confirm-btn"
       (click)="confirmPayment()"
-      [disabled]="isProcessing()"
+      [disabled]="isProcessing() || ((selectedMethod === 'card' || selectedMethod === 'pos') && !selectedTerminalId())"
       [class.processing]="isProcessing()"
       [class.success]="isSuccess()"
     >

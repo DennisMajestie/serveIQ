@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { BillsApiService, TabsApiService, TablesApiService, PosApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-legacy-payment',
@@ -187,12 +188,18 @@ export class LegacyPaymentComponent implements OnInit {
   }
 
   confirmPayment() {
+    if ((this.selectedMethod === 'card' || this.selectedMethod === 'pos') && !this.selectedTerminalId()) {
+      Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal before processing a card payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      return;
+    }
+
     this.isProcessing.set(true);
     const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
 
     this.billsApi.recordPayment(this.tabId(), {
       amount,
       method: this.selectedMethod,
+      terminal_id: (this.selectedMethod === 'card' || this.selectedMethod === 'pos') ? this.selectedTerminalId() : undefined,
     }).subscribe({
       next: () => {
         this.isProcessing.set(false);
@@ -201,6 +208,7 @@ export class LegacyPaymentComponent implements OnInit {
       },
       error: () => {
         this.isProcessing.set(false);
+        Swal.fire({ icon: 'error', title: 'Payment Failed', text: 'Could not process payment. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       }
     });
   }
