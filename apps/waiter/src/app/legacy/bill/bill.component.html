@@ -25,7 +25,7 @@
       </div>
 
       <div class="bill-items">
-        @for (item of items(); track item.menuItemName) {
+        @for (item of items(); track item.id) {
           <div class="item-line">
             <span class="qty">{{ item.quantity > 1 ? item.quantity + 'x' : '' }}</span>
             <span class="name">{{ item.menuItemName }}</span>

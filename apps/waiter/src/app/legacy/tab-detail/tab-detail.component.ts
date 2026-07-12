@@ -77,8 +77,9 @@ export class LegacyTabDetailComponent implements OnInit {
     if (directName) return directName;
 
     const menuItemId = item.menuItemId ?? (item as any).menu_item_id ?? '';
+    if (!menuItemId) return 'Unknown Item';
     const menuItem = this.getMenuItem(menuItemId);
-    return menuItem?.name ?? '';
+    return menuItem?.name || 'Unknown Item';
   }
 
   getItemImage(item: OrderItem): string {
@@ -110,7 +111,6 @@ export class LegacyTabDetailComponent implements OnInit {
         console.debug('loadOrders raw:', items);
         const normalized = (items || []).map((item: any) => ({
           ...item,
-          menuItemName: item.menuItemName || item.menu_item_name || item.menuItem?.name || item.menuItem?.menuItemName || item.menu_item?.name || item.menu_item?.menu_item_name || item.name || item.itemName || item.details?.name || 'Unknown Item',
           menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
@@ -158,7 +158,7 @@ export class LegacyTabDetailComponent implements OnInit {
   removeItem(item: OrderItem) {
     Swal.fire({
       title: 'Remove item?',
-      text: `Remove ${item.menuItemName} from the tab?`,
+      text: `Remove ${this.getItemName(item)} from the tab?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#EF4444',
@@ -188,7 +188,6 @@ export class LegacyTabDetailComponent implements OnInit {
       next: (response) => {
         const normalized = (response || []).map((item: any) => ({
           ...item,
-          menuItemName: item.menuItemName || item.menu_item_name || item.menuItem?.name || item.menuItem?.menuItemName || item.menu_item?.name || item.menu_item?.menu_item_name || 'Unknown Item',
           menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
