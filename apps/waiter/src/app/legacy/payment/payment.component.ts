@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -32,6 +32,11 @@ export class LegacyPaymentComponent implements OnInit {
   isSuccess = signal(false);
   terminals = signal<any[]>([]);
   selectedTerminalId = signal('');
+  selectedTerminalLabel = computed(() => {
+    const id = this.selectedTerminalId();
+    if (!id) return '';
+    return this.terminals().find(t => t.id === id)?.label ?? '';
+  });
 
   isSplit = signal(false);
   splitCount = signal(2);
@@ -203,7 +208,7 @@ export class LegacyPaymentComponent implements OnInit {
       next: () => {
         this.isProcessing.set(false);
         this.isSuccess.set(true);
-        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()]), 1000);
+        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], { state: { terminalLabel: this.selectedTerminalLabel() } }), 1000);
       },
       error: () => {
         this.isProcessing.set(false);

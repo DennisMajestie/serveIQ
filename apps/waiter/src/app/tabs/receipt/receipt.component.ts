@@ -33,7 +33,7 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
     const method = this.receipt()?.bill?.paymentMethod ?? '';
     return method ? method.charAt(0).toUpperCase() + method.slice(1) : '—';
   });
-  paymentTerminal = computed(() => this.receipt()?.terminal?.label ?? '');
+  paymentTerminal = computed(() => this.receipt()?.terminal?.label || (history.state as any)?.terminalLabel || '');
   amountPaid = computed(() => (this.receipt()?.bill?.totalKobo ?? 0) / 100);
   subtotalNaira = computed(() => (this.receipt()?.bill?.subtotalKobo ?? 0) / 100);
   serviceChargeNaira = computed(() => (this.receipt()?.bill?.serviceChargeKobo ?? 0) / 100);
