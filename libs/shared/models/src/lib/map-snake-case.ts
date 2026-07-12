@@ -15,3 +15,21 @@ export function snakeToCamel<T>(obj: unknown): T {
   }
   return obj as T;
 }
+
+export function camelToSnake(obj: unknown): unknown {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((item) => camelToSnake(item));
+  }
+  if (typeof obj === 'object' && !(obj instanceof Date)) {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+      result[snakeKey] = camelToSnake(value);
+    }
+    return result;
+  }
+  return obj;
+}
