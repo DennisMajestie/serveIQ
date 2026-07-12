@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService } from '@serveiq/shared/data-access';
-import { Bill, Tab, Table } from '@serveiq/shared/models';
+import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService } from '@serveiq/shared/data-access';
+import { Bill, Tab, Table, MenuItem } from '@serveiq/shared/models';
 import { catchError, of, switchMap, map } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -20,6 +20,7 @@ export class LegacyBillComponent implements OnInit {
   private tableService = inject(TablesApiService);
   private tabService = inject(TabsApiService);
   private ordersService = inject(OrdersApiService);
+  private menuService = inject(MenuApiService);
 
   private currentDiscountKobo = 0;
 
@@ -30,6 +31,7 @@ export class LegacyBillComponent implements OnInit {
   error = signal('');
   waiterName = signal('Waiter');
   time = signal(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+  menuItems = signal<MenuItem[]>([]);
 
   subtotalNaira = computed(() => (this.bill()?.subtotalKobo ?? 0) / 100);
   serviceChargeNaira = computed(() => (this.bill()?.serviceChargeKobo ?? 0) / 100);
@@ -44,6 +46,10 @@ export class LegacyBillComponent implements OnInit {
   getTotal = () => this.totalNaira();
 
   ngOnInit() {
+    this.menuService.getAllItems().subscribe({
+      next: (items) => this.menuItems.set(items || []),
+      error: () => {}
+    });
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -51,6 +57,15 @@ export class LegacyBillComponent implements OnInit {
         this.loadTabAndGenerateBill(id);
       }
     });
+  }
+
+  getItemName(item: any): string {
+    const directName = item.menuItemName || item.menu_item_name || '';
+    if (directName) return directName;
+    const menuItemId = item.menuItemId ?? item.menu_item_id ?? '';
+    if (!menuItemId) return 'Unknown Item';
+    const menuItem = this.menuItems().find(m => m.id === menuItemId);
+    return menuItem?.name || 'Unknown Item';
   }
 
   loadTabAndGenerateBill(tabId: string) {

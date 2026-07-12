@@ -28,7 +28,7 @@
         @for (item of items(); track item.id) {
           <div class="item-line">
             <span class="qty">{{ item.quantity > 1 ? item.quantity + 'x' : '' }}</span>
-            <span class="name">{{ item.menuItemName }}</span>
+            <span class="name">{{ getItemName(item) }}</span>
             <span class="price">₦{{ ((item.priceKobo / 100) * item.quantity).toLocaleString() }}</span>
           </div>
         }

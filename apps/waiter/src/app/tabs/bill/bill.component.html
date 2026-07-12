@@ -37,7 +37,7 @@
           @for (item of items(); track item.id) {
             <div class="flex justify-between items-start">
               <div class="flex-1">
-                <p class="text-[16px] leading-[1.5] font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ item.menuItemName || 'Unknown Item' }}</p>
+                <p class="text-[16px] leading-[1.5] font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ getItemName(item) }}</p>
                 <p class="text-[14px] leading-[1.4] text-[#bccbb9]" style="font-family:'JetBrains Mono',monospace">{{ item.quantity }}x @ ₦{{ formatNaira(item.priceKobo / 100) }}</p>
               </div>
               <p class="text-[14px] leading-[1.4] font-bold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira((item.priceKobo / 100) * item.quantity) }}</p>
