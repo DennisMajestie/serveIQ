@@ -74,6 +74,12 @@
         <span class="info-label">Payment Method</span>
         <span class="info-value">{{ paymentMethod() }}</span>
       </div>
+      @if (paymentTerminal()) {
+        <div class="info-row">
+          <span class="info-label">POS Terminal</span>
+          <span class="info-value">{{ paymentTerminal() }}</span>
+        </div>
+      }
 
       <div class="divider"></div>
 

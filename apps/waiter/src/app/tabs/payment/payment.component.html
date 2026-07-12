@@ -161,6 +161,12 @@
               <option [value]="t.id" class="bg-[#0c1324]">{{ t.label }}</option>
             }
           </select>
+          @if (selectedTerminalLabel()) {
+            <p class="mt-2 text-[13px] leading-none font-medium text-[#4be277] flex items-center gap-1" style="font-family:'Inter',sans-serif">
+              <span class="material-symbols-outlined text-[18px]">point_of_sale</span>
+              {{ selectedTerminalLabel() }}
+            </p>
+          }
         </section>
       }
 

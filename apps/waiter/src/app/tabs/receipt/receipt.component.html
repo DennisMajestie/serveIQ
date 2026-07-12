@@ -64,6 +64,12 @@
             <span class="text-[14px] leading-none" style="font-family:'Inter',sans-serif">Payment Method</span>
             <span class="text-[14px] leading-none font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ paymentMethod() }}</span>
           </div>
+          @if (paymentTerminal()) {
+            <div class="flex justify-between text-[#bccbb9]">
+              <span class="text-[14px] leading-none" style="font-family:'Inter',sans-serif">POS Terminal</span>
+              <span class="text-[14px] leading-none font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ paymentTerminal() }}</span>
+            </div>
+          }
           <div class="flex justify-between text-[#bccbb9]">
             <span class="text-[14px] leading-none" style="font-family:'Inter',sans-serif">Transaction ID</span>
             <span class="text-[14px] leading-none font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif;font-size:11px">{{ transactionId() }}</span>

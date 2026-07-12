@@ -36,6 +36,11 @@ export class PaymentComponent implements OnInit {
   isSuccess = signal(false);
   terminals = signal<any[]>([]);
   selectedTerminalId = signal('');
+  selectedTerminalLabel = computed(() => {
+    const id = this.selectedTerminalId();
+    if (!id) return '';
+    return this.terminals().find(t => t.id === id)?.label ?? '';
+  });
 
   isSplit = signal(false);
   splitCount = signal(2);
