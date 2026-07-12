@@ -42,15 +42,18 @@ self.addEventListener('fetch', (event) => {
   // Skip non-HTTP(S) requests (e.g. chrome-extension://)
   if (!url.protocol.startsWith('http')) return;
 
-  // API requests — network-first, cache fallback
+  // API requests — network-first, cache fallback (GET only)
   if (url.pathname.startsWith('/api/')) {
-    event.respondWith(networkFirstWithCache(request, API_CACHE));
+    if (request.method === 'GET') {
+      event.respondWith(networkFirstWithCache(request, API_CACHE));
+    }
     return;
   }
 
   // Static assets — cache-first
   event.respondWith(
     caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+      if (request.method !== 'GET') return response;
       const clone = response.clone();
       caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
       return response;
