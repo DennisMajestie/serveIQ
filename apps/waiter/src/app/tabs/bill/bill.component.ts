@@ -54,6 +54,7 @@ export class BillComponent implements OnInit {
   loadTabAndGenerateBill(tabId: string) {
     this.tabService.getTab(tabId).subscribe({
       next: (tab: Tab) => {
+        this.waiterName.set((tab as any).waiter?.fullName || 'Waiter');
         if (tab.tableId) {
           this.tableService.getTable(tab.tableId).subscribe({
             next: (table) => this.table.set(table)
@@ -74,9 +75,9 @@ export class BillComponent implements OnInit {
           map((items) => {
             bill.orderItems = items?.map((o: any) => ({
               ...o,
-              menuItemName: o.menuItemName || o.menuItem?.name || '',
-              menuItemId: o.menuItemId || o.menuItem?.id || '',
-              priceKobo: o.priceKobo || o.unitPriceKobo || 0,
+              menuItemName: o.menuItemName ?? o.menu_item_name ?? o.menu_item?.name ?? o.name ?? o.itemName ?? o.details?.name ?? '',
+              menuItemId: o.menuItemId ?? o.menu_item_id ?? o.menu_item?.id ?? '',
+              priceKobo: o.priceKobo ?? o.unitPriceKobo ?? 0,
             })) || [];
             return bill;
           }),
@@ -192,9 +193,9 @@ export class BillComponent implements OnInit {
           map((items) => {
             bill.orderItems = items?.map((o: any) => ({
               ...o,
-              menuItemName: o.menuItemName || o.menuItem?.name || '',
-              menuItemId: o.menuItemId || o.menuItem?.id || '',
-              priceKobo: o.priceKobo || o.unitPriceKobo || 0,
+              menuItemName: o.menuItemName ?? o.menu_item_name ?? o.menu_item?.name ?? o.name ?? o.itemName ?? o.details?.name ?? '',
+              menuItemId: o.menuItemId ?? o.menu_item_id ?? o.menu_item?.id ?? '',
+              priceKobo: o.priceKobo ?? o.unitPriceKobo ?? 0,
             })) || [];
             return bill;
           }),
