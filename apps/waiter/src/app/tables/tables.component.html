@@ -22,7 +22,15 @@
       </div>
     }
 
-    @if (!hasOpenShift()) {
+    @if (currentShift(); as shift) {
+      <div class="mb-6 p-4 rounded-2xl bg-[#4be277]/10 border border-[#4be277]/30 flex items-start gap-3">
+        <span class="material-symbols-outlined text-[#4be277]">schedule</span>
+        <div>
+          <p class="text-[#4be277] text-[14px] leading-[1.4] font-semibold" style="font-family:'Inter',sans-serif">Shift Open</p>
+          <p class="text-[#bccbb9] text-[12px] leading-[1.4]" style="font-family:'Inter',sans-serif">Started {{ shift.openedAt | date:'short' }}</p>
+        </div>
+      </div>
+    } @else {
       <div class="mb-6 p-4 rounded-2xl bg-[#ffb4ab]/10 border border-[#ffb4ab]/30 flex items-start gap-3">
         <span class="material-symbols-outlined text-[#ffb4ab]">schedule</span>
         <div>

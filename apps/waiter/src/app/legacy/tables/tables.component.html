@@ -24,7 +24,15 @@
   </header>
 
   <main class="main-content">
-    @if (!hasOpenShift()) {
+    @if (currentShift(); as shift) {
+      <div class="shift-banner" style="border-color:#4be27733;background:#4be27710;">
+        <span class="material-symbols-outlined" style="color:#4be277;">schedule</span>
+        <div>
+          <p style="color:#4be277;font-weight:600;font-size:14px;">Shift Open</p>
+          <p style="color:#94a3b8;font-size:12px;">Started {{ shift.openedAt | date:'short' }}</p>
+        </div>
+      </div>
+    } @else {
       <div class="shift-banner">
         <span class="material-symbols-outlined" style="color:#ffb4ab;">schedule</span>
         <div>
