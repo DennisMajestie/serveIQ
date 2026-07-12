@@ -96,7 +96,8 @@ export class LegacyBillComponent implements OnInit {
   private buildBillFromOrders(tabId: string, discountKobo: number, orderItems: any[]): Bill {
     const subtotalKobo = orderItems.reduce((s, o) => s + (o.priceKobo || 0) * (o.quantity || 1), 0);
     const serviceChargeKobo = Math.round(subtotalKobo * 0.05);
-    const totalKobo = subtotalKobo + serviceChargeKobo - discountKobo;
+    const vatKobo = Math.round(subtotalKobo * 0.075);
+    const totalKobo = subtotalKobo + serviceChargeKobo + vatKobo - discountKobo;
     return {
       id: '',
       tabId,
