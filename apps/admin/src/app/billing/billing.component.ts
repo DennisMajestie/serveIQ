@@ -1,6 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubscriptionService } from '../core/subscription.service';
+import { BusinessApiService } from '@serveiq/shared/data-access';
+import { Business, SubscriptionPlan } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -59,17 +61,21 @@ import Swal from 'sweetalert2';
           <h3>{{ subService.subscription() ? 'Upgrade Your Plan' : 'Choose a Plan' }}</h3>
           <p class="plans-subtitle" *ngIf="!subService.subscription()">Select a plan to start using ServeIQ</p>
 
-          <div *ngIf="subService.plansLoading()" class="loading-state">
+          <div *ngIf="subService.plansLoading() || businessLoading()" class="loading-state">
             <div class="spinner"></div>
-            <p>Loading plans...</p>
+            <p>{{ subService.plansLoading() ? 'Loading plans...' : 'Loading business info...' }}</p>
           </div>
 
-          <div class="plans-grid" *ngIf="!subService.plansLoading()">
-            <div class="plan-card" *ngFor="let plan of subService.plans()" [class.featured]="plan.name === 'Pro'" [class.current-plan]="subService.subscription()?.plan?.name === plan.name">
+          <div *ngIf="!subService.plansLoading() && !businessLoading() && filteredPlans().length === 0" class="loading-state">
+            <p>No plans available for this region. Please contact support.</p>
+          </div>
+
+          <div class="plans-grid" *ngIf="!subService.plansLoading() && !businessLoading() && filteredPlans().length">
+            <div class="plan-card" *ngFor="let plan of filteredPlans()" [class.featured]="plan.name === 'Pro'" [class.current-plan]="subService.subscription()?.plan?.name === plan.name">
               <div class="plan-name">{{ plan.name }}</div>
               <div class="plan-price">
-                <span class="amount">{{ plan.price === 0 ? 'Free' : '₦' + (plan.price / 100 | number:'1.2-2') }}</span>
-                <span class="interval" *ngIf="plan.price > 0">/month</span>
+                <span class="amount">{{ formatPrice(plan) }}</span>
+                <span class="interval" *ngIf="plan.price > 0">{{ plan.billingInterval === 'yearly' ? '/year' : '/month' }}</span>
               </div>
               <ul class="plan-features">
                 <li>Up to {{ plan.features.maxTables }} tables</li>
@@ -142,11 +148,31 @@ import Swal from 'sweetalert2';
 })
 export class BillingComponent implements OnInit {
   subService = inject(SubscriptionService);
+  private businessApi = inject(BusinessApiService);
   isProcessing = signal(false);
+  business = signal<Business | null>(null);
+  businessLoading = signal(true);
+
+  filteredPlans = computed(() => {
+    const biz = this.business();
+    const allPlans = this.subService.plans();
+    if (!biz || !allPlans.length) return [];
+    return allPlans.filter(p => p.currency === biz.currency);
+  });
 
   ngOnInit() {
     this.subService.load();
     this.subService.loadPlans();
+    this.businessApi.getBusiness().subscribe({
+      next: (biz) => { this.business.set(biz); this.businessLoading.set(false); },
+      error: () => this.businessLoading.set(false),
+    });
+  }
+
+  formatPrice(plan: SubscriptionPlan): string {
+    if (plan.price === 0) return 'Free';
+    const code = this.business()?.currency || 'NGN';
+    return new Intl.NumberFormat('en', { style: 'currency', currency: code, minimumFractionDigits: 2 }).format(plan.price / 100);
   }
 
   selectPlan(plan: any): void {

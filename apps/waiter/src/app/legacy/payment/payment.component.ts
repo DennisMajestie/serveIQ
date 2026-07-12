@@ -5,7 +5,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { BillsApiService, TabsApiService, TablesApiService, PosApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-legacy-payment',
