@@ -21,6 +21,8 @@ export class BillComponent implements OnInit {
   private tabService = inject(TabsApiService);
   private ordersService = inject(OrdersApiService);
 
+  private currentDiscountKobo = 0;
+
   tabId = signal('');
   bill = signal<Bill | null>(null);
   table = signal<Table | null>(null);
@@ -68,23 +70,56 @@ export class BillComponent implements OnInit {
     });
   }
 
+  private mapOrderItems(items: any[]): any[] {
+    return (items || []).map((o: any) => ({
+      ...o,
+      menuItemName: o.menuItemName ?? o.menu_item_name ?? o.menu_item?.name ?? o.name ?? o.itemName ?? o.details?.name ?? '',
+      menuItemId: o.menuItemId ?? o.menu_item_id ?? o.menu_item?.id ?? '',
+      priceKobo: o.priceKobo ?? o.unitPriceKobo ?? 0,
+    }));
+  }
+
+  private buildBillFromOrders(tabId: string, discountKobo: number, orderItems: any[]): Bill {
+    const subtotalKobo = orderItems.reduce((s, o) => s + (o.priceKobo || 0) * (o.quantity || 1), 0);
+    const serviceChargeKobo = Math.round(subtotalKobo * 0.05);
+    const totalKobo = subtotalKobo + serviceChargeKobo - discountKobo;
+    return {
+      id: '',
+      tabId,
+      branchId: '',
+      subtotalKobo,
+      serviceChargeKobo,
+      serviceChargePercent: 5,
+      discountKobo,
+      totalKobo,
+      createdAt: new Date(),
+      orderItems,
+    };
+  }
+
   private loadBill(tabId: string) {
+    this.isLoading.set(true);
+    this.error.set('');
     this.billService.generate(tabId, { serviceChargePercent: 5 }).pipe(
       switchMap((bill) =>
         this.ordersService.getByTab(tabId).pipe(
           map((items) => {
-            bill.orderItems = items?.map((o: any) => ({
-              ...o,
-              menuItemName: o.menuItemName ?? o.menu_item_name ?? o.menu_item?.name ?? o.name ?? o.itemName ?? o.details?.name ?? '',
-              menuItemId: o.menuItemId ?? o.menu_item_id ?? o.menu_item?.id ?? '',
-              priceKobo: o.priceKobo ?? o.unitPriceKobo ?? 0,
-            })) || [];
+            bill.orderItems = this.mapOrderItems(items);
+            this.currentDiscountKobo = bill.discountKobo;
             return bill;
           }),
           catchError(() => of(bill))
         )
       ),
-      catchError(() => of(null))
+      catchError(() =>
+        this.ordersService.getByTab(tabId).pipe(
+          map((items) => {
+            const orderItems = this.mapOrderItems(items);
+            return this.buildBillFromOrders(tabId, this.currentDiscountKobo, orderItems);
+          }),
+          catchError(() => of(null))
+        )
+      )
     ).subscribe((bill: Bill | null) => {
       if (!bill) {
         this.error.set('Could not generate bill. Please try again.');
@@ -184,25 +219,42 @@ export class BillComponent implements OnInit {
 
   private applyDiscountToBill(discountKobo: number) {
     this.isLoading.set(true);
-    this.billService.generate(this.tabId(), {
-      serviceChargePercent: 5,
-      discountKobo
-    }).pipe(
+    this.error.set('');
+    this.billService.applyDiscount(this.tabId(), { discountKobo }).pipe(
       switchMap((bill) =>
         this.ordersService.getByTab(this.tabId()).pipe(
           map((items) => {
-            bill.orderItems = items?.map((o: any) => ({
-              ...o,
-              menuItemName: o.menuItemName ?? o.menu_item_name ?? o.menu_item?.name ?? o.name ?? o.itemName ?? o.details?.name ?? '',
-              menuItemId: o.menuItemId ?? o.menu_item_id ?? o.menu_item?.id ?? '',
-              priceKobo: o.priceKobo ?? o.unitPriceKobo ?? 0,
-            })) || [];
+            bill.orderItems = this.mapOrderItems(items);
+            this.currentDiscountKobo = bill.discountKobo;
             return bill;
           }),
           catchError(() => of(bill))
         )
       ),
-      catchError(() => of(null))
+      catchError(() =>
+        this.billService.generate(this.tabId(), { serviceChargePercent: 5, discountKobo }).pipe(
+          switchMap((bill) =>
+            this.ordersService.getByTab(this.tabId()).pipe(
+              map((items) => {
+                bill.orderItems = this.mapOrderItems(items);
+                this.currentDiscountKobo = bill.discountKobo;
+                return bill;
+              }),
+              catchError(() => of(bill))
+            )
+          ),
+          catchError(() =>
+            this.ordersService.getByTab(this.tabId()).pipe(
+              map((items) => {
+                const orderItems = this.mapOrderItems(items);
+                this.currentDiscountKobo = discountKobo;
+                return this.buildBillFromOrders(this.tabId(), discountKobo, orderItems);
+              }),
+              catchError(() => of(null))
+            )
+          )
+        )
+      )
     ).subscribe((bill: Bill | null) => {
       if (!bill) {
         this.error.set('Could not apply discount. Please try again.');
