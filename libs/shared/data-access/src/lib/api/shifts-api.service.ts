@@ -16,8 +16,12 @@ export class ShiftsApiService extends BaseApiService {
     return this.get<Shift[]>(API_CONFIG.endpoints.shifts.list);
   }
 
-  getCurrent(): Observable<Shift> {
-    return this.get<Shift>(API_CONFIG.endpoints.shifts.current);
+  getCurrent(branchId?: string): Observable<Shift> {
+    const queryParams: Record<string, string> = {};
+    if (branchId) {
+      queryParams['branchId'] = branchId;
+    }
+    return this.get<Shift>(API_CONFIG.endpoints.shifts.current, undefined, queryParams);
   }
 
   open(data: OpenShiftRequest): Observable<Shift> {
