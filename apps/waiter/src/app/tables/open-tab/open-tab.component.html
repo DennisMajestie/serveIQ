@@ -1,40 +1,53 @@
-<div class="open-tab-container">
-  <!-- Top Navigation -->
-  <header class="top-nav">
-    <div class="nav-left">
-      <button class="back-btn" (click)="cancel()">
-        <span class="material-symbols-outlined">arrow_back</span>
-      </button>
-      <h1 class="nav-title">Open New Tab — {{ tableName }}</h1>
-    </div>
-    <button class="close-btn" (click)="cancel()">
-      <span class="material-symbols-outlined">close</span>
+<div class="mesh-gradient min-h-screen overflow-x-hidden pb-40">
+  <!-- TopAppBar -->
+  <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-xl bg-white/5 shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+    <button (click)="cancel()" class="w-10 h-10 rounded-full bg-[#4be277]/20 flex items-center justify-center overflow-hidden border border-[#4be277]/20 active:scale-95 transition-transform">
+      <span class="material-symbols-outlined text-[#4be277]">arrow_back</span>
+    </button>
+    <h1 class="text-[24px] leading-[1.3] font-medium font-bold tracking-widest text-[#4be277]" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 10px rgba(75,226,119,0.5)">LUMINA</h1>
+    <button (click)="cancel()" class="w-10 h-10 rounded-full flex items-center justify-center active:scale-95 transition-all duration-200">
+      <span class="material-symbols-outlined text-[#bccbb9]">close</span>
     </button>
   </header>
 
-  <!-- Main Content -->
-  <main class="open-tab-main">
-    <div class="form-section">
+  <!-- Content -->
+  <main class="pt-28 px-6 max-w-lg mx-auto">
+    <!-- Table Info -->
+    <div class="glass-card rounded-[32px] p-6 mb-6 flex items-center gap-4">
+      <div class="w-14 h-14 rounded-full bg-[#4be277]/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-[#4be277] text-3xl">table_restaurant</span>
+      </div>
+      <div>
+        <h2 class="text-[22px] leading-[1.3] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ tableName }}</h2>
+        <p class="text-[13px] leading-none font-medium text-[#bccbb9]" style="font-family:'Inter',sans-serif">Opening new tab</p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="glass-card rounded-[32px] p-6 flex flex-col gap-6">
       <!-- Customer Name -->
-      <div class="field-group">
-        <label class="field-label">Customer Name (Optional)</label>
+      <div class="flex flex-col gap-2">
+        <label class="text-[12px] leading-none font-semibold text-[#bccbb9] uppercase tracking-[0.08em]" style="font-family:'Inter',sans-serif">Customer Name (Optional)</label>
         <input 
           type="text" 
-          class="field-input" 
           placeholder="Enter name"
           [(ngModel)]="customerName"
+          class="w-full h-14 bg-white/5 border-2 border-white/10 rounded-2xl px-4 text-[#dce1fb] text-base font-medium outline-none transition-all duration-200 focus:border-[#4be277] placeholder:text-white/20"
+          style="font-family:'Inter',sans-serif"
         />
       </div>
 
       <!-- Number of People -->
-      <div class="field-group">
-        <label class="field-label">Number of People</label>
-        <div class="stepper">
-          <button class="stepper-btn" (click)="numPeople = (numPeople > 1 ? numPeople - 1 : 1)">
+      <div class="flex flex-col gap-2">
+        <label class="text-[12px] leading-none font-semibold text-[#bccbb9] uppercase tracking-[0.08em]" style="font-family:'Inter',sans-serif">Number of People</label>
+        <div class="flex items-center justify-center gap-6 bg-white/5 border-2 border-white/10 rounded-2xl p-4">
+          <button class="w-14 h-14 rounded-full bg-white/5 text-[#dce1fb] flex items-center justify-center active:scale-90 transition-all duration-200"
+                  (click)="numPeople = (numPeople > 1 ? numPeople - 1 : 1)">
             <span class="material-symbols-outlined">remove</span>
           </button>
-          <span class="stepper-count">{{ numPeople }}</span>
-          <button class="stepper-btn" (click)="numPeople = numPeople + 1">
+          <span class="text-[32px] leading-[40px] font-bold text-[#dce1fb] min-w-[48px] text-center" style="font-family:'Space Grotesk',sans-serif">{{ numPeople }}</span>
+          <button class="w-14 h-14 rounded-full bg-white/5 text-[#dce1fb] flex items-center justify-center active:scale-90 transition-all duration-200"
+                  (click)="numPeople = numPeople + 1">
             <span class="material-symbols-outlined">add</span>
           </button>
         </div>
@@ -42,12 +55,16 @@
     </div>
   </main>
 
-  <!-- Footer Actions -->
-  <footer class="open-tab-footer">
-    <button class="confirm-btn" (click)="confirm()">
+  <!-- Footer -->
+  <footer class="fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/5 border-t border-white/10 p-6 pb-[calc(16px+env(safe-area-inset-bottom))] flex flex-col gap-3">
+    <button (click)="confirm()"
+            class="w-full h-16 bg-[#4be277] text-[#003915] rounded-2xl font-bold text-xl shadow-[0_10px_15px_-3px_rgba(75,226,119,0.2)] active:scale-[0.98] transition-all duration-200"
+            style="font-family:'Inter',sans-serif">
       Open Tab
     </button>
-    <button class="cancel-btn" (click)="cancel()">
+    <button (click)="cancel()"
+            class="w-full h-14 bg-transparent text-[#bccbb9] rounded-2xl font-semibold text-base active:scale-[0.96] transition-all duration-200"
+            style="font-family:'Inter',sans-serif">
       Cancel
     </button>
   </footer>
