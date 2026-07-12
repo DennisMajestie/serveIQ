@@ -73,8 +73,8 @@ export class LegacyBillComponent implements OnInit {
   private mapOrderItems(items: any[]): any[] {
     return (items || []).map((o: any) => ({
       ...o,
-      menuItemName: o.menuItemName ?? o.menu_item_name ?? o.menuItem?.name ?? o.menu_item?.name ?? o.name ?? o.itemName ?? o.details?.name ?? '',
-      menuItemId: o.menuItemId ?? o.menu_item_id ?? o.menu_item?.id ?? '',
+      menuItemName: o.menuItemName || o.menu_item_name || o.menuItem?.name || o.menu_item?.name || o.name || o.itemName || o.details?.name || 'Unknown Item',
+      menuItemId: o.menuItemId ?? o.menu_item_id ?? o.menuItem?.id ?? o.menu_item?.id ?? '',
       priceKobo: o.priceKobo ?? o.unitPriceKobo ?? 0,
     }));
   }

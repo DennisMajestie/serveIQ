@@ -119,7 +119,7 @@ export class TabDetailComponent implements OnInit {
         const raw = Array.isArray(items) ? items : [];
         const normalized = raw.map((item: any) => ({
           ...item,
-          menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? item.name ?? item.itemName ?? item.details?.name ?? '',
+          menuItemName: item.menuItemName || item.menu_item_name || item.menuItem?.name || item.menu_item?.name || item.name || item.itemName || item.details?.name || 'Unknown Item',
           menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
@@ -198,7 +198,7 @@ export class TabDetailComponent implements OnInit {
       next: (response) => {
         const normalized = (response || []).map((item: any) => ({
           ...item,
-          menuItemName: item.menuItemName ?? item.menu_item_name ?? item.menu_item?.name ?? '',
+          menuItemName: item.menuItemName || item.menu_item_name || item.menuItem?.name || item.menu_item?.name || 'Unknown Item',
           menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
