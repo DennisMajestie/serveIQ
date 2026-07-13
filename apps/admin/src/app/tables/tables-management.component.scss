@@ -6,9 +6,8 @@
 }
 
 .glass-card {
-  background: color-mix(in srgb, var(--surface-container-high) 40%, transparent);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
+  background: var(--surface-container);
+  border: 1px solid var(--outline-variant);
 }
 
 .luminous-glow-primary {
