@@ -85,7 +85,7 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
 
   loadOpenTabs() {
     this.tabsSub?.unsubscribe();
-    this.tabsSub = this.tabsApi.getAllTabs().subscribe({
+    this.tabsSub = this.tabsApi.getAllTabs({ per_page: '1000' }).subscribe({
       next: (tabs) => {
         this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
       },
@@ -111,7 +111,7 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
 
     if (!tab && table.status === 'occupied') {
       try {
-        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs());
+        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ per_page: '1000' }));
         const allOpen = Array.isArray(allTabs) ? allTabs.filter(t => t.status === 'open') : [];
         this.openTabs.set(allOpen);
         tab = allOpen.find(t => t.tableId === table.id);

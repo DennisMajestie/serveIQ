@@ -52,7 +52,7 @@ export class LegacyTabHistoryComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.tabsApi.getAllTabs().subscribe({
+    this.tabsApi.getAllTabs({ per_page: '1000' }).subscribe({
       next: (tabs) => {
         const closed = tabs.filter(t => t.status === 'paid' || t.status === 'voided');
         this.closedTabs.set(closed);
