@@ -88,14 +88,7 @@
           </span>
         </div>
         <div class="space-y-4">
-          <div class="flex justify-between items-center">
-            <span class="text-[12px] leading-none font-medium text-[var(--secondary)] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Efficiency</span>
-            <span class="text-[18px] leading-none font-semibold tracking-wider" style="font-family:'Space Grotesk',sans-serif" [class.text-[var(--primary)]]="table.status === 'available'" [class.text-[var(--secondary)]]="table.status !== 'available'">{{ tableEfficiency() }}%</span>
-          </div>
-          <div class="h-1.5 rounded-full overflow-hidden" style="background: var(--surface-variant)">
-            <div class="h-full w-[92%]" [style.width.%]="tableEfficiency()" [style.background]="table.status === 'available' ? 'var(--primary)' : 'var(--secondary)'"></div>
-          </div>
-          <div class="pt-4 flex justify-between text-[var(--secondary)]">
+          <div class="flex justify-between text-[var(--secondary)]">
             <span class="text-[12px] leading-none font-medium flex items-center gap-1" style="font-family:'Inter',sans-serif">
               <span class="material-symbols-outlined text-sm">group</span> {{ table.capacity }} Seats
             </span>

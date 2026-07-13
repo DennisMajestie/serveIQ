@@ -78,7 +78,7 @@ export class TablesManagementComponent implements OnInit {
       this.waitersList.set(waiters as User[]);
 
       const tabMap = new Map<string, Tab>();
-      const openTabs = (tabs as Tab[]).filter(t => t.status === 'open' || t.status === 'billed');
+      const openTabs = (tabs as Tab[]).filter(t => t.status === 'open');
       openTabs.forEach(t => tabMap.set(t.tableId, t));
       this.activeTabs.set(tabMap);
 
@@ -176,12 +176,6 @@ export class TablesManagementComponent implements OnInit {
     const occupied = this.tables().filter(t => t.status === 'occupied').length;
     if (occupied === 0) return 0;
     return Math.max(5, Math.round(occupied * 3.5));
-  });
-
-  tableEfficiency = computed(() => {
-    const t = this.tables();
-    if (!t.length) return 92;
-    return (t.reduce((s, _, i) => s + (40 + (i * 7) % 55), 0) / t.length);
   });
 
   recentActivity = computed(() => {
