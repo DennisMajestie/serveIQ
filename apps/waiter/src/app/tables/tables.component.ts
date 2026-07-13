@@ -160,14 +160,17 @@ export class TablesComponent implements OnInit, OnDestroy {
     const branchId = localStorage.getItem('branchId') || undefined;
     this.shiftsApi.getCurrent(branchId).subscribe({
       next: (shift) => this.currentShift.set(shift),
-      error: () => {
-        // Fallback: try the list endpoint to find any open shift
+      error: (err) => {
+        console.error('getCurrent shift failed', err);
         this.shiftsApi.list().subscribe({
           next: (shifts) => {
             const open = (Array.isArray(shifts) ? shifts : []).find(s => s.status === 'open');
             this.currentShift.set(open || null);
           },
-          error: () => this.currentShift.set(null),
+          error: (err2) => {
+            console.error('list shifts fallback also failed', err2);
+            this.currentShift.set(null);
+          },
         });
       },
     });
