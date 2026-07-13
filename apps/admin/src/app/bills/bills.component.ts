@@ -1,10 +1,16 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { BillsApiService, TabsApiService, OrdersApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, OrderItem } from '@serveiq/shared/models';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import Swal from 'sweetalert2';
+
+type StatusFilter = 'all' | 'paid' | 'pending';
+type SourceFilter = 'all' | 'receipt' | 'generated' | 'computed';
+type SortField = 'total' | 'date' | 'items';
+type SortDir = 'asc' | 'desc';
 
 interface BillWithTab {
   bill: Bill;
@@ -15,7 +21,7 @@ interface BillWithTab {
 @Component({
   selector: 'app-bills',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="bills-page">
       <header class="page-header">
@@ -23,22 +29,67 @@ interface BillWithTab {
           <h1 class="page-title">Bills & Payments</h1>
           <p class="page-subtitle">View and manage all billing records across your venue.</p>
         </div>
+
         <div class="summary-bar">
           <div class="summary-item">
-            <span class="summary-label">Total (loaded bills)</span>
-            <span class="summary-value">{{ totalFormatted() }}</span>
+            <span class="summary-label">Total (filtered)</span>
+            <span class="summary-value">{{ filteredTotalFormatted() }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Transactions</span>
-            <span class="summary-value">{{ bills().length }}</span>
+            <span class="summary-value">{{ filteredSortedBills().length }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Paid</span>
-            <span class="summary-value accent">{{ paidCount() }}</span>
+            <span class="summary-value accent">{{ filteredPaidCount() }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Pending</span>
-            <span class="summary-value">{{ pendingCount() }}</span>
+            <span class="summary-value">{{ filteredPendingCount() }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">All loaded</span>
+            <span class="summary-value muted">{{ allBills().length }}</span>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-wrap">
+            <span class="material-symbols-outlined search-icon">search</span>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search by Tab ID, Table, or Bill..."
+              [(ngModel)]="searchQuery"
+            />
+            <button *ngIf="searchQuery()" class="clear-btn" (click)="searchQuery.set('')">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div class="filters">
+            <select class="filter-select" [(ngModel)]="statusFilter">
+              <option value="all">All Status</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
+            </select>
+
+            <select class="filter-select" [(ngModel)]="sourceFilter">
+              <option value="all">All Sources</option>
+              <option value="receipt">Receipt</option>
+              <option value="generated">Live</option>
+              <option value="computed">Estimate</option>
+            </select>
+
+            <select class="filter-select" [(ngModel)]="sortField">
+              <option value="total">Sort: Total</option>
+              <option value="date">Sort: Date</option>
+              <option value="items">Sort: Items</option>
+            </select>
+
+            <button class="sort-dir-btn" (click)="toggleSortDir()" title="Toggle order">
+              <span class="material-symbols-outlined">{{ sortDir() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
+            </button>
           </div>
         </div>
       </header>
@@ -56,7 +107,7 @@ interface BillWithTab {
                 <th>Items</th>
                 <th>Subtotal</th>
                 <th>Service Chg</th>
-                <th>Total</th>
+                <th class="sortable" (click)="setSort('total')">Total <span class="sort-arrow" *ngIf="sortField() === 'total'">{{ sortDir() === 'asc' ? '▲' : '▼' }}</span></th>
                 <th>Method</th>
                 <th>Status</th>
                 <th>Source</th>
@@ -64,43 +115,47 @@ interface BillWithTab {
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let entry of bills()" class="bill-row">
-                <td>
-                  <code>{{ entry.tab.id.slice(0, 8) }}...</code>
-                  <span class="table-label">T-{{ entry.tab.tableId?.slice(0, 4) || '??' }}</span>
-                </td>
-                <td>{{ (entry.bill.orderItems || []).length }}</td>
-                <td>₦{{ formatKobo(entry.bill.subtotalKobo) }}</td>
-                <td>{{ entry.bill.serviceChargePercent || 5 }}%</td>
-                <td class="cell-total">₦{{ formatKobo(entry.bill.totalKobo) }}</td>
-                <td>
-                  <span class="method-badge" *ngIf="entry.bill.paymentMethod">
-                    {{ entry.bill.paymentMethod | titlecase }}
-                  </span>
-                  <span class="method-badge unpaid" *ngIf="!entry.bill.paymentMethod">—</span>
-                </td>
-                <td>
-                  <span class="status-badge" [class.paid]="entry.bill.paidAt">
-                    {{ entry.bill.paidAt ? 'Paid' : 'Pending' }}
-                  </span>
-                </td>
-                <td>
-                  <span class="source-badge" [class]="entry.source">
-                    {{ entry.source === 'receipt' ? 'Receipt' : entry.source === 'generated' ? 'Live' : 'Estimate' }}
-                  </span>
-                </td>
-                <td class="cell-actions">
-                  <button class="action-btn" (click)="viewReceipt(entry)" title="View Details">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-              <tr *ngIf="bills().length === 0">
-                <td colspan="9" class="empty-state">No bills found.</td>
-              </tr>
+              @for (entry of filteredSortedBills(); track entry.tab.id) {
+                <tr class="bill-row">
+                  <td>
+                    <code>{{ entry.tab.id.slice(0, 8) }}...</code>
+                    <span class="table-label">T-{{ entry.tab.tableId?.slice(0, 4) || '??' }}</span>
+                  </td>
+                  <td>{{ (entry.bill.orderItems || []).length }}</td>
+                  <td>₦{{ formatKobo(entry.bill.subtotalKobo) }}</td>
+                  <td>{{ entry.bill.serviceChargePercent || 5 }}%</td>
+                  <td class="cell-total">₦{{ formatKobo(entry.bill.totalKobo) }}</td>
+                  <td>
+                    <span class="method-badge" *ngIf="entry.bill.paymentMethod">
+                      {{ entry.bill.paymentMethod | titlecase }}
+                    </span>
+                    <span class="method-badge unpaid" *ngIf="!entry.bill.paymentMethod">—</span>
+                  </td>
+                  <td>
+                    <span class="status-badge" [class.paid]="entry.bill.paidAt">
+                      {{ entry.bill.paidAt ? 'Paid' : 'Pending' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="source-badge" [class]="entry.source">
+                      {{ entry.source === 'receipt' ? 'Receipt' : entry.source === 'generated' ? 'Live' : 'Estimate' }}
+                    </span>
+                  </td>
+                  <td class="cell-actions">
+                    <button class="action-btn" (click)="viewReceipt(entry)" title="View Details">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              }
+              @empty {
+                <tr>
+                  <td colspan="9" class="empty-state">{{ bills().length ? 'No match for current filters.' : 'No bills found.' }}</td>
+                </tr>
+              }
             </tbody>
           </table>
         </div>
@@ -109,7 +164,7 @@ interface BillWithTab {
   `,
   styles: [`
     .bills-page { padding: 40px 48px; margin: 0 auto; font-family: 'Inter', sans-serif; }
-    .page-header { margin-bottom: 32px; display: flex; flex-direction: column; gap: 24px; }
+    .page-header { margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; }
     .title-group { display: flex; flex-direction: column; gap: 8px; }
     .page-title { margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; color: var(--on-surface); }
     .page-subtitle { margin: 0; font-size: 1rem; color: var(--secondary); }
@@ -119,6 +174,18 @@ interface BillWithTab {
     .summary-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary); }
     .summary-value { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--on-background); }
     .summary-value.accent { color: var(--primary); }
+    .summary-value.muted { color: var(--secondary); font-size: 1.25rem; }
+
+    .toolbar { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .search-wrap { position: relative; flex: 1; min-width: 240px; }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--secondary); pointer-events: none; }
+    .search-input { width: 100%; padding: 10px 36px 10px 44px; border: 1px solid var(--outline-variant); border-radius: 12px; background: var(--surface-container-low); color: var(--on-background); font-size: 0.9375rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; &::placeholder { color: var(--secondary); } &:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent); } }
+    .clear-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--secondary); cursor: pointer; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; &:hover { background: var(--surface-variant); } .material-symbols-outlined { font-size: 18px; } }
+
+    .filters { display: flex; gap: 8px; align-items: center; }
+    .filter-select { padding: 10px 36px 10px 14px; border: 1px solid var(--outline-variant); border-radius: 12px; background: var(--surface-container-low); color: var(--on-background); font-size: 0.875rem; font-family: 'Inter', sans-serif; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23575e70' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; &:focus { border-color: var(--primary); } &:hover { border-color: var(--primary); } }
+
+    .sort-dir-btn { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--outline-variant); border-radius: 12px; background: var(--surface-container-low); color: var(--secondary); cursor: pointer; transition: all 0.2s; &:hover { border-color: var(--primary); color: var(--primary); } .material-symbols-outlined { font-size: 20px; } }
 
     .skeleton-list { display: flex; flex-direction: column; gap: 12px; }
     .skeleton-shimmer { background: linear-gradient(90deg, var(--surface-container-low) 25%, var(--surface-container-high) 50%, var(--surface-container-low) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; }
@@ -131,6 +198,8 @@ interface BillWithTab {
     .bills-table th { text-align: left; padding: 20px 24px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--secondary); background: var(--surface-container-low); }
     .bills-table td { padding: 20px 24px; border-bottom: 1px solid var(--outline-variant); color: var(--secondary); font-size: 0.9375rem; }
     .bill-row:hover { background: var(--surface-container-low); }
+    .sortable { cursor: pointer; user-select: none; &:hover { color: var(--primary); } }
+    .sort-arrow { font-size: 0.65rem; margin-left: 4px; }
 
     .table-label { display: inline-block; margin-left: 8px; font-size: 0.8rem; font-weight: 600; color: var(--primary); }
     .cell-total { font-weight: 700; color: var(--on-surface); }
@@ -157,16 +226,59 @@ export class BillsComponent implements OnInit {
   private tabsApi = inject(TabsApiService);
   private ordersApi = inject(OrdersApiService);
 
-  bills = signal<BillWithTab[]>([]);
+  allBills = signal<BillWithTab[]>([]);
   isLoading = signal(true);
 
-  totalFormatted = computed(() => {
-    const total = this.bills().reduce((s, e) => s + e.bill.totalKobo, 0);
+  searchQuery = signal('');
+  statusFilter = signal<StatusFilter>('all');
+  sourceFilter = signal<SourceFilter>('all');
+  sortField = signal<SortField>('total');
+  sortDir = signal<SortDir>('desc');
+
+  bills = this.allBills.asReadonly();
+
+  filteredSortedBills = computed(() => {
+    let list = this.allBills();
+    const query = this.searchQuery().toLowerCase().trim();
+    const status = this.statusFilter();
+    const source = this.sourceFilter();
+    const field = this.sortField();
+    const dir = this.sortDir();
+
+    if (query) {
+      list = list.filter(e =>
+        e.tab.id.toLowerCase().includes(query) ||
+        (e.tab.tableId || '').toLowerCase().includes(query) ||
+        (e.bill.id || '').toLowerCase().includes(query)
+      );
+    }
+
+    if (status !== 'all') {
+      list = list.filter(e => status === 'paid' ? !!e.bill.paidAt : !e.bill.paidAt);
+    }
+
+    if (source !== 'all') {
+      list = list.filter(e => e.source === source);
+    }
+
+    list = [...list].sort((a, b) => {
+      let cmp = 0;
+      if (field === 'total') cmp = a.bill.totalKobo - b.bill.totalKobo;
+      else if (field === 'date') cmp = new Date(a.bill.createdAt || 0).getTime() - new Date(b.bill.createdAt || 0).getTime();
+      else if (field === 'items') cmp = (a.bill.orderItems || []).length - (b.bill.orderItems || []).length;
+      return dir === 'asc' ? cmp : -cmp;
+    });
+
+    return list;
+  });
+
+  filteredTotalFormatted = computed(() => {
+    const total = this.filteredSortedBills().reduce((s, e) => s + e.bill.totalKobo, 0);
     return '₦' + (total / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   });
 
-  paidCount = computed(() => this.bills().filter(e => !!e.bill.paidAt).length);
-  pendingCount = computed(() => this.bills().filter(e => !e.bill.paidAt).length);
+  filteredPaidCount = computed(() => this.filteredSortedBills().filter(e => !!e.bill.paidAt).length);
+  filteredPendingCount = computed(() => this.filteredSortedBills().filter(e => !e.bill.paidAt).length);
 
   ngOnInit() {
     this.loadAllBills();
@@ -180,29 +292,23 @@ export class BillsComponent implements OnInit {
         this.isLoading.set(false);
         return;
       }
-
       const requests = tabs.map(tab =>
         this.loadBillForTab(tab).pipe(catchError(() => of(null as BillWithTab | null)))
       );
       forkJoin(requests).subscribe(results => {
-        this.bills.set(results.filter((r): r is BillWithTab => r !== null));
+        this.allBills.set(results.filter((r): r is BillWithTab => r !== null));
         this.isLoading.set(false);
       });
     });
   }
 
   private loadBillForTab(tab: Tab) {
-    // Step 1: Try receipt endpoint (paid bills)
     return this.billsApi.getByTab(tab.id).pipe(
       switchMap(bill => {
-        if (bill) {
-          return this.fetchOrdersAndWrap(tab, bill, 'receipt');
-        }
-        // Step 2: No receipt — try generate()
+        if (bill) return this.fetchOrdersAndWrap(tab, bill, 'receipt');
         return this.billsApi.generate(tab.id, { serviceChargePercent: 5 }).pipe(
           switchMap(genBill => this.fetchOrdersAndWrap(tab, genBill, 'generated')),
           catchError(() =>
-            // Step 3: Generate failed — compute from orders
             this.ordersApi.getByTab(tab.id).pipe(
               map(items => this.wrapComputed(tab, items)),
             )
@@ -229,17 +335,22 @@ export class BillsComponent implements OnInit {
     const serviceChargeKobo = Math.round(subtotalKobo * 0.05);
     const totalKobo = subtotalKobo + serviceChargeKobo;
     return {
-      id: '',
-      tabId,
-      branchId: '',
-      subtotalKobo,
-      serviceChargeKobo,
-      serviceChargePercent: 5,
-      discountKobo: 0,
-      totalKobo,
-      createdAt: new Date(),
-      orderItems: items,
+      id: '', tabId, branchId: '', subtotalKobo, serviceChargeKobo,
+      serviceChargePercent: 5, discountKobo: 0, totalKobo, createdAt: new Date(), orderItems: items,
     };
+  }
+
+  toggleSortDir() {
+    this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
+  }
+
+  setSort(field: SortField) {
+    if (this.sortField() === field) {
+      this.toggleSortDir();
+    } else {
+      this.sortField.set(field);
+      this.sortDir.set('desc');
+    }
   }
 
   formatKobo(kobo: number): string {
