@@ -83,7 +83,7 @@ interface BillWithTab {
     </div>
   `,
   styles: [`
-    .bills-page { padding: 40px 48px; max-width: 1600px; margin: 0 auto; font-family: 'Inter', sans-serif; }
+    .bills-page { padding: 40px 48px; margin: 0 auto; font-family: 'Inter', sans-serif; }
 
     .page-header { margin-bottom: 40px; }
     .title-group { display: flex; flex-direction: column; gap: 8px; }
