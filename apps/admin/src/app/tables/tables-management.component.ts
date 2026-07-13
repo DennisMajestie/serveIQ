@@ -27,6 +27,7 @@ export class TablesManagementComponent implements OnInit {
   readonly tables = signal<Table[]>([]);
   readonly activeTabs = signal<Map<string, Tab>>(new Map());
   readonly waiterMap = signal<Record<string, string>>({});
+  readonly waitersList = signal<User[]>([]);
   statusFilter = signal<string>('all');
 
   readonly summaryStats = computed(() => {
@@ -71,9 +72,9 @@ export class TablesManagementComponent implements OnInit {
     }).subscribe(({ tables, tabs, waiters }) => {
       this.tables.set(Array.isArray(tables) ? tables : []);
 
-      const wm: Record<string, string> = {};
       (waiters as User[]).forEach(w => { wm[w.id] = w.fullName; });
       this.waiterMap.set(wm);
+      this.waitersList.set(waiters as User[]);
 
       const tabMap = new Map<string, Tab>();
       const openTabs = (tabs as Tab[]).filter(t => t.status === 'open' || t.status === 'billed');
