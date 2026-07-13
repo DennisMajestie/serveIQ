@@ -21,8 +21,9 @@
 }
 
 [data-theme="light"] .blueprint-line {
-  stroke: rgba(0, 0, 0, 0.2);
-  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.15));
+  stroke: #010309;
+  stroke-width: 1;
+  filter: drop-shadow(0 0 2px rgba(173, 198, 255, 0.5));
 }
 
 .pulse-left::before {
