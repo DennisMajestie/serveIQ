@@ -70,6 +70,7 @@ export const API_CONFIG = {
       void: '/api/v1/tabs/:id/void',
       transfer: '/api/v1/tabs/:id/transfer',
       delete: '/api/v1/tabs/:id',
+      waiterList: '/api/v1/tabs/waiter-list',
     },
     // Orders
     orders: {

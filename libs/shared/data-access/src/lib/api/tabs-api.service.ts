@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
@@ -58,5 +59,12 @@ export class TabsApiService extends BaseApiService {
   // Transfer a tab to another table
   transferTab(id: string, targetTableId: string): Observable<Tab> {
     return this.post<Tab>(buildUrl(API_CONFIG.endpoints.tabs.transfer, { id }), { targetTableId });
+  }
+
+  // Get list of users who have tabs in the branch (for waiter filter)
+  getWaiterList(): Observable<{ id: string; fullName: string; role: string }[]> {
+    return this.get<any[]>(API_CONFIG.endpoints.tabs.waiterList).pipe(
+      map(list => list.map(w => ({ id: w.id, fullName: w.fullName || w.full_name, role: w.role })))
+    );
   }
 }

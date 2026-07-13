@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 
 type StatusFilter = 'all' | 'paid' | 'pending';
 type SourceFilter = 'all' | 'receipt' | 'generated' | 'computed';
-type SortField = 'total' | 'date' | 'items';
+type SortField = 'total' | 'date' | 'items' | 'waiter';
 type SortDir = 'asc' | 'desc';
 
 interface BillWithTab {
@@ -32,12 +32,12 @@ interface BillWithTab {
 
         <div class="summary-bar">
           <div class="summary-item">
-            <span class="summary-label">Reported Revenue</span>
-            <span class="summary-value">₦{{ formatKobo(reportTotalKobo()) }}</span>
+            <span class="summary-label">Total Revenue</span>
+            <span class="summary-value">{{ filteredTotalFormatted() }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Reported Orders</span>
-            <span class="summary-value">{{ reportTransactionCount() }}</span>
+            <span class="summary-label">Transactions</span>
+            <span class="summary-value">{{ filteredSortedBills().length }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Paid</span>
@@ -48,7 +48,7 @@ interface BillWithTab {
             <span class="summary-value">{{ filteredPendingCount() }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Records Loaded</span>
+            <span class="summary-label">Loaded</span>
             <span class="summary-value muted">{{ allBills().length }}</span>
           </div>
         </div>
@@ -81,10 +81,18 @@ interface BillWithTab {
               <option value="computed">Estimate</option>
             </select>
 
+            <select class="filter-select" [(ngModel)]="waiterFilter">
+              <option value="">All Waiters</option>
+              @for (w of waiterOptions(); track w.id) {
+                <option [value]="w.id">{{ w.name }}</option>
+              }
+            </select>
+
             <select class="filter-select" [(ngModel)]="sortField">
               <option value="total">Sort: Total</option>
               <option value="date">Sort: Date</option>
               <option value="items">Sort: Items</option>
+              <option value="waiter">Sort: Waiter</option>
             </select>
 
             <button class="sort-dir-btn" (click)="toggleSortDir()" title="Toggle order">
@@ -104,7 +112,7 @@ interface BillWithTab {
             <thead>
               <tr>
                 <th>Tab / Table</th>
-                <th>Waiter</th>
+                <th class="sortable" (click)="setSort('waiter')">Waiter <span class="sort-arrow" *ngIf="sortField() === 'waiter'">{{ sortDir() === 'asc' ? '▲' : '▼' }}</span></th>
                 <th>Items</th>
                 <th>Subtotal</th>
                 <th>Service Chg</th>
@@ -239,6 +247,8 @@ export class BillsComponent implements OnInit {
   searchQuery = signal('');
   statusFilter = signal<StatusFilter>('all');
   sourceFilter = signal<SourceFilter>('all');
+  waiterFilter = signal('');
+  waiterOptions = signal<{ id: string; name: string }[]>([]);
   sortField = signal<SortField>('total');
   sortDir = signal<SortDir>('desc');
 
@@ -249,6 +259,7 @@ export class BillsComponent implements OnInit {
     const query = this.searchQuery().toLowerCase().trim();
     const status = this.statusFilter();
     const source = this.sourceFilter();
+    const wf = this.waiterFilter();
     const field = this.sortField();
     const dir = this.sortDir();
 
@@ -268,11 +279,20 @@ export class BillsComponent implements OnInit {
       list = list.filter(e => e.source === source);
     }
 
+    if (wf) {
+      list = list.filter(e => e.tab.waiterId === wf);
+    }
+
     list = [...list].sort((a, b) => {
       let cmp = 0;
       if (field === 'total') cmp = a.bill.totalKobo - b.bill.totalKobo;
       else if (field === 'date') cmp = new Date(a.bill.createdAt || 0).getTime() - new Date(b.bill.createdAt || 0).getTime();
       else if (field === 'items') cmp = (a.bill.orderItems || []).length - (b.bill.orderItems || []).length;
+      else if (field === 'waiter') {
+        const na = this.waiterMap()[a.tab.waiterId || ''] || '';
+        const nb = this.waiterMap()[b.tab.waiterId || ''] || '';
+        cmp = na.localeCompare(nb);
+      }
       return dir === 'asc' ? cmp : -cmp;
     });
 
@@ -295,11 +315,19 @@ export class BillsComponent implements OnInit {
     forkJoin({
       tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
       waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
+      waiterList: this.tabsApi.getWaiterList().pipe(catchError(() => of([]))),
       sales: this.reportsApi.getSales().pipe(catchError(() => of([]))),
-    }).subscribe(({ tabs, waiters, sales }) => {
+    }).subscribe(({ tabs, waiters, waiterList, sales }) => {
       const map: Record<string, string> = {};
       (waiters as User[]).forEach(w => { map[w.id] = w.fullName; });
+      (waiterList as { id: string; fullName: string; role: string }[]).forEach(w => { if (!map[w.id]) map[w.id] = w.fullName; });
       this.waiterMap.set(map);
+
+      this.waiterOptions.set(
+        (waiterList as { id: string; fullName: string; role: string }[])
+          .map(w => ({ id: w.id, name: w.fullName }))
+          .sort((a, b) => a.name.localeCompare(b.name))
+      );
 
       const entries = sales as SalesEntry[];
       const totalKobo = entries.reduce((s, e) => s + (e.revenueKobo || 0), 0);
