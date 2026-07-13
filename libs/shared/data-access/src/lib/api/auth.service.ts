@@ -166,7 +166,7 @@ export class AuthService {
     const currentToken = getStaffToken() || localStorage.getItem('token');
     const isStaff = !!getStaffToken();
     
-    return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/refresh`, {}).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/refresh`, { refresh_token: currentToken }).pipe(
       tap(response => {
         const token = response.data?.access_token;
         if (token) {
