@@ -120,7 +120,7 @@ interface BillWithTab {
                 <tr class="bill-row">
                   <td>
                     <code>{{ entry.tab.id.slice(0, 8) }}...</code>
-                    <span class="table-label">T-{{ entry.tab.tableId?.slice(0, 4) || '??' }}</span>
+                    <span class="table-label">T-{{ entry.tab.tableId.slice(0, 4) }}</span>
                   </td>
                   <td>{{ waiterMap()[entry.tab.waiterId || ''] || '—' }}</td>
                   <td>{{ (entry.bill.orderItems || []).length }}</td>
@@ -293,12 +293,14 @@ export class BillsComponent implements OnInit {
 
   private loadAllBills() {
     forkJoin({
-      tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
+      tabs: this.tabsApi.getAllTabs({ all: 'true' }).pipe(catchError(() => of([]))),
       waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
+      currentUser: this.userApi.getMe().pipe(catchError(() => of(null))),
       sales: this.reportsApi.getSales().pipe(catchError(() => of([]))),
-    }).subscribe(({ tabs, waiters, sales }) => {
+    }).subscribe(({ tabs, waiters, currentUser, sales }) => {
       const map: Record<string, string> = {};
       (waiters as User[]).forEach(w => { map[w.id] = w.fullName; });
+      if (currentUser) map[(currentUser as User).id] = (currentUser as User).fullName;
       this.waiterMap.set(map);
 
       const entries = sales as SalesEntry[];

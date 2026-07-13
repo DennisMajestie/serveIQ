@@ -15,9 +15,9 @@ export class TabsApiService extends BaseApiService {
     super(http, env);
   }
 
-  // Get all tabs
-  getAllTabs(): Observable<Tab[]> {
-    return this.get<Tab[]>(API_CONFIG.endpoints.tabs.list);
+  // Get all tabs (optionally include closed/completed)
+  getAllTabs(queryParams?: Record<string, string>): Observable<Tab[]> {
+    return this.get<Tab[]>(API_CONFIG.endpoints.tabs.list, undefined, queryParams);
   }
 
   // Get a single tab
