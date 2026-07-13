@@ -1,8 +1,8 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BillsApiService, TabsApiService, OrdersApiService } from '@serveiq/shared/data-access';
-import { Bill, Tab, OrderItem } from '@serveiq/shared/models';
+import { BillsApiService, TabsApiService, OrdersApiService, UserApiService, ReportsApiService } from '@serveiq/shared/data-access';
+import { Bill, Tab, OrderItem, User, SalesEntry } from '@serveiq/shared/models';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -32,12 +32,12 @@ interface BillWithTab {
 
         <div class="summary-bar">
           <div class="summary-item">
-            <span class="summary-label">Total (filtered)</span>
-            <span class="summary-value">{{ filteredTotalFormatted() }}</span>
+            <span class="summary-label">Reported Revenue</span>
+            <span class="summary-value">₦{{ formatKobo(reportTotalKobo()) }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">Transactions</span>
-            <span class="summary-value">{{ filteredSortedBills().length }}</span>
+            <span class="summary-label">Reported Orders</span>
+            <span class="summary-value">{{ reportTransactionCount() }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Paid</span>
@@ -48,7 +48,7 @@ interface BillWithTab {
             <span class="summary-value">{{ filteredPendingCount() }}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">All loaded</span>
+            <span class="summary-label">Records Loaded</span>
             <span class="summary-value muted">{{ allBills().length }}</span>
           </div>
         </div>
@@ -104,6 +104,7 @@ interface BillWithTab {
             <thead>
               <tr>
                 <th>Tab / Table</th>
+                <th>Waiter</th>
                 <th>Items</th>
                 <th>Subtotal</th>
                 <th>Service Chg</th>
@@ -121,6 +122,7 @@ interface BillWithTab {
                     <code>{{ entry.tab.id.slice(0, 8) }}...</code>
                     <span class="table-label">T-{{ entry.tab.tableId?.slice(0, 4) || '??' }}</span>
                   </td>
+                  <td>{{ waiterMap()[entry.tab.waiterId || ''] || '—' }}</td>
                   <td>{{ (entry.bill.orderItems || []).length }}</td>
                   <td>₦{{ formatKobo(entry.bill.subtotalKobo) }}</td>
                   <td>{{ entry.bill.serviceChargePercent || 5 }}%</td>
@@ -153,7 +155,7 @@ interface BillWithTab {
               }
               @empty {
                 <tr>
-                  <td colspan="9" class="empty-state">{{ bills().length ? 'No match for current filters.' : 'No bills found.' }}</td>
+                  <td colspan="10" class="empty-state">{{ bills().length ? 'No match for current filters.' : 'No bills found.' }}</td>
                 </tr>
               }
             </tbody>
@@ -225,8 +227,13 @@ export class BillsComponent implements OnInit {
   private billsApi = inject(BillsApiService);
   private tabsApi = inject(TabsApiService);
   private ordersApi = inject(OrdersApiService);
+  private userApi = inject(UserApiService);
+  private reportsApi = inject(ReportsApiService);
 
   allBills = signal<BillWithTab[]>([]);
+  waiterMap = signal<Record<string, string>>({});
+  reportTotalKobo = signal(0);
+  reportTransactionCount = signal(0);
   isLoading = signal(true);
 
   searchQuery = signal('');
@@ -285,14 +292,26 @@ export class BillsComponent implements OnInit {
   }
 
   private loadAllBills() {
-    this.tabsApi.getAllTabs().pipe(
-      catchError(() => of([]))
-    ).subscribe((tabs: Tab[]) => {
+    forkJoin({
+      tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
+      waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
+      sales: this.reportsApi.getSales().pipe(catchError(() => of([]))),
+    }).subscribe(({ tabs, waiters, sales }) => {
+      const map: Record<string, string> = {};
+      (waiters as User[]).forEach(w => { map[w.id] = w.fullName; });
+      this.waiterMap.set(map);
+
+      const entries = sales as SalesEntry[];
+      const totalKobo = entries.reduce((s, e) => s + (e.revenueKobo || 0), 0);
+      const totalTx = entries.reduce((s, e) => s + (e.orderCount || 0), 0);
+      this.reportTotalKobo.set(totalKobo);
+      this.reportTransactionCount.set(totalTx);
+
       if (!tabs.length) {
         this.isLoading.set(false);
         return;
       }
-      const requests = tabs.map(tab =>
+      const requests = (tabs as Tab[]).map(tab =>
         this.loadBillForTab(tab).pipe(catchError(() => of(null as BillWithTab | null)))
       );
       forkJoin(requests).subscribe(results => {

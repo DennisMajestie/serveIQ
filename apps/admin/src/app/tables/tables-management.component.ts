@@ -2,7 +2,10 @@ import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-import { TablesApiService, Table } from '@serveiq/shared/data-access';
+import { TablesApiService, TabsApiService, UserApiService } from '@serveiq/shared/data-access';
+import { Table, Tab, User } from '@serveiq/shared/models';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
 
@@ -16,10 +19,15 @@ import Swal from 'sweetalert2';
 })
 export class TablesManagementComponent implements OnInit {
   private tableService = inject(TablesApiService);
+  private tabsApi = inject(TabsApiService);
+  private userApi = inject(UserApiService);
   isFloorPlan = signal(false);
   isLoading = signal(true);
 
   readonly tables = signal<Table[]>([]);
+  readonly activeTabs = signal<Map<string, Tab>>(new Map());
+  readonly waiterMap = signal<Record<string, string>>({});
+  statusFilter = signal<string>('all');
 
   readonly summaryStats = computed(() => {
     const t = this.tables();
@@ -43,13 +51,36 @@ export class TablesManagementComponent implements OnInit {
     ];
   });
 
+  filteredTables = computed(() => {
+    const f = this.statusFilter();
+    if (f === 'all') return this.tables();
+    return this.tables().filter(t => t.status === f);
+  });
+
+  getWaiterForTable(tableId: string): string {
+    const tab = this.activeTabs().get(tableId);
+    if (!tab?.waiterId) return '';
+    return this.waiterMap()[tab.waiterId] || '';
+  }
+
   ngOnInit() {
-    this.tableService.getAllTables().subscribe({
-      next: (tables: any) => {
-        this.tables.set(Array.isArray(tables) ? tables : []);
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false)
+    forkJoin({
+      tables: this.tableService.getAllTables().pipe(catchError(() => of([]))),
+      tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
+      waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
+    }).subscribe(({ tables, tabs, waiters }) => {
+      this.tables.set(Array.isArray(tables) ? tables : []);
+
+      const wm: Record<string, string> = {};
+      (waiters as User[]).forEach(w => { wm[w.id] = w.fullName; });
+      this.waiterMap.set(wm);
+
+      const tabMap = new Map<string, Tab>();
+      const openTabs = (tabs as Tab[]).filter(t => t.status === 'open' || t.status === 'billed');
+      openTabs.forEach(t => tabMap.set(t.tableId, t));
+      this.activeTabs.set(tabMap);
+
+      this.isLoading.set(false);
     });
   }
 

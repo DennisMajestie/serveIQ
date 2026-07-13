@@ -16,6 +16,13 @@
     </div>
   </header>
 
+  <div class="flex gap-2 mb-5 flex-wrap">
+    <button class="px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="statusFilter() === 'all' ? 'bg-[var(--primary)] text-[var(--on-primary)]' : 'bg-[var(--surface-container)] text-[var(--secondary)] hover:text-[var(--primary)]'" (click)="statusFilter.set('all')">All</button>
+    <button class="px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="statusFilter() === 'available' ? 'bg-[var(--primary)] text-[var(--on-primary)]' : 'bg-[var(--surface-container)] text-[var(--secondary)] hover:text-[var(--primary)]'" (click)="statusFilter.set('available')">Available</button>
+    <button class="px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="statusFilter() === 'occupied' ? 'bg-[var(--primary)] text-[var(--on-primary)]' : 'bg-[var(--surface-container)] text-[var(--secondary)] hover:text-[var(--primary)]'" (click)="statusFilter.set('occupied')">Occupied</button>
+    <button class="px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="statusFilter() === 'reserved' ? 'bg-[var(--primary)] text-[var(--on-primary)]' : 'bg-[var(--surface-container)] text-[var(--secondary)] hover:text-[var(--primary)]'" (click)="statusFilter.set('reserved')">Reserved</button>
+  </div>
+
   <ng-container *ngIf="!isLoading(); else skeleton">
     <!-- Asymmetric Bento Grid -->
     <div class="grid grid-cols-12 gap-5">
@@ -25,8 +32,14 @@
           <svg viewBox="0 0 800 400" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M50 50H750V350H50V50Z" class="blueprint-line"></path>
             <path d="M200 50V350M400 50V350M600 50V350" class="blueprint-line"></path>
-            <circle cx="125" cy="125" r="30" class="blueprint-line"></circle>
-            <circle cx="300" cy="125" r="30" class="blueprint-line"></circle>
+            <g transform="translate(93, 93)">
+              <circle cx="32" cy="32" r="32" fill="#9d4300"/>
+              <text x="32" y="32" text-anchor="middle" dominant-baseline="middle" font-size="28" font-weight="400" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Fira Sans, Droid Sans, Helvetica Neue', sans-serif" dy=".1em">DM</text>
+            </g>
+            <g transform="translate(268, 93)">
+              <circle cx="32" cy="32" r="32" fill="#9d4300"/>
+              <text x="32" y="32" text-anchor="middle" dominant-baseline="middle" font-size="28" font-weight="400" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Fira Sans, Droid Sans, Helvetica Neue', sans-serif" dy=".1em">AD</text>
+            </g>
             <rect x="480" y="95" width="60" height="60" rx="4" class="blueprint-line"></rect>
             <rect x="650" y="95" width="80" height="60" rx="4" class="blueprint-line"></rect>
             <path d="M100 250H150V300H100V250Z" class="blueprint-line"></path>
@@ -61,7 +74,7 @@
           <ng-container *ngIf="tables().length > 0; else emptyActivity">
             <div *ngFor="let table of recentActivity()" class="p-4 rounded-xl bg-[var(--surface)] border-l-4 pulse-left relative cursor-pointer" [style.border-left-color]="table.status === 'available' ? 'color-mix(in srgb, var(--primary) 40%, transparent)' : table.status === 'occupied' ? 'color-mix(in srgb, var(--secondary) 40%, transparent)' : 'color-mix(in srgb, var(--error) 40%, transparent)'" (click)="editTable(table)">
               <p class="text-[14px] leading-none font-semibold text-[var(--on-background)] flex items-center gap-1.5" style="font-family:'Inter',sans-serif"><span class="material-symbols-outlined text-[16px] text-[var(--on-background)]">table_restaurant</span> {{ table.tableNumber.toString().padStart(2, '0') }} — {{ table.status | titlecase }}</p>
-              <p class="text-[12px] leading-none font-medium text-[var(--secondary)]" style="font-family:'Inter',sans-serif">{{ table.capacity }} seats</p>
+              <p class="text-[12px] leading-none font-medium text-[var(--secondary)] flex items-center gap-1" style="font-family:'Inter',sans-serif"><span class="material-symbols-outlined text-[12px]">group</span> {{ table.capacity }} seats <ng-container *ngIf="getWaiterForTable(table.id)">· <span class="material-symbols-outlined text-[12px]">person</span>{{ getWaiterForTable(table.id) }}</ng-container></p>
             </div>
           </ng-container>
           <ng-template #emptyActivity>
@@ -73,7 +86,7 @@
       </div>
 
       <!-- Table Cards -->
-      <div *ngFor="let table of tables()" class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 transition-all hover:scale-[1.02] cursor-pointer" [class.luminous-glow-primary]="table.status === 'available'" (click)="editTable(table)">
+      <div *ngFor="let table of filteredTables()" class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 transition-all hover:scale-[1.02] cursor-pointer" [class.luminous-glow-primary]="table.status === 'available'" (click)="editTable(table)">
         <div class="flex justify-between items-start mb-8">
           <span class="flex items-center gap-3" [class.opacity-60]="table.status !== 'available'"><span class="material-symbols-outlined text-[40px] text-[var(--on-background)]">table_restaurant</span><span class="text-[48px] leading-[1.1] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">{{ table.tableNumber.toString().padStart(2, '0') }}</span></span>
           <span class="px-3 py-1 text-[12px] leading-none font-medium rounded-full" [ngClass]="statusBadgeClass(table.status)">
@@ -91,6 +104,9 @@
           <div class="pt-4 flex justify-between text-[var(--secondary)]">
             <span class="text-[12px] leading-none font-medium flex items-center gap-1" style="font-family:'Inter',sans-serif">
               <span class="material-symbols-outlined text-sm">group</span> {{ table.capacity }} Seats
+            </span>
+            <span class="text-[12px] leading-none font-medium flex items-center gap-1" style="font-family:'Inter',sans-serif" *ngIf="getWaiterForTable(table.id)">
+              <span class="material-symbols-outlined text-sm">person</span> {{ getWaiterForTable(table.id) }}
             </span>
             <div class="flex gap-2">
               <button class="text-[var(--secondary)] hover:text-[var(--primary)] transition-colors" (click)="$event.stopPropagation(); updateTableStatus(table, 'available')" title="Set Available">
@@ -116,6 +132,11 @@
         <p class="text-[var(--on-background)] text-lg font-medium mb-2" style="font-family:'Space Grotesk',sans-serif">No tables yet</p>
         <p class="text-[var(--secondary)] text-sm mb-6" style="font-family:'Inter',sans-serif">Add your first table to start managing your floor.</p>
         <button class="px-6 py-3 bg-[var(--primary)] text-[var(--on-primary)] rounded-xl font-semibold text-sm transition-all hover:brightness-110 active:scale-95" (click)="addNewTable()">Add Your First Table</button>
+      </div>
+      <div *ngIf="tables().length > 0 && filteredTables().length === 0" class="col-span-12 glass-card rounded-3xl p-12 text-center">
+        <span class="material-symbols-outlined text-5xl text-[var(--secondary)]/50 mb-4">search_off</span>
+        <p class="text-[var(--on-background)] text-lg font-medium mb-2" style="font-family:'Space Grotesk',sans-serif">No {{ statusFilter() }} tables</p>
+        <p class="text-[var(--secondary)] text-sm" style="font-family:'Inter',sans-serif">No tables match the current filter.</p>
       </div>
     </div>
   </ng-container>
