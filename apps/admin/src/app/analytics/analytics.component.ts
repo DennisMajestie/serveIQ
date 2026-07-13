@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
@@ -53,6 +53,37 @@ export class AnalyticsComponent implements OnInit {
   staffData = signal<StaffPerformance[]>([]);
   peakHoursData = signal<PeakHoursData[]>([]);
 
+  chartPaths = computed(() => {
+    const data = this.peakHoursData();
+    if (!data.length) return { line: '', area: '', line2: '', area2: '' };
+
+    const maxKobo = Math.max(...data.map(d => d.revenueKobo), 1);
+    const maxOrders = Math.max(...data.map(d => d.orderCount), 1);
+    const margin = 50;
+    const chartW = 900;
+    const chartH = 240;
+    const bottom = 280;
+    const step = data.length > 1 ? chartW / (data.length - 1) : chartW;
+
+    const pts = data.map((d, i) => ({
+      x: margin + i * step,
+      y: bottom - (d.revenueKobo / maxKobo) * chartH
+    }));
+
+    const lineSeg = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
+    const area = lineSeg + ` L ${pts[pts.length - 1].x},${bottom} L ${margin},${bottom} Z`;
+
+    const pts2 = data.map((d, i) => ({
+      x: margin + i * step,
+      y: bottom - (d.orderCount / maxOrders) * chartH
+    }));
+
+    const lineSeg2 = pts2.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
+    const area2 = lineSeg2 + ` L ${pts2[pts2.length - 1].x},${bottom} L ${margin},${bottom} Z`;
+
+    return { line: lineSeg, area, line2: lineSeg2, area2 };
+  });
+
   isLoading = signal(true);
   isUsingMockData = signal(false);
   dateFrom = signal('');
@@ -60,12 +91,7 @@ export class AnalyticsComponent implements OnInit {
 
   ngOnInit() {
     this.loadAnalytics();
-    // Set default dates to last 30 days for real data
-    const today = new Date();
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-    this.dateFrom.set(thirtyDaysAgo.toISOString().split('T')[0]);
-    this.dateTo.set(today.toISOString().split('T')[0]);
+    this.setDefaultDates();
     this.loadPeakHours();
   }
 
@@ -120,42 +146,39 @@ export class AnalyticsComponent implements OnInit {
       name: w.waiter?.fullName || 'Unknown Waiter',
       role: 'Staff',
       sales: w.tabsCount || 0,
-      efficiency: Math.round((w.revenueKobo / (w.tabsCount * 5000)) * 100) || 0,
+      efficiency: Math.min(Math.round((w.revenueKobo / (w.tabsCount * 500000)) * 100), 100) || 0,
       avatar: w.waiter?.avatarUrl || '#9d4300'
     })));
   }
 
   updateCategoryROI(recentOrders: any[]) {
     if (!recentOrders || recentOrders.length === 0) {
-      this.categoryROI.set([
-        { name: 'Food & Entrees', value: '0', percentage: 0, color: '#00D166' },
-        { name: 'Beverages', value: '0', percentage: 0, color: '#0059bb' },
-        { name: 'Desserts', value: '0', percentage: 0, color: '#FF7043' }
-      ]);
+      this.categoryROI.set([]);
       return;
     }
 
-    const orderCounts = recentOrders.reduce((acc: Record<string, number>, order) => {
-      if (!acc[order.menuItemName]) {
-        acc[order.menuItemName] = 0;
-      }
-      acc[order.menuItemName] += order.quantity || 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const itemMap = new Map<string, { totalKobo: number }>();
+    for (const order of recentOrders) {
+      const name = order.menuItemName || 'Unknown';
+      const kobo = (order.priceKobo || 0) * (order.quantity || 1);
+      const existing = itemMap.get(name) || { totalKobo: 0 };
+      existing.totalKobo += kobo;
+      itemMap.set(name, existing);
+    }
 
-    const totalOrders = Object.values(orderCounts).reduce((sum: number, count: number) => sum + count, 0);
+    const totalKobo = Array.from(itemMap.values()).reduce((s, i) => s + i.totalKobo, 0) || 1;
 
-    const itemNames = Object.keys(orderCounts);
-    const totalItems = totalOrders || 1;
-    const segments = itemNames.length <= 3
-      ? itemNames.map((name, i) => ({ name, pct: Math.round((orderCounts[name] / totalItems) * 100), colors: ['#00D166', '#0059bb', '#FF7043'] }))
-      : [{ name: 'Top Items', pct: 100, colors: ['#00D166'] }];
-    const firstValue = parseInt(this.kpiMetrics()[0]?.value?.replace(/[^0-9]/g, '') || '0', 10);
-    this.categoryROI.set(segments.map((s, i) => ({
-      name: s.name,
-      value: Math.round(firstValue * s.pct / 100).toLocaleString(),
-      percentage: s.pct,
-      color: s.colors[i] || '#00D166'
+    const sorted = Array.from(itemMap.entries())
+      .map(([name, data]) => ({ name, totalKobo: data.totalKobo, pct: Math.round((data.totalKobo / totalKobo) * 100) }))
+      .sort((a, b) => b.totalKobo - a.totalKobo)
+      .slice(0, 3);
+
+    const colors = ['#00D166', '#0059bb', '#FF7043'];
+    this.categoryROI.set(sorted.map((item, i) => ({
+      name: item.name,
+      value: Math.round(item.totalKobo / 100).toLocaleString(),
+      percentage: item.pct,
+      color: colors[i] || '#00D166'
     })));
   }
 
@@ -192,5 +215,31 @@ export class AnalyticsComponent implements OnInit {
   getMaxOrders(): number {
     if (!this.peakHoursData().length) return 0;
     return Math.max(...this.peakHoursData().map(d => d.orderCount));
+  }
+
+  private setDefaultDates() {
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    this.dateFrom.set(thirtyDaysAgo.toISOString().split('T')[0]);
+    this.dateTo.set(today.toISOString().split('T')[0]);
+  }
+
+  onDateChange() {
+    this.loadPeakHours();
+  }
+
+  exportReport() {
+    const rows = this.peakHoursData().map(d =>
+      `${d.hour}:00,${d.orderCount},${(d.revenueKobo / 100).toFixed(2)}`
+    ).join('\n');
+    const csv = `Hour,Orders,Revenue (NGN)\n${rows}`;
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analytics-report-${this.dateFrom()}_to_${this.dateTo()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }
