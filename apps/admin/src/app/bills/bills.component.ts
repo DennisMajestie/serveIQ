@@ -441,10 +441,17 @@ export class BillsComponent implements OnInit {
        </div>`
     ).join('');
 
+    const fullBillId = bill.id || entry.tab.id;
+    const truncatedId = fullBillId.length > 13 ? fullBillId.slice(0, 8) + '...' + fullBillId.slice(-4) : fullBillId;
+
     Swal.fire({
       title: entry.source === 'computed' ? 'Estimated Bill' : 'Bill Summary',
       html: `
         <div style="text-align:left;font-family:monospace;font-size:0.85rem">
+          <p><strong>Bill ID:</strong>
+            <span style="font-size:12px">${truncatedId}</span>
+            <button data-copy="${fullBillId}" style="background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:4px;font-size:14px;transition:all 0.2s;vertical-align:middle" title="Copy full ID"><span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle">content_copy</span></button>
+          </p>
           <p><strong>Tab:</strong> ${entry.tab.id.slice(0, 8)}...</p>
           <p><strong>Status:</strong> ${bill.paidAt ? 'Paid on ' + new Date(bill.paidAt).toLocaleDateString() : 'Pending'}</p>
           <p><strong>Source:</strong> ${entry.source === 'receipt' ? 'Paid Receipt' : entry.source === 'generated' ? 'Live Bill' : 'Computed from Orders'}</p>
@@ -457,7 +464,20 @@ export class BillsComponent implements OnInit {
         </div>
       `,
       confirmButtonText: 'Close',
-      width: 520
+      width: 520,
+      didOpen: () => {
+        const container = Swal.getHtmlContainer();
+        if (!container) return;
+        container.querySelectorAll('[data-copy]').forEach(el => {
+          el.addEventListener('click', (e) => {
+            const target = e.currentTarget as HTMLElement;
+            const val = target.getAttribute('data-copy') || '';
+            navigator.clipboard.writeText(val);
+            target.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;color:#4be277">check</span>';
+            setTimeout(() => { target.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle">content_copy</span>'; }, 1500);
+          });
+        });
+      }
     });
   }
 }

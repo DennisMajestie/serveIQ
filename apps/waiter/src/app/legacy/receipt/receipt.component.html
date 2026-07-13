@@ -16,6 +16,12 @@
 
   <!-- Main Content -->
   <main class="receipt-main">
+    @if (toastMessage(); as msg) {
+      <div class="toast-copied">
+        <span class="material-symbols-outlined text-sm">check</span>
+        {{ msg }}
+      </div>
+    }
     @if (isLoading()) {
       <div class="skeleton-shimmer" style="height:100px; width:100px; border-radius:50%; margin: 32px auto;"></div>
       <div class="skeleton-shimmer" style="height:24px; width:200px; margin: 16px auto;"></div>
@@ -133,7 +139,12 @@
       </div>
       <div class="detail-row">
         <span class="label">Transaction ID</span>
-        <span class="value tid">{{ transactionId() }}</span>
+        <span class="value tid flex items-center gap-1.5">
+          <span style="font-family:monospace;font-size:12px">{{ truncatedTransactionId() }}</span>
+          <button (click)="copyToClipboard(transactionId())" class="copy-btn" style="background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;padding:2px;border-radius:4px;transition:all 0.2s" [style.background]="copiedId() === transactionId() ? 'rgba(75,226,119,0.2)' : ''">
+            <span class="material-symbols-outlined text-sm" [style.color]="copiedId() === transactionId() ? '#4be277' : '#bccbb9'">{{ copiedId() === transactionId() ? 'check' : 'content_copy' }}</span>
+          </button>
+        </span>
       </div>
     </div>
 

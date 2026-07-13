@@ -461,3 +461,23 @@
   max-width: 280px;
   margin: 0;
 }
+.toast-copied {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(75,226,119,0.2);
+  border: 1px solid rgba(75,226,119,0.3);
+  color: #4be277;
+  font-size: 13px;
+  font-weight: 600;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+}

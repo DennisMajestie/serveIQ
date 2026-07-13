@@ -44,6 +44,21 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   date = computed(() => this.receipt()?.bill?.paidAt ? new Date(this.receipt()!.bill!.paidAt!).toLocaleString() : new Date().toLocaleString());
   tableNumber = computed(() => this.table()?.tableNumber ?? this.receipt()?.tab?.tableId ?? '—');
   transactionId = computed(() => this.receipt()?.bill?.id ?? '—');
+  truncatedTransactionId = computed(() => {
+    const id = this.transactionId();
+    if (id === '—' || id.length <= 13) return id;
+    return id.slice(0, 8) + '...' + id.slice(-4);
+  });
+
+  copiedId = signal<string | null>(null);
+  toastMessage = signal<string | null>(null);
+
+  copyToClipboard(value: string) {
+    navigator.clipboard.writeText(value);
+    this.copiedId.set(value);
+    this.toastMessage.set('Copied!');
+    setTimeout(() => { this.copiedId.set(null); this.toastMessage.set(null); }, 2000);
+  }
 
   items = computed<OrderItem[]>(() => {
     const orders = this.receipt()?.orders ?? [];
