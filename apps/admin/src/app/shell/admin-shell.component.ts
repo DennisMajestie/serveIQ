@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -6,7 +6,7 @@ import { SyncStore } from '@serveiq/data-access';
 import { AuthService, UserApiService, TablesApiService, TabsApiService, User, SubscriptionsApiService, NotificationsApiService } from '@serveiq/shared/data-access';
 import { SubscriptionService } from '../core/subscription.service';
 import { ThemeService } from '../core/theme.service';
-import { of, forkJoin } from 'rxjs';
+import { of, forkJoin, interval, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
@@ -596,7 +596,7 @@ interface NavItem {
     }
   `]
 })
-export class AdminShellComponent implements OnInit {
+export class AdminShellComponent implements OnInit, OnDestroy {
   sidebarCollapsed = signal(false);
   profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: localStorage.getItem('userRole') || 'owner' });
   hasNotifications = signal(false);
@@ -617,6 +617,7 @@ export class AdminShellComponent implements OnInit {
   private router = inject(Router);
   subService = inject(SubscriptionService);
   themeService = inject(ThemeService);
+  private notifSub?: Subscription;
 
   daysLeft(dateStr: string | null): number {
     if (!dateStr) return 0;
@@ -647,6 +648,12 @@ export class AdminShellComponent implements OnInit {
     this.notificationsApi.list().subscribe({
       next: (notifications) => this.hasNotifications.set(notifications.some(n => !n.isRead)),
       error: () => {}
+    });
+    this.notifSub = interval(30000).subscribe(() => {
+      this.notificationsApi.list().subscribe({
+        next: (notifications) => this.hasNotifications.set(notifications.some(n => !n.isRead)),
+        error: () => {}
+      });
     });
 
     this.searchControl.valueChanges.pipe(
@@ -724,5 +731,9 @@ export class AdminShellComponent implements OnInit {
 
   openNotifications() {
     this.router.navigate(['/app/notifications']);
+  }
+
+  ngOnDestroy() {
+    this.notifSub?.unsubscribe();
   }
 }

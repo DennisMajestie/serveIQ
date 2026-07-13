@@ -8,7 +8,12 @@
         </div>
       </div>
       <h1 class="text-[28px] leading-[1.2] font-semibold tracking-tighter text-[#4be277]" style="text-shadow:0 0 10px rgba(75,226,119,0.4);font-family:'Space Grotesk',sans-serif">{{ branchName() || 'ServeIQ' }}</h1>
-      <button class="material-symbols-outlined text-[#4be277] active:scale-95 transition-transform p-2 bg-white/5 rounded-full">notifications</button>
+      <button (click)="openNotifications()" class="relative active:scale-95 transition-transform p-2 bg-white/5 rounded-full">
+        <span class="material-symbols-outlined text-[#4be277]">notifications</span>
+        @if (unreadCount() > 0) {
+          <span class="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#ffb4ab] text-[#003915] text-[10px] rounded-full flex items-center justify-center font-bold">{{ unreadCount() }}</span>
+        }
+      </button>
     </div>
   </header>
 

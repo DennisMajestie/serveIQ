@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService, ShiftsApiService } from '@serveiq/shared/data-access';
-import { Table, Tab, User, Business, Shift } from '@serveiq/shared/models';
+import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService, ShiftsApiService, NotificationsApiService } from '@serveiq/shared/data-access';
+import { Table, Tab, User, Business, Shift, Notification } from '@serveiq/shared/models';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
@@ -23,6 +23,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   private userApi = inject(UserApiService);
   private businessApi = inject(BusinessApiService);
   private shiftsApi = inject(ShiftsApiService);
+  private notificationsApi = inject(NotificationsApiService);
 
   branchName = signal('');
   isSynced = signal(false);
@@ -34,6 +35,8 @@ export class TablesComponent implements OnInit, OnDestroy {
   tables = signal<Table[]>([]);
   openTabs = signal<Tab[]>([]);
   currentUser = signal<User | null>(null);
+  notifications = signal<Notification[]>([]);
+  unreadCount = computed(() => this.notifications().filter(n => !n.isRead).length);
 
   stats = computed(() => {
     const t = this.tables();
@@ -113,6 +116,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.loadCurrentUser();
     this.loadBusiness();
     this.loadCurrentShift();
+    this.loadNotifications();
     this.pollSub = interval(30000).subscribe(async () => {
       try {
         const tables = await firstValueFrom(this.tablesApi.getAllTables());
@@ -121,6 +125,7 @@ export class TablesComponent implements OnInit, OnDestroy {
         this.refreshOpenTabs();
       } catch {}
       this.loadCurrentShift();
+      this.loadNotifications();
     });
   }
 
@@ -299,6 +304,36 @@ export class TablesComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  loadNotifications() {
+    this.notificationsApi.list().subscribe({
+      next: (notifications) => this.notifications.set(Array.isArray(notifications) ? notifications : []),
+      error: () => {}
+    });
+  }
+
+  openNotifications() {
+    const notes = this.notifications();
+    Swal.fire({
+      title: 'Notifications',
+      html: notes.length === 0
+        ? '<p style="color:#bccbb9;padding:24px 0">No notifications yet</p>'
+        : notes.map(n => `
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);text-align:left">
+            <span class="material-symbols-outlined" style="font-size:20px;color:${n.isRead ? '#bccbb9' : '#4be277'}">${n.isRead ? 'notifications' : 'notifications_active'}</span>
+            <div style="flex:1">
+              <p style="margin:0;font-size:14px;font-weight:600;color:#dce1fb">${n.title}</p>
+              <p style="margin:2px 0 0;font-size:12px;color:#bccbb9">${n.message}</p>
+            </div>
+            <span style="font-size:11px;color:#bccbb9/60">${new Date(n.createdAt).toLocaleDateString()}</span>
+          </div>
+        `).join(''),
+      confirmButtonText: 'Close',
+      background: '#0c1324',
+      color: '#dce1fb',
+      width: 400,
+    });
   }
 
   private async refreshOpenTabs(): Promise<boolean> {
