@@ -40,6 +40,15 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
     };
   });
 
+  vipTables = computed(() => this.tables().filter(t => t.isVip));
+
+  vipOccupied = computed(() => {
+    return this.vipTables().filter(t => {
+      const tab = this.openTabs().find(tab => tab.tableId === t.id);
+      return !!tab && tab.status === 'open';
+    }).length;
+  });
+
   get currentUserId(): string {
     const token = this.authService.getToken();
     if (!token) return '';

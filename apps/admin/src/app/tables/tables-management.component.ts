@@ -37,17 +37,20 @@ export class TablesManagementComponent implements OnInit {
         { label: 'Available', value: '0 Tables', icon: 'check_circle', color: 'green' },
         { label: 'Occupied', value: '0 Tables', icon: 'person', color: 'pink' },
         { label: 'Reserved', value: '0 Tables', icon: 'event', color: 'yellow' },
+        { label: 'VIP', value: '0 Tables', icon: 'workspace_premium', color: 'amber' },
         { label: 'Total Capacity', value: '0 Seats', icon: 'group', color: 'brown' }
       ];
     }
     const occupied = t.filter(x => x.status === 'occupied').length;
     const available = t.filter(x => x.status === 'available').length;
     const reserved = t.filter(x => x.status === 'reserved').length;
+    const vip = t.filter(x => x.isVip).length;
     const totalSeats = t.reduce((acc, curr) => acc + (curr.capacity || 0), 0);
     return [
       { label: 'Available', value: available + ' Tables', icon: 'check_circle', color: 'green' },
       { label: 'Occupied', value: occupied + ' Tables', icon: 'person', color: 'pink' },
       { label: 'Reserved', value: reserved + ' Tables', icon: 'event', color: 'yellow' },
+      { label: 'VIP', value: vip + ' Tables', icon: 'workspace_premium', color: 'amber' },
       { label: 'Total Capacity', value: totalSeats + ' Seats', icon: 'group', color: 'brown' }
     ];
   });
@@ -55,6 +58,7 @@ export class TablesManagementComponent implements OnInit {
   filteredTables = computed(() => {
     const f = this.statusFilter();
     if (f === 'all') return this.tables();
+    if (f === 'vip') return this.tables().filter(t => t.isVip);
     return this.tables().filter(t => t.status === f);
   });
 
@@ -93,12 +97,16 @@ export class TablesManagementComponent implements OnInit {
     Swal.fire({
       title: 'Add New Table',
       html: `<input id="swal-number" class="swal2-input" placeholder="Table number" type="number">
-             <input id="swal-capacity" class="swal2-input" placeholder="Capacity (seats)" type="number">`,
+             <input id="swal-capacity" class="swal2-input" placeholder="Capacity (seats)" type="number">
+             <label class="swal2-checkbox-label" style="display:flex;align-items:center;gap:8px;margin-top:12px;justify-content:center;font-size:14px">
+               <input id="swal-vip" type="checkbox"> VIP Table
+             </label>`,
       confirmButtonText: 'Create',
       showCancelButton: true,
       preConfirm: () => ({
         tableNumber: (document.getElementById('swal-number') as HTMLInputElement).value,
-        capacity: (document.getElementById('swal-capacity') as HTMLInputElement).value
+        capacity: (document.getElementById('swal-capacity') as HTMLInputElement).value,
+        isVip: (document.getElementById('swal-vip') as HTMLInputElement).checked
       })
     }).then(result => {
       if (result.isConfirmed && result.value) {
@@ -106,7 +114,8 @@ export class TablesManagementComponent implements OnInit {
         this.tableService.createTable({
           tableNumber: result.value.tableNumber,
           capacity: Number(result.value.capacity),
-          branchId
+          branchId,
+          isVip: result.value.isVip
         }).subscribe(t => this.tables.update(ts => [...ts, t]));
       }
     });
@@ -115,13 +124,18 @@ export class TablesManagementComponent implements OnInit {
   editTable(table: Table) {
     Swal.fire({
       title: `Edit Table ${table.tableNumber}`,
-      input: 'number',
-      inputLabel: 'Capacity (seats)',
-      inputValue: table.capacity,
-      showCancelButton: true
+      html: `<input id="swal-edit-capacity" class="swal2-input" placeholder="Capacity (seats)" type="number" value="${table.capacity}">
+             <label class="swal2-checkbox-label" style="display:flex;align-items:center;gap:8px;margin-top:12px;justify-content:center;font-size:14px">
+               <input id="swal-edit-vip" type="checkbox"${table.isVip ? ' checked' : ''}> VIP Table
+             </label>`,
+      showCancelButton: true,
+      preConfirm: () => ({
+        capacity: Number((document.getElementById('swal-edit-capacity') as HTMLInputElement).value),
+        isVip: (document.getElementById('swal-edit-vip') as HTMLInputElement).checked
+      })
     }).then(result => {
       if (result.isConfirmed) {
-        this.tableService.updateTable(table.id, { capacity: Number(result.value) })
+        this.tableService.updateTable(table.id, { capacity: result.value.capacity, isVip: result.value.isVip })
           .subscribe(updated => this.tables.update(ts => ts.map(t => t.id === updated.id ? updated : t)));
       }
     });

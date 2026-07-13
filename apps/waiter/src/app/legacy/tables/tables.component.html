@@ -104,7 +104,24 @@
     <div class="vip-section">
       <div class="vip-content">
         <h3 class="vip-title">VIP Lounge</h3>
-        <p class="vip-subtitle">Reservations available</p>
+        <p class="vip-subtitle">
+          @if (vipTables().length > 0) {
+            {{ vipOccupied() }}/{{ vipTables().length }} occupied
+          } @else {
+            No VIP tables configured
+          }
+        </p>
+        @if (vipTables().length > 0) {
+          <div class="vip-tables-row" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            @for (table of vipTables(); track table.id) {
+              <button class="vip-table-chip" (click)="onTableClick(table)" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);font-size:13px;cursor:pointer;transition:all 0.2s">
+                <span style="font-size:16px">★</span>
+                <span>{{ table.label || table.tableNumber }}</span>
+                <span [style.color]="table.status === 'occupied' ? '#4be277' : '#bccbb9'" style="font-size:11px">({{ table.status }})</span>
+              </button>
+            }
+          </div>
+        }
       </div>
     </div>
   </main>

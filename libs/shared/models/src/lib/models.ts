@@ -75,6 +75,7 @@ export interface Table {
   capacity: number;
   label?: string;
   status: TableStatus;
+  isVip?: boolean;
 }
 
 export type TabStatus = 'open' | 'billed' | 'paid' | 'voided';
@@ -226,6 +227,7 @@ export interface CreateTableRequest {
   tableNumber: string;
   capacity: number;
   label?: string;
+  isVip?: boolean;
 }
 
 export interface OpenTabRequest {

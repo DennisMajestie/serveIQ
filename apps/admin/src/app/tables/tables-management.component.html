@@ -21,6 +21,7 @@
     <button class="px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="statusFilter() === 'available' ? 'bg-[var(--primary)] text-[var(--on-primary)]' : 'bg-[var(--surface-container)] text-[var(--secondary)] hover:text-[var(--primary)]'" (click)="statusFilter.set('available')">Available</button>
     <button class="px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="statusFilter() === 'occupied' ? 'bg-[var(--primary)] text-[var(--on-primary)]' : 'bg-[var(--surface-container)] text-[var(--secondary)] hover:text-[var(--primary)]'" (click)="statusFilter.set('occupied')">Occupied</button>
     <button class="px-4 py-2 rounded-xl text-sm font-semibold transition-all" [class]="statusFilter() === 'reserved' ? 'bg-[var(--primary)] text-[var(--on-primary)]' : 'bg-[var(--surface-container)] text-[var(--secondary)] hover:text-[var(--primary)]'" (click)="statusFilter.set('reserved')">Reserved</button>
+    <button class="px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1" [class]="statusFilter() === 'vip' ? 'bg-[var(--primary)] text-[var(--on-primary)]' : 'bg-[var(--surface-container)] text-[var(--secondary)] hover:text-[var(--primary)]'" (click)="statusFilter.set('vip')"><span class="material-symbols-outlined text-[14px]">workspace_premium</span> VIP</button>
   </div>
 
   <ng-container *ngIf="!isLoading(); else skeleton">
@@ -83,9 +84,16 @@
       <div *ngFor="let table of filteredTables()" class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 transition-all hover:scale-[1.02] cursor-pointer" [class.luminous-glow-primary]="table.status === 'available'" (click)="editTable(table)">
         <div class="flex justify-between items-start mb-8">
           <span class="flex items-center gap-3" [class.opacity-60]="table.status !== 'available'"><span class="material-symbols-outlined text-[40px] text-[var(--on-background)]">table_restaurant</span><span class="text-[48px] leading-[1.1] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">{{ table.tableNumber.toString().padStart(2, '0') }}</span></span>
-          <span class="px-3 py-1 text-[12px] leading-none font-medium rounded-full" [ngClass]="statusBadgeClass(table.status)">
-            {{ table.status | titlecase }}
-          </span>
+          <div class="flex items-center gap-2">
+            @if (table.isVip) {
+              <span class="px-2 py-1 text-[11px] leading-none font-bold rounded-full bg-[#f59e0b]/20 text-[#f59e0b] flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[12px]">workspace_premium</span> VIP
+              </span>
+            }
+            <span class="px-3 py-1 text-[12px] leading-none font-medium rounded-full" [ngClass]="statusBadgeClass(table.status)">
+              {{ table.status | titlecase }}
+            </span>
+          </div>
         </div>
         <div class="space-y-4">
           <div class="flex justify-between text-[var(--secondary)]">
