@@ -105,7 +105,7 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   }
 
-  ngAfterViewInit() { this.initConfetti(); }
+  ngAfterViewInit() { if (history.state?.showConfetti) { this.initConfetti(); } }
   ngOnDestroy() { this.stopConfetti(); }
 
   goToTables() { this.router.navigate(['/tables']); }

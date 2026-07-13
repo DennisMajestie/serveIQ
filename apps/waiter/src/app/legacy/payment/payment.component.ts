@@ -208,7 +208,7 @@ export class LegacyPaymentComponent implements OnInit {
       next: () => {
         this.isProcessing.set(false);
         this.isSuccess.set(true);
-        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], { state: { terminalLabel: this.selectedTerminalLabel() } }), 1000);
+        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], { state: { terminalLabel: this.selectedTerminalLabel(), showConfetti: true } }), 1000);
       },
       error: () => {
         this.isProcessing.set(false);
