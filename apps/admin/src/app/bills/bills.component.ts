@@ -293,14 +293,12 @@ export class BillsComponent implements OnInit {
 
   private loadAllBills() {
     forkJoin({
-      tabs: this.tabsApi.getAllTabs({ all: 'true' }).pipe(catchError(() => of([]))),
+      tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
       waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
-      currentUser: this.userApi.getMe().pipe(catchError(() => of(null))),
       sales: this.reportsApi.getSales().pipe(catchError(() => of([]))),
-    }).subscribe(({ tabs, waiters, currentUser, sales }) => {
+    }).subscribe(({ tabs, waiters, sales }) => {
       const map: Record<string, string> = {};
       (waiters as User[]).forEach(w => { map[w.id] = w.fullName; });
-      if (currentUser) map[(currentUser as User).id] = (currentUser as User).fullName;
       this.waiterMap.set(map);
 
       const entries = sales as SalesEntry[];

@@ -67,7 +67,7 @@ export class TablesManagementComponent implements OnInit {
   ngOnInit() {
     forkJoin({
       tables: this.tableService.getAllTables().pipe(catchError(() => of([]))),
-      tabs: this.tabsApi.getAllTabs({ all: 'true' }).pipe(catchError(() => of([]))),
+      tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
       waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
     }).subscribe(({ tables, tabs, waiters }) => {
       this.tables.set(Array.isArray(tables) ? tables : []);
