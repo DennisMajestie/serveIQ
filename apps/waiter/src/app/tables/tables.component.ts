@@ -73,7 +73,12 @@ export class TablesComponent implements OnInit, OnDestroy {
   });
 
   getTabForTable(tableId: string): Tab | undefined {
-    return this.openTabs().find(t => t.tableId === tableId);
+    return this.openTabs().find(t => {
+      if (t.tableId === tableId) return true;
+      const tableObj = (t as any).table;
+      if (tableObj?.id === tableId) return true;
+      return false;
+    });
   }
 
   isTabLockedByOther(table: Table): boolean {
@@ -224,7 +229,11 @@ export class TablesComponent implements OnInit, OnDestroy {
         const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ per_page: '1000' }));
         const allOpen = Array.isArray(allTabs) ? allTabs.filter(t => t.status === 'open') : [];
         this.openTabs.set(allOpen);
-        tab = allOpen.find(t => t.tableId === table.id);
+        tab = allOpen.find(t => {
+          if (t.tableId === table.id) return true;
+          const tableObj = (t as any).table;
+          return tableObj?.id === table.id;
+        });
       } catch {
         // Fallback — continue with null tab
       }
@@ -232,6 +241,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
     if (!tab) {
       if (table.status === 'occupied') {
+        console.warn('[TableMismatch] table=%s occupied but no matching tab found. openTabs=%o', table.id, this.openTabs().map(t => ({ id: t.id, tableId: t.tableId, table: (t as any).table, status: t.status })));
         const result = await Swal.fire({
           icon: 'error',
           title: 'Table Mismatch',
