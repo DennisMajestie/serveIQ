@@ -313,7 +313,7 @@ export class BillsComponent implements OnInit {
 
   private loadAllBills() {
     forkJoin({
-      tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
+      tabs: this.tabsApi.getAllTabs({ per_page: '1000' }).pipe(catchError(() => of([]))),
       waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
       waiterList: this.tabsApi.getWaiterList().pipe(catchError(() => of([]))),
       sales: this.reportsApi.getSales().pipe(catchError(() => of([]))),

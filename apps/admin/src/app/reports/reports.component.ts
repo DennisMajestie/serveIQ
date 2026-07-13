@@ -52,7 +52,7 @@ import Swal from 'sweetalert2';
               <tbody>
                 <tr *ngFor="let entry of salesData()">
                   <td>{{ entry.date | date:'mediumDate' }}</td>
-                  <td>{{ entry.revenueKobo | currency:'NGN':'symbol-narrow':'1.2-2' }}</td>
+                  <td>{{ toNaira(entry.revenueKobo) | currency:'NGN':'symbol-narrow':'1.2-2' }}</td>
                   <td>{{ entry.orderCount }}</td>
                   <td>{{ entry.paymentMethod }}</td>
                 </tr>
@@ -98,7 +98,7 @@ import Swal from 'sweetalert2';
                   <td>{{ item.name }}</td>
                   <td>{{ item.category }}</td>
                   <td>{{ item.quantitySold }}</td>
-                  <td>{{ item.revenueKobo | currency:'NGN':'symbol-narrow':'1.2-2' }}</td>
+                  <td>{{ toNaira(item.revenueKobo) | currency:'NGN':'symbol-narrow':'1.2-2' }}</td>
                 </tr>
                 <tr *ngIf="topItemsData().length === 0">
                   <td colspan="5" class="empty-state">No items sold in this period</td>
@@ -200,9 +200,13 @@ export class ReportsComponent implements OnInit {
   velocityData = signal<TableVelocityEntry[]>([]);
   efficiencyData = signal<PeakEfficiencyEntry[]>([]);
 
-  totalRevenue = computed(() => this.salesData().reduce((sum, e) => sum + e.revenueKobo, 0));
+  totalRevenue = computed(() => this.salesData().reduce((sum, e) => sum + e.revenueKobo / 100, 0));
   totalOrders = computed(() => this.salesData().reduce((sum, e) => sum + e.orderCount, 0));
   maxPeakCount = computed(() => Math.max(...this.peakHoursData().map(e => e.orderCount), 1));
+
+  toNaira(kobo: number): number {
+    return kobo / 100;
+  }
 
   tabs = [
     { key: 'sales', label: 'Sales', icon: 'payments' },
