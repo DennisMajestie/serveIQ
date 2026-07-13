@@ -1,8 +1,8 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BillsApiService, TabsApiService, OrdersApiService, UserApiService, ReportsApiService } from '@serveiq/shared/data-access';
-import { Bill, Tab, OrderItem, User, SalesEntry } from '@serveiq/shared/models';
+import { BillsApiService, TabsApiService, OrdersApiService, UserApiService, ReportsApiService, MenuApiService } from '@serveiq/shared/data-access';
+import { Bill, Tab, OrderItem, User, SalesEntry, MenuItem } from '@serveiq/shared/models';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -237,6 +237,8 @@ export class BillsComponent implements OnInit {
   private ordersApi = inject(OrdersApiService);
   private userApi = inject(UserApiService);
   private reportsApi = inject(ReportsApiService);
+  private menuApi = inject(MenuApiService);
+  private menuItems = signal<MenuItem[]>([]);
 
   allBills = signal<BillWithTab[]>([]);
   waiterMap = signal<Record<string, string>>({});
@@ -317,7 +319,8 @@ export class BillsComponent implements OnInit {
       waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
       waiterList: this.tabsApi.getWaiterList().pipe(catchError(() => of([]))),
       sales: this.reportsApi.getSales().pipe(catchError(() => of([]))),
-    }).subscribe(({ tabs, waiters, waiterList, sales }) => {
+      menuItems: this.menuApi.getAllItems().pipe(catchError(() => of([]))),
+    }).subscribe(({ tabs, waiters, waiterList, sales, menuItems }) => {
       const map: Record<string, string> = {};
       (waiters as User[]).forEach(w => { map[w.id] = w.fullName; });
       (waiterList as { id: string; fullName: string; role: string }[]).forEach(w => { if (!map[w.id]) map[w.id] = w.fullName; });
@@ -328,6 +331,8 @@ export class BillsComponent implements OnInit {
           .map(w => ({ id: w.id, name: w.fullName }))
           .sort((a, b) => a.name.localeCompare(b.name))
       );
+
+      this.menuItems.set(Array.isArray(menuItems) ? (menuItems as MenuItem[]) : []);
 
       const entries = sales as SalesEntry[];
       const totalKobo = entries.reduce((s, e) => s + (e.revenueKobo || 0), 0);
@@ -367,9 +372,31 @@ export class BillsComponent implements OnInit {
 
   private fetchOrdersAndWrap(tab: Tab, bill: Bill, source: 'receipt' | 'generated') {
     return this.ordersApi.getByTab(tab.id).pipe(
-      map(items => ({ bill: { ...bill, orderItems: items }, tab, source }) as BillWithTab),
+      map(items => {
+        const normalized = items.map(o => this.normalizeOrderItem(o));
+        return { bill: { ...bill, orderItems: normalized }, tab, source } as BillWithTab;
+      }),
       catchError(() => of({ bill, tab, source } as BillWithTab))
     );
+  }
+
+  private normalizeOrderItem(o: any): any {
+    return {
+      ...o,
+      menuItemId: o.menuItemId ?? o.menu_item_id ?? '',
+      menuItemName: o.menuItemName || o.menu_item_name || o.menuItem?.name || o.menu_item?.name || '',
+      priceKobo: o.priceKobo ?? o.price_kobo ?? o.unitPriceKobo ?? o.unit_price_kobo ?? 0,
+      quantity: o.quantity ?? o.qty ?? 1,
+    };
+  }
+
+  private getItemName(item: any): string {
+    const name = item.menuItemName || item.menu_item_name || '';
+    if (name) return name;
+    const id = item.menuItemId ?? item.menu_item_id ?? '';
+    if (!id) return 'Item';
+    const found = this.menuItems().find(m => m.id === id);
+    return found?.name || id.slice(0, 8);
   }
 
   private wrapComputed(tab: Tab, items: OrderItem[]): BillWithTab {
@@ -409,7 +436,7 @@ export class BillsComponent implements OnInit {
     const items = bill.orderItems || [];
     const itemList = items.slice(0, 5).map(i =>
       `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #eee;font-size:13px">
-        <span>${i.menuItemName || i.menuItemId?.slice(0, 8) || 'Item'} x${i.quantity || 1}</span>
+        <span>${this.getItemName(i)} x${i.quantity || 1}</span>
         <span>₦${this.formatKobo((i.priceKobo || 0) * (i.quantity || 1))}</span>
        </div>`
     ).join('');
