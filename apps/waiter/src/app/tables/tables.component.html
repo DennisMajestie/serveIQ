@@ -100,6 +100,14 @@
                     [class.active-glow]="table.status === 'occupied'"
                     [class.azure-pulse]="table.status === 'occupied' && isTabLockedByOther(table)"
                     (click)="onTableClick(table)">
+              @if (table.isVip) {
+                <div class="absolute top-2 right-2">
+                  <span class="material-symbols-outlined text-[#f59e0b] text-[14px]">workspace_premium</span>
+                </div>
+              }
+              <div class="mb-1">
+                <span class="material-symbols-outlined text-[20px]" [class.text-[#4be277]/60]="table.status === 'occupied'" [class.text-[#bccbb9]/20]="table.status !== 'occupied'">table_restaurant</span>
+              </div>
               @if (table.status === 'occupied') {
                 <div class="mb-1">
                   <span class="material-symbols-outlined text-[#4be277] opacity-60 group-hover:opacity-100">group</span>
