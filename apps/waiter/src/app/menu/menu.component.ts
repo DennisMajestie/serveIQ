@@ -101,15 +101,6 @@ export class MenuComponent implements OnInit {
       : this.menuItems.filter(i => i.category === this.selectedCategory);
   }
 
-  get categoryCards() {
-    const cats = this.categories();
-    return cats.map(c => {
-      const items = c === 'All' ? this.menuItems : this.menuItems.filter(i => i.category === c);
-      const firstWithImage = items.find(i => i.image && i.image !== '');
-      return { name: c, count: items.length, imageUrl: firstWithImage?.image || '' };
-    });
-  }
-
   get selectionTotal(): number {
     if (!Array.isArray(this.selectedItems)) return 0;
     return this.selectedItems.reduce((sum, item) => {
