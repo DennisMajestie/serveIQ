@@ -130,7 +130,7 @@ import Swal from 'sweetalert2';
     .plan-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
     .plan-card.featured { border-color: var(--primary); border-width: 2px; }
     .plan-card.current-plan { opacity: 0.7; }
-    .plan-name { font-size: 20px; font-weight: 700; }
+    .plan-name { font-size: 20px; font-weight: 700; color: var(--on-background); }
     .plan-price { display: flex; align-items: baseline; gap: 4px; }
     .plan-price .amount { font-size: 28px; font-weight: 800; color: var(--on-background); }
     .plan-price .interval { font-size: 14px; color: var(--secondary); }
