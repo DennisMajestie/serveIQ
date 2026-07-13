@@ -1,7 +1,7 @@
 {
   "installCommand": "npm install",
   "buildCommand": "npx nx build admin --configuration=production",
-  "outputDirectory": "../dist/apps/admin/browser",
+  "outputDirectory": "../../dist/apps/admin/browser",
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [

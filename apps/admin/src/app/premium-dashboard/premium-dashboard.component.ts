@@ -1,6 +1,23 @@
-import { Component, AfterViewInit, Inject, PLATFORM_ID, HostBinding } from '@angular/core';
+import { Component, OnInit, inject, signal, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { BranchesApiService, ReportsApiService, TabsApiService, ShiftsApiService } from '@serveiq/shared/data-access';
+import { DashboardStats, Tab, PeakHoursEntry, Shift, WaiterPerformance } from '@serveiq/shared/models';
+import { catchError, forkJoin, of } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
+interface EventItem {
+  tx: string;
+  status: string;
+  statusClass: string;
+  desc: string;
+  time: string;
+}
+
+interface StaffAvatar {
+  initial: string;
+  color: string;
+}
 
 @Component({
   selector: 'app-premium-dashboard',
@@ -9,16 +26,226 @@ import { RouterModule } from '@angular/router';
   templateUrl: './premium-dashboard.component.html',
   styleUrls: ['./premium-dashboard.component.scss']
 })
-export class PremiumDashboardComponent implements AfterViewInit {
-  @HostBinding('attr.data-theme') theme = 'dark';
-  recentEvents = [
-    { tx: '#TX_8829', status: 'Paid', statusClass: 'status-paid', desc: 'Table 12 - $145.00', time: '14:22:10 UTC' },
-    { tx: '#TX_8830', status: 'Pending', statusClass: 'status-pending', desc: 'Table 04 - $82.50', time: '14:25:44 UTC' },
-    { tx: '#TX_8831', status: 'Paid', statusClass: 'status-paid', desc: 'Table 22 - $310.00', time: '14:28:12 UTC' },
-    { tx: '#TX_VOID', status: 'Void', statusClass: 'status-void', desc: 'Table 01 - Refunded', time: '14:30:01 UTC' }
+export class PremiumDashboardComponent implements OnInit, AfterViewInit {
+  private branchesApi = inject(BranchesApiService);
+  private reportsApi = inject(ReportsApiService);
+  private tabsApi = inject(TabsApiService);
+  private shiftsApi = inject(ShiftsApiService);
+
+  businessName = signal('ServeIQ');
+  totalRevenue = signal('₦0');
+  revenueGrowth = signal('—');
+  staffOnline = signal(0);
+  avgTurnaround = signal(0);
+  targetTurnaround = signal(45);
+  turnaroundPercent = signal(0);
+  systemStatus = signal('Offline');
+  zoneTag = signal('SYSTEM_IDLE');
+  systemTag = signal('LOADING');
+  recentEvents = signal<EventItem[]>([]);
+  staffAvatars = signal<StaffAvatar[]>([]);
+  isLoading = signal(true);
+
+  sparklinePath = signal('');
+  healthPath1 = signal('');
+  healthPath1Area = signal('');
+  healthPath2 = signal('');
+  healthPath2Area = signal('');
+
+  private avatarColors = [
+    'linear-gradient(135deg, #f97316, #fb923c)',
+    'linear-gradient(135deg, #8b5cf6, #a78bfa)',
+    'linear-gradient(135deg, #06b6d4, #22d3ee)',
+    'linear-gradient(135deg, #10b981, #34d399)',
+    'linear-gradient(135deg, #f43f5e, #fb7185)',
+    'linear-gradient(135deg, #f59e0b, #fbbf24)',
   ];
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+
+  ngOnInit() {
+    this.businessName.set(localStorage.getItem('businessName') || 'ServeIQ');
+    this.loadData();
+  }
+
+  private loadData() {
+    const today = new Date().toISOString().split('T')[0];
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const from = thirtyDaysAgo.toISOString().split('T')[0];
+
+    forkJoin({
+      stats: this.branchesApi.getStats().pipe(catchError(() => of(null))),
+      peakHours: this.reportsApi.getPeakHours(undefined, from, today).pipe(catchError(() => of([]))),
+      peakEfficiency: this.reportsApi.getPeakEfficiency(from, today).pipe(catchError(() => of([]))),
+      tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
+      shift: this.shiftsApi.getCurrent().pipe(catchError(() => of(null))),
+    }).pipe(finalize(() => this.isLoading.set(false))).subscribe({
+      next: ({ stats, peakHours, peakEfficiency, tabs, shift }) => {
+        if (stats) this.updateFromStats(stats);
+        if (peakHours.length) this.updateFromPeakHours(peakHours);
+        if (peakEfficiency.length) this.updateFromEfficiency(peakEfficiency);
+        if (tabs.length) this.updateFromTabs(tabs);
+        if (shift) this.updateFromShift(shift);
+
+        if (!stats && !peakHours.length && !tabs.length) {
+          this.setMockData();
+        }
+      },
+      error: () => this.setMockData()
+    });
+  }
+
+  private updateFromStats(stats: DashboardStats) {
+    const revenue = stats.dailyRevenue || 0;
+    this.totalRevenue.set(`₦${(revenue / 100).toLocaleString()}`);
+
+    const staff = stats.waiterPerformance || [];
+    this.staffOnline.set(staff.length);
+
+    this.staffAvatars.set(staff.slice(0, 5).map((w: WaiterPerformance) => ({
+      initial: (w.waiter?.fullName || '?').charAt(0).toUpperCase(),
+      color: this.avatarColors[staff.indexOf(w) % this.avatarColors.length],
+    })));
+
+    if (staff.length > 5) {
+      const more = this.staffAvatars();
+      more.push({ initial: `+${staff.length - 5}`, color: '' });
+      this.staffAvatars.set(more);
+    }
+  }
+
+  private updateFromPeakHours(data: PeakHoursEntry[]) {
+    const counts = data.map(d => d.orderCount);
+    if (!counts.length) return;
+    this.sparklinePath.set(this.buildSparklinePath(counts, 400, 100));
+
+    this.zoneTag.set(data.some(d => d.orderCount > 5) ? 'ZONE_ALPHA' : 'ZONE_BETA');
+
+    const orderVals = counts.map(c => c * 5);
+    const revVals = data.map(d => Math.round(d.revenueKobo / 100000));
+    this.healthPath1.set(this.buildLinePath(revVals, 800, 300));
+    this.healthPath1Area.set(this.buildAreaPath(revVals, 800, 300));
+    this.healthPath2.set(this.buildLinePath(orderVals, 800, 300));
+    this.healthPath2Area.set(this.buildAreaPath(orderVals, 800, 300));
+  }
+
+  private updateFromEfficiency(data: { hour: number; totalCovers: number; avgDurationMinutes: number }[]) {
+    const valid = data.filter(d => d.avgDurationMinutes > 0);
+    if (!valid.length) return;
+    const avg = Math.round(valid.reduce((s, d) => s + d.avgDurationMinutes, 0) / valid.length);
+    this.avgTurnaround.set(avg);
+    const target = this.targetTurnaround();
+    this.turnaroundPercent.set(target > 0 ? Math.min(Math.round((avg / target) * 100), 100) : 100);
+  }
+
+  private updateFromTabs(tabs: Tab[]) {
+    const recent = tabs
+      .filter(t => t.status !== 'voided')
+      .sort((a, b) => new Date(b.closedAt || b.openedAt).getTime() - new Date(a.closedAt || a.openedAt).getTime())
+      .slice(0, 4);
+
+    this.recentEvents.set(recent.map(t => {
+      const paid = t.status === 'paid';
+      const voided = t.status === 'voided';
+      return {
+        tx: `#${t.id.slice(0, 8).toUpperCase()}`,
+        status: paid ? 'Paid' : voided ? 'Void' : 'Pending',
+        statusClass: paid ? 'status-paid' : voided ? 'status-void' : 'status-pending',
+        desc: `Table ${t.tableId?.slice(0, 4) || '??'} - ${this.formatTabTotal(t)}`,
+        time: new Date(t.closedAt || t.openedAt).toISOString().replace('T', ' ').slice(0, 19) + ' UTC',
+      };
+    }));
+  }
+
+  private updateFromShift(shift: Shift) {
+    if (shift.status === 'open') {
+      const start = new Date(shift.openedAt);
+      const h = start.getHours().toString().padStart(2, '0');
+      const m = start.getMinutes().toString().padStart(2, '0');
+      this.systemStatus.set(`Shift Open (${h}:${m} UTC)`);
+      this.systemTag.set('SYSTEM_ACTIVE');
+    } else {
+      this.systemStatus.set('Offline');
+      this.systemTag.set('SYSTEM_IDLE');
+    }
+  }
+
+  private formatTabTotal(tab: Tab): string {
+    const items = tab.orderItems || [];
+    const total = items.reduce((s, i) => s + (i.priceKobo || 0) * (i.quantity || 0), 0);
+    return `₦${(total / 100).toFixed(2)}`;
+  }
+
+  private buildSparklinePath(vals: number[], w: number, h: number): string {
+    if (!vals.length) return '';
+    const max = Math.max(...vals) || 1;
+    const min = Math.min(...vals) || 0;
+    const range = max - min || 1;
+    const step = w / (vals.length - 1);
+    const pad = 5;
+    const yScale = h - pad * 2;
+
+    let d = `M0,${pad + yScale - ((vals[0] - min) / range) * yScale}`;
+    for (let i = 1; i < vals.length; i++) {
+      const x = Math.round(i * step);
+      const y = Math.round(pad + yScale - ((vals[i] - min) / range) * yScale);
+      d += ` L${x},${y}`;
+    }
+    return d;
+  }
+
+  private buildLinePath(vals: number[], w: number, h: number): string {
+    if (!vals.length) return '';
+    const max = Math.max(...vals) || 1;
+    const min = Math.min(...vals) || 0;
+    const range = max - min || 1;
+    const step = w / (vals.length - 1);
+    const pad = 10;
+    const yScale = h - pad * 2;
+
+    let d = `M0,${pad + yScale - ((vals[0] - min) / range) * yScale}`;
+    for (let i = 1; i < vals.length; i++) {
+      const x = Math.round(i * step);
+      const y = Math.round(pad + yScale - ((vals[i] - min) / range) * yScale);
+      d += ` L${x},${y}`;
+    }
+    return d;
+  }
+
+  private buildAreaPath(vals: number[], w: number, h: number): string {
+    const line = this.buildLinePath(vals, w, h);
+    if (!line) return '';
+    return `${line} L${w},${h} L0,${h} Z`;
+  }
+
+  private setMockData() {
+    this.totalRevenue.set('₦1.2M');
+    this.revenueGrowth.set('+12.5%');
+    this.staffOnline.set(6);
+    this.avgTurnaround.set(42);
+    this.turnaroundPercent.set(93);
+    this.systemStatus.set('System Live: Prime Time');
+    this.zoneTag.set('ZONE_ALPHA');
+    this.systemTag.set('SYSTEM_STABLE');
+    this.sparklinePath.set('M0,80 Q50,70 100,85 T200,40 T300,60 T400,20');
+    this.healthPath1.set('M0,250 Q100,220 200,240 T400,100 T600,180 T800,50');
+    this.healthPath1Area.set('M0,250 Q100,220 200,240 T400,100 T600,180 T800,50 L800,300 L0,300 Z');
+    this.healthPath2.set('M0,280 Q150,260 300,270 T500,150 T800,100');
+    this.healthPath2Area.set('M0,280 Q150,260 300,270 T500,150 T800,100 L800,300 L0,300 Z');
+    this.recentEvents.set([
+      { tx: '#TX_8829', status: 'Paid', statusClass: 'status-paid', desc: 'Table 12 - $145.00', time: '14:22:10 UTC' },
+      { tx: '#TX_8830', status: 'Pending', statusClass: 'status-pending', desc: 'Table 04 - $82.50', time: '14:25:44 UTC' },
+      { tx: '#TX_8831', status: 'Paid', statusClass: 'status-paid', desc: 'Table 22 - $310.00', time: '14:28:12 UTC' },
+      { tx: '#TX_VOID', status: 'Void', statusClass: 'status-void', desc: 'Table 01 - Refunded', time: '14:30:01 UTC' }
+    ]);
+    this.staffAvatars.set([
+      { initial: 'A', color: 'linear-gradient(135deg, #f97316, #fb923c)' },
+      { initial: 'B', color: 'linear-gradient(135deg, #8b5cf6, #a78bfa)' },
+      { initial: 'C', color: 'linear-gradient(135deg, #06b6d4, #22d3ee)' },
+      { initial: '+3', color: '' },
+    ]);
+  }
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
