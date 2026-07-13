@@ -72,6 +72,7 @@ export class TablesManagementComponent implements OnInit {
     }).subscribe(({ tables, tabs, waiters }) => {
       this.tables.set(Array.isArray(tables) ? tables : []);
 
+      const wm: Record<string, string> = {};
       (waiters as User[]).forEach(w => { wm[w.id] = w.fullName; });
       this.waiterMap.set(wm);
       this.waitersList.set(waiters as User[]);
