@@ -97,7 +97,7 @@ import Swal from 'sweetalert2';
     </div>
   `,
   styles: [`
-    .billing-page { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+    .billing-page { padding: 24px 32px; margin: 0 auto; }
     .page-header { margin-bottom: 32px; }
     .page-title { font-size: 24px; font-weight: 700; margin: 0; color: var(--on-background); }
 

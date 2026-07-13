@@ -108,10 +108,10 @@ export class AnalyticsComponent implements OnInit {
     const avgTicket = todayTabs > 0 ? (revenue / todayTabs) : 0;
 
     this.kpiMetrics.set([
-      { label: 'Total Revenue', value: `₦${(revenue / 100).toLocaleString()}`, change: '+12.4%', trend: 'up', icon: 'payments', color: '#00D166' },
-      { label: 'Avg Ticket', value: `₦${(avgTicket / 100).toLocaleString()}`, change: '+5.2%', trend: 'up', icon: 'receipt', color: '#0059bb' },
-      { label: 'Active Tabs', value: stats.openTabs.toString(), change: '+2', trend: 'up', icon: 'table_restaurant', color: '#8b5cf6' },
-      { label: 'Tables Occupied', value: stats.activeTables.toString(), change: '-1', trend: 'down', icon: 'person', color: '#FF7043' }
+      { label: 'Total Revenue', value: `₦${(revenue / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'payments', color: '#00D166' },
+      { label: 'Avg Ticket', value: `₦${(avgTicket / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'receipt', color: '#0059bb' },
+      { label: 'Active Tabs', value: stats.openTabs.toString(), change: '—', trend: 'neutral', icon: 'table_restaurant', color: '#8b5cf6' },
+      { label: 'Tables Occupied', value: stats.activeTables.toString(), change: '—', trend: 'neutral', icon: 'person', color: '#FF7043' }
     ]);
   }
 

@@ -82,7 +82,7 @@ import { DailyTallyReport } from '@serveiq/shared/models';
     </div>
   `,
   styles: [`
-    .tally-page { padding: 24px 32px; max-width: 1400px; margin: 0 auto; font-family: 'Inter', sans-serif; }
+    .tally-page { padding: 24px 32px; margin: 0 auto; font-family: 'Inter', sans-serif; }
     .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
     .title-group { flex: 1; }
     .back-link { display: inline-block; font-size: 0.875rem; color: var(--primary); text-decoration: none; font-weight: 600; margin-bottom: 8px; }

@@ -21,6 +21,11 @@
   filter: drop-shadow(0 0 2px rgba(173, 198, 255, 0.5));
 }
 
+[data-theme="light"] .blueprint-line {
+  stroke: rgba(0, 0, 0, 0.2);
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.15));
+}
+
 .pulse-left::before {
   content: '';
   position: absolute;

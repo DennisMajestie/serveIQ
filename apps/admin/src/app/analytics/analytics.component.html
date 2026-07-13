@@ -24,11 +24,17 @@
       <div>
         <p class="text-[14px] leading-none font-semibold text-[var(--secondary)] uppercase tracking-[0.3em] mb-2 opacity-70" style="font-family:'Inter',sans-serif">Global Revenue Pulse</p>
         <h2 class="text-[64px] font-bold text-[var(--on-background)] leading-tight" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 15px color-mix(in srgb, var(--primary) 40%, transparent)">₦{{ (kpiMetrics()[0]?.value || '0').replace('₦', '') }}</h2>
-        <div class="flex items-center gap-2 mt-2">
-          <div class="flex items-center text-[var(--primary)] px-3 py-1 rounded-full" style="background: color-mix(in srgb, var(--primary) 10%, transparent)">
-            <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
-            <span class="text-[12px] leading-none font-bold" style="font-family:'Inter',sans-serif">{{ kpiMetrics()[0]?.change || '+0%' }}</span>
-          </div>
+          <div class="flex items-center gap-2 mt-2">
+            <div class="flex items-center text-[var(--primary)] px-3 py-1 rounded-full" style="background: color-mix(in srgb, var(--primary) 10%, transparent)">
+              @if (kpiMetrics()[0]?.trend === 'up') {
+                <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+              } @else if (kpiMetrics()[0]?.trend === 'down') {
+                <span class="material-symbols-outlined text-sm mr-1">trending_down</span>
+              } @else {
+                <span class="material-symbols-outlined text-sm mr-1">horizontal_rule</span>
+              }
+              <span class="text-[12px] leading-none font-bold" style="font-family:'Inter',sans-serif">{{ kpiMetrics()[0]?.change || '+0%' }}</span>
+            </div>
           <span class="text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif; color: color-mix(in srgb, var(--on-surface-variant) 60%, transparent)">vs. last 30 days</span>
         </div>
       </div>
