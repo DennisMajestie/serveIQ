@@ -1,18 +1,16 @@
 <div class="history-container">
-  <!-- Top Bar -->
   <header class="top-bar">
     <div class="top-bar-left">
       <button class="back-btn" (click)="goBack()">
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
-      <h1 class="page-title">Shift History — {{ currentDate }}</h1>
+      <h1 class="page-title">Settlements by Shift</h1>
     </div>
     <div class="top-bar-right">
       <span class="material-symbols-outlined icon-secondary">notifications</span>
     </div>
   </header>
 
-  <!-- Main Content -->
   <main class="history-main">
     @if (isLoading()) {
       <div class="skeleton-shimmer" style="height:48px; border-radius: 12px; margin-bottom: 16px;"></div>
@@ -21,59 +19,74 @@
         <div class="skeleton-shimmer" style="height:80px; border-radius: 12px;"></div>
       </div>
     } @else {
-    <!-- Search Bar -->
-    <div class="search-bar">
-      <span class="material-symbols-outlined search-icon">search</span>
-      <input
-        type="text"
-        placeholder="Search tables, names, or amounts..."
-        class="search-input"
-      />
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-cards">
-      <div class="stat-card">
-        <p class="stat-label">Shift Total</p>
-        <p class="stat-value total">₦{{ shiftTotal().toLocaleString() }}</p>
-      </div>
-      <div class="stat-card">
-        <p class="stat-label">Transactions</p>
-        <p class="stat-value count">{{ transactionsCount() }}</p>
-      </div>
-    </div>
-
-    <!-- Recent Transactions Section -->
-    <div class="section-header">
-      <h3 class="section-title">Recent Transactions</h3>
-    </div>
-
-    <div class="transactions-list">
-      @for (transaction of transactions(); track transaction.id) {
-        <div class="transaction-card" (click)="openTransactionById(transaction.id)">
-          <div class="card-left">
-            <span class="table-badge">{{ transaction.table }}</span>
-            <div class="customer-info">
-              <h4 class="customer-name">{{ transaction.customer }}</h4>
-              <p class="transaction-status">
-                {{ transaction.status }}
-                <span class="material-symbols-outlined status-icon">{{ transaction.statusIcon }}</span>
-              </p>
-            </div>
-          </div>
-          <div class="card-right">
-            <span class="transaction-amount">₦{{ (transaction.amount / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 }) }}</span>
-            <span class="payment-method-badge">{{ transaction.method }}</span>
-          </div>
+      <div class="stats-cards">
+        <div class="stat-card">
+          <p class="stat-label">Grand Total</p>
+          <p class="stat-value total">₦{{ grandTotal().toLocaleString() }}</p>
         </div>
-      }
-    </div>
+        <div class="stat-card">
+          <p class="stat-label">Transactions</p>
+          <p class="stat-value count">{{ transactionCount() }}</p>
+        </div>
+      </div>
 
-    <!-- View All Button -->
-    <button class="view-all-btn">
-      View All Shift Records
-      <span class="material-symbols-outlined">chevron_right</span>
-    </button>
+      @if (shiftGroups().length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined">receipt_long</span>
+          <p>No settled shifts found</p>
+        </div>
+      } @else {
+        @for (group of shiftGroups(); track group.shift.id || $index) {
+          <div class="shift-group">
+            <div class="shift-header" (click)="toggleShift(group.shift.id)">
+              <div class="shift-info">
+                <span class="shift-date">
+                  @if (group.shift.id) {
+                    {{ group.shift.openedAt | date:'EEE, MMM d, yyyy' }}
+                  } @else {
+                    No Shift
+                  }
+                </span>
+                <span class="shift-meta">
+                  @if (group.shift.id) {
+                    {{ group.shift.openedAt | date:'short' }}
+                    @if (group.shift.closedAt) {
+                      – {{ group.shift.closedAt | date:'shortTime' }}
+                    }
+                  }
+                </span>
+              </div>
+              <div class="shift-summary">
+                <span class="shift-amount">₦{{ formatKobo(group.totalKobo) }}</span>
+                <span class="shift-count">{{ group.transactions.length }} txns</span>
+                <span class="material-symbols-outlined expand-icon" [class.open]="expandedShift() === group.shift.id">expand_more</span>
+              </div>
+            </div>
+
+            @if (expandedShift() === group.shift.id) {
+              <div class="shift-transactions">
+                @for (txn of group.transactions; track txn.id) {
+                  <div class="transaction-card" (click)="openTransactionById(txn.id)">
+                    <div class="card-left">
+                      <span class="table-badge">{{ txn.table }}</span>
+                      <div class="customer-info">
+                        <h4 class="customer-name">{{ txn.customer }}</h4>
+                        <p class="transaction-status">
+                          {{ txn.method }}
+                          <span class="material-symbols-outlined status-icon">{{ txn.statusIcon }}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="card-right">
+                      <span class="transaction-amount">₦{{ formatKobo(txn.amount) }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      }
     }
   </main>
 </div>
