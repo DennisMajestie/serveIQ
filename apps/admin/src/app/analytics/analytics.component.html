@@ -35,17 +35,25 @@
               }
               <span class="text-[12px] leading-none font-bold" style="font-family:'Inter',sans-serif">{{ kpiMetrics()[0]?.change || '+0%' }}</span>
             </div>
-          <span class="text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif; color: color-mix(in srgb, var(--on-surface-variant) 60%, transparent)">vs. last 30 days</span>
+          <span class="text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif; color: color-mix(in srgb, var(--on-surface-variant) 60%, transparent)">{{ selectedRange() || 'Custom' }} range</span>
         </div>
       </div>
-      <div class="flex gap-4 items-center">
-        <input type="date" [ngModel]="dateFrom()" (ngModelChange)="dateFrom.set($event); onDateChange()"
-          class="px-4 py-3 rounded-2xl border text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif;border-color:color-mix(in srgb, var(--on-background) 5%, transparent);background:color-mix(in srgb, var(--on-surface) 3%, transparent);color:var(--on-background)">
-        <input type="date" [ngModel]="dateTo()" (ngModelChange)="dateTo.set($event); onDateChange()"
-          class="px-4 py-3 rounded-2xl border text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif;border-color:color-mix(in srgb, var(--on-background) 5%, transparent);background:color-mix(in srgb, var(--on-surface) 3%, transparent);color:var(--on-background)">
-        <button class="px-6 py-3 bg-[var(--primary)] text-[var(--on-primary)] rounded-2xl flex items-center gap-2 hover:brightness-110 transition-all font-bold active:scale-95" (click)="exportReport()" style="box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent)">
-          <span class="material-symbols-outlined">download</span>
-          <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Export Report</span>
+      <div class="flex gap-2 flex-wrap items-center">
+        @for (r of ranges; track r.key) {
+          <button class="px-4 py-2 rounded-xl text-[13px] leading-none font-semibold transition-all active:scale-95"
+            [class.bg-[var(--primary)]]="selectedRange() === r.key"
+            [class.text-[var(--on-primary)]]="selectedRange() === r.key"
+            [class.bg-[var(--surface-container)]]="selectedRange() !== r.key"
+            [class.text-[var(--secondary)]]="selectedRange() !== r.key"
+            (click)="setRange(r.key)" style="font-family:'Inter',sans-serif">{{ r.label }}</button>
+        }
+        <input type="date" [ngModel]="dateFrom()" (ngModelChange)="dateFrom.set($event); selectedRange.set(''); onDateChange()"
+          class="px-3 py-2 rounded-xl border text-[13px] leading-none" style="font-family:'Inter',sans-serif;border-color:color-mix(in srgb, var(--on-background) 5%, transparent);background:color-mix(in srgb, var(--on-surface) 3%, transparent);color:var(--on-background)">
+        <input type="date" [ngModel]="dateTo()" (ngModelChange)="dateTo.set($event); selectedRange.set(''); onDateChange()"
+          class="px-3 py-2 rounded-xl border text-[13px] leading-none" style="font-family:'Inter',sans-serif;border-color:color-mix(in srgb, var(--on-background) 5%, transparent);background:color-mix(in srgb, var(--on-surface) 3%, transparent);color:var(--on-background)">
+        <button class="px-4 py-2 bg-[var(--primary)] text-[var(--on-primary)] rounded-xl flex items-center gap-1.5 hover:brightness-110 transition-all font-bold active:scale-95 text-[13px] leading-none" (click)="exportReport()" style="box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent)">
+          <span class="material-symbols-outlined text-[16px]">download</span>
+          <span style="font-family:'Inter',sans-serif">Export</span>
         </button>
       </div>
     </section>

@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ReportsApiService } from '@serveiq/shared/data-access';
-import { BranchesApiService } from '@serveiq/shared/data-access';
-import { DashboardStats } from '@serveiq/shared/models';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { ReportsApiService, BranchesApiService } from '@serveiq/shared/data-access';
+import { DashboardStats, SalesEntry, TopItemEntry, PeakHoursEntry } from '@serveiq/shared/models';
 
 interface AnalyticsMetric {
   label: string;
@@ -89,55 +90,89 @@ export class AnalyticsComponent implements OnInit {
   dateFrom = signal('');
   dateTo = signal('');
 
+  selectedRange = signal<string>('monthly');
+
+  readonly ranges = [
+    { key: 'daily', label: 'Daily' },
+    { key: 'weekly', label: 'Weekly' },
+    { key: 'monthly', label: 'Monthly' },
+    { key: 'quarterly', label: 'Quarterly' },
+    { key: '6months', label: '6 Months' },
+    { key: 'annual', label: 'Annual' },
+  ];
+
   ngOnInit() {
-    this.loadAnalytics();
-    this.setDefaultDates();
-    this.loadPeakHours();
+    this.setRange('monthly');
   }
 
-  loadAnalytics() {
-    // Load dashboard stats which include revenue and stats
-    this.branchesApi.getStats().subscribe({
-      next: (stats: DashboardStats) => {
-        this.updateKPIMetrics(stats);
+  setRange(key: string) {
+    this.selectedRange.set(key);
+    const now = new Date();
+    const from = new Date();
+    switch (key) {
+      case 'daily': break;
+      case 'weekly': from.setDate(now.getDate() - 7); break;
+      case 'monthly': from.setDate(now.getDate() - 30); break;
+      case 'quarterly': from.setDate(now.getDate() - 90); break;
+      case '6months': from.setDate(now.getDate() - 180); break;
+      case 'annual': from.setDate(now.getDate() - 365); break;
+    }
+    this.dateFrom.set(from.toISOString().split('T')[0]);
+    this.dateTo.set(now.toISOString().split('T')[0]);
+    this.loadAll();
+  }
+
+  loadAll() {
+    this.isLoading.set(true);
+    const df = this.dateFrom() || undefined;
+    const dt = this.dateTo() || undefined;
+
+    forkJoin({
+      stats: this.branchesApi.getStats().pipe(catchError(() => of(null))),
+      sales: this.reportsApi.getSales(df, dt).pipe(catchError(() => of([] as SalesEntry[]))),
+      topItems: this.reportsApi.getTopItems(df, dt).pipe(catchError(() => of([] as TopItemEntry[]))),
+      peakHours: this.reportsApi.getPeakHours(undefined, df, dt).pipe(catchError(() => of([] as PeakHoursEntry[]))),
+    }).subscribe(({ stats, sales, topItems, peakHours }) => {
+      this.peakHoursData.set(peakHours);
+
+      if (stats) {
+        this.updateKPIMetrics(stats, sales);
         this.updateStaffData(stats.waiterPerformance);
-        this.updateCategoryROI(stats.recentOrders);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.isLoading.set(false);
+      } else if (sales.length) {
+        this.updateKPIMetricsFromSales(sales);
+      } else {
         this.isUsingMockData.set(true);
         this.setMockData();
       }
+
+      this.updateCategoryROI(topItems);
+      this.isLoading.set(false);
     });
   }
 
-  loadPeakHours() {
-    const params: Record<string, string> = {};
-    if (this.dateFrom()) params['dateFrom'] = this.dateFrom();
-    if (this.dateTo()) params['dateTo'] = this.dateTo();
-
-    this.reportsApi.getPeakHours(undefined, this.dateFrom() || undefined, this.dateTo() || undefined).subscribe({
-      next: (data) => {
-        this.peakHoursData.set(data);
-      },
-      error: () => {
-        console.error('Failed to load peak hours data');
-      }
-    });
-  }
-
-  updateKPIMetrics(stats: DashboardStats) {
-    const revenue = stats.dailyRevenue || 0;
-    const todayTabs = stats.todayTabsCount || 0;
-
-    const avgTicket = todayTabs > 0 ? (revenue / todayTabs) : 0;
+  updateKPIMetrics(stats: DashboardStats, sales: SalesEntry[]) {
+    const totalKobo = sales.reduce((s, e) => s + e.revenueKobo, 0);
+    const totalOrders = sales.reduce((s, e) => s + e.orderCount, 0);
+    const avgTicket = totalOrders > 0 ? totalKobo / totalOrders : 0;
 
     this.kpiMetrics.set([
-      { label: 'Total Revenue', value: `₦${(revenue / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'payments', color: '#00D166' },
+      { label: 'Total Revenue', value: `₦${(totalKobo / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'payments', color: '#00D166' },
       { label: 'Avg Ticket', value: `₦${(avgTicket / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'receipt', color: '#0059bb' },
       { label: 'Active Tabs', value: stats.openTabs.toString(), change: '—', trend: 'neutral', icon: 'table_restaurant', color: '#8b5cf6' },
-      { label: 'Tables Occupied', value: stats.activeTables.toString(), change: '—', trend: 'neutral', icon: 'person', color: '#FF7043' }
+      { label: 'Tables Occupied', value: stats.activeTables.toString(), change: '—', trend: 'neutral', icon: 'person', color: '#FF7043' },
+    ]);
+  }
+
+  updateKPIMetricsFromSales(sales: SalesEntry[]) {
+    const totalKobo = sales.reduce((s, e) => s + e.revenueKobo, 0);
+    const totalOrders = sales.reduce((s, e) => s + e.orderCount, 0);
+    const avgTicket = totalOrders > 0 ? totalKobo / totalOrders : 0;
+
+    this.kpiMetrics.set([
+      { label: 'Total Revenue', value: `₦${(totalKobo / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'payments', color: '#00D166' },
+      { label: 'Avg Ticket', value: `₦${(avgTicket / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'receipt', color: '#0059bb' },
+      { label: 'Active Tabs', value: '—', change: '—', trend: 'neutral', icon: 'table_restaurant', color: '#8b5cf6' },
+      { label: 'Tables Occupied', value: '—', change: '—', trend: 'neutral', icon: 'person', color: '#FF7043' },
     ]);
   }
 
@@ -151,34 +186,21 @@ export class AnalyticsComponent implements OnInit {
     })));
   }
 
-  updateCategoryROI(recentOrders: any[]) {
-    if (!recentOrders || recentOrders.length === 0) {
+  updateCategoryROI(items: TopItemEntry[]) {
+    if (!items.length) {
       this.categoryROI.set([]);
       return;
     }
 
-    const itemMap = new Map<string, { totalKobo: number }>();
-    for (const order of recentOrders) {
-      const name = order.menuItemName || 'Unknown';
-      const kobo = (order.priceKobo || 0) * (order.quantity || 1);
-      const existing = itemMap.get(name) || { totalKobo: 0 };
-      existing.totalKobo += kobo;
-      itemMap.set(name, existing);
-    }
-
-    const totalKobo = Array.from(itemMap.values()).reduce((s, i) => s + i.totalKobo, 0) || 1;
-
-    const sorted = Array.from(itemMap.entries())
-      .map(([name, data]) => ({ name, totalKobo: data.totalKobo, pct: Math.round((data.totalKobo / totalKobo) * 100) }))
-      .sort((a, b) => b.totalKobo - a.totalKobo)
-      .slice(0, 3);
-
+    const totalKobo = items.reduce((s, i) => s + i.revenueKobo, 0) || 1;
+    const sorted = [...items].sort((a, b) => b.revenueKobo - a.revenueKobo).slice(0, 3);
     const colors = ['#00D166', '#0059bb', '#FF7043'];
+
     this.categoryROI.set(sorted.map((item, i) => ({
       name: item.name,
-      value: Math.round(item.totalKobo / 100).toLocaleString(),
-      percentage: item.pct,
-      color: colors[i] || '#00D166'
+      value: Math.round(item.revenueKobo / 100).toLocaleString(),
+      percentage: Math.round((item.revenueKobo / totalKobo) * 100),
+      color: colors[i] || '#00D166',
     })));
   }
 
@@ -217,16 +239,8 @@ export class AnalyticsComponent implements OnInit {
     return Math.max(...this.peakHoursData().map(d => d.orderCount));
   }
 
-  private setDefaultDates() {
-    const today = new Date();
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-    this.dateFrom.set(thirtyDaysAgo.toISOString().split('T')[0]);
-    this.dateTo.set(today.toISOString().split('T')[0]);
-  }
-
   onDateChange() {
-    this.loadPeakHours();
+    this.loadAll();
   }
 
   exportReport() {
