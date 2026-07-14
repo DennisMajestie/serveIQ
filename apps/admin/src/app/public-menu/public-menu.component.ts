@@ -21,8 +21,8 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
         </div>
       } @else {
         <header class="header">
-          <h1>{{ menuData()?.branchName }}</h1>
-          <p class="subtitle">Scan to view our menu</p>
+          <h1>{{ menuData()?.businessName }}</h1>
+          <p class="subtitle">{{ menuData()?.branchName }}</p>
         </header>
 
         <main class="content">
@@ -131,8 +131,8 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
     }
     .items-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
     .menu-card {
       background: #fff;
