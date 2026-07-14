@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { buildUrl } from './api.config';
 import { handleApiError } from './api-error';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { snakeToCamel } from '@serveiq/shared/models';
+import { snakeToCamel, camelToSnake } from '@serveiq/shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class BaseApiService {
@@ -49,7 +49,7 @@ export class BaseApiService {
   protected post<T>(url: string, body?: any): Observable<T> {
     const fullUrl = this.buildFullUrl(url);
     return this.http
-      .post<any>(fullUrl, body, { headers: this.defaultHeaders })
+      .post<any>(fullUrl, camelToSnake(body), { headers: this.defaultHeaders })
       .pipe(
         map(res => {
           let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
@@ -66,7 +66,7 @@ export class BaseApiService {
   protected put<T>(url: string, body: any): Observable<T> {
     const fullUrl = this.buildFullUrl(url);
     return this.http
-      .put<any>(fullUrl, body, { headers: this.defaultHeaders })
+      .put<any>(fullUrl, camelToSnake(body), { headers: this.defaultHeaders })
       .pipe(
         map(res => {
           const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
@@ -80,7 +80,7 @@ export class BaseApiService {
   protected patch<T>(url: string, body: any): Observable<T> {
     const fullUrl = this.buildFullUrl(url);
     return this.http
-      .patch<any>(fullUrl, body, { headers: this.defaultHeaders })
+      .patch<any>(fullUrl, camelToSnake(body), { headers: this.defaultHeaders })
       .pipe(
         map(res => {
           const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
