@@ -101,7 +101,7 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
         </main>
 
         <footer class="footer">
-          <p>Powered by Lumina Studio</p>
+          <p>Powered by ServeIQ Mgt</p>
         </footer>
       }
     </div>
