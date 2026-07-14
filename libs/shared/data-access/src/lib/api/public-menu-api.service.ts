@@ -35,7 +35,10 @@ export class PublicMenuApiService {
     const url = `${this.env.apiUrl}${buildUrl(API_CONFIG.endpoints.publicMenu, { branchId })}`;
     return this.http.get<any>(url).pipe(
       map(res => {
-        const data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) {
+          data = data.data;
+        }
         return snakeToCamel<PublicMenuData>(data);
       })
     );
