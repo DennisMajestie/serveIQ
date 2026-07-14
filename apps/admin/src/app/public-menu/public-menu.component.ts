@@ -1,12 +1,13 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/shared/data-access';
 
 @Component({
   selector: 'app-public-menu',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="public-menu">
       @if (isLoading()) {
@@ -25,43 +26,77 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
           <p class="subtitle">{{ menuData()?.branchName }}</p>
         </header>
 
+        <div class="sticky-bar">
+          <div class="search-wrapper">
+            <span class="search-icon material-symbols-outlined">search</span>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search menu..."
+              [(ngModel)]="searchQuery"
+            />
+            @if (searchQuery()) {
+              <button class="clear-btn" (click)="searchQuery.set('')">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            }
+          </div>
+
+          <div class="category-tabs">
+            <button
+              class="category-pill"
+              [class.active]="selectedCategory() === ''"
+              (click)="selectedCategory.set('')"
+            >All</button>
+            @for (cat of categories(); track cat) {
+              <button
+                class="category-pill"
+                [class.active]="selectedCategory() === cat"
+                (click)="selectedCategory.set(cat)"
+              >{{ cat }}</button>
+            }
+          </div>
+        </div>
+
         <main class="content">
-          @for (group of groupedItems(); track group.category) {
-            <section class="category-section">
-              <h2 class="category-title">{{ group.category }}</h2>
-              <div class="items-grid">
-                @for (item of group.items; track item.id) {
-                  <div class="menu-card" [class.sold-out]="item.isSoldOut">
-                    <div class="card-image">
-                      @if (item.imageUrl) {
-                        <img
-                          [src]="item.imageUrl"
-                          [alt]="item.name"
-                          loading="lazy"
-                          (error)="item.imageUrl = undefined"
-                        />
-                      } @else {
-                        <div class="img-placeholder">&#127860;</div>
-                      }
-                      @if (item.isSoldOut) {
-                        <span class="sold-out-badge">Sold out</span>
-                      }
-                    </div>
-                    <div class="card-body">
-                      <h3>{{ item.name }}</h3>
-                      @if (item.description) {
-                        <p class="description">{{ item.description }}</p>
-                      }
-                      <div class="card-footer">
-                        <span class="price" [class.text-muted]="item.isSoldOut">
-                          &#8358;{{ (item.priceKobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 }) }}
-                        </span>
-                      </div>
+          @if (filteredItems().length === 0) {
+            <div class="empty-state">
+              <span class="material-symbols-outlined">search_off</span>
+              <p>No items found</p>
+            </div>
+          } @else {
+            <div class="items-grid">
+              @for (item of filteredItems(); track item.id) {
+                <div class="menu-card" [class.sold-out]="item.isSoldOut">
+                  <div class="card-image">
+                    @if (item.imageUrl) {
+                      <img
+                        [src]="item.imageUrl"
+                        [alt]="item.name"
+                        loading="lazy"
+                        (error)="item.imageUrl = undefined"
+                      />
+                    } @else {
+                      <div class="img-placeholder">&#127860;</div>
+                    }
+                    @if (item.isSoldOut) {
+                      <span class="sold-out-badge">Sold out</span>
+                    }
+                  </div>
+                  <div class="card-body">
+                    <h3>{{ item.name }}</h3>
+                    @if (item.description) {
+                      <p class="description">{{ item.description }}</p>
+                    }
+                    <div class="card-footer">
+                      <span class="price" [class.text-muted]="item.isSoldOut">
+                        &#8358;{{ (item.priceKobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 }) }}
+                      </span>
                     </div>
                   </div>
-                }
-              </div>
-            </section>
+                </div>
+              }
+            </div>
           }
         </main>
 
@@ -98,37 +133,113 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
     @keyframes spin { to { transform: rotate(360deg); } }
     .header {
       text-align: center;
-      padding: 48px 24px 32px;
+      padding: 40px 24px 24px;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       color: #fff;
     }
     .header h1 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
-      margin: 0 0 8px;
+      margin: 0 0 4px;
     }
     .header .subtitle {
       font-size: 14px;
       opacity: 0.7;
       margin: 0;
     }
+    .sticky-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #f8f9fa;
+      padding: 12px 16px 8px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0 12px;
+      margin-bottom: 10px;
+    }
+    .search-wrapper:focus-within {
+      border-color: #4be277;
+      box-shadow: 0 0 0 3px rgba(75,226,119,0.15);
+    }
+    .search-icon {
+      font-size: 20px;
+      color: #94a3b8;
+    }
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      padding: 10px 0;
+      background: transparent;
+      color: #1a1a2e;
+    }
+    .search-input::placeholder { color: #94a3b8; }
+    .clear-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      color: #94a3b8;
+    }
+    .clear-btn .material-symbols-outlined { font-size: 18px; }
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .category-tabs::-webkit-scrollbar { display: none; }
+    .category-pill {
+      flex-shrink: 0;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .category-pill.active {
+      background: #1a1a2e;
+      color: #fff;
+      border-color: #1a1a2e;
+    }
     .content {
       max-width: 800px;
       margin: 0 auto;
-      padding: 24px 16px 80px;
+      padding: 8px 16px 80px;
     }
-    .category-section {
-      margin-bottom: 32px;
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 30vh;
+      gap: 12px;
+      color: #94a3b8;
     }
-    .category-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 20px;
-      font-weight: 600;
-      margin: 0 0 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #e9ecef;
-    }
+    .empty-state .material-symbols-outlined { font-size: 48px; }
+    .empty-state p { font-size: 15px; margin: 0; }
     .items-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -220,7 +331,24 @@ export class PublicMenuComponent implements OnInit {
   error = signal<string | null>(null);
   menuData = signal<PublicMenuData | null>(null);
 
-  groupedItems = signal<{ category: string; items: PublicMenuItem[] }[]>([]);
+  selectedCategory = signal('');
+  searchQuery = signal('');
+
+  categories = signal<string[]>([]);
+  allItems = signal<PublicMenuItem[]>([]);
+
+  filteredItems = computed(() => {
+    let items = this.allItems();
+    const cat = this.selectedCategory();
+    const q = this.searchQuery().toLowerCase().trim();
+    if (cat) {
+      items = items.filter(i => i.category === cat);
+    }
+    if (q) {
+      items = items.filter(i => i.name.toLowerCase().includes(q));
+    }
+    return items;
+  });
 
   ngOnInit(): void {
     const branchId = this.route.snapshot.paramMap.get('branchId');
@@ -232,7 +360,9 @@ export class PublicMenuComponent implements OnInit {
     this.publicMenuApi.getMenu(branchId).subscribe({
       next: (data) => {
         this.menuData.set(data);
-        this.groupedItems.set(this.groupByCategory(data.items));
+        this.allItems.set(data.items);
+        const cats = [...new Set(data.items.map(i => i.category))];
+        this.categories.set(cats);
         this.isLoading.set(false);
       },
       error: () => {
@@ -240,15 +370,5 @@ export class PublicMenuComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
-  }
-
-  private groupByCategory(items: PublicMenuItem[]): { category: string; items: PublicMenuItem[] }[] {
-    const map = new Map<string, PublicMenuItem[]>();
-    for (const item of items) {
-      const list = map.get(item.category) || [];
-      list.push(item);
-      map.set(item.category, list);
-    }
-    return Array.from(map.entries()).map(([category, items]) => ({ category, items }));
   }
 }
