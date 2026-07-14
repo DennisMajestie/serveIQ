@@ -19,6 +19,7 @@ export interface PublicMenuItem {
 export interface PublicMenuData {
   businessName: string;
   branchName: string;
+  logoUrl?: string;
   items: PublicMenuItem[];
 }
 

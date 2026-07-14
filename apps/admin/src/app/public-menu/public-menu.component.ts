@@ -22,6 +22,9 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
         </div>
       } @else {
         <header class="header">
+          @if (menuData()?.logoUrl) {
+            <img [src]="menuData()?.logoUrl" alt="Logo" class="logo" />
+          }
           <h1>{{ menuData()?.businessName }}</h1>
           <p class="subtitle">{{ menuData()?.branchName }}</p>
         </header>
@@ -136,6 +139,14 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
       padding: 40px 24px 24px;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       color: #fff;
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      background: rgba(255,255,255,0.1);
     }
     .header h1 {
       font-family: 'Space Grotesk', sans-serif;
