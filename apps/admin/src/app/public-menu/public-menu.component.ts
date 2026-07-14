@@ -141,11 +141,12 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
       color: #fff;
     }
     .logo {
-      width: 64px;
-      height: 64px;
+      width: 72px;
+      height: 72px;
       object-fit: contain;
-      border-radius: 12px;
-      margin-bottom: 12px;
+      border-radius: 14px;
+      margin: 0 auto 14px;
+      display: block;
       background: rgba(255,255,255,0.1);
     }
     .header h1 {
