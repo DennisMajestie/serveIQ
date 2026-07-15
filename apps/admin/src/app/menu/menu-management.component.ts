@@ -191,7 +191,7 @@ export class MenuManagementComponent implements OnInit {
     }
 
     const payload: any = {
-      branchId: localStorage.getItem('branchId') || 'default',
+      branchId: localStorage.getItem('branchId') || localStorage.getItem('businessId') || 'default-branch',
       name: this.formName(),
       category: this.formCategory(),
       priceKobo: Math.round(this.formPrice()! * 100),
