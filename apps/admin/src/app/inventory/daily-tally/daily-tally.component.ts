@@ -38,11 +38,11 @@ import { DailyTallyReport } from '@serveiq/shared/models';
           </div>
         </div>
 
-        <div *ngIf="report.items.length === 0" class="empty-state">
+        <div *ngIf="!report?.items?.length" class="empty-state">
           <p>No data for this date.</p>
         </div>
 
-        <div *ngIf="report.items.length > 0" class="tally-table-wrapper">
+        <div *ngIf="report?.items?.length" class="tally-table-wrapper">
           <table class="tally-table">
             <thead>
               <tr>
@@ -131,7 +131,11 @@ export class DailyTallyComponent implements OnInit {
     this.isLoading.set(true);
     this.report.set(null);
     this.inventoryApi.getDailyTally(this.selectedDate()).subscribe({
-      next: (r) => { this.report.set(r); this.isLoading.set(false); },
+      next: (r: any) => {
+        const data = r?.report || r;
+        this.report.set(data?.items ? data : null);
+        this.isLoading.set(false);
+      },
       error: () => { this.isLoading.set(false); }
     });
   }
