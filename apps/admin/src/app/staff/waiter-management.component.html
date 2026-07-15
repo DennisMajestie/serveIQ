@@ -68,10 +68,25 @@
 
       <!-- Personnel Roster (8 cols) -->
       <section class="col-span-12 lg:col-span-8 glass-card rounded-[40px] overflow-hidden">
-        <div class="p-6 border-b border-white/5 flex justify-between items-center">
+        <div class="p-6 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Personnel Roster</h3>
-          <div class="flex gap-2">
-            <button class="p-2 hover-bg-surface-variant-40 rounded-lg transition-colors" (click)="clearFilters()">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <div class="relative flex-1 sm:flex-initial">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--on-surface-variant)] text-[18px]">search</span>
+              <input
+                type="text"
+                placeholder="Search by name or email..."
+                [ngModel]="searchQuery()"
+                (ngModelChange)="searchQuery.set($event)"
+                class="w-full sm:w-64 pl-9 pr-3 py-2 rounded-xl bg-[var(--surface-container-high)] border border-white/5 text-[var(--on-background)] text-sm placeholder:text-[var(--on-surface-variant)] outline-none focus:border-[var(--primary-container)] transition-colors"
+              />
+              @if (searchQuery()) {
+                <button class="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--on-surface-variant)] hover:text-[var(--on-background)]" (click)="clearFilters()">
+                  <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+              }
+            </div>
+            <button class="p-2 hover-bg-surface-variant-40 rounded-lg transition-colors flex-shrink-0" (click)="clearFilters()" title="Clear filters">
               <span class="material-symbols-outlined text-[var(--on-surface-variant)]">filter_list</span>
             </button>
           </div>

@@ -80,8 +80,15 @@
           <span *ngIf="!isLoading()" class="material-symbols-outlined text-[18px]">login</span>
         </button>
       </form>
+      <!-- Sign Up Link -->
+      <div class="mt-6 text-center">
+        <p class="text-[14px] leading-[20px] font-semibold text-[#584237]" style="font-family:'Inter',sans-serif">
+          Don't have an account?
+          <a routerLink="/register" class="text-[#F97316] font-bold hover:underline">Sign Up</a>
+        </p>
+      </div>
       <!-- Footer -->
-      <div class="mt-8 pt-6 border-t border-[#e0c0b1]/30 w-full text-center">
+      <div class="mt-6 pt-6 border-t border-[#e0c0b1]/30 w-full text-center">
         <p class="text-[14px] leading-[20px] font-semibold text-[#584237]" style="font-family:'Inter',sans-serif">
           Need help? <a class="text-[#9d4300] font-bold hover:underline" href="#">Contact Support</a>
         </p>

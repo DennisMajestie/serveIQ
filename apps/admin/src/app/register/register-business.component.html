@@ -54,15 +54,16 @@
                 class="form-input pin-input"
                 [(ngModel)]="pin"
                 name="pin"
-                maxlength="6"
-                placeholder="••••••"
+                minlength="8"
+                maxlength="128"
+                placeholder="••••••••"
                 required
               >
               <button type="button" class="pin-toggle" (click)="showPin.set(!showPin())">
                 <span class="material-symbols-outlined text-on-surface-variant/30">visibility</span>
               </button>
             </div>
-            <p class="field-hint">Required for cross-department synchronization.</p>
+            <p class="field-hint">At least 8 characters. Used for account authentication.</p>
           </div>
         </div>
       }
