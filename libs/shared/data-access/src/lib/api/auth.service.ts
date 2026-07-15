@@ -134,8 +134,9 @@ export class AuthService {
 
   /** Verify a staff member's PIN for an activated terminal */
   verifyStaffPin(pin: string, businessId: string): Observable<AuthResponse> {
+    const branchId = localStorage.getItem('branchId');
     return this.http.post<AuthResponse>(
-      `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, business_id: businessId }
+      `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, business_id: businessId, branch_id: branchId || undefined }
     ).pipe(
       tap(response => {
         const token = response.data?.access_token;
