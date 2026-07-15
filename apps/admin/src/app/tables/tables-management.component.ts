@@ -110,7 +110,11 @@ export class TablesManagementComponent implements OnInit {
       })
     }).then(result => {
       if (result.isConfirmed && result.value) {
-        const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || 'default-branch';
+        const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || '';
+        if (!branchId || branchId === 'undefined') {
+          Swal.fire({ icon: 'error', title: 'No Branch Found', text: 'Create a branch in Business Setup or Settings first.' });
+          return;
+        }
         this.tableService.createTable({
           tableNumber: result.value.tableNumber,
           capacity: Number(result.value.capacity),

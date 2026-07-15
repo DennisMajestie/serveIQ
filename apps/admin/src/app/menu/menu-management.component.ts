@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { MenuApiService, UploadApiService, MenuItem, ENVIRONMENT_CONFIG, EnvironmentConfig, showApiErrorToast } from '@serveiq/shared/data-access';
+import { MenuApiService, UploadApiService, BranchesApiService, MenuItem, ENVIRONMENT_CONFIG, EnvironmentConfig, showApiErrorToast } from '@serveiq/shared/data-access';
 import { resolveImageUrl } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
@@ -19,6 +19,7 @@ export class MenuManagementComponent implements OnInit {
   private uploadService = inject(UploadApiService);
   private env = inject(ENVIRONMENT_CONFIG);
   private router = inject(Router);
+  private branchesService = inject(BranchesApiService);
   
   selectedCategory = signal('All');
   isLoading = signal(true);
@@ -182,6 +183,22 @@ export class MenuManagementComponent implements OnInit {
     if (!this.formName() || !this.formCategory() || this.formPrice() === null || !this.formUnit()) return;
     this.isSubmitting.set(true);
 
+    let branchId = localStorage.getItem('branchId') || '';
+    if (!branchId || branchId === 'undefined' || branchId === 'null') {
+      try {
+        const branches = await firstValueFrom(this.branchesService.list());
+        if (branches.length) {
+          branchId = branches[0].id;
+          localStorage.setItem('branchId', branchId);
+        }
+      } catch { /* ignore */ }
+    }
+    if (!branchId || branchId === 'undefined' || branchId === 'null') {
+      this.isSubmitting.set(false);
+      Swal.fire({ icon: 'error', title: 'No Branch Found', text: 'Create a branch in Business Setup or Settings first.' });
+      return;
+    }
+
     let imageUrl: string | undefined;
     if (this.selectedFile()) {
       try {
@@ -191,7 +208,7 @@ export class MenuManagementComponent implements OnInit {
     }
 
     const payload: any = {
-      branchId: localStorage.getItem('branchId') || localStorage.getItem('businessId') || 'default-branch',
+      branchId,
       name: this.formName(),
       category: this.formCategory(),
       priceKobo: Math.round(this.formPrice()! * 100),

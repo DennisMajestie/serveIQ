@@ -112,7 +112,12 @@ export class WaiterManagementComponent implements OnInit {
       } catch { /* silently skip photo */ }
     }
 
-    const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || 'default-branch';
+    const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || '';
+    if (!branchId || branchId === 'undefined') {
+      this.isSubmitting.set(false);
+      Swal.fire({ icon: 'error', title: 'No Branch Found', text: 'Create a branch in Business Setup or Settings first.' });
+      return;
+    }
     const payload: any = {
       fullName,
       email: this.formEmail().trim(),
