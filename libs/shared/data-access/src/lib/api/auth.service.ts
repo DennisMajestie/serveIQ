@@ -142,11 +142,17 @@ export class AuthService {
         const token = response.data?.access_token;
         const resData = response.data as any;
         const branchId = resData.user?.branch || resData.branchId || resData.branch?.id;
+        const userRole = resData.user?.role || resData.role;
+        const normalizedRole = userRole === 'superadmin' ? 'super_admin' : userRole;
         if (token) {
           setStaffToken(token);
+          this.tokenSubject.next(token);
         }
         if (branchId && branchId !== 'default-branch') {
           localStorage.setItem('branchId', branchId);
+        }
+        if (normalizedRole) {
+          localStorage.setItem('userRole', normalizedRole);
         }
       })
     );

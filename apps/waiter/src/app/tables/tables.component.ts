@@ -109,6 +109,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   private pollSub?: Subscription;
   private tabsSub?: Subscription;
+  private seenOrderReadyIds = new Set<string>();
 
   ngOnInit() {
     this.loadTables();
@@ -308,7 +309,25 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   loadNotifications() {
     this.notificationsApi.list().subscribe({
-      next: (notifications) => this.notifications.set(Array.isArray(notifications) ? notifications : []),
+      next: (notifications) => {
+        const list = Array.isArray(notifications) ? notifications : [];
+        this.notifications.set(list);
+
+        const orderReady = list.filter((n: Notification) => !n.isRead && (n.type as any) === 'order_ready' && !this.seenOrderReadyIds.has(n.id));
+        orderReady.forEach((n: Notification) => {
+          this.seenOrderReadyIds.add(n.id);
+          Swal.fire({
+            icon: 'success',
+            title: 'Order Ready',
+            text: n.message || 'Your order is ready for pickup.',
+            timer: 3000,
+            showConfirmButton: false,
+            background: '#1e293b',
+            color: '#fff'
+          });
+          this.notificationsApi.markRead(n.id).subscribe({ error: () => {} });
+        });
+      },
       error: () => {}
     });
   }

@@ -119,6 +119,7 @@ export class SettingsComponent implements OnInit {
   waiterFormEmail = signal('');
   waiterFormPhone = signal('');
   waiterFormBranchId = signal('');
+  waiterFormRole = signal<'waiter' | 'supervisor'>('waiter');
   isSavingWaiter = signal(false);
 
   // Security
@@ -293,7 +294,10 @@ export class SettingsComponent implements OnInit {
             Swal.fire({ icon: 'success', title: 'Branch Deleted', timer: 1500, showConfirmButton: false });
             this.branchesApi.list().subscribe(b => this.branches.set(Array.isArray(b) ? b : []));
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Delete Failed' })
+          error: (err) => {
+            const msg = this.extractErrorMessage(err) || 'Could not delete branch.';
+            Swal.fire({ icon: 'error', title: 'Delete Failed', text: msg });
+          }
         });
       }
     });
@@ -342,6 +346,17 @@ export class SettingsComponent implements OnInit {
     return name.split(' ').filter(n => !!n).map(n => n[0]).join('').toUpperCase().slice(0, 2);
   }
 
+  private extractErrorMessage(error: any): string | null {
+    if (!error) return null;
+    const payload = error?.error || error;
+    if (typeof payload?.message === 'string') return payload.message;
+    if (Array.isArray(payload?.message)) return payload.message[0];
+    if (typeof payload?.meta?.message === 'string') return payload.meta.message;
+    if (Array.isArray(payload?.meta?.message)) return payload.meta.message[0];
+    if (typeof error?.message === 'string') return error.message;
+    return null;
+  }
+
   // ===== Staff Management =====
 
   loadWaiters() {
@@ -360,6 +375,7 @@ export class SettingsComponent implements OnInit {
     this.waiterFormEmail.set('');
     this.waiterFormPhone.set('');
     this.waiterFormBranchId.set(this.activeBranchId() || this.branches()[0]?.id || '');
+    this.waiterFormRole.set('waiter');
     this.showCreateWaiterModal.set(true);
   }
 
@@ -371,20 +387,27 @@ export class SettingsComponent implements OnInit {
       email: this.waiterFormEmail() || undefined,
       phone: this.waiterFormPhone() || undefined,
       branchId: this.waiterFormBranchId(),
+      role: this.waiterFormRole(),
     }).subscribe({
       next: (waiter) => {
         this.isSavingWaiter.set(false);
         this.showCreateWaiterModal.set(false);
+        const createdRole = (waiter as User | any)?.role || this.waiterFormRole();
+        const pin = (waiter as User | any)?.pin;
+        const roleLabel = createdRole === 'supervisor' ? 'Supervisor' : 'Waiter';
         Swal.fire({
-          icon: 'success', title: 'Waiter Created',
-          text: waiter.pin ? `PIN: ${waiter.pin}` : undefined,
-          timer: waiter.pin ? 5000 : 1500, showConfirmButton: false,
+          icon: 'success',
+          title: `${roleLabel} Created`,
+          text: pin ? `PIN: ${pin}` : 'The account was created successfully.',
+          timer: pin ? 5000 : 1500,
+          showConfirmButton: false,
         });
         this.loadWaiters();
       },
-      error: () => {
+      error: (err) => {
         this.isSavingWaiter.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to create waiter' });
+        const msg = this.extractErrorMessage(err) || 'Failed to create staff member';
+        Swal.fire({ icon: 'error', title: 'Create Failed', text: msg });
       }
     });
   }

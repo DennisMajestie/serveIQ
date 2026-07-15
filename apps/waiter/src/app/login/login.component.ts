@@ -62,7 +62,12 @@ export class LoginComponent implements OnInit {
     if (!businessId) return;
 
     this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
-      next: () => {
+      next: (res: any) => {
+        const role = (res?.data?.user?.role || res?.data?.role || localStorage.getItem('userRole') || '').toString().toLowerCase();
+        if (role === 'supervisor') {
+          window.location.assign('/app/supervisor/orders');
+          return;
+        }
         this.router.navigate(['/tables']);
       },
       error: (err) => {

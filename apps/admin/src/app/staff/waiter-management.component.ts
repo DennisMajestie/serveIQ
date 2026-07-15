@@ -123,7 +123,7 @@ export class WaiterManagementComponent implements OnInit {
       email: this.formEmail().trim(),
       phone: this.formPhone().trim(),
       branchId,
-      role: this.formRole(),
+      role: this.formRole() || 'waiter',
       ...(avatar_url ? { avatar_url } : {})
     };
 
@@ -133,11 +133,12 @@ export class WaiterManagementComponent implements OnInit {
         this.waiters.update(ws => [...ws, createdWaiter]);
         this.isSubmitting.set(false);
         this.closeModal();
-        const roleLabel = this.getRoleLabel(createdWaiter.role || this.formRole());
+        const roleLabel = this.getRoleLabel(createdWaiter.role || this.formRole() || 'waiter');
+        const pin = createdWaiter.pin || w.pin || '';
         Swal.fire({
           icon: 'success',
           title: 'Staff Created',
-          html: `${roleLabel} added successfully!<br><strong style="font-size:22px;letter-spacing:4px">${w.pin}</strong><br><small>Share this PIN with the staff member to log in.</small>`,
+          html: `${roleLabel} added successfully!${pin ? `<br><strong style="font-size:22px;letter-spacing:4px">${pin}</strong><br><small>Share this PIN with the staff member to log in.</small>` : ''}`,
         });
       },
       error: (err) => {
@@ -277,7 +278,10 @@ export class WaiterManagementComponent implements OnInit {
             this.waiters.update(ws => ws.filter(w => w.id !== id));
             Swal.fire({ icon: 'success', title: 'Waiter removed', timer: 2000, showConfirmButton: false });
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Failed to delete waiter' })
+          error: (err) => {
+            const msg = err?.error?.message || err?.serverMessage || 'Failed to delete user';
+            Swal.fire({ icon: 'error', title: 'Delete Failed', text: msg });
+          }
         });
       }
     });

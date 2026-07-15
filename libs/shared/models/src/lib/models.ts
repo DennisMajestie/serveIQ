@@ -196,7 +196,7 @@ export interface CreateWaiterRequest {
   email?: string;
   phone?: string;
   branchId: string;
-  role?: string;
+  role?: 'waiter' | 'supervisor';
   password?: string;
   pin?: string;
 }

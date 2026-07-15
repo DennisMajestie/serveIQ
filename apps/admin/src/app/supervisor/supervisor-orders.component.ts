@@ -84,13 +84,13 @@ type QueueTab = 'pending' | 'preparing' | 'ready';
                   </div>
                 </div>
                 <div class="order-card-actions">
-                  <button class="btn btn-approve" (click)="openApproveModal(order)">
+                  <button class="btn btn-approve" [disabled]="isProcessingAction()" (click)="openApproveModal(order)">
                     <span class="material-symbols-outlined">check_circle</span>
-                    Approve
+                    {{ isProcessingAction() ? 'Working...' : 'Approve' }}
                   </button>
-                  <button class="btn btn-decline" (click)="openDeclineModal(order)">
+                  <button class="btn btn-decline" [disabled]="isProcessingAction()" (click)="openDeclineModal(order)">
                     <span class="material-symbols-outlined">cancel</span>
-                    Decline
+                    {{ isProcessingAction() ? 'Working...' : 'Decline' }}
                   </button>
                 </div>
               </div>
@@ -190,9 +190,9 @@ type QueueTab = 'pending' | 'preparing' | 'ready';
                   </div>
                 </div>
                 <div class="order-card-actions">
-                  <button class="btn btn-deliver" (click)="deliverOrder(order)">
+                  <button class="btn btn-deliver" [disabled]="isProcessingAction()" (click)="deliverOrder(order)">
                     <span class="material-symbols-outlined">task_alt</span>
-                    Mark Delivered
+                    {{ isProcessingAction() ? 'Working...' : 'Mark Delivered' }}
                   </button>
                 </div>
               </div>
@@ -205,7 +205,7 @@ type QueueTab = 'pending' | 'preparing' | 'ready';
   styles: [`
     .supervisor-orders {
       padding: 24px;
-      // max-width: 960px;
+      max-width: 960px;
       margin: 0 auto;
     }
     .page-header { margin-bottom: 24px; }
@@ -299,6 +299,11 @@ type QueueTab = 'pending' | 'preparing' | 'ready';
       font-family: inherit;
     }
     .btn:active { transform: scale(0.97); }
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: wait;
+      transform: none;
+    }
     .btn-approve { background: rgba(34,197,94,0.15); color: #22c55e; }
     .btn-approve:hover { background: rgba(34,197,94,0.25); }
     .btn-decline { background: rgba(239,68,68,0.15); color: #ef4444; }
@@ -354,6 +359,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   isLoadingPending = signal(false);
   isLoadingPreparing = signal(false);
   isLoadingReady = signal(false);
+  isProcessingAction = signal(false);
 
   departments = signal<Department[]>([]);
 
@@ -442,6 +448,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   }
 
   openApproveModal(order: Order) {
+    if (this.isProcessingAction()) return;
     const depts = this.departments();
     let selectedDept = '';
     let selectedTime = 5;
@@ -516,19 +523,25 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
       }
     }).then(result => {
       if (result.isConfirmed && result.value) {
+        this.isProcessingAction.set(true);
         this.ordersApi.approveOrder(order.id, result.value).subscribe({
           next: () => {
+            this.isProcessingAction.set(false);
             Swal.fire({ icon: 'success', title: 'Approved', text: 'Order has been approved and sent to preparation.', timer: 1500, showConfirmButton: false, background: '#1A1A1A', color: '#fff' });
             this.pendingOrders.update(list => list.filter(o => o.id !== order.id));
             this.loadPreparing();
           },
-          error: (err) => showApiErrorToast(err, 'Failed to approve order')
+          error: (err) => {
+            this.isProcessingAction.set(false);
+            showApiErrorToast(err, 'Failed to approve order');
+          }
         });
       }
     });
   }
 
   openDeclineModal(order: Order) {
+    if (this.isProcessingAction()) return;
     const html = `
       <div style="text-align:left;">
         <div style="margin-bottom:8px;">
@@ -558,18 +571,24 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
       }
     }).then(result => {
       if (result.isConfirmed && result.value) {
+        this.isProcessingAction.set(true);
         this.ordersApi.declineOrder(order.id, result.value).subscribe({
           next: () => {
+            this.isProcessingAction.set(false);
             Swal.fire({ icon: 'info', title: 'Declined', text: 'Order has been declined.', timer: 1500, showConfirmButton: false, background: '#1A1A1A', color: '#fff' });
             this.pendingOrders.update(list => list.filter(o => o.id !== order.id));
           },
-          error: (err) => showApiErrorToast(err, 'Failed to decline order')
+          error: (err) => {
+            this.isProcessingAction.set(false);
+            showApiErrorToast(err, 'Failed to decline order');
+          }
         });
       }
     });
   }
 
   deliverOrder(order: Order) {
+    if (this.isProcessingAction()) return;
     Swal.fire({
       title: 'Mark as Delivered?',
       text: `Confirm that this order has been delivered to Table ${order.tab?.table?.tableNumber || order.tab?.tableId || '—'}.`,
@@ -582,12 +601,17 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
       color: '#fff',
     }).then(result => {
       if (result.isConfirmed) {
+        this.isProcessingAction.set(true);
         this.ordersApi.deliverOrder(order.id).subscribe({
           next: () => {
+            this.isProcessingAction.set(false);
             Swal.fire({ icon: 'success', title: 'Delivered', text: 'Order marked as delivered.', timer: 1500, showConfirmButton: false, background: '#1A1A1A', color: '#fff' });
             this.readyOrders.update(list => list.filter(o => o.id !== order.id));
           },
-          error: (err) => showApiErrorToast(err, 'Failed to mark order as delivered')
+          error: (err) => {
+            this.isProcessingAction.set(false);
+            showApiErrorToast(err, 'Failed to mark order as delivered');
+          }
         });
       }
     });

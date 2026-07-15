@@ -445,6 +445,13 @@
             <input type="text" [ngModel]="waiterFormPhone()" (ngModelChange)="waiterFormPhone.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. +234 800 000 0000" style="font-family:'Inter',sans-serif" />
           </div>
           <div class="space-y-2">
+            <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">ROLE</label>
+            <select [ngModel]="waiterFormRole()" (ngModelChange)="waiterFormRole.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
+              <option value="waiter" class="bg-[var(--background)]">Waiter</option>
+              <option value="supervisor" class="bg-[var(--background)]">Supervisor</option>
+            </select>
+          </div>
+          <div class="space-y-2">
             <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">BRANCH</label>
             <select [ngModel]="waiterFormBranchId()" (ngModelChange)="waiterFormBranchId.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
               @for (b of branches(); track b.id) {
