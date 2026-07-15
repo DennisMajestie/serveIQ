@@ -269,6 +269,17 @@ body.fonts-loaded mat-icon {
   visibility: visible;
 }
 
+/* ===== Input / Select / Textarea Dark Theme ===== */
+[data-theme="dark"] .field-input,
+[data-theme="dark"] .field-select,
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--surface-container-high) !important;
+  color: var(--on-surface) !important;
+  border-color: var(--outline) !important;
+}
+
 /* ===== SweetAlert2 Theme Overrides ===== */
 .swal2-popup {
   border: 1px solid color-mix(in srgb, var(--on-background) 10%, transparent);
