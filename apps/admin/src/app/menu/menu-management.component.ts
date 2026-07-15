@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { MenuApiService, UploadApiService, MenuItem, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
+import { MenuApiService, UploadApiService, MenuItem, ENVIRONMENT_CONFIG, EnvironmentConfig, showApiErrorToast } from '@serveiq/shared/data-access';
 import { resolveImageUrl } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
@@ -155,6 +155,59 @@ export class MenuManagementComponent implements OnInit {
           },
           error: () => Swal.fire({ title: 'Error', text: 'Failed to delete item.', icon: 'error' })
         });
+      }
+    });
+  }
+
+  openAddModal() {
+    this.resetForm();
+    this.showAddModal.set(true);
+  }
+
+  closeModal() {
+    this.showAddModal.set(false);
+    this.resetForm();
+  }
+
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.selectedFile.set(file);
+    const reader = new FileReader();
+    reader.onload = (e) => this.imagePreview.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  async submitItem() {
+    if (!this.formName() || !this.formCategory() || this.formPrice() === null || !this.formUnit()) return;
+    this.isSubmitting.set(true);
+
+    let imageUrl: string | undefined;
+    if (this.selectedFile()) {
+      try {
+        const uploaded = await this.uploadService.uploadFile(this.selectedFile()!).toPromise();
+        imageUrl = uploaded?.url;
+      } catch { /* silently skip photo */ }
+    }
+
+    const payload: any = {
+      branchId: localStorage.getItem('branchId') || 'default',
+      name: this.formName(),
+      category: this.formCategory(),
+      priceKobo: Math.round(this.formPrice()! * 100),
+      unit: this.formUnit(),
+    };
+    if (imageUrl) payload.image_url = imageUrl;
+    this.menuService.createItem(payload).subscribe({
+      next: (item) => {
+        this.isSubmitting.set(false);
+        this.items.update(is => [...is, item]);
+        this.closeModal();
+        Swal.fire({ icon: 'success', title: 'Item Created', timer: 1500, showConfirmButton: false });
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        showApiErrorToast(err, 'Failed to create menu item');
       }
     });
   }
