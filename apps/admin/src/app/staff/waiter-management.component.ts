@@ -140,9 +140,10 @@ export class WaiterManagementComponent implements OnInit {
           html: `${roleLabel} added successfully!<br><strong style="font-size:22px;letter-spacing:4px">${w.pin}</strong><br><small>Share this PIN with the staff member to log in.</small>`,
         });
       },
-      error: () => {
+      error: (err) => {
         this.isSubmitting.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to create waiter' });
+        const msg = err?.error?.message || err?.serverMessage || 'Failed to create waiter';
+        Swal.fire({ icon: 'error', title: 'Error', text: msg });
       }
     });
   }

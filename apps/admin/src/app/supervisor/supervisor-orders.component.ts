@@ -205,7 +205,7 @@ type QueueTab = 'pending' | 'preparing' | 'ready';
   styles: [`
     .supervisor-orders {
       padding: 24px;
-      max-width: 960px;
+      // max-width: 960px;
       margin: 0 auto;
     }
     .page-header { margin-bottom: 24px; }
