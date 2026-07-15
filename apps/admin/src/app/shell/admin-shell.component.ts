@@ -2,12 +2,13 @@ import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { SyncStore } from '@serveiq/data-access';
-import { AuthService, UserApiService, TablesApiService, TabsApiService, User, SubscriptionsApiService, NotificationsApiService } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService, TablesApiService, TabsApiService, User, SubscriptionsApiService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
 import { SubscriptionService } from '../core/subscription.service';
 import { ThemeService } from '../core/theme.service';
 import { of, forkJoin, interval, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, map, catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
 interface SearchResult {
@@ -204,7 +205,8 @@ interface NavItem {
               </button>
               <button class="icon-btn" (click)="openNotifications()">
                 <span class="material-symbols-outlined">notifications</span>
-                <span class="notification-dot" *ngIf="hasNotifications()"></span>
+                <span class="notif-dots" *ngIf="notifLoading()">...</span>
+                <span class="notification-dot" *ngIf="!notifLoading() && hasNotifications()"></span>
               </button>
               <button class="icon-btn">
                 <span class="material-symbols-outlined">help</span>
@@ -547,6 +549,20 @@ interface NavItem {
       border-radius: 9999px;
       border: 2px solid var(--surface);
     }
+    .notif-dots {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--primary);
+      animation: dotPulse 1.4s infinite;
+    }
+    @keyframes dotPulse {
+      0%, 80%, 100% { opacity: 0.3; }
+      40% { opacity: 1; }
+    }
 
     .divider {
       height: 32px;
@@ -606,6 +622,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
   sidebarCollapsed = signal(false);
   profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: localStorage.getItem('userRole') || 'owner' });
   hasNotifications = signal(false);
+  notifLoading = signal(true);
   searchControl = new FormControl('');
   searchResults = signal<SearchResult[]>([]);
   showDropdown = signal(false);
@@ -619,7 +636,8 @@ export class AdminShellComponent implements OnInit, OnDestroy {
   private userApi = inject(UserApiService);
   private tablesApi = inject(TablesApiService);
   private tabsApi = inject(TabsApiService);
-  private notificationsApi = inject(NotificationsApiService);
+  private http = inject(HttpClient);
+  private env = inject<EnvironmentConfig>(ENVIRONMENT_CONFIG);
   private router = inject(Router);
   subService = inject(SubscriptionService);
   themeService = inject(ThemeService);
@@ -651,16 +669,8 @@ export class AdminShellComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.notificationsApi.list().subscribe({
-      next: (notifications) => this.hasNotifications.set(notifications.some(n => !n.isRead)),
-      error: () => {}
-    });
-    this.notifSub = interval(30000).subscribe(() => {
-      this.notificationsApi.list().subscribe({
-        next: (notifications) => this.hasNotifications.set(notifications.some(n => !n.isRead)),
-        error: () => {}
-      });
-    });
+    this.pollNotifications();
+    this.notifSub = interval(30000).subscribe(() => this.pollNotifications());
 
     this.searchControl.valueChanges.pipe(
       debounceTime(300),
@@ -737,6 +747,17 @@ export class AdminShellComponent implements OnInit, OnDestroy {
 
   openNotifications() {
     this.router.navigate(['/app/notifications']);
+  }
+
+  private pollNotifications() {
+    this.http.get<any>(`${this.env.apiUrl}/api/v1/notifications`).subscribe({
+      next: (res) => {
+        const data = res?.data || res || [];
+        this.hasNotifications.set(Array.isArray(data) && data.some((n: any) => !n.is_read));
+        this.notifLoading.set(false);
+      },
+      error: () => this.notifLoading.set(false),
+    });
   }
 
   ngOnDestroy() {
