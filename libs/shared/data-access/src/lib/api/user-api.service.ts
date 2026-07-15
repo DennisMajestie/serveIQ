@@ -1,10 +1,13 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 import { User, CreateWaiterRequest } from '@serveiq/shared/models';
+import { snakeToCamel } from '@serveiq/shared/models';
+import { handleApiError } from './api-error';
 
 /** Manages user profiles and waiter accounts. */
 @Injectable({ providedIn: 'root' })
@@ -38,7 +41,14 @@ export class UserApiService extends BaseApiService {
 
   /** Create a new waiter account (owner only). */
   createWaiter(data: CreateWaiterRequest): Observable<User> {
-    return this.post<User>(API_CONFIG.endpoints.users.waiters, data);
+    const url = `${this.apiUrl}${API_CONFIG.endpoints.users.waiters}`;
+    return this.http.post<any>(url, data, { headers: this.defaultHeaders }).pipe(
+      map(res => {
+        const d = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        return snakeToCamel<User>(d);
+      }),
+      catchError(handleApiError)
+    );
   }
 
   /** Reset a staff member's PIN (owner only). */
