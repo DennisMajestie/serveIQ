@@ -45,6 +45,7 @@ export class PaymentComponent implements OnInit {
   isSplit = signal(false);
   splitCount = signal(2);
   splitAmounts = signal<number[]>([]);
+  maxGuests = signal(0);
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -52,6 +53,7 @@ export class PaymentComponent implements OnInit {
       if (id) {
         this.tabId.set(id);
         this.loadTableInfo(id);
+        this.loadTab(id);
         this.loadBill(id);
       }
     });
@@ -64,6 +66,17 @@ export class PaymentComponent implements OnInit {
           this.tableService.getTable(tab.tableId).subscribe({
             next: (table) => this.table.set(table)
           });
+        }
+      }
+    });
+  }
+
+  private loadTab(tabId: string) {
+    this.tabService.getTab(tabId).subscribe({
+      next: (tab: Tab) => {
+        this.maxGuests.set(tab.partySize || 1);
+        if (tab.partySize && tab.partySize < this.splitCount()) {
+          this.splitCount.set(Math.max(1, tab.partySize));
         }
       }
     });
@@ -94,7 +107,7 @@ export class PaymentComponent implements OnInit {
 
   selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos') {
     this.selectedMethod = method;
-    if (method === 'card' || method === 'pos') {
+    if (method !== 'cash') {
       this.loadActiveTerminals();
     }
   }
@@ -129,7 +142,14 @@ export class PaymentComponent implements OnInit {
   }
 
   changeSplitCount(delta: number) {
-    const newCount = Math.max(2, Math.min(10, this.splitCount() + delta));
+    const max = this.maxGuests();
+    const current = this.splitCount();
+    const proposed = current + delta;
+    if (proposed > max) {
+      Swal.fire({ icon: 'warning', title: 'Maximum Participants Reached', text: `This table has ${max} guest${max > 1 ? 's' : ''}. You cannot split beyond that.`, background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      return;
+    }
+    const newCount = Math.max(1, Math.min(max, proposed));
     this.splitCount.set(newCount);
     this.distributeEqually();
   }
@@ -155,7 +175,20 @@ export class PaymentComponent implements OnInit {
   }
 
   get isSplitValid(): boolean {
-    return this.getRemainingKobo() === 0;
+    return this.splitAmounts().length === 0 || this.getRemainingKobo() === 0;
+  }
+
+  get totalPaidKobo(): number {
+    const total = this.bill()?.totalKobo ?? 0;
+    return total - this.getRemainingKobo();
+  }
+
+  get remainingNaira(): string {
+    return (this.getRemainingKobo() / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+  }
+
+  get paidNaira(): string {
+    return (this.totalPaidKobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
   }
 
   customizeSplit(index: number) {
@@ -197,8 +230,12 @@ export class PaymentComponent implements OnInit {
   }
 
   confirmPayment() {
-    if ((this.selectedMethod === 'card' || this.selectedMethod === 'pos') && !this.selectedTerminalId()) {
-      Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal before processing a card payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+    if (this.isSplit() && !this.isSplitValid) {
+      Swal.fire({ icon: 'warning', title: 'Incomplete Allocation', text: 'Allocate the full bill amount across guests before completing payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      return;
+    }
+    if (this.selectedMethod !== 'cash' && !this.selectedTerminalId()) {
+      Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal to process this payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       return;
     }
 
@@ -208,12 +245,19 @@ export class PaymentComponent implements OnInit {
     this.billsApi.recordPayment(this.tabId(), {
       amount,
       method: this.selectedMethod,
-      terminal_id: (this.selectedMethod === 'card' || this.selectedMethod === 'pos') ? this.selectedTerminalId() : undefined,
+      terminal_id: this.selectedMethod !== 'cash' ? this.selectedTerminalId() : undefined,
     }).subscribe({
       next: () => {
         this.isProcessing.set(false);
         this.isSuccess.set(true);
-        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], { state: { terminalLabel: this.selectedTerminalLabel(), showConfetti: true } }), 1000);
+        const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
+        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
+          state: {
+            terminalLabel: this.selectedTerminalLabel(),
+            showConfetti: true,
+            splitAllocations: allocations,
+          }
+        }), 1000);
       },
       error: () => {
         this.isProcessing.set(false);

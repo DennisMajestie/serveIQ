@@ -78,6 +78,12 @@ export const API_CONFIG = {
       get: '/api/v1/orders/:id',
       update: '/api/v1/orders/:id',
       delete: '/api/v1/orders/:id',
+      pending: '/api/v1/orders/pending',
+      approve: '/api/v1/orders/:id/approve',
+      decline: '/api/v1/orders/:id/decline',
+      preparing: '/api/v1/orders/preparing',
+      readyForPickup: '/api/v1/orders/ready-for-pickup',
+      deliver: '/api/v1/orders/:id/deliver',
     },
     // Bills
     bills: {
@@ -130,6 +136,7 @@ export const API_CONFIG = {
     // Notifications
     notifications: {
       list: '/api/v1/notifications',
+      unread: '/api/v1/notifications?unread=true',
       read: '/api/v1/notifications/:id/read',
       readAll: '/api/v1/notifications/read-all',
     },
@@ -164,6 +171,10 @@ export const API_CONFIG = {
     // Plans
     plans: {
       list: '/api/v1/subscriptions/plans',
+    },
+    // Departments
+    departments: {
+      list: '/api/v1/departments',
     },
     admin: {
       businesses: '/api/v1/admin/businesses',

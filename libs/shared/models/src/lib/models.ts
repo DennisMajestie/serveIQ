@@ -9,7 +9,7 @@ export interface User {
   businessId?: string;
   fullName: string;
   email: string;
-  role: 'owner' | 'waiter' | 'super_admin';
+  role: 'owner' | 'waiter' | 'supervisor' | 'chef' | 'super_admin';
   pin?: string;
   avatarUrl?: string;
   isActive?: boolean;
@@ -196,6 +196,7 @@ export interface CreateWaiterRequest {
   email?: string;
   phone?: string;
   branchId: string;
+  role?: string;
   password?: string;
   pin?: string;
 }
@@ -487,13 +488,58 @@ export interface TopItemEntry {
   category: string;
 }
 
+// ===== Supervisor Workflow =====
+export type OrderStatus =
+  | 'PENDING_SUPERVISOR_APPROVAL'
+  | 'APPROVED'
+  | 'ASSIGNED_TO_DEPARTMENT'
+  | 'PREPARING'
+  | 'READY_FOR_PICKUP'
+  | 'DELIVERED'
+  | 'COMPLETED'
+  | 'DECLINED';
+
+export interface Department {
+  id: string;
+  branchId: string;
+  name: string;
+  description?: string;
+}
+
+export interface Order {
+  id: string;
+  tabId: string;
+  branchId: string;
+  waiterId: string;
+  waiter?: { id: string; fullName: string };
+  tab?: { id: string; tableId: string; table?: { tableNumber: string } };
+  items?: OrderItem[];
+  status: OrderStatus;
+  timerEndsAt?: string;
+  declineReason?: string;
+  departmentId?: string;
+  department?: Department;
+  createdAt: string;
+}
+
+export interface ApproveOrderRequest {
+  departmentId: string;
+  estimatedTime: number;
+}
+
+export interface DeclineOrderRequest {
+  declineReason: string;
+}
+
 // ===== Notifications =====
+export type NotificationType = 'low_stock' | 'shift_reminder' | 'payment' | 'system' | 'order_ready';
+
 export interface Notification {
   id: string;
   branchId: string;
   title: string;
   message: string;
-  type: 'low_stock' | 'shift_reminder' | 'payment' | 'system';
+  type: NotificationType;
   isRead: boolean;
   createdAt: Date;
 }

@@ -37,5 +37,6 @@ export * from './lib/api/inventory-api.service';
 export * from './lib/api/pos-api.service';
 export * from './lib/api/subscriptions-api.service';
 export * from './lib/api/notifications-api.service';
+export * from './lib/api/departments-api.service';
 export * from './lib/api/ai-api.service';
 export * from './lib/api/public-menu-api.service';

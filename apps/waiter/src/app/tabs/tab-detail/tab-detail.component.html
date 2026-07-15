@@ -35,6 +35,57 @@
         </div>
       </div>
 
+      <!-- Order Status Banner -->
+      @if (orderStatus() === 'PENDING_SUPERVISOR_APPROVAL') {
+        <div class="mb-5 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-amber-400">hourglass_top</span>
+          <div>
+            <p class="text-amber-300 text-sm font-semibold">Waiting for Supervisor Approval...</p>
+            <p class="text-amber-200/60 text-xs">Your order has been submitted and is pending review.</p>
+          </div>
+        </div>
+      }
+      @if (orderStatus() === 'PREPARING') {
+        <div class="mb-5 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-emerald-400">timer</span>
+          <div>
+            <p class="text-emerald-300 text-sm font-semibold">Preparing...</p>
+            <p class="text-emerald-200/60 text-xs font-mono tracking-wider">{{ countdownLabel }} remaining</p>
+          </div>
+        </div>
+      }
+      @if (orderStatus() === 'READY_FOR_PICKUP') {
+        <div class="mb-5 p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-blue-400">inventory_2</span>
+          <div>
+            <p class="text-blue-300 text-sm font-semibold">Ready for Pickup</p>
+            <p class="text-blue-200/60 text-xs">Your order is ready. Collect from the counter.</p>
+          </div>
+        </div>
+      }
+      @if (orderStatus() === 'DELIVERED') {
+        <div class="mb-5 p-4 rounded-2xl bg-[#4be277]/10 border border-[#4be277]/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-[#4be277]">check_circle</span>
+          <div>
+            <p class="text-[#4be277] text-sm font-semibold">Delivered</p>
+            <p class="text-emerald-200/60 text-xs">Order has been delivered to the table.</p>
+          </div>
+        </div>
+      }
+      @if (orderStatus() === 'DECLINED') {
+        <div class="mb-5 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-red-400">cancel</span>
+          <div>
+            <p class="text-red-300 text-sm font-semibold">Order Declined</p>
+            @if (declineReason()) {
+              <p class="text-red-200/80 text-xs">{{ declineReason() }}</p>
+            } @else {
+              <p class="text-red-200/60 text-xs">No reason provided.</p>
+            }
+          </div>
+        </div>
+      }
+
       <!-- Bento Grid -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
         <!-- Total Balance Card -->
@@ -105,6 +156,13 @@
               <span class="text-[18px] leading-none font-bold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 10px rgba(75,226,119,0.3)">₦{{ formatKobo(total()) }}</span>
             </div>
           </div>
+          <!-- Submit Order button -->
+          @if (!orderStatus()) {
+            <button class="mt-4 w-full py-3 rounded-xl bg-[#4be277] text-[#003915] font-semibold text-sm flex items-center justify-center gap-2 hover:bg-[#3dcc66] active:scale-95 transition-all" (click)="submitOrder()">
+              <span class="material-symbols-outlined">send</span>
+              Place Order
+            </button>
+          }
         </section>
 
         <!-- Table Map/Context -->

@@ -17,6 +17,10 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
       {
+        path: 'supervisor/orders',
+        loadComponent: () => import('./supervisor/supervisor-orders.component').then(m => m.SupervisorOrdersComponent)
+      },
+      {
         path: 'analytics',
         loadComponent: () => import('./analytics/analytics.component').then(m => m.AnalyticsComponent)
       },

@@ -1,9 +1,10 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, ENVIRONMENT_CONFIG, showApiErrorToast } from '@serveiq/shared/data-access';
-import { Tab, OrderItem, Table, MenuItem, resolveImageUrl } from '@serveiq/shared/models';
+import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, ENVIRONMENT_CONFIG, showApiErrorToast, NotificationsApiService } from '@serveiq/shared/data-access';
+import { Tab, OrderItem, Table, MenuItem, resolveImageUrl, Order, NotificationType } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tab-detail',
@@ -12,7 +13,7 @@ import Swal from 'sweetalert2';
   templateUrl: './tab-detail.component.html',
   styleUrls: ['./tab-detail.component.scss']
 })
-export class TabDetailComponent implements OnInit {
+export class TabDetailComponent implements OnInit, OnDestroy {
   businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -21,6 +22,7 @@ export class TabDetailComponent implements OnInit {
   private tableService = inject(TablesApiService);
   private menuService = inject(MenuApiService);
   private env = inject(ENVIRONMENT_CONFIG);
+  private notificationsApi = inject(NotificationsApiService);
 
   tabId = signal('');
   tab = signal<Tab | null>(null);
@@ -30,7 +32,27 @@ export class TabDetailComponent implements OnInit {
   isLoading = signal(true);
   toastMessage = signal<string | null>(null);
 
+  activeOrder = signal<Order | null>(null);
+  orderStatus = computed(() => this.activeOrder()?.status ?? null);
+  declineReason = computed(() => this.activeOrder()?.declineReason ?? null);
+  timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
+
+  get remainingSeconds(): number {
+    const endsAt = this.timerEndsAt();
+    if (!endsAt) return 0;
+    return Math.max(0, Math.floor((new Date(endsAt).getTime() - Date.now()) / 1000));
+  }
+
+  get countdownLabel(): string {
+    const s = this.remainingSeconds;
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+  }
+
   private orderPosted = false;
+  private pollSub: Subscription | null = null;
+  private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
   subtotal = computed(() => {
     const items = this.items();
@@ -51,11 +73,26 @@ export class TabDetailComponent implements OnInit {
     });
 
     this.readRouterStateOnce();
+
+    this.pollSub = interval(15000).subscribe(() => {
+      this.pollOrderStatus();
+      this.pollNotifications();
+    });
+
+    this.countdownInterval = setInterval(() => {
+      if (this.orderStatus() === 'PREPARING' || this.orderStatus() === 'READY_FOR_PICKUP') {
+      }
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    this.pollSub?.unsubscribe();
+    if (this.countdownInterval) clearInterval(this.countdownInterval);
   }
 
   private readRouterStateOnce() {
     if (this.orderPosted) return;
-    
+
     const state = history.state as { selectedItems?: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
     if (state?.selectedItems?.length) {
       this.orderPosted = true;
@@ -96,6 +133,7 @@ export class TabDetailComponent implements OnInit {
       next: (tab) => {
         this.tab.set(tab);
         this.loadOrders(id);
+        this.pollOrderStatus();
         if (tab.tableId) {
           this.tableService.getTable(tab.tableId).subscribe({
             next: (table) => this.table.set(table)
@@ -118,7 +156,7 @@ export class TabDetailComponent implements OnInit {
 
   loadOrders(tabId: string) {
     this.orderService.getByTab(tabId).subscribe({
-      next: (items) => { 
+      next: (items) => {
         console.debug('loadOrders raw:', items);
         const raw = Array.isArray(items) ? items : [];
         const normalized = raw.map((item: any) => ({
@@ -128,13 +166,74 @@ export class TabDetailComponent implements OnInit {
           quantity: item.quantity ?? item.qty ?? 1
         }));
         console.debug('loadOrders normalized:', normalized);
-        this.items.set(normalized); 
-        this.isLoading.set(false); 
+        this.items.set(normalized);
+        this.isLoading.set(false);
       },
       error: () => {
         this.isLoading.set(false);
         Swal.fire({ icon: 'error', title: 'Failed to Load Orders', text: 'Could not load order items.', background: '#1A1A1A', color: '#fff', confirmButtonColor: '#f97316' });
       }
+    });
+  }
+
+  private pollOrderStatus() {
+    const tid = this.tabId();
+    if (!tid) return;
+    this.orderService.getPending().subscribe({
+      next: (orders) => {
+        const match = (orders || []).find(o => o.tabId === tid);
+        if (match) { this.activeOrder.set(match); return; }
+        this.orderService.getPreparing().subscribe({
+          next: (preparing) => {
+            const pmatch = (preparing || []).find(o => o.tabId === tid);
+            if (pmatch) { this.activeOrder.set(pmatch); return; }
+            this.orderService.getReadyForPickup().subscribe({
+              next: (ready) => {
+                const rmatch = (ready || []).find(o => o.tabId === tid);
+                if (rmatch) { this.activeOrder.set(rmatch); return; }
+              },
+              error: () => {}
+            });
+          },
+          error: () => {}
+        });
+      },
+      error: () => {}
+    });
+  }
+
+  private pollNotifications() {
+    this.notificationsApi.getUnread().subscribe({
+      next: (notifications) => {
+        const relevant = (notifications || []).find(n =>
+          (n.type as NotificationType) === 'order_ready' &&
+          n.message?.includes(this.tabId())
+        );
+        if (relevant) {
+          this.notificationsApi.markRead(relevant.id).subscribe({ error: () => {} });
+          this.pollOrderStatus();
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  submitOrder() {
+    if (this.items().length === 0) {
+      this.showToast('Add items before submitting');
+      return;
+    }
+    const body = this.items().map(item => ({
+      menu_item_id: item.menuItemId ?? (item as any).menu_item_id ?? item.id,
+      quantity: item.quantity,
+      notes: item.notes || '',
+    }));
+    this.orderService.addItems(this.tabId(), body).subscribe({
+      next: () => {
+        Swal.fire({ icon: 'success', title: 'Order Submitted', text: 'Waiting for supervisor approval...', timer: 2000, showConfirmButton: false, background: '#1A1A1A', color: '#fff' });
+        this.pollOrderStatus();
+      },
+      error: (err) => showApiErrorToast(err, 'Failed to submit order')
     });
   }
 
@@ -214,6 +313,7 @@ export class TabDetailComponent implements OnInit {
           timer: 1500,
           showConfirmButton: false
         });
+        this.pollOrderStatus();
       },
       error: (err) => {
         console.error('addItems error:', err);

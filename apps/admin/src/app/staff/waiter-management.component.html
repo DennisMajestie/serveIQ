@@ -23,7 +23,7 @@
             </div>
             <div>
               <h4 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ waiter.fullName }}</h4>
-              <p class="text-[12px] leading-none font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">Waiter</p>
+              <p class="text-[12px] leading-none font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">{{ getRoleLabel(waiter.role) }}</p>
               <div class="flex flex-col">
                 <span class="text-[18px] leading-none font-semibold tracking-wider text-[var(--primary)]" style="font-family:'Space Grotesk',sans-serif">{{ 85 + (i * 4) }}%</span>
                 <span class="text-[10px] text-on-surface-variant-60 uppercase tracking-tighter" style="font-family:'Inter',sans-serif">Efficiency Rank</span>
@@ -58,7 +58,7 @@
               <span class="text-[10px] font-bold text-primary-60" style="font-family:'Inter',sans-serif">{{ waiter.isActive !== false ? 'ACTIVE' : 'OFF DUTY' }}</span>
             </div>
             <p class="text-[14px] leading-none font-semibold text-[var(--on-background)]" style="font-family:'Inter',sans-serif">{{ waiter.fullName }}</p>
-            <p class="text-[10px] text-on-surface-variant-40" style="font-family:'Inter',sans-serif">{{ waiter.email }}</p>
+            <p class="text-[10px] text-on-surface-variant-40" style="font-family:'Inter',sans-serif">{{ getRoleLabel(waiter.role) }}</p>
           </div>
         </div>
         <button class="mt-auto w-full py-3 rounded-2xl bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold hover:bg-[var(--surface-variant)] transition-colors" (click)="openAddStaffModal()">
@@ -94,7 +94,7 @@
                   </div>
                   <div>
                     <span class="font-semibold text-[var(--on-background)]">{{ waiter.fullName }}</span>
-                    <span *ngIf="waiter.email" class="block text-[12px] leading-none font-medium text-on-surface-variant-60">{{ waiter.email }}</span>
+                    <span class="block text-[12px] leading-none font-medium text-on-surface-variant-60">{{ getRoleLabel(waiter.role) }}</span>
                   </div>
                 </td>
                 <td class="px-6 py-5">
@@ -227,6 +227,12 @@
         <label class="field-label">Phone</label>
         <input class="field-input" type="tel" placeholder="+234 800 000 0000" [ngModel]="editPhone()" (ngModelChange)="editPhone.set($event)">
       </div>
+      <div class="form-field full-width">
+        <label class="field-label">Role <span class="required">*</span></label>
+        <select class="field-input" [ngModel]="editRole()" (ngModelChange)="editRole.set($event)">
+          <option *ngFor="let opt of roleOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
     </div>
   </div>
   <div class="modal-footer">
@@ -245,8 +251,8 @@
       <span class="material-symbols-outlined text-[var(--primary)]">person_add</span>
     </div>
     <div>
-      <h2 class="modal-title">Add New Waiter</h2>
-      <p class="modal-subtitle">Create a staff account. A PIN will be generated automatically.</p>
+      <h2 class="modal-title">Create Staff</h2>
+      <p class="modal-subtitle">Create a staff account with role assignment. A PIN will be generated automatically.</p>
     </div>
     <button class="modal-close-btn" (click)="closeModal()">
       <span class="material-symbols-outlined">close</span>
@@ -283,6 +289,12 @@
         <label class="field-label">Phone <span class="optional">(optional)</span></label>
         <input class="field-input" type="tel" placeholder="+234 800 000 0000" [ngModel]="formPhone()" (ngModelChange)="formPhone.set($event)">
       </div>
+      <div class="form-field full-width">
+        <label class="field-label">Role <span class="required">*</span></label>
+        <select class="field-input" [ngModel]="formRole()" (ngModelChange)="formRole.set($event)">
+          <option *ngFor="let opt of roleOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
     </div>
     <div class="pin-info-card">
       <span class="material-symbols-outlined text-[var(--primary)]">info</span>
@@ -292,7 +304,7 @@
   <div class="modal-footer">
     <button class="btn-cancel" (click)="closeModal()">Cancel</button>
     <button class="btn-submit" (click)="submitWaiter()" [disabled]="isSubmitting() || !formFullName()">
-      <span *ngIf="!isSubmitting()">Create Waiter</span>
+      <span *ngIf="!isSubmitting()">Create Staff</span>
       <span *ngIf="isSubmitting()">Creating…</span>
     </button>
   </div>

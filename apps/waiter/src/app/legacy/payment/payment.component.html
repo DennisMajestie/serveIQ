@@ -27,11 +27,14 @@
       <h2 class="total-amount">₦{{ totalDueNaira }}</h2>
     </section>
 
-    <!-- Split Bill Toggle + Config -->
+    <!-- Payment Allocation Section -->
     <section class="split-section">
       <button class="split-toggle" [class.active]="isSplit()" (click)="toggleSplit()">
         <span class="material-symbols-outlined">call_split</span>
-        <span>Split Bill</span>
+        <span>Payment Allocation</span>
+        @if (maxGuests() > 0) {
+          <span class="max-badge">Max {{ maxGuests() }}</span>
+        }
         <span class="material-symbols-outlined toggle-chevron">{{ isSplit() ? 'expand_less' : 'expand_more' }}</span>
       </button>
 
@@ -56,13 +59,18 @@
             }
           </div>
 
+          <div class="split-sub-row">
+            <span class="split-sub-label">Allocated</span>
+            <span class="split-sub-value">₦{{ paidNaira }}</span>
+          </div>
+
           <div class="split-summary" [class.valid]="isSplitValid">
-            <span>{{ isSplitValid ? 'Fully allocated' : 'Remaining' }}</span>
+            <span>{{ isSplitValid ? 'Fully Allocated' : 'Remaining' }}</span>
             <span class="summary-amount">
               @if (isSplitValid) {
                 <span class="material-symbols-outlined">check_circle</span>
               }
-              ₦{{ (getRemainingKobo() / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 }) }}
+              ₦{{ remainingNaira }}
             </span>
           </div>
         </div>
@@ -116,7 +124,7 @@
     </section>
 
     <!-- POS Terminal Selector -->
-    @if (selectedMethod === 'card' || selectedMethod === 'pos') {
+    @if (selectedMethod !== 'cash') {
       <section class="pos-section">
         <label class="pos-label">POS Terminal</label>
         <select [(ngModel)]="selectedTerminalId" class="pos-select">
@@ -167,17 +175,22 @@
 
   <!-- Confirmation Action -->
   <footer class="payment-footer">
+    @if (isSplit() && !isSplitValid) {
+      <div class="split-warning">
+        Allocate ₦{{ remainingNaira }} remaining across guests to continue
+      </div>
+    }
     <button
       class="confirm-btn"
       (click)="confirmPayment()"
-      [disabled]="isProcessing() || ((selectedMethod === 'card' || selectedMethod === 'pos') && !selectedTerminalId())"
+      [disabled]="isProcessing() || (selectedMethod !== 'cash' && !selectedTerminalId()) || (isSplit() && !isSplitValid)"
       [class.processing]="isProcessing()"
       [class.success]="isSuccess()"
     >
       <span class="material-symbols-outlined btn-icon" *ngIf="!isProcessing() && !isSuccess()">check_circle</span>
       <span class="material-symbols-outlined btn-icon animate-spin" *ngIf="isProcessing()">sync</span>
       <span class="material-symbols-outlined btn-icon" *ngIf="isSuccess()">task_alt</span>
-      <span class="btn-text">{{ getButtonText() }}</span>
+      <span class="btn-text">{{ isSplit() ? 'Confirm & Complete Payment' : getButtonText() }}</span>
     </button>
   </footer>
 </div>

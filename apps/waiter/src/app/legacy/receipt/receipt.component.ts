@@ -29,6 +29,11 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
   businessName = computed(() => this.receipt()?.business?.name ?? 'ServeIQ');
   branchName = computed(() => this.receipt()?.branch?.name ?? '');
   waiterName = computed(() => this.receipt()?.waiter?.fullName ?? 'Waiter');
+  waiterInitials = computed(() => {
+    const name = this.waiterName();
+    if (!name || name === 'Waiter') return '?';
+    return name.split(' ').filter(Boolean).map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+  });
   paymentMethod = computed(() => {
     const method = this.receipt()?.bill?.paymentMethod ?? '';
     return method ? method.charAt(0).toUpperCase() + method.slice(1) : '—';
@@ -38,7 +43,20 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
   serviceChargeNaira = computed(() => (this.receipt()?.bill?.serviceChargeKobo ?? 0) / 100);
   discountNaira = computed(() => (this.receipt()?.bill?.discountKobo ?? 0) / 100);
   total = computed(() => (this.receipt()?.bill?.totalKobo ?? 0) / 100);
-  vatNaira = computed(() => Math.round((this.receipt()?.bill?.subtotalKobo ?? 0) * 0.075) / 100);
+  vatNaira = computed(() => {
+    const bill = this.receipt()?.bill;
+    if (!bill) return 0;
+    const derived = (bill.totalKobo ?? 0) - (bill.subtotalKobo ?? 0) - (bill.serviceChargeKobo ?? 0) + (bill.discountKobo ?? 0);
+    return derived / 100;
+  });
+  vatPercent = computed(() => {
+    const subtotal = this.receipt()?.bill?.subtotalKobo ?? 0;
+    if (subtotal <= 0) return 7.5;
+    const bill = this.receipt()?.bill;
+    if (!bill) return 7.5;
+    const derived = (bill.totalKobo ?? 0) - subtotal - (bill.serviceChargeKobo ?? 0) + (bill.discountKobo ?? 0);
+    return Math.round((derived / subtotal) * 1000) / 10;
+  });
   receiptNumber = computed(() => this.receipt()?.receiptNumber ?? '—');
   date = computed(() => this.receipt()?.bill?.paidAt ? new Date(this.receipt()!.bill!.paidAt!).toLocaleString() : new Date().toLocaleString());
   tableNumber = computed(() => this.table()?.tableNumber ?? this.receipt()?.tab?.tableId ?? '—');
@@ -49,6 +67,13 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
     return id.slice(0, 8) + '...' + id.slice(-4);
   });
   paymentTerminal = computed(() => this.receipt()?.terminal?.label || (history.state as any)?.terminalLabel || '');
+
+  splitAllocations = signal<{ guest: number; amountKobo: number }[]>([]);
+  hasSplitAllocations = computed(() => this.splitAllocations().length > 0);
+  splitAllocationsLabel = computed(() => {
+    const allocations = this.splitAllocations();
+    return allocations.map(a => `Guest ${a.guest} — ₦${(a.amountKobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`).join('\n');
+  });
 
   copiedId = signal<string | null>(null);
   toastMessage = signal<string | null>(null);
@@ -64,8 +89,8 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
     const orders = this.receipt()?.orders ?? [];
     return orders.map((o: any) => ({
       ...o,
-      menuItemName: o.menuItemName || o.menuItem?.name || '',
-      priceKobo: o.priceKobo || o.unitPriceKobo || 0,
+      menuItemName: o.menuItemName || o.menu_item_name || o.menuItem?.name || o.menu_item?.name || 'Unknown Item',
+      priceKobo: o.priceKobo || o.price_kobo || o.unitPriceKobo || o.unit_price_kobo || 0,
       quantity: o.quantity || o.qty || 1,
     }));
   });
@@ -81,6 +106,10 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
       const id = params.get('id');
       if (id) {
         this.tabId.set(id);
+        const state = history.state as any;
+        if (state?.splitAllocations) {
+          this.splitAllocations.set(state.splitAllocations);
+        }
         this.billsApi.getReceipt(id).subscribe({
           next: (r) => {
             this.receipt.set(r);
@@ -111,7 +140,34 @@ export class LegacyReceiptComponent implements OnInit, AfterViewInit, OnDestroy 
   goToTables() { this.router.navigate(['/tables']); }
   printReceipt() { window.print(); }
   whatsAppReceipt() {
-    const text = `ServeIQ Receipt #${this.receiptNumber()}\nTotal: ₦${this.total().toLocaleString()}\nDate: ${this.date()}`;
+    const lines: string[] = [
+      `*ServeIQ Receipt*`,
+      `Receipt #${this.receiptNumber()}`,
+      `${this.businessName()}${this.branchName() ? ' — ' + this.branchName() : ''}`,
+      `Table: ${this.tableNumber()} | ${this.paymentMethod()}`,
+      `Waiter: ${this.waiterName()}`,
+      ``,
+      `*Items:*`,
+    ];
+    for (const item of this.items()) {
+      const qty = item.quantity > 1 ? ` ×${item.quantity}` : '';
+      lines.push(`${item.menuItemName}${qty} — ₦${((item.priceKobo * item.quantity) / 100).toLocaleString('en-NG', {minimumFractionDigits: 2})}`);
+    }
+    lines.push(
+      ``,
+      `Subtotal: ₦${this.subtotalNaira().toLocaleString('en-NG', {minimumFractionDigits: 2})}`,
+      `VAT: ₦${this.vatNaira().toLocaleString('en-NG', {minimumFractionDigits: 2})}`,
+      `Service Charge: ₦${this.serviceChargeNaira().toLocaleString('en-NG', {minimumFractionDigits: 2})}`,
+    );
+    if (this.discountNaira() > 0) {
+      lines.push(`Discount: -₦${this.discountNaira().toLocaleString('en-NG', {minimumFractionDigits: 2})}`);
+    }
+    lines.push(
+      `*Total: ₦${this.total().toLocaleString('en-NG', {minimumFractionDigits: 2})}*`,
+      ``,
+      `${this.date()}`,
+    );
+    const text = lines.join('\n');
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   }
 

@@ -41,11 +41,14 @@
         </div>
       </section>
 
-      <!-- Split Bill Section -->
+      <!-- Payment Allocation Section -->
       <section class="glass-card rounded-2xl p-6 border border-white/5">
         <button (click)="toggleSplit()" class="w-full flex items-center gap-3 text-left">
           <span class="material-symbols-outlined text-[#4be277]">call_split</span>
-          <span class="flex-1 text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Inter',sans-serif">Split Bill</span>
+          <span class="flex-1 text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Inter',sans-serif">Payment Allocation</span>
+          @if (maxGuests() > 0) {
+            <span class="text-[11px] leading-none font-medium text-[#bccbb9]/60 px-2 py-1 rounded-full bg-white/5" style="font-family:'Inter',sans-serif">Max {{ maxGuests() }}</span>
+          }
           <span class="material-symbols-outlined text-[#bccbb9]">{{ isSplit() ? 'expand_less' : 'expand_more' }}</span>
         </button>
 
@@ -72,15 +75,20 @@
               }
             </div>
 
-            <div class="flex justify-between items-center pt-3 border-t border-white/5 text-sm font-semibold"
+            <div class="flex items-center justify-between pt-3 border-t border-white/5">
+              <span class="text-[13px] leading-none font-medium text-[#bccbb9]" style="font-family:'Inter',sans-serif">Allocated</span>
+              <span class="text-[13px] leading-none font-semibold text-[#4be277]" style="font-family:'JetBrains Mono',monospace">₦{{ paidNaira }}</span>
+            </div>
+
+            <div class="flex items-center justify-between"
               [class.text-[#ffb4ab]]="!isSplitValid"
               [class.text-[#22c55e]]="isSplitValid">
-              <span>{{ isSplitValid ? 'Fully allocated' : 'Remaining' }}</span>
-              <span class="flex items-center gap-1" style="font-family:'JetBrains Mono',monospace">
+              <span class="text-[13px] leading-none font-medium" style="font-family:'Inter',sans-serif">{{ isSplitValid ? 'Fully Allocated' : 'Remaining' }}</span>
+              <span class="flex items-center gap-1 text-[13px] leading-none font-semibold" style="font-family:'JetBrains Mono',monospace">
                 @if (isSplitValid) {
                   <span class="material-symbols-outlined text-sm">check_circle</span>
                 }
-                ₦{{ (getRemainingKobo() / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 }) }}
+                ₦{{ remainingNaira }}
               </span>
             </div>
           </div>
@@ -152,7 +160,7 @@
       </section>
 
       <!-- POS Terminal Selector -->
-      @if (selectedMethod === 'card' || selectedMethod === 'pos') {
+      @if (selectedMethod !== 'cash') {
         <section class="glass-card rounded-2xl p-6 border border-white/5">
           <p class="text-[14px] leading-none font-semibold text-[#bccbb9] uppercase tracking-[0.08em] mb-4" style="font-family:'Inter',sans-serif">POS Terminal</p>
           <select [(ngModel)]="selectedTerminalId" class="w-full bg-[#070d1f] border border-white/10 rounded-xl px-4 py-3 text-[#dce1fb] text-[16px] leading-[1.5] font-medium outline-none appearance-none focus:border-[#4be277]/50 transition-colors" style="font-family:'Inter',sans-serif">
@@ -201,7 +209,12 @@
   <!-- Complete Payment Footer -->
   <footer class="fixed bottom-0 left-0 w-full p-6 glass-card bg-[#0c1324]/80 backdrop-blur-3xl border-t border-white/5 z-40">
     <div class="max-w-2xl mx-auto">
-      <button (click)="confirmPayment()" [disabled]="isProcessing() || ((selectedMethod === 'card' || selectedMethod === 'pos') && !selectedTerminalId())"
+      @if (isSplit() && !isSplitValid) {
+        <div class="text-center mb-3">
+          <span class="text-[13px] leading-none font-medium text-[#ffb4ab]" style="font-family:'Inter',sans-serif">Allocate ₦{{ remainingNaira }} remaining across guests to continue</span>
+        </div>
+      }
+      <button (click)="confirmPayment()" [disabled]="isProcessing() || (selectedMethod !== 'cash' && !selectedTerminalId()) || (isSplit() && !isSplitValid)"
         class="w-full py-5 rounded-2xl font-bold uppercase tracking-widest shadow-[0_0_25px_rgba(75,226,119,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-[20px] leading-[1.2] disabled:opacity-60"
         style="font-family:'Space Grotesk',sans-serif"
         [class.bg-[#4be277]]="!isProcessing() && !isSuccess()"
@@ -209,7 +222,7 @@
         [class.bg-[#16a34a]]="isProcessing() || isSuccess()"
         [class.text-white]="isProcessing() || isSuccess()">
         @if (!isProcessing() && !isSuccess()) {
-          <span>Complete Payment</span>
+          <span>{{ isSplit() ? 'Confirm & Complete Payment' : 'Complete Payment' }}</span>
           <span class="material-symbols-outlined font-bold">check_circle</span>
         }
         @if (isProcessing()) {

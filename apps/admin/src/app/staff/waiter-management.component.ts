@@ -30,10 +30,18 @@ export class WaiterManagementComponent implements OnInit {
   formFullName = signal('');
   formEmail = signal('');
   formPhone = signal('');
+  formRole = signal('waiter');
+
+  roleOptions = [
+    { value: 'waiter', label: 'Waiter' },
+    { value: 'supervisor', label: 'Supervisor (Business Manager)' },
+    { value: 'chef', label: 'Chef / Cook' },
+  ];
   editWaiter = signal<Waiter | null>(null);
   editFullName = signal('');
   editEmail = signal('');
   editPhone = signal('');
+  editRole = signal('waiter');
   editAvatarPreview = signal<string | null>(null);
   editSelectedFile = signal<File | null>(null);
   isEditing = signal(false);
@@ -53,7 +61,7 @@ export class WaiterManagementComponent implements OnInit {
     const data = this.waiters();
     const count = Array.isArray(data) ? data.length : 0;
     return [
-      { label: 'Total Waiters', value: count.toString(), icon: 'users', color: 'orange' },
+      { label: 'Total Staff', value: count.toString(), icon: 'users', color: 'orange' },
       { label: 'Active Staff', value: count.toString(), icon: 'check', color: 'blue' },
       { label: 'On Leave', value: '0', icon: 'assignment', color: 'purple' },
       { label: 'Branches', value: '1', icon: 'store', color: 'brown' }
@@ -110,6 +118,7 @@ export class WaiterManagementComponent implements OnInit {
       email: this.formEmail().trim(),
       phone: this.formPhone().trim(),
       branchId,
+      role: this.formRole(),
       ...(avatar_url ? { avatar_url } : {})
     };
 
@@ -119,10 +128,11 @@ export class WaiterManagementComponent implements OnInit {
         this.waiters.update(ws => [...ws, createdWaiter]);
         this.isSubmitting.set(false);
         this.closeModal();
+        const roleLabel = this.getRoleLabel(createdWaiter.role || this.formRole());
         Swal.fire({
           icon: 'success',
-          title: 'Waiter Created',
-          html: `Waiter added successfully!<br><strong style="font-size:22px;letter-spacing:4px">${w.pin}</strong><br><small>Share this PIN with the waiter to log in.</small>`,
+          title: 'Staff Created',
+          html: `${roleLabel} added successfully!<br><strong style="font-size:22px;letter-spacing:4px">${w.pin}</strong><br><small>Share this PIN with the staff member to log in.</small>`,
         });
       },
       error: () => {
@@ -136,6 +146,7 @@ export class WaiterManagementComponent implements OnInit {
     this.formFullName.set('');
     this.formEmail.set('');
     this.formPhone.set('');
+    this.formRole.set('waiter');
     this.avatarPreview.set(null);
     this.selectedFile.set(null);
   }
@@ -172,12 +183,14 @@ export class WaiterManagementComponent implements OnInit {
     this.editFullName.set(waiter.fullName || '');
     this.editEmail.set(waiter.email || '');
     this.editPhone.set((waiter as any).phone || '');
+    this.editRole.set(waiter.role || 'waiter');
     this.editAvatarPreview.set(null);
     this.editSelectedFile.set(null);
   }
 
   closeEditModal() {
     this.editWaiter.set(null);
+    this.editRole.set('waiter');
     this.editAvatarPreview.set(null);
     this.editSelectedFile.set(null);
   }
@@ -206,15 +219,16 @@ export class WaiterManagementComponent implements OnInit {
     const payload: any = {
       fullName: this.editFullName(),
       email: this.editEmail(),
+      role: this.editRole(),
       ...(avatar_url ? { avatar_url } : {}),
     };
 
     this.staffService.updateUser(this.editWaiter()!.id, payload).subscribe({
       next: (updated: any) => {
         this.isEditing.set(false);
-        this.waiters.update(ws => ws.map(w => w.id === updated.id ? { ...w, fullName: updated.fullName || this.editFullName(), email: updated.email || this.editEmail(), avatarUrl: updated.avatarUrl || updated.avatar_url || avatar_url || w.avatarUrl } : w));
+        this.waiters.update(ws => ws.map(w => w.id === updated.id ? { ...w, fullName: updated.fullName || this.editFullName(), email: updated.email || this.editEmail(), role: updated.role || this.editRole(), avatarUrl: updated.avatarUrl || updated.avatar_url || avatar_url || w.avatarUrl } : w));
         this.closeEditModal();
-        Swal.fire({ icon: 'success', title: 'Waiter Updated', timer: 1500, showConfirmButton: false });
+        Swal.fire({ icon: 'success', title: 'Staff Updated', timer: 1500, showConfirmButton: false });
       },
       error: () => {
         this.isEditing.set(false);
@@ -277,4 +291,9 @@ export class WaiterManagementComponent implements OnInit {
     return name.split(' ').filter(n => !!n).map(n => n[0]).join('').toUpperCase(); 
   }
   roleFilterLabel = computed(() => 'All Waiters');
+
+  getRoleLabel(role: string | undefined): string {
+    const option = this.roleOptions.find(r => r.value === role);
+    return option ? option.label : (role || 'Waiter');
+  }
 }

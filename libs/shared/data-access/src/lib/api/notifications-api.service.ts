@@ -16,6 +16,10 @@ export class NotificationsApiService extends BaseApiService {
     return this.get<Notification[]>(API_CONFIG.endpoints.notifications.list);
   }
 
+  getUnread(): Observable<Notification[]> {
+    return this.get<Notification[]>(API_CONFIG.endpoints.notifications.unread);
+  }
+
   markRead(id: string): Observable<Notification> {
     return this.patch<Notification>(buildUrl(API_CONFIG.endpoints.notifications.read, { id }), {});
   }

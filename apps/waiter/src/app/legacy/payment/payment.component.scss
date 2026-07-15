@@ -326,6 +326,45 @@
   font-size: 18px;
 }
 
+.split-sub-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 13px;
+}
+.split-sub-label {
+  color: var(--secondary);
+}
+.split-sub-value {
+  font-weight: 600;
+  color: var(--primary-container);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.max-badge {
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 500;
+  color: rgba(140, 140, 140, 0.6);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background-color: rgba(64, 71, 88, 0.15);
+  margin-left: auto;
+  margin-right: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+.split-warning {
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #ef4444;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
 /* Methods Section */
 .methods-section {
   margin-bottom: 0;
