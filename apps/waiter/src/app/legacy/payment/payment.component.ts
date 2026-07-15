@@ -234,30 +234,56 @@ export class LegacyPaymentComponent implements OnInit {
       return;
     }
 
-    this.isProcessing.set(true);
-    const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
+    Swal.fire({
+      title: 'Confirm Payment?',
+      html: `
+        <div style="text-align:left;font-size:14px;line-height:1.6;">
+          <p style="margin:0 0 12px;">Once confirmed, this transaction <strong>cannot be reversed</strong> through the terminal. Any refund or adjustment must be handled by management.</p>
+          <p style="margin:0 0 12px;">Please verify the following before proceeding:</p>
+          <ul style="padding-left:18px;margin:0 0 12px;">
+            <li>The amount entered is correct.</li>
+            <li>The payment method selected matches what the guest is using.</li>
+            <li>Split amounts (if applicable) are fully allocated and accurate.</li>
+          </ul>
+          <p style="margin:0;opacity:0.7;font-size:12px;">By confirming, you accept responsibility for this transaction.</p>
+        </div>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Complete Payment',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f97316',
+      cancelButtonColor: '#6b7280',
+      background: '#1e293b',
+      color: '#fff',
+    }).then(result => {
+      if (!result.isConfirmed) return;
 
-    this.billsApi.recordPayment(this.tabId(), {
-      amount,
-      method: this.selectedMethod,
-      terminal_id: this.selectedMethod !== 'cash' ? this.selectedTerminalId() : undefined,
-    }).subscribe({
-      next: () => {
-        this.isProcessing.set(false);
-        this.isSuccess.set(true);
-        const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
-        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
-          state: {
-            terminalLabel: this.selectedTerminalLabel(),
-            showConfetti: true,
-            splitAllocations: allocations,
-          }
-        }), 1000);
-      },
-      error: () => {
-        this.isProcessing.set(false);
-        Swal.fire({ icon: 'error', title: 'Payment Failed', text: 'Could not process payment. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
-      }
+      this.isProcessing.set(true);
+      const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
+
+      this.billsApi.recordPayment(this.tabId(), {
+        amount,
+        method: this.selectedMethod,
+        terminal_id: this.selectedMethod !== 'cash' ? this.selectedTerminalId() : undefined,
+      }).subscribe({
+        next: () => {
+          this.isProcessing.set(false);
+          this.isSuccess.set(true);
+          const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
+          setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
+            state: {
+              terminalLabel: this.selectedTerminalLabel(),
+              showConfetti: true,
+              splitAllocations: allocations,
+            }
+          }), 1000);
+        },
+        error: () => {
+          this.isProcessing.set(false);
+          Swal.fire({ icon: 'error', title: 'Payment Failed', text: 'Could not process payment. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+        }
+      });
     });
   }
 
