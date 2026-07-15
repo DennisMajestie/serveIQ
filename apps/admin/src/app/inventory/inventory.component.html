@@ -160,8 +160,8 @@
 
         <div class="form-group">
           <label class="form-label" for="item-supplier">Supplier</label>
-          <select id="item-supplier" class="form-input" [value]="formSupplierId()" (change)="formSupplierId.set($any($event.target).value || undefined)">
-            <option [value]="undefined">None</option>
+          <select id="item-supplier" class="form-input" [value]="formSupplierId()" (change)="formSupplierId.set($any($event.target).value)">
+            <option value="">None</option>
             <option *ngFor="let s of suppliers()" [value]="s.id">{{ s.name }}</option>
           </select>
         </div>

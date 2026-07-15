@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { InventoryApiService, SuppliersApiService } from '@serveiq/shared/data-access';
-import { MenuItem, Supplier, RestockRequest, camelToSnake } from '@serveiq/shared/models';
+import { MenuItem, Supplier, RestockRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -144,7 +144,7 @@ export class InventoryComponent implements OnInit {
       name,
       trackStock,
       priceKobo: this.nairaToKobo(this.formSellingPriceNaira()),
-      supplierId: this.formSupplierId() ?? null,
+      supplierId: this.formSupplierId() || null,
       barcode: this.formBarcode() || undefined,
     };
 
@@ -155,12 +155,12 @@ export class InventoryComponent implements OnInit {
     }
 
     if (this.isEditing()) {
-      this.inventoryApi.update(this.editId(), camelToSnake(payload) as any).subscribe({
+      this.inventoryApi.update(this.editId(), payload).subscribe({
         next: (updated) => { done(); this.inventory.update(is => is.map(i => i.id === updated.id ? updated : i)); this.closeFormModal(); },
         error: onError,
       });
     } else {
-      this.inventoryApi.create(camelToSnake(payload)).subscribe({
+      this.inventoryApi.create(payload).subscribe({
         next: (created) => { done(); this.inventory.update(is => [...is, created]); this.closeFormModal(); },
         error: onError,
       });
@@ -318,12 +318,12 @@ export class InventoryComponent implements OnInit {
       }).then(result => {
         if (!result.isConfirmed || !result.value) return;
         const { quantityInStock, reorderLevel } = result.value;
-        this.inventoryApi.update(item.id, camelToSnake({
+        this.inventoryApi.update(item.id, {
           trackStock: true,
           quantityInStock,
           reorderLevel,
           costPriceKobo: item.costPriceKobo,
-        }) as any).subscribe({
+        }).subscribe({
           next: (updated) => {
             Swal.fire({ icon: 'success', title: 'Tracking Enabled', timer: 1500, showConfirmButton: false });
             this.untrackedItems.update(items => items.filter(i => i.id !== item.id));
