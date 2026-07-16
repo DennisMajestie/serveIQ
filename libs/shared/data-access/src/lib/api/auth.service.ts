@@ -111,8 +111,8 @@ export class AuthService {
       { email, password },
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(
-      tap(response => {
-        const resData = response.data as any || response;
+      tap((response: any) => {
+        const resData = response.data || response;
         const token = resData.access_token || resData.token || response.access_token || response.token;
         
         const businessId = resData.business?.id || resData.businessId || resData.user?.business;
@@ -141,8 +141,8 @@ export class AuthService {
     return this.http.post<AuthResponse>(
       `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, business_id: businessId, branch_id: branchId || undefined }
     ).pipe(
-      tap(response => {
-        const resData = response.data as any || response;
+      tap((response: any) => {
+        const resData = response.data || response;
         const token = resData.access_token || resData.token || response.access_token || response.token;
         const branchId = resData.user?.branch || resData.branchId || resData.branch?.id;
         const userRole = resData.user?.role || resData.role;
