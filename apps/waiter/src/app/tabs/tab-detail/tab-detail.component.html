@@ -45,11 +45,11 @@
           </div>
         </div>
       }
-      @if (orderStatus() === 'PREPARING') {
+      @if (orderStatus() === 'APPROVED' || orderStatus() === 'PREPARING') {
         <div class="mb-5 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
           <span class="material-symbols-outlined text-emerald-400">timer</span>
           <div>
-            <p class="text-emerald-300 text-sm font-semibold">Preparing...</p>
+            <p class="text-emerald-300 text-sm font-semibold">{{ orderStatus() === 'APPROVED' ? 'Approved — Preparing...' : 'Preparing...' }}</p>
             <p class="text-emerald-200/60 text-xs font-mono tracking-wider">{{ countdownLabel }} remaining</p>
           </div>
         </div>

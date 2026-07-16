@@ -36,8 +36,10 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   orderStatus = computed(() => this.activeOrder()?.status ?? null);
   declineReason = computed(() => this.activeOrder()?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
+  private countdownTick = signal(0);
 
   get remainingSeconds(): number {
+    const _ = this.countdownTick();
     const endsAt = this.timerEndsAt();
     if (!endsAt) return 0;
     return Math.max(0, Math.floor((new Date(endsAt).getTime() - Date.now()) / 1000));
@@ -80,8 +82,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     });
 
     this.countdownInterval = setInterval(() => {
-      if (this.orderStatus() === 'PREPARING' || this.orderStatus() === 'READY_FOR_PICKUP') {
-      }
+      this.countdownTick.update(n => n + 1);
     }, 1000);
   }
 
