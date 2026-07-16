@@ -45,6 +45,12 @@ export class LoginComponent implements OnInit {
     this.isActivating.set(true);
     this.authService.activateTerminal(this.adminEmail, this.adminPassword).subscribe({
       next: (res: any) => {
+        const role = (res?.data?.user?.role || res?.data?.role || '').toLowerCase();
+        if (role === 'supervisor' || role === 'super_admin') {
+          const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
+          window.location.assign(adminUrl + (role === 'supervisor' ? '/app/supervisor/orders' : '/app/admin/dashboard'));
+          return;
+        }
         this.isActivated.set(true);
         this.businessName.set(res.data?.businessName || res.data?.business?.name || 'ServeIQ Business');
         this.isActivating.set(false);

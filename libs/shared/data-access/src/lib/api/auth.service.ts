@@ -120,9 +120,13 @@ export class AuthService {
         const businessName = resData.business?.name || resData.businessName || '';
         const branchId = resData.branch?.id || resData.branchId || resData.user?.branch;
 
+        const userRole = resData.user?.role || resData.role;
+        const normalizedRole = userRole === 'superadmin' ? 'super_admin' : userRole;
+
         if (businessId) localStorage.setItem('businessId', businessId);
         if (businessName) localStorage.setItem('businessName', businessName);
         if (branchId && branchId !== 'default-branch') localStorage.setItem('branchId', branchId);
+        if (normalizedRole) localStorage.setItem('userRole', normalizedRole);
         
         if (token) {
           localStorage.setItem('token', token);
