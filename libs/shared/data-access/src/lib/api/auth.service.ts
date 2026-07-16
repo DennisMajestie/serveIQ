@@ -68,11 +68,11 @@ export class AuthService {
       email, password
     }).pipe(
       tap((response: any) => {
-        const token = response.access_token || response.data?.access_token;
+        const data = response.data || response;
+        const token = data.access_token || data.token || response.access_token || response.token;
         if (token) {
           localStorage.setItem('token', token);
 
-          const data = response.data || response;
           const branchId = data.branch?.id ||
                            data.branchId ||
                            data.user?.branch?.id ||
@@ -85,7 +85,6 @@ export class AuthService {
                              data.user?.business ||
                              data.user?.business_id;
 
-          // Store user role for fast client-side role-based routing
           let userRole = data.user?.role || data.role;
           if (userRole === 'superadmin') userRole = 'super_admin';
           if (userRole) {
@@ -113,9 +112,9 @@ export class AuthService {
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(
       tap(response => {
-        const token = response.data?.access_token;
+        const resData = response.data as any || response;
+        const token = resData.access_token || resData.token || response.access_token || response.token;
         
-        const resData = response.data as any;
         const businessId = resData.business?.id || resData.businessId || resData.user?.business;
         const businessName = resData.business?.name || resData.businessName || '';
         const branchId = resData.branch?.id || resData.branchId || resData.user?.branch;
@@ -143,8 +142,8 @@ export class AuthService {
       `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, business_id: businessId, branch_id: branchId || undefined }
     ).pipe(
       tap(response => {
-        const token = response.data?.access_token;
-        const resData = response.data as any;
+        const resData = response.data as any || response;
+        const token = resData.access_token || resData.token || response.access_token || response.token;
         const branchId = resData.user?.branch || resData.branchId || resData.branch?.id;
         const userRole = resData.user?.role || resData.role;
         const normalizedRole = userRole === 'superadmin' ? 'super_admin' : userRole;

@@ -665,7 +665,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
       next: (user: any) => {
         let apiRole = user.role;
         if (apiRole === 'superadmin') apiRole = 'super_admin';
-        const role = apiRole || localStorage.getItem('userRole') || '';
+        const role = localStorage.getItem('userRole') || apiRole || '';
         this.profile.set({ fullName: user.fullName, role, avatarUrl: user.avatarUrl || user.avatar_url });
       },
       error: () => {
