@@ -49,6 +49,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   businessName = signal(localStorage.getItem('businessName') || 'ServeIQ');
   activityLogs = signal<AuditLog[]>([]);
   isActivityLoading = signal(false);
+  currentUser = signal<User | null>(null);
 
   avgApprovalTime = computed(() => {
     const count = this.pendingOrders().length + this.preparingOrders().length + this.readyOrders().length;
@@ -126,18 +127,29 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     this.loadTables();
     this.loadShift();
     this.loadWaiters();
-    this.loadRecentActivity();
+    this.userApi.getMe().subscribe({
+      next: (user) => {
+        this.currentUser.set(user);
+        this.loadRecentActivity();
+      },
+      error: () => this.loadRecentActivity(),
+    });
   }
 
   loadRecentActivity() {
     this.isActivityLoading.set(true);
-    this.auditApi.recent().subscribe({
-      next: (logs) => {
-        this.activityLogs.set(logs);
-        this.isActivityLoading.set(false);
-      },
-      error: () => this.isActivityLoading.set(false),
-    });
+    const userId = this.currentUser()?.id;
+    if (userId) {
+      this.auditApi.list({ user_id: userId, limit: 20 }).subscribe({
+        next: (res) => { this.activityLogs.set(res.data); this.isActivityLoading.set(false); },
+        error: () => this.isActivityLoading.set(false),
+      });
+    } else {
+      this.auditApi.recent().subscribe({
+        next: (logs) => { this.activityLogs.set(logs); this.isActivityLoading.set(false); },
+        error: () => this.isActivityLoading.set(false),
+      });
+    }
   }
 
   loadDepartments() {
