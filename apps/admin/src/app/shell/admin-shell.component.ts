@@ -106,6 +106,12 @@ interface NavItem {
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" routerLink="/app/departments" routerLinkActive="active">
+                <span class="material-symbols-outlined">category</span>
+                <span>Departments</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" routerLink="/app/suppliers" routerLinkActive="active">
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span>Suppliers</span>

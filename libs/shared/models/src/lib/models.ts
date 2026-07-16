@@ -503,7 +503,9 @@ export interface Department {
   id: string;
   branchId: string;
   name: string;
+  isActive?: boolean;
   description?: string;
+  createdAt?: string;
 }
 
 export interface Order {

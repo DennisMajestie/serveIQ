@@ -175,6 +175,10 @@ export const API_CONFIG = {
     // Departments
     departments: {
       list: '/api/v1/departments',
+      get: '/api/v1/departments/:id',
+      create: '/api/v1/departments',
+      update: '/api/v1/departments/:id',
+      delete: '/api/v1/departments/:id',
     },
     // Audit Logs
     auditLogs: {
