@@ -39,6 +39,11 @@ export class UserApiService extends BaseApiService {
     return this.get<User[]>(API_CONFIG.endpoints.users.waiters);
   }
 
+  /** List all staff (waiters + supervisors) for the business. */
+  listStaff(): Observable<User[]> {
+    return this.get<User[]>(`${API_CONFIG.endpoints.users.waiters}?role=all`);
+  }
+
   /** Create a new waiter account (owner only). */
   createWaiter(data: CreateWaiterRequest): Observable<User> {
     const url = `${this.apiUrl}${API_CONFIG.endpoints.users.waiters}`;
