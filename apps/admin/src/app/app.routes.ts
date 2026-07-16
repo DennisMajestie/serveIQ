@@ -14,10 +14,6 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
     children: [
       {
-        path: 'supervisor/orders',
-        loadComponent: () => import('./supervisor/supervisor-orders.component').then(m => m.SupervisorOrdersComponent)
-      },
-      {
         path: 'admin/dashboard',
         loadComponent: () => import('./admin/dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
         canActivate: [superAdminGuard]

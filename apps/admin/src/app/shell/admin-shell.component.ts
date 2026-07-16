@@ -61,27 +61,11 @@ interface NavItem {
             </li>
           </ul>
 
-          <ul class="nav-list" *ngIf="profile().role === 'supervisor'">
-            <li class="nav-section-label">Order Flow</li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/app/supervisor/orders" routerLinkActive="active">
-                <span class="material-symbols-outlined">fact_check</span>
-                <span>Orders</span>
-              </a>
-            </li>
-          </ul>
-
           <ul class="nav-list" *ngIf="profile().role === 'owner'">
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/dashboard" routerLinkActive="active">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/app/supervisor/orders" routerLinkActive="active">
-                <span class="material-symbols-outlined">fact_check</span>
-                <span>Orders</span>
               </a>
             </li>
             <li class="nav-item">

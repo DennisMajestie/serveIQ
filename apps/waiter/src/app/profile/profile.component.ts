@@ -149,6 +149,7 @@ export class ProfileComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/tables']);
+    const role = this.user()?.role?.toLowerCase();
+    this.router.navigate(role === 'supervisor' ? ['/supervisor/orders'] : ['/tables']);
   }
 }

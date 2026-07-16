@@ -8,12 +8,20 @@
         <p class="sv-subtitle">Supervisor Workflow — Approve, track, and fulfill orders</p>
       </div>
       <div class="header-actions">
+        <button class="glass-btn icon-btn" (click)="goBack()">
+          <span class="material-symbols-outlined">arrow_back</span>
+          <span class="btn-label">Back</span>
+        </button>
         <button class="glass-btn icon-btn theme-toggle" (click)="toggleTheme()" [title]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'">
           <span class="material-symbols-outlined">{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</span>
         </button>
         <button class="glass-btn icon-btn" (click)="refreshAll()" [disabled]="isRefreshing()">
           <span class="material-symbols-outlined">{{ isRefreshing() ? 'sync' : 'refresh' }}</span>
           <span class="btn-label">Refresh</span>
+        </button>
+        <button class="glass-btn icon-btn" (click)="logout()">
+          <span class="material-symbols-outlined">logout</span>
+          <span class="btn-label">Logout</span>
         </button>
       </div>
     </div>

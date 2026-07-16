@@ -133,7 +133,7 @@
 .supervisor-wrapper {
   background-image: var(--bg-mesh);
   background-color: var(--bg-page);
-  min-height: calc(100vh - 64px);
+  min-height: 100vh;
   -webkit-tap-highlight-color: transparent;
   transition: background-color 0.3s, background-image 0.3s;
 }
@@ -171,6 +171,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 .sv-title {
   font-family: 'Space Grotesk', sans-serif;
