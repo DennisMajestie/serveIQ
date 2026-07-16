@@ -663,12 +663,9 @@ export class AdminShellComponent implements OnInit, OnDestroy {
     this.subService.load();
     this.userApi.getMe().subscribe({
       next: (user: any) => {
-        // Normalise backend role values: 'superadmin' → 'super_admin'
         let apiRole = user.role;
         if (apiRole === 'superadmin') apiRole = 'super_admin';
         const role = apiRole || localStorage.getItem('userRole') || '';
-        // Keep localStorage in sync with verified API response
-        if (apiRole) localStorage.setItem('userRole', apiRole);
         this.profile.set({ fullName: user.fullName, role, avatarUrl: user.avatarUrl || user.avatar_url });
       },
       error: () => {
