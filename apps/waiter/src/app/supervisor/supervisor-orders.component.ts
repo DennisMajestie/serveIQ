@@ -421,7 +421,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
           Swal.showValidationMessage('Please select a department');
           return false;
         }
-        return { departmentId: selectedDept, estimatedTime: selectedTime };
+        return { department: selectedDept, estimatedPreparationTimeSeconds: selectedTime * 60 };
       }
     }).then(result => {
       if (result.isConfirmed && result.value) {

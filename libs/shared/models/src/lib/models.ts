@@ -525,8 +525,8 @@ export interface Order {
 }
 
 export interface ApproveOrderRequest {
-  departmentId: string;
-  estimatedTime: number;
+  department: string;
+  estimatedPreparationTimeSeconds: number;
 }
 
 export interface DeclineOrderRequest {
