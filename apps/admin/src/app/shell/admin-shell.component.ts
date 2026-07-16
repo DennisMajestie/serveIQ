@@ -630,7 +630,7 @@ interface NavItem {
 })
 export class AdminShellComponent implements OnInit, OnDestroy {
   sidebarCollapsed = signal(false);
-  profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: localStorage.getItem('userRole') || 'owner' });
+  profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: localStorage.getItem('userRole') || '' });
   hasNotifications = signal(false);
   notifLoading = signal(true);
   searchControl = new FormControl('');
@@ -666,7 +666,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
         // Normalise backend role values: 'superadmin' → 'super_admin'
         let apiRole = user.role;
         if (apiRole === 'superadmin') apiRole = 'super_admin';
-        const role = apiRole || localStorage.getItem('userRole') || 'owner';
+        const role = apiRole || localStorage.getItem('userRole') || '';
         // Keep localStorage in sync with verified API response
         if (apiRole) localStorage.setItem('userRole', apiRole);
         this.profile.set({ fullName: user.fullName, role, avatarUrl: user.avatarUrl || user.avatar_url });
