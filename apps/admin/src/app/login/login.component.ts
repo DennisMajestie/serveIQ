@@ -78,8 +78,6 @@ export class LoginComponent {
           const userRole = localStorage.getItem('userRole');
           if (userRole === 'super_admin') {
             this.router.navigate(['/app/admin/dashboard']);
-          } else if (userRole === 'supervisor') {
-            this.router.navigate(['/app/supervisor/orders']);
           } else {
             this.router.navigate(['/app/dashboard']);
           }

@@ -7,5 +7,5 @@ export const ownerGuard = () => {
   if (role === 'owner' || role === 'super_admin') {
     return true;
   }
-  return router.parseUrl('/app/supervisor/orders');
+  return router.parseUrl('/login');
 };

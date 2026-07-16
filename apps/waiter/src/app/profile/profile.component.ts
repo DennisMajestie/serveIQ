@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { AuthService, UserApiService } from '@serveiq/shared/data-access';
 import { User, UiThemeVariant } from '@serveiq/shared/models';
 import { ThemePreferenceService } from '../core/theme-preference.service';
@@ -16,7 +15,6 @@ import Swal from 'sweetalert2';
 export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private userService = inject(UserApiService);
-  private router = inject(Router);
   private themePref = inject(ThemePreferenceService);
 
   user = signal<User | null>(null);
@@ -148,8 +146,4 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  goBack() {
-    const role = this.user()?.role?.toLowerCase();
-    this.router.navigate(role === 'supervisor' ? ['/supervisor/orders'] : ['/tables']);
-  }
 }
