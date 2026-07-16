@@ -4,8 +4,8 @@
     <!-- Header -->
     <div class="sv-header">
       <div>
-        <h1 class="sv-title">Order Management</h1>
-        <p class="sv-subtitle">Supervisor Workflow — Approve, track, and fulfill orders</p>
+        <h1 class="sv-title">{{ businessName() }}</h1>
+        <p class="sv-subtitle">Supervisor Dashboard — Approve, track, and fulfill orders</p>
       </div>
       <div class="header-actions">
         <button class="glass-btn icon-btn theme-toggle" (click)="toggleTheme()" [title]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'">

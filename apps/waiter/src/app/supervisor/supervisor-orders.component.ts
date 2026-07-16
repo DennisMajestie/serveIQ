@@ -51,6 +51,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   currentShift = signal<Shift | null>(null);
   waiters = signal<User[]>([]);
 
+  businessName = signal(localStorage.getItem('businessName') || 'ServeIQ');
   journalText = '';
   journalEntries = signal<JournalEntry[]>([]);
 
