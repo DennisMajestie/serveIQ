@@ -87,7 +87,7 @@ interface JournalEntry {
             <h2><span class="material-symbols-outlined">schedule</span> Shift Snapshot</h2>
             <span class="widget-subtitle" *ngIf="currentShift() as shift">{{ shift.status | titlecase }}</span>
           </div>
-          @if (currentShift() as shift) {
+          <ng-container *ngIf="currentShift() as shift; else noShift">
             <div class="shift-info">
               <div class="shift-row">
                 <span class="shift-label">Opened</span>
@@ -117,12 +117,13 @@ interface JournalEntry {
                 }
               </div>
             </div>
-          } @else {
+          </ng-container>
+          <ng-template #noShift>
             <div class="shift-empty">
               <span class="material-symbols-outlined">sleep</span>
               <p>No active shift</p>
             </div>
-          }
+          </ng-template>
         </div>
       </div>
 
