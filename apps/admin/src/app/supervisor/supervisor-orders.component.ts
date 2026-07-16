@@ -40,6 +40,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   isLoadingReady = signal(false);
   isProcessingAction = signal(false);
   isRefreshing = signal(false);
+  isDarkMode = signal(true);
 
   departments = signal<Department[]>([]);
   tables = signal<Table[]>([]);
@@ -64,6 +65,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit() {
+    this.loadThemePreference();
     this.loadAll();
     this.loadJournalFromStorage();
     this.pollSub = interval(15000).subscribe(() => {
@@ -87,6 +89,18 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     this.isRefreshing.set(true);
     this.loadAll();
     setTimeout(() => this.isRefreshing.set(false), 1000);
+  }
+
+  toggleTheme() {
+    this.isDarkMode.update(v => !v);
+    localStorage.setItem('serveiq_supervisor_theme', this.isDarkMode() ? 'dark' : 'light');
+  }
+
+  private loadThemePreference() {
+    const saved = localStorage.getItem('serveiq_supervisor_theme');
+    if (saved === 'light') {
+      this.isDarkMode.set(false);
+    }
   }
 
   switchTab(tab: QueueTab) {

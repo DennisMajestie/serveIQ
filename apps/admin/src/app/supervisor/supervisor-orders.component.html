@@ -1,4 +1,4 @@
-<div class="supervisor-wrapper">
+<div class="supervisor-wrapper" [class.theme-dark]="isDarkMode()" [class.theme-light]="!isDarkMode()">
   <div class="sv-content">
 
     <!-- Header -->
@@ -7,10 +7,15 @@
         <h1 class="sv-title">Order Management</h1>
         <p class="sv-subtitle">Supervisor Workflow — Approve, track, and fulfill orders</p>
       </div>
-      <button class="glass-btn icon-btn" (click)="refreshAll()" [disabled]="isRefreshing()">
-        <span class="material-symbols-outlined">{{ isRefreshing() ? 'sync' : 'refresh' }}</span>
-        <span class="btn-label">Refresh</span>
-      </button>
+      <div class="header-actions">
+        <button class="glass-btn icon-btn theme-toggle" (click)="toggleTheme()" [title]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'">
+          <span class="material-symbols-outlined">{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</span>
+        </button>
+        <button class="glass-btn icon-btn" (click)="refreshAll()" [disabled]="isRefreshing()">
+          <span class="material-symbols-outlined">{{ isRefreshing() ? 'sync' : 'refresh' }}</span>
+          <span class="btn-label">Refresh</span>
+        </button>
+      </div>
     </div>
 
     <!-- Summary Bar -->
