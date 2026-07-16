@@ -265,9 +265,11 @@ export class WaiterManagementComponent implements OnInit {
   }
 
   deleteWaiter(id: string) {
+    const staff = this.waiters().find(w => w.id === id);
+    const label = this.getRoleLabel(staff?.role);
     Swal.fire({
-      title: 'Delete Waiter',
-      text: 'Are you sure you want to remove this waiter?',
+      title: `Delete ${label}`,
+      text: `Are you sure you want to remove this ${label.toLowerCase()}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete'
@@ -276,7 +278,7 @@ export class WaiterManagementComponent implements OnInit {
         this.staffService.deleteWaiter(id).subscribe({
           next: () => {
             this.waiters.update(ws => ws.filter(w => w.id !== id));
-            Swal.fire({ icon: 'success', title: 'Waiter removed', timer: 2000, showConfirmButton: false });
+            Swal.fire({ icon: 'success', title: `${label} removed`, timer: 2000, showConfirmButton: false });
           },
           error: (err) => {
             const msg = err?.error?.message || err?.serverMessage || 'Failed to delete user';
