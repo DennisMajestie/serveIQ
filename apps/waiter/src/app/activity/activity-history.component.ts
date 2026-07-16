@@ -162,9 +162,9 @@ export class ActivityHistoryComponent implements OnInit {
 
     this.auditApi.list(params).subscribe({
       next: (res) => {
-        this.logs.set(res.data);
-        this.total = res.meta.total;
-        this.totalPages = res.meta.totalPages;
+        this.logs.set(res.data || []);
+        this.total = res.meta?.total ?? 0;
+        this.totalPages = res.meta?.totalPages ?? 1;
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
