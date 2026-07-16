@@ -16,18 +16,22 @@ interface JournalEntry {
 }
 
 @Component({
-  selector: 'app-orders',
+  selector: 'app-waiter-supervisor-orders',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
     <div class="supervisor-dashboard">
-      <%-- Header --%>
+      <!-- Header -->
       <div class="page-header">
         <div>
           <h1>Order Management</h1>
           <p class="subtitle">Supervisor Workflow — Approve, track, and fulfill orders</p>
         </div>
         <div class="header-actions">
+          <button class="btn btn-outline" (click)="goBack()">
+            <span class="material-symbols-outlined">arrow_back</span>
+            <span class="btn-label">Back</span>
+          </button>
           <button class="btn btn-outline" (click)="logout()">
             <span class="material-symbols-outlined">logout</span>
             <span class="btn-label">Logout</span>
@@ -39,7 +43,7 @@ interface JournalEntry {
         </div>
       </div>
 
-      <%-- Live Summary Bar --%>
+      <!-- Live Summary Bar -->
       <div class="summary-bar">
         <div class="stat-card pending-stat">
           <div class="stat-value">{{ pendingOrders().length }}</div>
@@ -63,9 +67,9 @@ interface JournalEntry {
         </div>
       </div>
 
-      <%-- Two-Column Widgets --%>
+      <!-- Two-Column Widgets -->
       <div class="widgets-row">
-        <%-- Table Floor Map --%>
+        <!-- Table Floor Map -->
         <div class="widget table-map-widget">
           <div class="widget-header">
             <h2><span class="material-symbols-outlined">table_restaurant</span> Table Floor Map</h2>
@@ -86,7 +90,7 @@ interface JournalEntry {
           </div>
         </div>
 
-        <%-- Shift Snapshot --%>
+        <!-- Shift Snapshot -->
         <div class="widget shift-widget">
           <div class="widget-header">
             <h2><span class="material-symbols-outlined">schedule</span> Shift Snapshot</h2>
@@ -132,7 +136,7 @@ interface JournalEntry {
         </div>
       </div>
 
-      <%-- Queue Tabs --%>
+      <!-- Queue Tabs -->
       <div class="queue-section">
         <div class="queue-tabs">
           <button class="queue-tab" [class.active]="activeTab() === 'pending'" (click)="switchTab('pending')">
@@ -158,7 +162,7 @@ interface JournalEntry {
           </button>
         </div>
 
-        <%-- Pending Queue --%>
+        <!-- Pending Queue -->
         @if (activeTab() === 'pending') {
           @if (isLoadingPending()) {
             <div class="loading-shimmer"></div>
@@ -214,7 +218,7 @@ interface JournalEntry {
           }
         }
 
-        <%-- Preparing Queue --%>
+        <!-- Preparing Queue -->
         @if (activeTab() === 'preparing') {
           @if (isLoadingPreparing()) {
             <div class="loading-shimmer"></div>
@@ -265,7 +269,7 @@ interface JournalEntry {
           }
         }
 
-        <%-- Ready Queue --%>
+        <!-- Ready Queue -->
         @if (activeTab() === 'ready') {
           @if (isLoadingReady()) {
             <div class="loading-shimmer"></div>
@@ -317,7 +321,7 @@ interface JournalEntry {
         }
       </div>
 
-      <%-- Service Journal --%>
+      <!-- Service Journal -->
       <div class="widget journal-widget">
         <div class="widget-header">
           <h2><span class="material-symbols-outlined">edit_note</span> Service Journal</h2>
@@ -358,7 +362,44 @@ interface JournalEntry {
     </div>
   `,
   styles: [`
-    :host { display: block; }
+    :host {
+      display: block;
+      --secondary: #575e70;
+      --on-primary-container: #582200;
+      --primary-container: #f97316;
+      --on-secondary-container: #5c6274;
+      --background: #f9f9ff;
+      --surface: #f9f9ff;
+      --on-background: #151c27;
+      --on-surface: #151c27;
+      --surface-container-low: #f0f3ff;
+      --surface-container-high: #e2e8f8;
+      --outline-variant: #e0c0b1;
+      --on-surface-variant: #584237;
+      --on-primary: #ffffff;
+      --on-primary-container: #582200;
+      --surface-container-lowest: #ffffff;
+      --error: #ba1a1a;
+      --primary: #9d4300;
+    }
+    [data-theme="dark"] {
+      --primary: #4be277;
+      --on-primary: #003915;
+      --primary-container: rgba(75, 226, 119, 0.15);
+      --on-primary-container: #4be277;
+      --secondary: #adc6ff;
+      --on-secondary-container: #adc6ff;
+      --background: #020617;
+      --on-background: #dce1fb;
+      --surface: #0f172a;
+      --on-surface: #dce1fb;
+      --surface-container-low: #0a1022;
+      --surface-container-high: #1a2235;
+      --surface-container-lowest: #020617;
+      --outline-variant: #2a3550;
+      --on-surface-variant: rgba(188, 203, 185, 0.4);
+      --error: #ffb4ab;
+    }
     .material-symbols-outlined { font-size: 20px; vertical-align: middle; }
 
     .supervisor-dashboard {
@@ -367,6 +408,7 @@ interface JournalEntry {
       margin: 0 auto;
     }
 
+    /* Header */
     .page-header {
       display: flex;
       justify-content: space-between;
@@ -390,6 +432,7 @@ interface JournalEntry {
     .btn-outline:disabled { opacity: 0.6; cursor: wait; }
     .btn-label { display: inline; }
 
+    /* Summary Bar */
     .summary-bar {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -404,15 +447,30 @@ interface JournalEntry {
       padding: 20px;
       overflow: hidden;
     }
-    .stat-value { font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
-    .stat-label { font-size: 13px; color: var(--secondary); font-weight: 500; }
-    .stat-icon { position: absolute; right: 16px; top: 16px; opacity: 0.15; }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--secondary);
+      font-weight: 500;
+    }
+    .stat-icon {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      opacity: 0.15;
+    }
     .stat-icon .material-symbols-outlined { font-size: 40px; }
     .pending-stat .stat-value { color: #f59e0b; }
     .preparing-stat .stat-value { color: #22c55e; }
     .ready-stat .stat-value { color: #3b82f6; }
     .time-stat .stat-value { color: #a855f7; }
 
+    /* Widgets */
     .widgets-row {
       display: grid;
       grid-template-columns: 1fr 320px;
@@ -432,12 +490,17 @@ interface JournalEntry {
       margin-bottom: 16px;
     }
     .widget-header h2 {
-      font-size: 15px; font-weight: 600; margin: 0;
-      display: flex; align-items: center; gap: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     .widget-header h2 .material-symbols-outlined { color: var(--primary-container); font-size: 20px; }
     .widget-subtitle { font-size: 12px; color: var(--secondary); }
 
+    /* Table Floor Map */
     .table-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
@@ -445,20 +508,28 @@ interface JournalEntry {
     }
     .table-cell {
       position: relative;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 10px 6px; border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 6px;
+      border-radius: 10px;
       border: 2px solid var(--outline-variant);
       background: var(--surface-container-low);
-      cursor: default; transition: all 0.2s;
+      cursor: default;
+      transition: all 0.2s;
       min-height: 56px;
     }
     .table-cell:hover { transform: scale(1.05); }
     .table-number { font-size: 13px; font-weight: 700; line-height: 1; }
     .table-cap { font-size: 9px; color: var(--secondary); margin-top: 2px; }
     .table-order-dot {
-      position: absolute; top: 4px; right: 4px;
-      width: 8px; height: 8px; border-radius: 50%;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
     }
     .dot-pending { background: #f59e0b; box-shadow: 0 0 4px #f59e0b; }
     .dot-preparing { background: #22c55e; box-shadow: 0 0 4px #22c55e; }
@@ -471,6 +542,7 @@ interface JournalEntry {
     .table-cell.has-ready { border-color: #3b82f6; }
     .no-tables { grid-column: 1 / -1; text-align: center; padding: 24px; color: var(--secondary); font-size: 13px; }
 
+    /* Shift Snapshot */
     .shift-info { display: flex; flex-direction: column; gap: 8px; }
     .shift-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     .shift-label { color: var(--secondary); }
@@ -495,6 +567,7 @@ interface JournalEntry {
     .shift-empty .material-symbols-outlined { font-size: 36px; opacity: 0.4; margin-bottom: 8px; }
     .shift-empty p { margin: 0; font-size: 13px; }
 
+    /* Queue Tabs */
     .queue-section {
       background: var(--surface);
       border: 1px solid var(--outline-variant);
@@ -503,16 +576,27 @@ interface JournalEntry {
       margin-bottom: 20px;
     }
     .queue-tabs {
-      display: flex; gap: 8px; margin-bottom: 16px;
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .queue-tab {
-      padding: 10px 16px; border-radius: 10px;
+      padding: 10px 16px;
+      border-radius: 10px;
       border: 1px solid var(--outline-variant);
-      background: transparent; color: var(--on-surface);
-      font-size: 13px; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-      transition: all 0.2s; font-family: inherit; white-space: nowrap;
+      background: transparent;
+      color: var(--on-surface);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: inherit;
+      white-space: nowrap;
     }
     .queue-tab .material-symbols-outlined { font-size: 18px; }
     .queue-tab.active {
@@ -523,20 +607,29 @@ interface JournalEntry {
     .queue-tab .badge {
       background: var(--primary-container);
       color: var(--on-primary-container);
-      font-size: 11px; font-weight: 700;
-      padding: 2px 8px; border-radius: 999px; line-height: 1.4;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      line-height: 1.4;
     }
     .queue-tab.active .badge { background: var(--primary-container); }
 
+    /* Order Cards */
     .order-list { display: flex; flex-direction: column; gap: 12px; }
     .order-card {
       background: var(--surface-container-low);
       border: 1px solid var(--outline-variant);
-      border-radius: 16px; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     .order-card-header {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .table-info { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
     .table-info .material-symbols-outlined { font-size: 20px; color: var(--primary-container); }
@@ -548,19 +641,32 @@ interface JournalEntry {
     .items-count { font-size: 12px; color: var(--secondary); font-weight: 500; }
     .item-tags { display: flex; flex-wrap: wrap; gap: 4px; }
     .item-tag {
-      font-size: 11px; padding: 3px 8px; border-radius: 999px;
-      background: rgba(64,71,88,0.15); color: var(--on-surface);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(64,71,88,0.15);
+      color: var(--on-surface);
     }
     .item-tag.more { background: transparent; color: var(--secondary); font-style: italic; }
     .order-card-actions { display: flex; gap: 8px; }
     .order-card.preparing { border-color: rgba(34,197,94,0.3); }
     .order-card.ready { border-color: rgba(249,115,22,0.3); }
 
+    /* Buttons */
     .btn {
-      flex: 1; height: 44px; border-radius: 10px; border: none;
-      display: flex; align-items: center; justify-content: center;
-      gap: 6px; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s; font-family: inherit;
+      flex: 1;
+      height: 44px;
+      border-radius: 10px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
     }
     .btn:active { transform: scale(0.97); }
     .btn:disabled { opacity: 0.7; cursor: wait; transform: none; }
@@ -575,81 +681,134 @@ interface JournalEntry {
     .countdown.urgent { color: #ef4444; }
     .countdown .material-symbols-outlined { font-size: 18px; }
     .dept-badge {
-      font-size: 11px; padding: 3px 10px; border-radius: 999px;
-      background: rgba(249,115,22,0.15); color: var(--primary-container);
-      display: inline-block; width: fit-content;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(249,115,22,0.15);
+      color: var(--primary-container);
+      display: inline-block;
+      width: fit-content;
     }
     .ready-badge {
-      font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px;
-      background: rgba(34,197,94,0.15); color: #22c55e;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.15);
+      color: #22c55e;
     }
 
     .empty-state {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 48px 24px; text-align: center; color: var(--secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--secondary);
     }
     .empty-state .material-symbols-outlined { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
     .empty-state h3 { font-size: 16px; font-weight: 600; margin: 0 0 6px; color: var(--on-surface); }
     .empty-state p { font-size: 13px; margin: 0; }
 
+    /* Service Journal */
     .journal-widget { margin-bottom: 24px; }
-    .journal-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .journal-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
     .journal-input {
-      flex: 1; padding: 10px 14px; border-radius: 10px;
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 10px;
       border: 1px solid var(--outline-variant);
       background: var(--surface-container-low);
-      color: var(--on-surface); font-size: 13px; font-family: inherit;
-      outline: none; transition: border-color 0.2s;
+      color: var(--on-surface);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
     }
     .journal-input:focus { border-color: var(--primary-container); }
     .journal-input::placeholder { color: var(--secondary); opacity: 0.6; }
     .btn-journal {
-      flex: none; width: 44px; height: 44px; padding: 0; border-radius: 10px;
-      border: none; background: var(--primary-container);
-      color: var(--on-primary-container); cursor: pointer;
-      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+      flex: none;
+      width: 44px; height: 44px;
+      padding: 0;
+      border-radius: 10px;
+      border: none;
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
     }
     .btn-journal:hover { opacity: 0.9; }
     .btn-journal:disabled { opacity: 0.5; cursor: not-allowed; }
     .journal-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
     .journal-entry {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 10px 12px; border-radius: 10px;
-      background: var(--surface-container-low); transition: background 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--surface-container-low);
+      transition: background 0.2s;
     }
     .journal-entry:hover { background: var(--surface-container-high); }
     .journal-bullet {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--primary-container); margin-top: 6px; flex-shrink: 0;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--primary-container);
+      margin-top: 6px;
+      flex-shrink: 0;
     }
     .journal-body { flex: 1; min-width: 0; }
     .journal-text { margin: 0; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
     .journal-time { font-size: 11px; color: var(--secondary); }
     .journal-delete {
-      flex: none; width: 24px; height: 24px; border: none;
-      background: transparent; color: var(--secondary); cursor: pointer;
-      border-radius: 6px; display: flex; align-items: center;
-      justify-content: center; opacity: 0; transition: all 0.2s;
+      flex: none;
+      width: 24px; height: 24px;
+      border: none;
+      background: transparent;
+      color: var(--secondary);
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.2s;
     }
     .journal-entry:hover .journal-delete { opacity: 1; }
     .journal-delete:hover { background: rgba(239,68,68,0.15); color: #ef4444; }
     .journal-empty {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 24px; color: var(--secondary); text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      color: var(--secondary);
+      text-align: center;
     }
     .journal-empty .material-symbols-outlined { font-size: 32px; opacity: 0.4; margin-bottom: 8px; }
     .journal-empty p { margin: 0; font-size: 13px; }
 
     .loading-shimmer {
-      height: 100px; border-radius: 16px; margin-bottom: 12px;
+      height: 100px;
+      border-radius: 16px;
+      margin-bottom: 12px;
       background: linear-gradient(90deg, var(--surface-container-low) 25%, var(--surface-container-high) 50%, var(--surface-container-low) 75%);
-      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
     }
     @keyframes shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
 
+    /* === Mobile Responsive === */
     @media (max-width: 768px) {
       .supervisor-dashboard { padding: 12px; }
       .page-header h1 { font-size: 20px; }
@@ -683,7 +842,7 @@ interface JournalEntry {
     }
   `]
 })
-export class OrdersComponent implements OnInit, OnDestroy {
+export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   private ordersApi = inject(OrdersApiService);
   private departmentsApi = inject(DepartmentsApiService);
   private tablesApi = inject(TablesApiService);
@@ -745,6 +904,10 @@ export class OrdersComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.pollSub?.unsubscribe();
     if (this.countdownInterval) clearInterval(this.countdownInterval);
+  }
+
+  goBack() {
+    this.router.navigate(['/tables']);
   }
 
   logout() {
@@ -832,6 +995,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   getTableStatusClass(table: Table): string {
     const status = table.status || 'available';
+
     const orders = [
       ...this.pendingOrders(),
       ...this.preparingOrders(),

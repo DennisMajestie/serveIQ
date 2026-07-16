@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import { LoginComponent } from './login/login.component';
+import { SupervisorOrdersComponent } from './supervisor/supervisor-orders.component';
 import { TablesComponent } from './tables/tables.component';
 import { TabDetailComponent } from './tabs/tab-detail/tab-detail.component';
 import { MenuComponent } from './menu/menu.component';
@@ -47,6 +48,9 @@ export const appRoutes: Route[] = [
   { path: 'menu', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyMenuComponent },
   { path: 'tabs/create/:tableId', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyOpenTabComponent },
   { path: 'profile', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyProfileComponent },
+
+  // ===== Supervisor (no theme guards) =====
+  { path: 'supervisor/orders', canActivate: [authGuard], component: SupervisorOrdersComponent },
 
   { path: '', redirectTo: 'tables', pathMatch: 'full' }
 ];
