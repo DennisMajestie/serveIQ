@@ -1,0 +1,334 @@
+<div class="supervisor-wrapper">
+  <div class="sv-content">
+
+    <!-- Header -->
+    <div class="sv-header">
+      <div>
+        <h1 class="sv-title">Order Management</h1>
+        <p class="sv-subtitle">Supervisor Workflow — Approve, track, and fulfill orders</p>
+      </div>
+      <button class="glass-btn icon-btn" (click)="refreshAll()" [disabled]="isRefreshing()">
+        <span class="material-symbols-outlined">{{ isRefreshing() ? 'sync' : 'refresh' }}</span>
+        <span class="btn-label">Refresh</span>
+      </button>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="sv-stats">
+      <div class="glass-stat pending-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">hourglass_empty</span></div>
+        <div class="stat-value">{{ pendingOrders().length }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="glass-stat preparing-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">cooking</span></div>
+        <div class="stat-value">{{ preparingOrders().length }}</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="glass-stat ready-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">checklist</span></div>
+        <div class="stat-value">{{ readyOrders().length }}</div>
+        <div class="stat-label">Ready</div>
+      </div>
+      <div class="glass-stat time-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">speed</span></div>
+        <div class="stat-value">{{ avgApprovalTime() }}</div>
+        <div class="stat-label">Avg Approval</div>
+      </div>
+    </div>
+
+    <!-- Widgets Row -->
+    <div class="sv-widgets">
+      <!-- Table Floor Map -->
+      <div class="glass-card sv-table-map">
+        <div class="widget-head">
+          <h2><span class="material-symbols-outlined">table_restaurant</span> Table Floor Map</h2>
+          <span class="widget-head-sub">{{ tables().length }} tables</span>
+        </div>
+        <div class="table-grid">
+          @for (table of tables(); track table.id) {
+            <div class="table-cell" [class]="getTableStatusClass(table)" [title]="getTableTooltip(table)">
+              <span class="table-num">{{ table.tableNumber }}</span>
+              <span class="table-cap">{{ table.capacity }}p</span>
+              @if (getTableOrderStatus(table)) {
+                <span class="table-dot" [class]="'dot-' + getTableOrderStatus(table)"></span>
+              }
+            </div>
+          } @empty {
+            <div class="empty-cell">No tables loaded</div>
+          }
+        </div>
+      </div>
+
+      <!-- Shift Snapshot -->
+      <div class="glass-card sv-shift">
+        <div class="widget-head">
+          <h2><span class="material-symbols-outlined">schedule</span> Shift Snapshot</h2>
+          <span class="widget-head-sub" *ngIf="currentShift() as shift">{{ shift.status | titlecase }}</span>
+        </div>
+        <ng-container *ngIf="currentShift() as shift; else noShift">
+          <div class="shift-details">
+            <div class="shift-row">
+              <span class="shift-lbl">Opened</span>
+              <span class="shift-val">{{ shift.openedAt | date:'short' }}</span>
+            </div>
+            <div class="shift-row">
+              <span class="shift-lbl">Duration</span>
+              <span class="shift-val">{{ getShiftDuration(shift) }}</span>
+            </div>
+            <div class="shift-row">
+              <span class="shift-lbl">Starting Cash</span>
+              <span class="shift-val">{{ formatKobo(shift.startingCashKobo) }}</span>
+            </div>
+            <div class="shift-divider"></div>
+            <div class="shift-row">
+              <span class="shift-lbl">Waiters On Duty</span>
+              <span class="shift-val shift-highlight">{{ waitersOnDuty().length }}</span>
+            </div>
+            <div class="waiter-avatars">
+              @for (w of waitersOnDuty().slice(0, 8); track w.id) {
+                <div class="waiter-avatar" [title]="w.fullName">
+                  <img [src]="w.avatarUrl || 'https://ui-avatars.com/api/?name=' + encodeURI(w.fullName) + '&background=4be277&color=fff&size=32'" alt="">
+                </div>
+              }
+              @if (waitersOnDuty().length > 8) {
+                <div class="waiter-avatar more">+{{ waitersOnDuty().length - 8 }}</div>
+              }
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noShift>
+          <div class="shift-empty">
+            <span class="material-symbols-outlined">sleep</span>
+            <p>No active shift</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Queue Section -->
+    <div class="glass-card sv-queue">
+      <div class="sv-tabs">
+        <button class="sv-tab" [class.active]="activeTab() === 'pending'" (click)="switchTab('pending')">
+          <span class="material-symbols-outlined">hourglass_empty</span>
+          Pending
+          @if (pendingOrders().length > 0) {
+            <span class="tab-badge">{{ pendingOrders().length }}</span>
+          }
+        </button>
+        <button class="sv-tab" [class.active]="activeTab() === 'preparing'" (click)="switchTab('preparing')">
+          <span class="material-symbols-outlined">cooking</span>
+          In Progress
+          @if (preparingOrders().length > 0) {
+            <span class="tab-badge">{{ preparingOrders().length }}</span>
+          }
+        </button>
+        <button class="sv-tab" [class.active]="activeTab() === 'ready'" (click)="switchTab('ready')">
+          <span class="material-symbols-outlined">checklist</span>
+          Ready
+          @if (readyOrders().length > 0) {
+            <span class="tab-badge">{{ readyOrders().length }}</span>
+          }
+        </button>
+      </div>
+
+      <!-- Pending Queue -->
+      @if (activeTab() === 'pending') {
+        @if (isLoadingPending()) {
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        } @else if (pendingOrders().length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">check_circle</span>
+            <h3>No Pending Orders</h3>
+            <p>All orders have been reviewed.</p>
+          </div>
+        } @else {
+          <div class="order-list">
+            @for (order of pendingOrders(); track order.id) {
+              <div class="order-card pending-card">
+                <div class="order-head">
+                  <div class="order-table-label">
+                    <span class="material-symbols-outlined">table_restaurant</span>
+                    <span>Table {{ order.tab?.table?.tableNumber || order.tab?.tableId || '—' }}</span>
+                  </div>
+                  <span class="order-time">{{ formatTime(order.createdAt) }}</span>
+                </div>
+                <div class="order-body">
+                  <div class="order-waiter">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>{{ order.waiter?.fullName || 'Unknown Waiter' }}</span>
+                  </div>
+                  <div class="order-items">
+                    <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>
+                    <div class="items-tags">
+                      @for (item of (order.items || []).slice(0, 4); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName || item.menu_item_name || 'Item' }}</span>
+                      }
+                      @if ((order.items?.length || 0) > 4) {
+                        <span class="item-tag more">+{{ (order.items?.length || 0) - 4 }} more</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="order-actions">
+                  <button class="btn-approve" [disabled]="isProcessingAction()" (click)="openApproveModal(order)">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    {{ isProcessingAction() ? 'Working...' : 'Approve' }}
+                  </button>
+                  <button class="btn-decline" [disabled]="isProcessingAction()" (click)="openDeclineModal(order)">
+                    <span class="material-symbols-outlined">cancel</span>
+                    {{ isProcessingAction() ? 'Working...' : 'Decline' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- Preparing Queue -->
+      @if (activeTab() === 'preparing') {
+        @if (isLoadingPreparing()) {
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        } @else if (preparingOrders().length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">timer_off</span>
+            <h3>No Orders In Progress</h3>
+            <p>Approved orders will appear here with live countdowns.</p>
+          </div>
+        } @else {
+          <div class="order-list">
+            @for (order of preparingOrders(); track order.id) {
+              <div class="order-card preparing-card">
+                <div class="order-head">
+                  <div class="order-table-label">
+                    <span class="material-symbols-outlined">table_restaurant</span>
+                    <span>Table {{ order.tab?.table?.tableNumber || order.tab?.tableId || '—' }}</span>
+                  </div>
+                  <div class="countdown" [class.urgent]="getRemainingSeconds(order) <= 60">
+                    <span class="material-symbols-outlined">timer</span>
+                    <span>{{ formatCountdown(order) }}</span>
+                  </div>
+                </div>
+                <div class="order-body">
+                  <div class="order-waiter">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>{{ order.waiter?.fullName || 'Unknown Waiter' }}</span>
+                  </div>
+                  @if (order.department) {
+                    <div class="dept-badge">{{ order.department.name }}</div>
+                  }
+                  <div class="order-items">
+                    <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>
+                    <div class="items-tags">
+                      @for (item of (order.items || []).slice(0, 3); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName || item.menu_item_name || 'Item' }}</span>
+                      }
+                      @if ((order.items?.length || 0) > 3) {
+                        <span class="item-tag more">+{{ (order.items?.length || 0) - 3 }} more</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- Ready Queue -->
+      @if (activeTab() === 'ready') {
+        @if (isLoadingReady()) {
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        } @else if (readyOrders().length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <h3>No Orders Ready</h3>
+            <p>Orders whose timer has expired will appear here.</p>
+          </div>
+        } @else {
+          <div class="order-list">
+            @for (order of readyOrders(); track order.id) {
+              <div class="order-card ready-card">
+                <div class="order-head">
+                  <div class="order-table-label">
+                    <span class="material-symbols-outlined">table_restaurant</span>
+                    <span>Table {{ order.tab?.table?.tableNumber || order.tab?.tableId || '—' }}</span>
+                  </div>
+                  <span class="ready-pill">Ready</span>
+                </div>
+                <div class="order-body">
+                  <div class="order-waiter">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>{{ order.waiter?.fullName || 'Unknown Waiter' }}</span>
+                  </div>
+                  <div class="order-items">
+                    <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>
+                    <div class="items-tags">
+                      @for (item of (order.items || []).slice(0, 3); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName || item.menu_item_name || 'Item' }}</span>
+                      }
+                      @if ((order.items?.length || 0) > 3) {
+                        <span class="item-tag more">+{{ (order.items?.length || 0) - 3 }} more</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="order-actions">
+                  <button class="btn-deliver" [disabled]="isProcessingAction()" (click)="deliverOrder(order)">
+                    <span class="material-symbols-outlined">task_alt</span>
+                    {{ isProcessingAction() ? 'Working...' : 'Mark Delivered' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Service Journal -->
+    <div class="glass-card sv-journal">
+      <div class="widget-head">
+        <h2><span class="material-symbols-outlined">edit_note</span> Service Journal</h2>
+        <span class="widget-head-sub">{{ journalEntries().length }} entries</span>
+      </div>
+      <div class="journal-input-row">
+        <input
+          type="text"
+          [(ngModel)]="journalText"
+          (keydown.enter)="addJournalEntry()"
+          placeholder="Log an incident or note e.g. Table 4 sent back steak..."
+          class="journal-input"
+        >
+        <button class="btn-journal-add" (click)="addJournalEntry()" [disabled]="!journalText.trim()">
+          <span class="material-symbols-outlined">add</span>
+        </button>
+      </div>
+      <div class="journal-list">
+        @for (entry of journalEntries(); track entry.id) {
+          <div class="journal-entry">
+            <div class="journal-bullet"></div>
+            <div class="journal-body">
+              <p class="journal-text">{{ entry.text }}</p>
+              <span class="journal-time">{{ formatJournalTime(entry.timestamp) }}</span>
+            </div>
+            <button class="journal-delete" (click)="deleteJournalEntry(entry.id)" title="Delete">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        } @empty {
+          <div class="journal-empty">
+            <span class="material-symbols-outlined">note_add</span>
+            <p>No entries yet. Log service incidents or handover notes here.</p>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>
