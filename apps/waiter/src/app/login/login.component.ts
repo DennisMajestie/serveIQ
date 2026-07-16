@@ -72,8 +72,8 @@ export class LoginComponent implements OnInit {
       next: (res: any) => {
         const role = (res?.data?.user?.role || res?.data?.role || localStorage.getItem('userRole') || '').toString().toLowerCase();
         if (role === 'supervisor') {
-          const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
-          window.location.assign(adminUrl + '/app/supervisor/orders');
+          this.authService.logout();
+          Swal.fire({ icon: 'error', title: 'Access Denied', text: 'Please use the Supervisor app to log in.' });
           return;
         }
         this.router.navigate(['/tables']);

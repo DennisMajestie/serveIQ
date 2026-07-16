@@ -1,0 +1,93 @@
+{
+  "name": "supervisor",
+  "root": "apps/supervisor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/supervisor/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/supervisor",
+        "browser": "apps/supervisor/src/main.ts",
+        "tsConfig": "apps/supervisor/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/supervisor/public"
+          }
+        ],
+        "styles": ["apps/supervisor/src/styles.scss"],
+        "allowedCommonJsDependencies": ["sweetalert2"],
+        "fileReplacements": [
+          {
+            "replace": "apps/supervisor/src/environments/environment.ts",
+            "with": "apps/supervisor/src/environments/environment.prod.ts"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "15kb",
+              "maximumError": "20kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "options": {
+        "port": 4202
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "supervisor:build:production"
+        },
+        "development": {
+          "buildTarget": "supervisor:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "supervisor:build",
+        "port": 4202,
+        "staticFilePath": "dist/apps/supervisor/browser",
+        "spa": true
+      }
+    }
+  }
+}

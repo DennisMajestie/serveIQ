@@ -3,11 +3,6 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
 import { ThemePreferenceService } from './theme-preference.service';
 
-/**
- * Route guard that redirects unauthenticated users to /login.
- * Redirects supervisors/admins to the admin app.
- * Also pre-caches the user's theme preference for canMatch guards.
- */
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -19,9 +14,12 @@ export const authGuard: CanActivateFn = () => {
   }
 
   const role = localStorage.getItem('userRole');
-  if (role === 'supervisor' || role === 'super_admin') {
-    const adminUrl = env.publicMenuBaseUrl.replace(/\/+$/, '');
-    window.location.assign(adminUrl + (role === 'supervisor' ? '/app/supervisor/orders' : '/app/admin/dashboard'));
+  if (role === 'supervisor') {
+    window.location.assign(env.publicMenuBaseUrl.replace(/\/+$/, '') + '/login');
+    return false;
+  }
+  if (role === 'super_admin') {
+    window.location.assign(env.publicMenuBaseUrl.replace(/\/+$/, '') + '/app/admin/dashboard');
     return false;
   }
 

@@ -1,0 +1,150 @@
+/* Luminous Engine — Supervisor Style Core (reuses admin tokens) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
+:root {
+  --on-tertiary: #ffffff;
+  --secondary: #575e70;
+  --on-primary-fixed-variant: #783200;
+  --on-primary-container: #582200;
+  --on-secondary: #ffffff;
+  --on-tertiary-fixed-variant: #004b74;
+  --tertiary: #006398;
+  --on-secondary-fixed-variant: #404758;
+  --tertiary-fixed: #cde5ff;
+  --primary-container: #f97316;
+  --primary: #9d4300;
+  --on-secondary-container: #5c6274;
+  --background: #f9f9ff;
+  --surface-container: #e7eefe;
+  --surface-variant: #dce2f3;
+  --outline-variant: #e0c0b1;
+  --on-background: #151c27;
+  --surface-container-low: #f0f3ff;
+  --secondary-fixed: #dce2f7;
+  --primary-fixed: #ffdbca;
+  --tertiary-fixed-dim: #93ccff;
+  --surface: #f9f9ff;
+  --on-surface: #151c27;
+  --error-container: #ffdad6;
+  --secondary-fixed-dim: #c0c6db;
+  --on-error-container: #93000a;
+  --surface-container-high: #e2e8f8;
+  --primary-fixed-dim: #ffb690;
+  --surface-bright: #f9f9ff;
+  --on-tertiary-container: #003554;
+  --surface-tint: #9d4300;
+  --inverse-surface: #2a313d;
+  --inverse-on-surface: #ebf1ff;
+  --on-secondary-fixed: #141b2b;
+  --on-error: #ffffff;
+  --error: #ba1a1a;
+  --surface-dim: #d3daea;
+  --secondary-container: #d9dff5;
+  --on-tertiary-fixed: #001d32;
+  --on-surface-variant: #584237;
+  --tertiary-container: #00a2f4;
+  --inverse-primary: #ffb690;
+  --on-primary-fixed: #341100;
+  --surface-container-highest: #dce2f3;
+  --outline: #8c7164;
+  --on-primary: #ffffff;
+  --surface-container-lowest: #ffffff;
+  --radius-sm: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+  --radius-2xl: 1.5rem;
+  --stack-md: 16px;
+  --tap-target-min: 48px;
+  --stack-sm: 8px;
+  --gutter-mobile: 16px;
+  --margin-page: 24px;
+  --gutter-web: 24px;
+}
+
+[data-theme="dark"] {
+  --primary: #4be277;
+  --on-primary: #003915;
+  --primary-container: rgba(75, 226, 119, 0.15);
+  --on-primary-container: #4be277;
+  --primary-fixed: rgba(75, 226, 119, 0.2);
+  --primary-fixed-dim: rgba(75, 226, 119, 0.3);
+  --on-primary-fixed: #ffffff;
+  --on-primary-fixed-variant: #4be277;
+  --secondary: #adc6ff;
+  --on-secondary: #0c1324;
+  --secondary-container: rgba(173, 198, 255, 0.1);
+  --on-secondary-container: #adc6ff;
+  --secondary-fixed: #adc6ff;
+  --secondary-fixed-dim: #7a94d0;
+  --on-secondary-fixed: #0c1324;
+  --on-secondary-fixed-variant: #404758;
+  --tertiary: #93ccff;
+  --on-tertiary: #003554;
+  --tertiary-container: #006398;
+  --on-tertiary-container: #93ccff;
+  --tertiary-fixed: #cde5ff;
+  --tertiary-fixed-dim: #93ccff;
+  --on-tertiary-fixed: #001d32;
+  --on-tertiary-fixed-variant: #004b74;
+  --background: #020617;
+  --on-background: #dce1fb;
+  --surface: #0f172a;
+  --on-surface: #dce1fb;
+  --surface-dim: #020617;
+  --surface-bright: #1a2235;
+  --surface-container-lowest: #020617;
+  --surface-container-low: #0a1022;
+  --surface-container: #0f172a;
+  --surface-container-high: #1a2235;
+  --surface-container-highest: #1e2840;
+  --surface-variant: #1e2840;
+  --on-surface-variant: rgba(188, 203, 185, 0.4);
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffb4ab;
+  --outline: #4a5570;
+  --outline-variant: #2a3550;
+  --inverse-surface: #dce1fb;
+  --inverse-on-surface: #020617;
+  --inverse-primary: #9d4300;
+  --surface-tint: #4be277;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--on-background);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root, [data-theme] {
+    transition: background-color 0.35s ease, color 0.35s ease;
+  }
+}
+
+.material-symbols-outlined,
+.material-icons {
+  font-family: 'Material Icons' !important;
+  font-display: block;
+  visibility: hidden;
+}
+
+body.fonts-loaded {
+  .material-symbols-outlined,
+  .material-icons {
+    visibility: visible;
+  }
+}
+
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--surface-container-high) !important;
+  color: var(--on-surface) !important;
+  border-color: var(--outline) !important;
+}
