@@ -159,9 +159,11 @@ export class WaiterManagementComponent implements OnInit {
   }
 
   resetPin(id: string) {
+    const staff = this.waiters().find(w => w.id === id);
+    const role = staff?.role || 'staff member';
     Swal.fire({
       title: 'Reset PIN',
-      text: `Reset PIN for this waiter? A new PIN will be generated and displayed.`,
+      text: `Reset PIN for this ${role}? A new PIN will be generated and displayed.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Reset PIN'
@@ -174,7 +176,7 @@ export class WaiterManagementComponent implements OnInit {
             Swal.fire({
               icon: 'success',
               title: 'PIN Reset',
-              html: `New PIN generated!<br><strong>${pin}</strong><br><small>Share this PIN with the waiter</small>`,
+              html: `New PIN generated!<br><strong>${pin}</strong><br><small>Share this PIN with the ${role}</small>`,
               timer: 3000,
               showConfirmButton: true
             });
@@ -266,10 +268,11 @@ export class WaiterManagementComponent implements OnInit {
 
   deleteWaiter(id: string) {
     const staff = this.waiters().find(w => w.id === id);
+    const role = staff?.role || 'staff member';
     const label = this.getRoleLabel(staff?.role);
     Swal.fire({
       title: `Delete ${label}`,
-      text: `Are you sure you want to remove this ${label.toLowerCase()}?`,
+      text: `Are you sure you want to remove this ${role}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete'
