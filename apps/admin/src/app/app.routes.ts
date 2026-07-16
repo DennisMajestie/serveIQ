@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { authGuard } from './core/auth.guard';
 import { superAdminGuard } from './core/super-admin.guard';
+import { ownerGuard } from './core/owner.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -13,106 +14,8 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
     children: [
       {
-        path: 'dashboard',
-        loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
-      {
         path: 'supervisor/orders',
         loadComponent: () => import('./supervisor/supervisor-orders.component').then(m => m.SupervisorOrdersComponent)
-      },
-      {
-        path: 'analytics',
-        loadComponent: () => import('./analytics/analytics.component').then(m => m.AnalyticsComponent)
-      },
-      {
-        path: 'tables',
-        children: [
-          {
-            path: '',
-            loadComponent: () => import('./tables/tables-management.component').then(m => m.TablesManagementComponent)
-          },
-          {
-            path: ':id',
-            loadComponent: () => import('./tables/table-detail.component').then(m => m.TableDetailComponent)
-          }
-        ]
-      },
-      {
-        path: 'menu',
-        loadComponent: () => import('./menu/menu-management.component').then(m => m.MenuManagementComponent)
-      },
-      {
-        path: 'staff',
-        loadComponent: () => import('./staff/waiter-management.component').then(m => m.WaiterManagementComponent)
-      },
-      {
-        path: 'tabs',
-        children: [
-          {
-            path: '',
-            loadComponent: () => import('./tabs/tabs-management.component').then(m => m.TabsManagementComponent)
-          },
-          {
-            path: 'detail/:id',
-            loadComponent: () => import('./tabs/tab-detail.component').then(m => m.TabDetailComponent)
-          }
-        ]
-      },
-      {
-        path: 'suppliers',
-        loadComponent: () => import('./suppliers/suppliers.component').then(m => m.SuppliersComponent)
-      },
-      {
-        path: 'shifts',
-        loadComponent: () => import('./shifts/shifts.component').then(m => m.ShiftsComponent)
-      },
-      {
-        path: 'inventory',
-        loadComponent: () => import('./inventory/inventory.component').then(m => m.InventoryComponent)
-      },
-      {
-        path: 'inventory/audit',
-        loadComponent: () => import('./inventory/audit/audit.component').then(m => m.AuditComponent)
-      },
-      {
-        path: 'inventory/reconcile',
-        loadComponent: () => import('./inventory/reconcile/reconcile.component').then(m => m.ReconcileComponent)
-      },
-      {
-        path: 'inventory/daily-tally',
-        loadComponent: () => import('./inventory/daily-tally/daily-tally.component').then(m => m.DailyTallyComponent)
-      },
-      {
-        path: 'bills',
-        loadComponent: () => import('./bills/bills.component').then(m => m.BillsComponent)
-      },
-      {
-        path: 'pos',
-        loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)
-      },
-      {
-        path: 'reports',
-        loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
-      },
-      {
-        path: 'notifications',
-        loadComponent: () => import('./notifications/notifications.component').then(m => m.NotificationsComponent)
-      },
-      {
-        path: 'billing',
-        loadComponent: () => import('./billing/billing.component').then(m => m.BillingComponent)
-      },
-      {
-        path: 'settings',
-        loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
-      },
-      {
-        path: 'pulse',
-        loadComponent: () => import('./pulse/pulse.component').then(m => m.PulseComponent)
-      },
-      {
-        path: 'premium-dashboard',
-        loadComponent: () => import('./premium-dashboard/premium-dashboard.component').then(m => m.PremiumDashboardComponent)
       },
       {
         path: 'admin/dashboard',
@@ -130,13 +33,117 @@ export const appRoutes: Route[] = [
         canActivate: [superAdminGuard]
       },
       {
-        path: 'setup',
-        loadComponent: () => import('./business-setup/business-setup.component').then(m => m.BusinessSetupComponent)
-      },
-      {
         path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
+        canActivate: [ownerGuard],
+        children: [
+          {
+            path: 'dashboard',
+            loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+          },
+          {
+            path: 'analytics',
+            loadComponent: () => import('./analytics/analytics.component').then(m => m.AnalyticsComponent)
+          },
+          {
+            path: 'tables',
+            children: [
+              {
+                path: '',
+                loadComponent: () => import('./tables/tables-management.component').then(m => m.TablesManagementComponent)
+              },
+              {
+                path: ':id',
+                loadComponent: () => import('./tables/table-detail.component').then(m => m.TableDetailComponent)
+              }
+            ]
+          },
+          {
+            path: 'menu',
+            loadComponent: () => import('./menu/menu-management.component').then(m => m.MenuManagementComponent)
+          },
+          {
+            path: 'staff',
+            loadComponent: () => import('./staff/waiter-management.component').then(m => m.WaiterManagementComponent)
+          },
+          {
+            path: 'tabs',
+            children: [
+              {
+                path: '',
+                loadComponent: () => import('./tabs/tabs-management.component').then(m => m.TabsManagementComponent)
+              },
+              {
+                path: 'detail/:id',
+                loadComponent: () => import('./tabs/tab-detail.component').then(m => m.TabDetailComponent)
+              }
+            ]
+          },
+          {
+            path: 'suppliers',
+            loadComponent: () => import('./suppliers/suppliers.component').then(m => m.SuppliersComponent)
+          },
+          {
+            path: 'shifts',
+            loadComponent: () => import('./shifts/shifts.component').then(m => m.ShiftsComponent)
+          },
+          {
+            path: 'inventory',
+            loadComponent: () => import('./inventory/inventory.component').then(m => m.InventoryComponent)
+          },
+          {
+            path: 'inventory/audit',
+            loadComponent: () => import('./inventory/audit/audit.component').then(m => m.AuditComponent)
+          },
+          {
+            path: 'inventory/reconcile',
+            loadComponent: () => import('./inventory/reconcile/reconcile.component').then(m => m.ReconcileComponent)
+          },
+          {
+            path: 'inventory/daily-tally',
+            loadComponent: () => import('./inventory/daily-tally/daily-tally.component').then(m => m.DailyTallyComponent)
+          },
+          {
+            path: 'bills',
+            loadComponent: () => import('./bills/bills.component').then(m => m.BillsComponent)
+          },
+          {
+            path: 'pos',
+            loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)
+          },
+          {
+            path: 'reports',
+            loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
+          },
+          {
+            path: 'notifications',
+            loadComponent: () => import('./notifications/notifications.component').then(m => m.NotificationsComponent)
+          },
+          {
+            path: 'billing',
+            loadComponent: () => import('./billing/billing.component').then(m => m.BillingComponent)
+          },
+          {
+            path: 'settings',
+            loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
+          },
+          {
+            path: 'pulse',
+            loadComponent: () => import('./pulse/pulse.component').then(m => m.PulseComponent)
+          },
+          {
+            path: 'premium-dashboard',
+            loadComponent: () => import('./premium-dashboard/premium-dashboard.component').then(m => m.PremiumDashboardComponent)
+          },
+          {
+            path: 'setup',
+            loadComponent: () => import('./business-setup/business-setup.component').then(m => m.BusinessSetupComponent)
+          },
+          {
+            path: '',
+            redirectTo: 'dashboard',
+            pathMatch: 'full'
+          }
+        ]
       }
     ]
   },

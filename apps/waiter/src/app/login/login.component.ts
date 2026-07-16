@@ -2,7 +2,7 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService, UserApiService } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private userService = inject(UserApiService);
   private router = inject(Router);
+  private env = inject<EnvironmentConfig>(ENVIRONMENT_CONFIG);
 
   ngOnInit() {
     const bizId = localStorage.getItem('businessId');
@@ -65,7 +66,8 @@ export class LoginComponent implements OnInit {
       next: (res: any) => {
         const role = (res?.data?.user?.role || res?.data?.role || localStorage.getItem('userRole') || '').toString().toLowerCase();
         if (role === 'supervisor') {
-          window.location.assign('/app/supervisor/orders');
+          const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
+          window.location.assign(adminUrl + '/app/supervisor/orders');
           return;
         }
         this.router.navigate(['/tables']);

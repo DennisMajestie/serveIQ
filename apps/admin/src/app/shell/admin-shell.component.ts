@@ -61,14 +61,24 @@ interface NavItem {
             </li>
           </ul>
 
-          <ul class="nav-list" *ngIf="profile().role !== 'super_admin'">
+          <ul class="nav-list" *ngIf="profile().role === 'supervisor'">
+            <li class="nav-section-label">Order Flow</li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/supervisor/orders" routerLinkActive="active">
+                <span class="material-symbols-outlined">fact_check</span>
+                <span>Orders</span>
+              </a>
+            </li>
+          </ul>
+
+          <ul class="nav-list" *ngIf="profile().role === 'owner'">
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/dashboard" routerLinkActive="active">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dashboard</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="profile().role === 'supervisor' || profile().role === 'owner'">
+            <li class="nav-item">
               <a class="nav-link" routerLink="/app/supervisor/orders" routerLinkActive="active">
                 <span class="material-symbols-outlined">fact_check</span>
                 <span>Orders</span>
@@ -217,7 +227,7 @@ interface NavItem {
             <div class="user-profile">
               <div class="user-info">
                 <p class="user-name">{{ profile().fullName || 'Admin' }}</p>
-                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : (profile().role === 'super_admin' ? 'Super Admin' : 'Staff') }}</p>
+                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : (profile().role === 'super_admin' ? 'Super Admin' : (profile().role === 'supervisor' ? 'Supervisor' : 'Staff')) }}</p>
               </div>
               <img [src]="profile().avatarUrl || 'https://ui-avatars.com/api/?name=' + (profile().fullName || 'A') + '&background=9d4300&color=fff'" alt="Profile">
             </div>

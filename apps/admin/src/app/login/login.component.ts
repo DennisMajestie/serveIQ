@@ -75,10 +75,11 @@ export class LoginComponent {
         });
         this.isLoading.set(false);
         setTimeout(() => {
-          // Route super_admin users directly to the Platform Command Center
           const userRole = localStorage.getItem('userRole');
           if (userRole === 'super_admin') {
             this.router.navigate(['/app/admin/dashboard']);
+          } else if (userRole === 'supervisor') {
+            this.router.navigate(['/app/supervisor/orders']);
           } else {
             this.router.navigate(['/app/dashboard']);
           }
