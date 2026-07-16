@@ -190,6 +190,9 @@
                     <span class="material-symbols-outlined">cancel</span>
                     {{ isProcessingAction() ? 'Working...' : 'Decline' }}
                   </button>
+                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(order)">
+                    <span class="material-symbols-outlined">history</span>
+                  </button>
                 </div>
               </div>
             }
@@ -230,6 +233,9 @@
                   @if (order.department) {
                     <div class="dept-badge">{{ order.department.name }}</div>
                   }
+                  <button class="btn-timeline-icon" title="View activity timeline" (click)="viewOrderTimeline(order)">
+                    <span class="material-symbols-outlined">history</span>
+                  </button>
                   <div class="order-items">
                     <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>
                     <div class="items-tags">
@@ -292,6 +298,9 @@
                     <span class="material-symbols-outlined">task_alt</span>
                     {{ isProcessingAction() ? 'Working...' : 'Mark Delivered' }}
                   </button>
+                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(order)">
+                    <span class="material-symbols-outlined">history</span>
+                  </button>
                 </div>
               </div>
             }
@@ -300,43 +309,38 @@
       }
     </div>
 
-    <!-- Service Journal -->
-    <div class="glass-card sv-journal">
+    <!-- Activity Feed -->
+    <div class="glass-card sv-activity">
       <div class="widget-head">
-        <h2><span class="material-symbols-outlined">edit_note</span> Service Journal</h2>
-        <span class="widget-head-sub">{{ journalEntries().length }} entries</span>
+        <h2><span class="material-symbols-outlined">history</span> Recent Activity</h2>
+        <a class="widget-head-link" routerLink="/activity">View All</a>
       </div>
-      <div class="journal-input-row">
-        <input
-          type="text"
-          [(ngModel)]="journalText"
-          (keydown.enter)="addJournalEntry()"
-          placeholder="Log an incident or note e.g. Table 4 sent back steak..."
-          class="journal-input"
-        >
-        <button class="btn-journal-add" (click)="addJournalEntry()" [disabled]="!journalText.trim()">
-          <span class="material-symbols-outlined">add</span>
-        </button>
-      </div>
-      <div class="journal-list">
-        @for (entry of journalEntries(); track entry.id) {
-          <div class="journal-entry">
-            <div class="journal-bullet"></div>
-            <div class="journal-body">
-              <p class="journal-text">{{ entry.text }}</p>
-              <span class="journal-time">{{ formatJournalTime(entry.timestamp) }}</span>
+      @if (isActivityLoading()) {
+        <div class="activity-skeleton">
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
+        </div>
+      } @else if (activityLogs().length === 0) {
+        <div class="activity-empty">
+          <span class="material-symbols-outlined">radio_button_unchecked</span>
+          <p>No recent activity logged.</p>
+        </div>
+      } @else {
+        <div class="activity-list">
+          @for (log of activityLogs(); track log.id) {
+            <div class="activity-entry" [class]="'activity-' + getActivityIcon(log).type">
+              <div class="activity-icon">
+                <span class="material-symbols-outlined">{{ getActivityIcon(log).icon }}</span>
+              </div>
+              <div class="activity-body">
+                <p class="activity-text">{{ formatActivityAction(log) }}</p>
+                <span class="activity-time">{{ formatActivityTime(log.createdAt) }}</span>
+              </div>
             </div>
-            <button class="journal-delete" (click)="deleteJournalEntry(entry.id)" title="Delete">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-        } @empty {
-          <div class="journal-empty">
-            <span class="material-symbols-outlined">note_add</span>
-            <p>No entries yet. Log service incidents or handover notes here.</p>
-          </div>
-        }
-      </div>
+          }
+        </div>
+      }
     </div>
 
   </div>

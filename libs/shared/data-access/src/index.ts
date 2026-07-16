@@ -40,3 +40,4 @@ export * from './lib/api/notifications-api.service';
 export * from './lib/api/departments-api.service';
 export * from './lib/api/ai-api.service';
 export * from './lib/api/public-menu-api.service';
+export * from './lib/api/audit-api.service';

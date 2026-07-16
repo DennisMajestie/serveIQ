@@ -543,3 +543,24 @@ export interface Notification {
   isRead: boolean;
   createdAt: Date;
 }
+
+export interface AuditLog {
+  id: string;
+  branchId: string;
+  userId?: string;
+  action: string;
+  entityId?: string;
+  entityType?: string;
+  payload?: any;
+  createdAt: string;
+}
+
+export interface AuditLogResponse {
+  data: AuditLog[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}

@@ -176,6 +176,11 @@ export const API_CONFIG = {
     departments: {
       list: '/api/v1/departments',
     },
+    // Audit Logs
+    auditLogs: {
+      list: '/api/v1/audit-logs',
+      recent: '/api/v1/audit-logs/recent',
+    },
     admin: {
       businesses: '/api/v1/admin/businesses',
       business: '/api/v1/admin/businesses/:id',
