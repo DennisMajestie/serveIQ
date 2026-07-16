@@ -141,7 +141,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     const userId = this.currentUser()?.id;
     if (userId) {
       this.auditApi.list({ user_id: userId, limit: 20 }).subscribe({
-        next: (res) => { this.activityLogs.set(res.data); this.isActivityLoading.set(false); },
+        next: (res: any) => { this.activityLogs.set(Array.isArray(res) ? res : (res.data || [])); this.isActivityLoading.set(false); },
         error: () => this.isActivityLoading.set(false),
       });
     } else {
@@ -533,15 +533,16 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
       color: '#fff',
       didOpen: () => {
         this.auditApi.list({ entity_type: 'order', entity_id: order.id, limit: 50 }).subscribe({
-          next: (res) => {
+          next: (res: any) => {
             const el = document.getElementById('timeline-content');
             if (!el) return;
-            if (res.data.length === 0) {
+            const logs = Array.isArray(res) ? res : (res.data || []);
+            if (logs.length === 0) {
               el.innerHTML = '<div style="text-align:center;padding:20px;color:#666;">No activity recorded for this order.</div>';
               return;
             }
             el.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">' +
-              res.data.map((log: any) => `
+              logs.map((log: any) => `
                 <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);">
                   <span style="font-size:18px;">${this.getTimelineIcon(log.action)}</span>
                   <div style="flex:1;">
