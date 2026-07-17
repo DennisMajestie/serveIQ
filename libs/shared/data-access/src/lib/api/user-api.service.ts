@@ -66,8 +66,13 @@ export class UserApiService extends BaseApiService {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.users.delete, { id }));
   }
 
-  /** Deactivate a user (owner only). */
+  /** Deactivate a user (owner only). Invalidates their PIN and active sessions. */
   deactivateUser(id: string): Observable<User> {
     return this.patch<User>(buildUrl(API_CONFIG.endpoints.users.deactivate, { id }), {});
+  }
+
+  /** Reactivate a user (owner only). A new PIN must be created afterward. */
+  reactivateUser(id: string): Observable<User> {
+    return this.patch<User>(buildUrl(API_CONFIG.endpoints.users.update, { id }), { isActive: true });
   }
 }

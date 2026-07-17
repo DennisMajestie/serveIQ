@@ -132,7 +132,7 @@
                     <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="resetPin(waiter.id)" title="Reset PIN">
                       <span class="material-symbols-outlined text-[16px]">key</span>
                     </button>
-                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="toggleStatus(waiter)" title="Toggle Active">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="toggleStatus(waiter)" [title]="waiter.isActive !== false ? 'Deactivate (auto-logout + invalidate PIN)' : 'Reactivate (generate new PIN)'">
                       <span class="material-symbols-outlined text-[16px]">{{ waiter.isActive !== false ? 'block' : 'check_circle' }}</span>
                     </button>
                     <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="deleteWaiter(waiter.id)" title="Delete">

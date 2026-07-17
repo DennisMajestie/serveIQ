@@ -247,20 +247,84 @@ export class WaiterManagementComponent implements OnInit {
   }
 
   deactivateWaiter(id: string) {
+    const staff = this.waiters().find(w => w.id === id);
+    const name = staff?.fullName || 'This staff member';
     Swal.fire({
-      title: 'Deactivate Waiter',
-      text: 'This waiter will lose access to the system. You can re-activate later.',
+      title: 'Deactivate Staff',
+      html: `
+        <div style="text-align:left;font-size:14px;line-height:1.6">
+          <p><strong>${name}</strong> will be:</p>
+          <p>⛔ <strong>Auto-logged out</strong> from all devices immediately</p>
+          <p>❌ <strong>PIN invalidated</strong> — existing PIN will no longer work</p>
+          <br/>
+          <p style="color:var(--on-surface-variant)">To re-grant access, you'll need to reactivate and generate a new PIN.</p>
+        </div>
+      `,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Deactivate'
+      confirmButtonColor: '#EF4444',
+      confirmButtonText: 'Yes, Deactivate',
+      cancelButtonText: 'Cancel'
     }).then(result => {
       if (result.isConfirmed) {
         this.staffService.deactivateUser(id).subscribe({
           next: () => {
             this.waiters.update(ws => ws.map(w => w.id === id ? { ...w, isActive: false } : w));
-            Swal.fire({ icon: 'success', title: 'Waiter Deactivated', timer: 2000, showConfirmButton: false });
+            Swal.fire({
+              icon: 'success',
+              title: 'Staff Deactivated',
+              html: `${name} has been deactivated.<br/>Their session was terminated and PIN is now invalid.`,
+              showCancelButton: true,
+              confirmButtonText: 'Reset PIN',
+              cancelButtonText: 'OK'
+            }).then((r) => {
+              if (r.isConfirmed) {
+                this.resetPin(id);
+              }
+            });
           },
-          error: () => Swal.fire({ icon: 'error', title: 'Failed' })
+          error: () => Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not deactivate staff member.' })
+        });
+      }
+    });
+  }
+
+  reactivateWaiter(id: string) {
+    const staff = this.waiters().find(w => w.id === id);
+    const name = staff?.fullName || 'This staff member';
+    Swal.fire({
+      title: 'Reactivate Staff',
+      html: `
+        <div style="text-align:left;font-size:14px;line-height:1.6">
+          <p>Reactivate <strong>${name}</strong>?</p>
+          <p>A <strong>new PIN</strong> will be generated and must be shared with the staff member.</p>
+          <p style="color:var(--on-surface-variant)">The old PIN will remain invalid.</p>
+        </div>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--primary)',
+      confirmButtonText: 'Yes, Reactivate',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.staffService.reactivateUser(id).subscribe({
+          next: () => {
+            this.waiters.update(ws => ws.map(w => w.id === id ? { ...w, isActive: true } : w));
+            Swal.fire({
+              icon: 'success',
+              title: 'Staff Reactivated',
+              html: `${name} is now active.<br/>Generate a new PIN to grant access.`,
+              showCancelButton: true,
+              confirmButtonText: 'Generate New PIN',
+              cancelButtonText: 'Done'
+            }).then((r) => {
+              if (r.isConfirmed) {
+                this.resetPin(id);
+              }
+            });
+          },
+          error: () => Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not reactivate staff member.' })
         });
       }
     });
@@ -297,6 +361,8 @@ export class WaiterManagementComponent implements OnInit {
   toggleStatus(waiter: Waiter) {
     if (waiter.isActive) {
       this.deactivateWaiter(waiter.id);
+    } else {
+      this.reactivateWaiter(waiter.id);
     }
   }
   clearFilters() { this.searchQuery.set(''); }
