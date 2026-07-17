@@ -1,24 +1,24 @@
-<main class="min-h-screen flex items-center justify-center bg-[#ffffff] p-4 md:p-0">
+<main class="min-h-screen flex items-center justify-center p-4 md:p-0">
   <div class="w-full max-w-[440px]">
     <!-- Login Card -->
-    <div class="login-card bg-white rounded-xl p-8 border border-[#e0c0b1]/30 flex flex-col items-center">
+    <div class="login-card rounded-xl p-8 border flex flex-col items-center" style="background: var(--surface-container); border-color: color-mix(in srgb, var(--outline-variant) 30%, transparent);">
       <!-- Logo -->
       <div class="mb-8 flex flex-col items-center gap-2">
-        <div class="w-12 h-12 bg-[#F97316] rounded-lg flex items-center justify-center shadow-sm">
+        <div class="w-12 h-12 rounded-lg flex items-center justify-center shadow-sm" style="background: var(--primary-container);">
           <span class="material-symbols-outlined text-white text-[28px]" style="font-variation-settings:'FILL'1">restaurant</span>
         </div>
-        <span class="text-[24px] leading-[32px] font-semibold text-[#151c27] tracking-tight font-extrabold" style="font-family:'Inter',sans-serif">ServeIQ</span>
+        <span class="text-[24px] leading-[32px] font-semibold tracking-tight font-extrabold" style="font-family:'Inter',sans-serif;color:var(--on-surface);">ServeIQ</span>
       </div>
       <!-- Header -->
       <div class="w-full mb-8">
-        <h1 class="text-[24px] leading-[32px] font-semibold text-[#111827] text-center font-bold" style="font-family:'Inter',sans-serif">Welcome back</h1>
-        <p class="text-[16px] leading-[24px] text-[#584237] text-center mt-2" style="font-family:'Inter',sans-serif">Enter your credentials to manage your floor.</p>
+        <h1 class="text-[24px] leading-[32px] font-semibold text-center font-bold" style="font-family:'Inter',sans-serif;color:var(--on-background);">Welcome back</h1>
+        <p class="text-[16px] leading-[24px] text-center mt-2" style="font-family:'Inter',sans-serif;color:var(--on-surface-variant);">Enter your credentials to manage your floor.</p>
       </div>
       <!-- Login Form -->
       <form class="w-full space-y-6" (ngSubmit)="onSubmit()">
         <!-- Email -->
         <div class="space-y-2">
-          <label class="text-[14px] leading-[20px] font-semibold text-[#151c27]" style="font-family:'Inter',sans-serif" for="email">Email Address</label>
+          <label class="text-[14px] leading-[20px] font-semibold" style="font-family:'Inter',sans-serif;color:var(--on-surface);" for="email">Email Address</label>
           <div class="relative group">
             <input
               id="email"
@@ -27,10 +27,10 @@
               [(ngModel)]="email"
               placeholder="name@restaurant.com"
               required
-              class="w-full h-[48px] px-4 rounded-lg bg-[#f9f9ff] border border-[#e0c0b1]/50 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#F97316]/20 focus:border-[#F97316] text-[#151c27] text-[16px] leading-[24px] placeholder:text-[#584237]/50"
+              class="login-input w-full h-[48px] px-4 rounded-lg outline-none transition-all duration-200 text-[16px] leading-[24px]"
               style="font-family:'Inter',sans-serif"
             />
-            <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[#584237]/40">
+            <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none" style="color:color-mix(in srgb, var(--on-surface-variant) 40%, transparent);">
               <span class="material-symbols-outlined text-[20px]">mail</span>
             </div>
           </div>
@@ -38,7 +38,7 @@
         <!-- Password -->
         <div class="space-y-2">
           <div class="flex justify-between items-center">
-            <label class="text-[14px] leading-[20px] font-semibold text-[#151c27]" style="font-family:'Inter',sans-serif" for="password">Password</label>
+            <label class="text-[14px] leading-[20px] font-semibold" style="font-family:'Inter',sans-serif;color:var(--on-surface);" for="password">Password</label>
           </div>
           <div class="relative group">
             <input
@@ -48,12 +48,13 @@
               [(ngModel)]="password"
               placeholder="••••••••"
               required
-              class="w-full h-[48px] px-4 rounded-lg bg-[#f9f9ff] border border-[#e0c0b1]/50 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#F97316]/20 focus:border-[#F97316] text-[#151c27] text-[16px] leading-[24px] placeholder:text-[#584237]/50"
+              class="login-input w-full h-[48px] px-4 rounded-lg outline-none transition-all duration-200 text-[16px] leading-[24px]"
               style="font-family:'Inter',sans-serif"
             />
             <button
               type="button"
-              class="absolute inset-y-0 right-4 flex items-center text-[#584237]/60 hover:text-[#F97316] transition-colors"
+              class="absolute inset-y-0 right-4 flex items-center transition-colors"
+              style="color:color-mix(in srgb, var(--on-surface-variant) 60%, transparent);"
               (click)="showPassword.set(!showPassword())"
               [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
             >
@@ -64,17 +65,17 @@
         <!-- Remember Me & Forgot Password -->
         <div class="flex items-center justify-between py-1">
           <label class="flex items-center gap-2 cursor-pointer group">
-            <input type="checkbox" class="w-4 h-4 rounded border-[#e0c0b1]/50 text-[#F97316] focus:ring-[#F97316] cursor-pointer" />
-            <span class="text-[14px] leading-[20px] font-semibold text-[#584237] group-hover:text-[#151c27] transition-colors" style="font-family:'Inter',sans-serif">Remember me</span>
+            <input type="checkbox" class="w-4 h-4 rounded cursor-pointer" style="border-color:color-mix(in srgb, var(--outline-variant) 50%, transparent);" />
+            <span class="text-[14px] leading-[20px] font-semibold transition-colors" style="font-family:'Inter',sans-serif;color:var(--on-surface-variant);">Remember me</span>
           </label>
-          <button type="button" class="text-[14px] leading-[20px] font-semibold text-[#9d4300] hover:underline transition-all border-none bg-transparent cursor-pointer" style="font-family:'Inter',sans-serif" (click)="forgotPassword()">Forgot password?</button>
+          <button type="button" class="text-[14px] leading-[20px] font-semibold hover:underline transition-all border-none bg-transparent cursor-pointer" style="font-family:'Inter',sans-serif;color:var(--primary);" (click)="forgotPassword()">Forgot password?</button>
         </div>
         <!-- Submit Button -->
         <button
           type="submit"
           [disabled]="isLoading()"
-          class="w-full h-[48px] bg-[#F97316] text-white text-[14px] leading-[20px] font-semibold rounded-xl shadow-lg shadow-[#F97316]/20 hover:opacity-90 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          style="font-family:'Inter',sans-serif"
+          class="w-full h-[48px] text-[14px] leading-[20px] font-semibold rounded-xl hover:opacity-90 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+          style="font-family:'Inter',sans-serif;background:var(--primary);color:var(--on-primary);box-shadow:0 10px 15px -3px color-mix(in srgb, var(--primary) 20%, transparent);"
         >
           <span>{{ isLoading() ? 'Signing in...' : 'Sign In' }}</span>
           <span *ngIf="!isLoading()" class="material-symbols-outlined text-[18px]">login</span>
@@ -82,15 +83,15 @@
       </form>
       <!-- Sign Up Link -->
       <div class="mt-6 text-center">
-        <p class="text-[14px] leading-[20px] font-semibold text-[#584237]" style="font-family:'Inter',sans-serif">
+        <p class="text-[14px] leading-[20px] font-semibold" style="font-family:'Inter',sans-serif;color:var(--on-surface-variant);">
           Don't have an account?
-          <a routerLink="/register" class="text-[#F97316] font-bold hover:underline">Sign Up</a>
+          <a routerLink="/register" class="font-bold hover:underline" style="color:var(--primary);">Sign Up</a>
         </p>
       </div>
       <!-- Footer -->
-      <div class="mt-6 pt-6 border-t border-[#e0c0b1]/30 w-full text-center">
-        <p class="text-[14px] leading-[20px] font-semibold text-[#584237]" style="font-family:'Inter',sans-serif">
-          Need help? <a class="text-[#9d4300] font-bold hover:underline" href="#">Contact Support</a>
+      <div class="mt-6 pt-6 border-t w-full text-center" style="border-color:color-mix(in srgb, var(--outline-variant) 30%, transparent);">
+        <p class="text-[14px] leading-[20px] font-semibold" style="font-family:'Inter',sans-serif;color:var(--on-surface-variant);">
+          Need help? <a class="font-bold hover:underline" style="color:var(--primary);" href="#">Contact Support</a>
         </p>
       </div>
     </div>
@@ -98,9 +99,9 @@
     <div class="mt-8 flex items-center justify-center gap-6 opacity-40">
       <div class="flex items-center gap-2">
         <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-        <span class="text-[12px] leading-[16px] uppercase tracking-widest text-[#584237]" style="font-family:'JetBrains Mono',monospace">System Operational</span>
+        <span class="text-[12px] leading-[16px] uppercase tracking-widest" style="font-family:'JetBrains Mono',monospace;color:var(--on-surface-variant);">System Operational</span>
       </div>
-      <span class="text-[#584237] text-[12px] leading-[16px]" style="font-family:'JetBrains Mono',monospace">v2.4.0-ADMIN</span>
+      <span class="text-[12px] leading-[16px]" style="font-family:'JetBrains Mono',monospace;color:var(--on-surface-variant);">v2.4.0-ADMIN</span>
     </div>
   </div>
 </main>
