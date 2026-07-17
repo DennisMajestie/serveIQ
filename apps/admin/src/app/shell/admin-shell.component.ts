@@ -167,6 +167,10 @@ interface NavItem {
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" routerLink="/app/roles" routerLinkActive="active">
+                <span class="material-symbols-outlined">lock_manager</span>
+                <span>Roles</span>
+              </a>
               <a class="nav-link" routerLink="/app/settings" routerLinkActive="active">
                 <span class="material-symbols-outlined">settings</span>
                 <span>Settings</span>

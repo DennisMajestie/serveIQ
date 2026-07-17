@@ -127,6 +127,10 @@ export const appRoutes: Route[] = [
             loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent)
           },
           {
+            path: 'roles',
+            loadComponent: () => import('./roles/roles.component').then(m => m.RolesComponent)
+          },
+          {
             path: 'pulse',
             loadComponent: () => import('./pulse/pulse.component').then(m => m.PulseComponent)
           },

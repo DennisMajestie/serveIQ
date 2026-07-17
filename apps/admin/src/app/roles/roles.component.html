@@ -1,0 +1,114 @@
+<div class="min-h-screen p-8" style="background: var(--background); color: var(--on-background);">
+  <!-- Header -->
+  <div class="mb-8">
+    <h2 class="text-[32px] font-['Space_Grotesk'] font-bold" style="color: var(--on-background);">Roles & Permissions</h2>
+    <p class="text-[18px] font-['Inter']" style="color: var(--on-surface-variant);">Manage role permissions and access control for your restaurant</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex flex-col items-center justify-center py-12" style="color: var(--on-surface-variant); gap: 12px;">
+      <span class="material-symbols-outlined text-4xl">autorenew</span>
+      <p>Loading roles...</p>
+    </div>
+  } @else {
+    <div class="grid gap-8" style="grid-template-columns: 280px 1fr;">
+      <!-- Role sidebar -->
+      <aside>
+        <div class="glass-card p-4">
+          <h3 class="text-[14px] font-bold tracking-wider mb-4 px-3" style="color: var(--on-surface-variant);">ROLES</h3>
+          <nav class="flex flex-col gap-1">
+            @for (role of roles(); track role.id) {
+              <button
+                class="w-full flex items-center gap-3 py-3 px-4 rounded-xl text-left transition-all duration-200"
+                [class.active-role]="selectedRole()?.id === role.id"
+                (click)="selectRole(role)"
+                style="font-family: 'Inter', sans-serif;"
+              >
+                <span class="material-symbols-outlined text-[20px]">badge</span>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-[14px] truncate">{{ role.name }}</div>
+                  <div class="text-[11px] truncate" style="color: var(--on-surface-variant);">{{ role.description }}</div>
+                </div>
+                @if (role.is_system) {
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary);">System</span>
+                }
+              </button>
+            }
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Permission editor -->
+      <main>
+        @if (selectedRole(); as role) {
+          <div class="glass-card p-6">
+            <div class="flex items-center justify-between mb-8">
+              <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg" style="background: color-mix(in srgb, var(--primary) 10%, transparent);">
+                  <span class="material-symbols-outlined" style="color: var(--primary);">lock_manager</span>
+                </div>
+                <div>
+                  <h3 class="text-[24px] font-['Space_Grotesk'] font-medium">{{ role.name }}</h3>
+                  <p class="text-[14px]" style="color: var(--on-surface-variant);">{{ role.description }}</p>
+                </div>
+              </div>
+              @if (!role.is_system) {
+                <button
+                  class="px-6 py-3 rounded-full font-semibold text-[14px] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed glow-button"
+                  [disabled]="isSaving()"
+                  (click)="saveRole()"
+                  style="background: var(--primary); color: var(--on-primary); font-family: 'Inter', sans-serif;"
+                >
+                  @if (isSaving()) {
+                    Saving...
+                  } @else {
+                    Save Changes
+                  }
+                </button>
+              }
+              @if (role.is_system) {
+                <span class="px-4 py-2 rounded-full text-[13px] font-semibold" style="background: color-mix(in srgb, var(--on-surface-variant) 10%, transparent); color: var(--on-surface-variant);">
+                  System role — read only
+                </span>
+              }
+            </div>
+
+            <!-- Permission categories -->
+            <div class="space-y-6">
+              @for (group of permissionCategories(); track group.category) {
+                <div>
+                  <h4 class="text-[16px] font-bold mb-3 pb-2 border-b" style="color: var(--on-surface); border-color: color-mix(in srgb, var(--outline-variant) 30%, transparent); font-family: 'Inter', sans-serif;">
+                    {{ group.category }}
+                  </h4>
+                  <div class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                    @for (perm of group.permissions; track perm.id) {
+                      <label
+                        class="flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all duration-150"
+                        [class.permission-enabled]="hasPermission(perm.id)"
+                        [class.permission-disabled]="!hasPermission(perm.id)"
+                        style="font-family: 'Inter', sans-serif;"
+                      >
+                        <input
+                          type="checkbox"
+                          [checked]="hasPermission(perm.id)"
+                          [disabled]="role.is_system"
+                          (change)="togglePermission(perm.id)"
+                          class="mt-0.5 w-4 h-4 rounded cursor-pointer"
+                          style="accent-color: var(--primary);"
+                        />
+                        <div>
+                          <div class="font-medium text-[14px]">{{ perm.name }}</div>
+                          <div class="text-[12px] mt-0.5" style="color: var(--on-surface-variant);">{{ perm.description }}</div>
+                        </div>
+                      </label>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </main>
+    </div>
+  }
+</div>
