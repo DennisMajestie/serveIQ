@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 import { authGuard } from './core/auth.guard';
 import { superAdminGuard } from './core/super-admin.guard';
 import { ownerGuard } from './core/owner.guard';
+import { managerOrOwnerGuard } from './core/manager-or-owner.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -144,6 +145,11 @@ export const appRoutes: Route[] = [
             pathMatch: 'full'
           }
         ]
+      },
+      {
+        path: 'ads',
+        canActivate: [managerOrOwnerGuard],
+        loadComponent: () => import('./ads/ads.component').then(m => m.AdsComponent)
       }
     ]
   },
@@ -166,5 +172,9 @@ export const appRoutes: Route[] = [
   {
     path: 'public/menu/:branchId',
     loadComponent: () => import('./public-menu/public-menu.component').then(m => m.PublicMenuComponent)
+  },
+  {
+    path: 'tracking/:code',
+    loadComponent: () => import('./tracking/tracking.component').then(m => m.TrackingComponent)
   }
 ];

@@ -46,12 +46,23 @@
         </div>
       }
       @if (orderStatus() === 'APPROVED' || orderStatus() === 'PREPARING') {
-        <div class="mb-5 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
-          <span class="material-symbols-outlined text-emerald-400">timer</span>
-          <div>
-            <p class="text-emerald-300 text-sm font-semibold">{{ orderStatus() === 'APPROVED' ? 'Approved — Preparing...' : 'Preparing...' }}</p>
-            <p class="text-emerald-200/60 text-xs font-mono tracking-wider">{{ countdownLabel }} remaining</p>
+        <div class="mb-5 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col gap-2">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-emerald-400">timer</span>
+            <div>
+              <p class="text-emerald-300 text-sm font-semibold">{{ orderStatus() === 'APPROVED' ? 'Approved — Preparing...' : 'Preparing...' }}</p>
+              <p class="text-emerald-200/60 text-xs font-mono tracking-wider">{{ countdownLabel }} remaining</p>
+            </div>
           </div>
+          @if (trackingCode()) {
+            <div class="flex items-center gap-2 pl-9">
+              <span class="text-emerald-200/80 text-xs">Share this code with the customer:</span>
+              <span class="text-emerald-300 text-xs font-mono font-bold tracking-wider">{{ trackingCode() }}</span>
+              <button (click)="copyToClipboard(trackingCode()!)" class="inline-flex items-center justify-center active:scale-90 transition-all">
+                <span class="material-symbols-outlined text-[14px]" [class.text-[#4be277]]="copiedId() === trackingCode()" [class.text-emerald-400/60]="copiedId() !== trackingCode()">{{ copiedId() === trackingCode() ? 'check' : 'content_copy' }}</span>
+              </button>
+            </div>
+          }
         </div>
       }
       @if (orderStatus() === 'READY_FOR_PICKUP') {

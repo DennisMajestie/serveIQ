@@ -9,7 +9,7 @@ export interface User {
   businessId?: string;
   fullName: string;
   email: string;
-  role: 'owner' | 'waiter' | 'supervisor' | 'chef' | 'super_admin';
+  role: 'owner' | 'waiter' | 'supervisor' | 'chef' | 'manager' | 'super_admin';
   pin?: string;
   avatarUrl?: string;
   isActive?: boolean;
@@ -522,6 +522,11 @@ export interface Order {
   departmentId?: string;
   department?: Department;
   createdAt: string;
+  approvedAt?: string;
+  preparingAt?: string;
+  actualReadyTime?: string;
+  deliveredAt?: string;
+  trackingCode?: string;
 }
 
 export interface ApproveOrderRequest {

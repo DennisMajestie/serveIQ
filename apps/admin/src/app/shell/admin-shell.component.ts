@@ -61,7 +61,7 @@ interface NavItem {
             </li>
           </ul>
 
-          <ul class="nav-list" *ngIf="profile().role === 'owner'">
+          <ul class="nav-list" *ngIf="profile().role === 'owner' || profile().role === 'manager'">
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/dashboard" routerLinkActive="active">
                 <span class="material-symbols-outlined">dashboard</span>
@@ -109,6 +109,12 @@ interface NavItem {
               <a class="nav-link" routerLink="/app/departments" routerLinkActive="active">
                 <span class="material-symbols-outlined">category</span>
                 <span>Departments</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/ads" routerLinkActive="active">
+                <span class="material-symbols-outlined">campaign</span>
+                <span>Advertisements</span>
               </a>
             </li>
             <li class="nav-item">

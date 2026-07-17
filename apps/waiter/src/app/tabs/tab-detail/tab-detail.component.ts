@@ -36,6 +36,16 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   orderStatus = computed(() => this.activeOrder()?.status ?? null);
   declineReason = computed(() => this.activeOrder()?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
+  trackingCode = computed(() => this.activeOrder()?.trackingCode ?? null);
+
+  copiedId = signal<string | null>(null);
+
+  copyToClipboard(value: string) {
+    navigator.clipboard.writeText(value);
+    this.copiedId.set(value);
+    this.showToast('Copied!');
+    setTimeout(() => { this.copiedId.set(null); }, 2000);
+  }
   private countdownTick = signal(0);
 
   get remainingSeconds(): number {

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/shared/data-access';
 
@@ -28,6 +28,26 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
           <h1>{{ menuData()?.businessName }}</h1>
           <p class="subtitle">{{ menuData()?.branchName }}</p>
         </header>
+
+        <div class="tracking-section">
+          <div class="tracking-input-wrap" [class.has-error]="trackingError()">
+            <span class="material-symbols-outlined tracking-icon">pin</span>
+            <input
+              type="text"
+              class="tracking-input"
+              placeholder="Track your order — enter code (SVQ-XXXX-XXX)"
+              [(ngModel)]="trackingCode"
+              (keydown.enter)="submitTracking()"
+              maxlength="13"
+            />
+            <button class="track-btn" (click)="submitTracking()" [disabled]="!trackingCode.trim()">
+              Track
+            </button>
+          </div>
+          @if (trackingError()) {
+            <p class="tracking-error-msg">{{ trackingError() }}</p>
+          }
+        </div>
 
         <div class="sticky-bar">
           <div class="search-wrapper">
@@ -159,6 +179,62 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
       font-size: 14px;
       opacity: 0.7;
       margin: 0;
+    }
+    .tracking-section {
+      max-width: 800px;
+      margin: 12px auto 0;
+      padding: 0 16px;
+    }
+    .tracking-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0 4px 0 12px;
+    }
+    .tracking-input-wrap:focus-within {
+      border-color: #4be277;
+      box-shadow: 0 0 0 3px rgba(75,226,119,0.15);
+    }
+    .tracking-input-wrap.has-error {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220,53,69,0.1);
+    }
+    .tracking-icon {
+      font-size: 20px;
+      color: #94a3b8;
+    }
+    .tracking-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      padding: 10px 0;
+      background: transparent;
+      color: #1a1a2e;
+    }
+    .tracking-input::placeholder { color: #94a3b8; font-size: 12px; }
+    .track-btn {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: opacity 0.2s;
+    }
+    .track-btn:disabled { opacity: 0.5; cursor: default; }
+    .tracking-error-msg {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: #dc3545;
     }
     .sticky-bar {
       position: sticky;
@@ -337,6 +413,7 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
 })
 export class PublicMenuComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private publicMenuApi = inject(PublicMenuApiService);
 
   isLoading = signal(true);
@@ -361,6 +438,22 @@ export class PublicMenuComponent implements OnInit {
     }
     return items;
   });
+
+  trackingCode = '';
+  trackingError = signal('');
+
+  private readonly TRACKING_CODE_REGEX = /^SVQ-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{3}$/i;
+
+  submitTracking() {
+    const code = this.trackingCode.trim();
+    if (!code) return;
+    if (!this.TRACKING_CODE_REGEX.test(code)) {
+      this.trackingError.set('Invalid format. Expected: SVQ-XXXX-XXX');
+      return;
+    }
+    this.trackingError.set('');
+    this.router.navigate(['/tracking', code.toUpperCase()]);
+  }
 
   ngOnInit(): void {
     const branchId = this.route.snapshot.paramMap.get('branchId');

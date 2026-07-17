@@ -144,8 +144,10 @@ export const API_CONFIG = {
     // Menu extras
     menuImport: '/api/v1/menu/import',
     menuToggle: '/api/v1/menu/:id/toggle',
-    // Public menu (no auth)
+    // Public menu / tracking (no auth)
     publicMenu: '/api/v1/public/menu/:branchId',
+    publicTracking: '/api/v1/tracking/:code',
+    publicAds: '/api/v1/public/ads/:branchId',
     // AI / Nemotron
     ai: {
       generateLogic: '/api/v1/ai/generate-logic',
@@ -184,6 +186,14 @@ export const API_CONFIG = {
     auditLogs: {
       list: '/api/v1/audit-logs',
       recent: '/api/v1/audit-logs/recent',
+    },
+    // Ads / Promotions
+    ads: {
+      list: '/api/v1/advertisements',
+      get: '/api/v1/advertisements/:id',
+      create: '/api/v1/advertisements',
+      update: '/api/v1/advertisements/:id',
+      delete: '/api/v1/advertisements/:id',
     },
     admin: {
       businesses: '/api/v1/admin/businesses',
