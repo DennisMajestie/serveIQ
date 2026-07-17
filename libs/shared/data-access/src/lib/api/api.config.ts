@@ -195,6 +195,12 @@ export const API_CONFIG = {
       update: '/api/v1/advertisements/:id',
       delete: '/api/v1/advertisements/:id',
     },
+    roles: {
+      list: '/api/v1/roles',
+      permissions: '/api/v1/roles/permissions',
+      myPermissions: '/api/v1/roles/my-permissions',
+      updatePermissions: '/api/v1/roles/:id/permissions',
+    },
     admin: {
       businesses: '/api/v1/admin/businesses',
       business: '/api/v1/admin/businesses/:id',

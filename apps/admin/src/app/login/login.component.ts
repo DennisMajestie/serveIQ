@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@serveiq/shared/data-access';
+import { PermissionService } from '../core/permission.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -20,6 +21,7 @@ export class LoginComponent {
 
   private authService = inject(AuthService);
   private router = inject(Router);
+  private permissionService = inject(PermissionService);
 
   forgotPassword() {
     Swal.fire({
@@ -64,6 +66,7 @@ export class LoginComponent {
 
     this.authService.login(this.email(), this.password()).subscribe({
       next: () => {
+        this.permissionService.loadPermissions();
         Swal.fire({
           icon: 'success',
           title: 'Welcome Back!',

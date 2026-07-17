@@ -43,3 +43,4 @@ export * from './lib/api/public-menu-api.service';
 export * from './lib/api/tracking-api.service';
 export * from './lib/api/ads-api.service';
 export * from './lib/api/audit-api.service';
+export * from './lib/api/roles-api.service';

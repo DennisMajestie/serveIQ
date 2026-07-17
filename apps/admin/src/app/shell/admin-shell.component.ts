@@ -7,6 +7,7 @@ import { SyncStore } from '@serveiq/data-access';
 import { AuthService, UserApiService, TablesApiService, TabsApiService, User, SubscriptionsApiService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
 import { SubscriptionService } from '../core/subscription.service';
 import { ThemeService } from '../core/theme.service';
+import { PermissionService } from '../core/permission.service';
 import { of, forkJoin, interval, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map, catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -647,6 +648,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   subService = inject(SubscriptionService);
   themeService = inject(ThemeService);
+  permissionService = inject(PermissionService);
   private notifSub?: Subscription;
 
   daysLeft(dateStr: string | null): number {
@@ -656,6 +658,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.permissionService.loadPermissions();
     this.subService.load();
     this.userApi.getMe().subscribe({
       next: (user: any) => {
