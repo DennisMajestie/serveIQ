@@ -35,6 +35,7 @@ export class WaiterManagementComponent implements OnInit {
   roleOptions = [
     { value: 'waiter', label: 'Waiter' },
     { value: 'supervisor', label: 'Supervisor (Business Manager)' },
+    { value: 'manager', label: 'Manager' },
     { value: 'chef', label: 'Chef / Cook' },
   ];
   editWaiter = signal<Waiter | null>(null);
