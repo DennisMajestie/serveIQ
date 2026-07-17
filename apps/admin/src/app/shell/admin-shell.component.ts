@@ -223,7 +223,7 @@ interface NavItem {
             <div class="user-profile">
               <div class="user-info">
                 <p class="user-name">{{ profile().fullName || 'Admin' }}</p>
-                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : (profile().role === 'super_admin' ? 'Super Admin' : (profile().role === 'supervisor' ? 'Supervisor' : 'Staff')) }}</p>
+                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : (profile().role === 'super_admin' ? 'Super Admin' : (profile().role === 'manager' ? 'Manager' : (profile().role === 'supervisor' ? 'Supervisor' : (profile().role === 'chef' ? 'Chef' : 'Staff')))) }}</p>
               </div>
               <img [src]="profile().avatarUrl || 'https://ui-avatars.com/api/?name=' + (profile().fullName || 'A') + '&background=9d4300&color=fff'" alt="Profile">
             </div>

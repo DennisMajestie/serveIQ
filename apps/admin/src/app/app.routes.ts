@@ -1,7 +1,6 @@
 import { Route } from '@angular/router';
 import { authGuard } from './core/auth.guard';
 import { superAdminGuard } from './core/super-admin.guard';
-import { ownerGuard } from './core/owner.guard';
 import { managerOrOwnerGuard } from './core/manager-or-owner.guard';
 
 export const appRoutes: Route[] = [
@@ -31,7 +30,7 @@ export const appRoutes: Route[] = [
       },
       {
         path: '',
-        canActivate: [ownerGuard],
+        canActivate: [managerOrOwnerGuard],
         children: [
           {
             path: 'dashboard',
