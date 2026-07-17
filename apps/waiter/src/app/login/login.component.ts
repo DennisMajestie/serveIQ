@@ -75,6 +75,11 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/supervisor/orders']);
           return;
         }
+        if (role === 'manager' || role === 'owner') {
+          const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
+          window.location.assign(adminUrl + '/app/dashboard');
+          return;
+        }
         this.router.navigate(['/tables']);
       },
       error: (err) => {
