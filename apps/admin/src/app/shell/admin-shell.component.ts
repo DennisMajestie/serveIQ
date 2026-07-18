@@ -693,7 +693,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
         const q = query.trim().toLowerCase();
         return forkJoin({
           tables: this.tablesApi.getAllTables(),
-          tabs: this.tabsApi.getAllTabs(),
+          tabs: this.tabsApi.getAllTabsUnpaginated(),
           staff: this.userApi.listWaiters(),
         }).pipe(
           map(({ tables, tabs, staff }) => {

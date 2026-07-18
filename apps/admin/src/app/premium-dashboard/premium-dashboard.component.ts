@@ -78,7 +78,7 @@ export class PremiumDashboardComponent implements OnInit, AfterViewInit {
       stats: this.branchesApi.getStats().pipe(catchError(() => of(null))),
       peakHours: this.reportsApi.getPeakHours(undefined, from, today).pipe(catchError(() => of([]))),
       peakEfficiency: this.reportsApi.getPeakEfficiency(from, today).pipe(catchError(() => of([]))),
-      tabs: this.tabsApi.getAllTabs().pipe(catchError(() => of([]))),
+      tabs: this.tabsApi.getAllTabsUnpaginated().pipe(catchError(() => of([]))),
       shift: this.shiftsApi.getCurrent().pipe(catchError(() => of(null))),
     }).pipe(finalize(() => this.isLoading.set(false))).subscribe({
       next: ({ stats, peakHours, peakEfficiency, tabs, shift }) => {

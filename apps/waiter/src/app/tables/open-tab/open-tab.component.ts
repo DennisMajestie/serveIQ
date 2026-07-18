@@ -31,10 +31,10 @@ export class OpenTabComponent implements OnInit {
     if (id) {
       this.tableId = id;
       // Safety check: if a tab already exists for this table, redirect to detail
-      this.tabsApi.getAllTabs({ per_page: '1000' }).subscribe({
+      this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
         next: (tabs) => {
           const existingTab = (Array.isArray(tabs) ? tabs : []).find(
-            (t: Tab) => t.tableId === id && t.status === 'open'
+            (t: Tab) => t.tableId === id
           );
           if (existingTab) {
             this.router.navigate(['/tabs/detail', existingTab.id], { replaceUrl: true });
@@ -85,9 +85,9 @@ export class OpenTabComponent implements OnInit {
       },
       error: (err) => {
         if (err?.statusCode === 400 && err?.details?.message?.includes('already exists')) {
-          this.tabsApi.getAllTabs({ per_page: '1000' }).subscribe((tabs) => {
+          this.tabsApi.getAllTabs({ status: 'open' }).subscribe((tabs) => {
             const existing = (Array.isArray(tabs) ? tabs : []).find(
-              (t: Tab) => t.tableId === this.tableId && t.status === 'open'
+              (t: Tab) => t.tableId === this.tableId
             );
             if (existing) {
               this.router.navigate(['/tabs/detail', existing.id], { replaceUrl: true });

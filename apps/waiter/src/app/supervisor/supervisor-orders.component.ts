@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { OrdersApiService, DepartmentsApiService, TablesApiService, TabsApiService, ShiftsApiService, UserApiService, AuditApiService, showApiErrorToast, AuthService } from '@serveiq/shared/data-access';
-import { Order, Department, Table, Shift, User, Tab, AuditLog } from '@serveiq/shared/models';
+import { OrdersApiService, DepartmentsApiService, TablesApiService, ShiftsApiService, UserApiService, AuditApiService, showApiErrorToast, AuthService } from '@serveiq/shared/data-access';
+import { OrderGroup, Department, Table, Shift, User, AuditLog } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
-import { interval, Subscription, forkJoin } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 type QueueTab = 'pending' | 'preparing' | 'ready';
 
@@ -22,16 +22,15 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   private ordersApi = inject(OrdersApiService);
   private departmentsApi = inject(DepartmentsApiService);
   private tablesApi = inject(TablesApiService);
-  private tabsApi = inject(TabsApiService);
   private shiftsApi = inject(ShiftsApiService);
   private userApi = inject(UserApiService);
   private auditApi = inject(AuditApiService);
 
   activeTab = signal<QueueTab>('pending');
 
-  pendingOrders = signal<Order[]>([]);
-  preparingOrders = signal<Order[]>([]);
-  readyOrders = signal<Order[]>([]);
+  pendingOrders = signal<OrderGroup[]>([]);
+  preparingOrders = signal<OrderGroup[]>([]);
+  readyOrders = signal<OrderGroup[]>([]);
 
   isLoadingPending = signal(false);
   isLoadingPreparing = signal(false);
@@ -42,7 +41,6 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
 
   departments = signal<Department[]>([]);
   tables = signal<Table[]>([]);
-  tabs = signal<Tab[]>([]);
   currentShift = signal<Shift | null>(null);
   waiters = signal<User[]>([]);
 
@@ -159,14 +157,8 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   }
 
   loadTables() {
-    forkJoin({
-      tables: this.tablesApi.getAllTables(),
-      tabs: this.tabsApi.getAllTabs(),
-    }).subscribe({
-      next: ({ tables, tabs }) => {
-        this.tables.set(tables || []);
-        this.tabs.set(tabs || []);
-      },
+    this.tablesApi.getAllTables().subscribe({
+      next: (tables) => this.tables.set(tables || []),
     });
   }
 
@@ -210,19 +202,17 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   getTableStatusClass(table: Table): string {
     const status = table.status || 'available';
 
-    const orders = [
+    const groups = [
       ...this.pendingOrders(),
       ...this.preparingOrders(),
       ...this.readyOrders(),
     ];
-    const matchingOrder = orders.find(o => {
-      const tableId = o.tab?.tableId;
-      const tableNum = o.tab?.table?.tableNumber;
-      return tableId === table.id || tableNum === table.tableNumber;
-    });
-    if (matchingOrder) {
-      const orderStatus = this.getOrderStatusClass(matchingOrder.status);
-      return `${status} has-${orderStatus}`;
+    const match = groups.find(g =>
+      g.tableId === table.id || g.tableNumber === table.tableNumber
+    );
+    if (match) {
+      const firstItem = match.items[0];
+      return `${status} has-${this.getOrderStatusClass(firstItem?.orderStatus || '')}`;
     }
     return status;
   }
@@ -235,50 +225,40 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   }
 
   getTableOrderStatus(table: Table): string | null {
-    const orders = [
+    const groups = [
       ...this.pendingOrders(),
       ...this.preparingOrders(),
       ...this.readyOrders(),
     ];
-    const match = orders.find(o => {
-      const tableId = o.tab?.tableId;
-      const tableNum = o.tab?.table?.tableNumber;
-      return tableId === table.id || tableNum === table.tableNumber;
-    });
+    const match = groups.find(g =>
+      g.tableId === table.id || g.tableNumber === table.tableNumber
+    );
     if (!match) return null;
-    return this.getOrderStatusClass(match.status);
+    const firstItem = match.items[0];
+    return this.getOrderStatusClass(firstItem?.orderStatus || '');
   }
 
-  getTableLabel(order: Order): string {
-    if (order.tab?.table?.tableNumber) return order.tab.table.tableNumber;
-    const tab = this.tabs().find(t => t.id === order.tabId);
-    if (tab) {
-      const table = this.tables().find(t => t.id === tab.tableId);
-      if (table) return table.tableNumber;
-    }
-    return order.tab?.tableId || '—';
+  getTableLabel(group: OrderGroup): string {
+    return group.tableNumber || '—';
   }
 
-  getWaiterLabel(order: Order): string {
-    if (order.waiter?.fullName) return order.waiter.fullName;
-    const waiter = this.waiters().find(w => w.id === order.waiterId);
-    return waiter?.fullName || 'Unknown Waiter';
+  getWaiterLabel(group: OrderGroup): string {
+    return group.waiterName || 'Unknown Waiter';
   }
 
   getTableTooltip(table: Table): string {
     const status = table.status || 'available';
-    const orders = [
+    const groups = [
       ...this.pendingOrders(),
       ...this.preparingOrders(),
       ...this.readyOrders(),
     ];
-    const match = orders.find(o => {
-      const tableId = o.tab?.tableId;
-      const tableNum = o.tab?.table?.tableNumber;
-      return tableId === table.id || tableNum === table.tableNumber;
-    });
+    const match = groups.find(g =>
+      g.tableId === table.id || g.tableNumber === table.tableNumber
+    );
     if (match) {
-      return `Table ${table.tableNumber} — ${match.status.replace(/_/g, ' ')}`;
+      const firstItem = match.items[0];
+      return `Table ${table.tableNumber} — ${(firstItem?.orderStatus || '').replace(/_/g, ' ')}`;
     }
     return `Table ${table.tableNumber} — ${status}`;
   }
@@ -305,13 +285,13 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     return Math.max(0, Math.floor((end - Date.now()) / 1000));
   }
 
-  getRemainingSeconds(order: Order): number {
-    if (!order.timerEndsAt) return 0;
-    return this.getRemainingSecondsRaw(order.timerEndsAt);
+  getRemainingSeconds(group: OrderGroup): number {
+    if (!group.timerEndsAt) return 0;
+    return this.getRemainingSecondsRaw(group.timerEndsAt);
   }
 
-  formatCountdown(order: Order): string {
-    const secs = this.getRemainingSeconds(order);
+  formatCountdown(group: OrderGroup): string {
+    const secs = this.getRemainingSeconds(group);
     const m = Math.floor(secs / 60);
     const s = secs % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -365,8 +345,96 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     return `${prefix}${entityInfo}`;
   }
 
-  openApproveModal(order: Order) {
-    if (this.isProcessingAction()) return;
+
+  private processingGroupId = signal<string | null>(null);
+  private groupProgress = signal<{ total: number; completed: number; failed: boolean; errorMessage?: string } | null>(null);
+
+  private async executeSequentially(
+    group: OrderGroup,
+    action: 'approve' | 'decline' | 'deliver',
+    getBody?: (itemId: string) => any,
+  ): Promise<void> {
+    if (this.processingGroupId() === group.tabId + group.createdAt) return;
+    this.processingGroupId.set(group.tabId + group.createdAt);
+    this.groupProgress.set({ total: group.items.length, completed: 0, failed: false });
+
+    const remaining = group.items.filter(i => !i._actionDone);
+    const toProcess = remaining.length > 0 ? remaining : group.items;
+    let completed = 0;
+
+    for (let i = 0; i < toProcess.length; i++) {
+      const item = toProcess[i];
+      if (item._actionDone) continue;
+
+      const current = group.items.filter(x => x._actionDone).length;
+      this.groupProgress.set({ total: group.items.length, completed: current, failed: false });
+
+      try {
+        const body = getBody ? getBody(item.id) : undefined;
+        if (action === 'approve') {
+          await this.ordersApi.approveOrder(item.id, body).toPromise();
+        } else if (action === 'decline') {
+          await this.ordersApi.declineOrder(item.id, body).toPromise();
+        } else {
+          await this.ordersApi.deliverOrder(item.id).toPromise();
+        }
+        item._actionDone = true;
+        completed++;
+      } catch (err: any) {
+        this.groupProgress.set({
+          total: group.items.length,
+          completed: group.items.filter(x => x._actionDone).length,
+          failed: true,
+          errorMessage: err?.error?.message || err?.message || 'An error occurred',
+        });
+        this.processingGroupId.set(null);
+        return;
+      }
+    }
+
+    this.groupProgress.set({ total: group.items.length, completed: group.items.length, failed: false });
+    this.processingGroupId.set(null);
+
+    if (action === 'approve') {
+      this.pendingOrders.update(list => list.filter(g => g.tabId !== group.tabId || g.createdAt !== group.createdAt));
+    } else if (action === 'deliver') {
+      this.readyOrders.update(list => list.filter(g => g.tabId !== group.tabId || g.createdAt !== group.createdAt));
+    }
+  }
+
+  retryGroup(group: OrderGroup) {
+    const remaining = group.items.filter(i => !i._actionDone);
+    if (remaining.length === 0) return;
+    const progress = this.groupProgress();
+    if (progress?.failed) {
+      this.groupProgress.set(null);
+    }
+  }
+
+  get processingGroup(): boolean {
+    return this.processingGroupId() !== null;
+  }
+
+  isProcessingGroup(group: OrderGroup): boolean {
+    return this.processingGroupId() === group.tabId + group.createdAt;
+  }
+
+  getGroupProgressText(group: OrderGroup): string {
+    const p = this.groupProgress();
+    if (!p || this.processingGroupId() !== group.tabId + group.createdAt) return '';
+    if (p.failed) {
+      return `Failed at ${p.completed + 1} of ${p.total} — ${p.errorMessage || ''}`;
+    }
+    return `Processing ${p.completed + 1} of ${p.total}...`;
+  }
+
+  getGroupProgress(group: OrderGroup): { completed: number; total: number; failed: boolean; errorMessage?: string } | null {
+    if (this.processingGroupId() !== group.tabId + group.createdAt) return null;
+    return this.groupProgress();
+  }
+
+  openApproveModal(group: OrderGroup) {
+    if (this.isProcessingAction() || this.isProcessingGroup(group)) return;
     const depts = this.departments();
     let selectedDept = '';
     let selectedTime = 5;
@@ -442,25 +510,17 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     }).then(result => {
       if (result.isConfirmed && result.value) {
         this.isProcessingAction.set(true);
-        this.ordersApi.approveOrder(order.id, result.value).subscribe({
-          next: () => {
-            this.isProcessingAction.set(false);
-            Swal.fire({ icon: 'success', title: 'Approved', text: 'Order has been approved and sent to preparation.', timer: 1500, showConfirmButton: false, background: '#1A1A1A', color: '#fff' });
-            this.pendingOrders.update(list => list.filter(o => o.id !== order.id));
-            this.loadPreparing();
-            
-          },
-          error: (err) => {
-            this.isProcessingAction.set(false);
-            showApiErrorToast(err, 'Failed to approve order');
-          }
+        const body = result.value;
+        this.executeSequentially(group, 'approve', () => body).finally(() => {
+          this.isProcessingAction.set(false);
+          this.loadPreparing();
         });
       }
     });
   }
 
-  openDeclineModal(order: Order) {
-    if (this.isProcessingAction()) return;
+  openDeclineModal(group: OrderGroup) {
+    if (this.isProcessingAction() || this.isProcessingGroup(group)) return;
     const html = `
       <div style="text-align:left;">
         <div style="margin-bottom:8px;">
@@ -491,27 +551,20 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     }).then(result => {
       if (result.isConfirmed && result.value) {
         this.isProcessingAction.set(true);
-        this.ordersApi.declineOrder(order.id, result.value).subscribe({
-          next: () => {
-            this.isProcessingAction.set(false);
-            Swal.fire({ icon: 'info', title: 'Declined', text: 'Order has been declined.', timer: 1500, showConfirmButton: false, background: '#1A1A1A', color: '#fff' });
-            this.pendingOrders.update(list => list.filter(o => o.id !== order.id));
-            
-          },
-          error: (err) => {
-            this.isProcessingAction.set(false);
-            showApiErrorToast(err, 'Failed to decline order');
-          }
+        const body = result.value;
+        this.executeSequentially(group, 'decline', () => body).finally(() => {
+          this.isProcessingAction.set(false);
+          this.pendingOrders.update(list => list.filter(g => g.tabId !== group.tabId || g.createdAt !== group.createdAt));
         });
       }
     });
   }
 
-  deliverOrder(order: Order) {
-    if (this.isProcessingAction()) return;
+  deliverOrder(group: OrderGroup) {
+    if (this.isProcessingAction() || this.isProcessingGroup(group)) return;
     Swal.fire({
       title: 'Mark as Delivered?',
-      text: `Confirm that this order has been delivered to Table ${this.getTableLabel(order)}.`,
+      text: `Confirm that this order has been delivered to Table ${this.getTableLabel(group)}.`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Yes, Delivered',
@@ -522,24 +575,16 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     }).then(result => {
       if (result.isConfirmed) {
         this.isProcessingAction.set(true);
-        this.ordersApi.deliverOrder(order.id).subscribe({
-          next: () => {
-            this.isProcessingAction.set(false);
-            Swal.fire({ icon: 'success', title: 'Delivered', text: 'Order marked as delivered.', timer: 1500, showConfirmButton: false, background: '#1A1A1A', color: '#fff' });
-            this.readyOrders.update(list => list.filter(o => o.id !== order.id));
-            
-          },
-          error: (err) => {
-            this.isProcessingAction.set(false);
-            showApiErrorToast(err, 'Failed to mark order as delivered');
-          }
+        this.executeSequentially(group, 'deliver').finally(() => {
+          this.isProcessingAction.set(false);
         });
       }
     });
   }
 
-  viewOrderTimeline(order: Order) {
-    const tableNum = this.getTableLabel(order);
+  viewOrderTimeline(group: OrderGroup) {
+    const tableNum = this.getTableLabel(group);
+    const groupIds = group.items.map(i => i.id);
     Swal.fire({
       title: `Order Timeline — Table ${tableNum}`,
       html: '<div id="timeline-content" style="text-align:left;color:#ccc;min-height:60px;">Loading...</div>',
@@ -548,7 +593,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
       background: '#1A1A1A',
       color: '#fff',
       didOpen: () => {
-        this.auditApi.list({ entity_type: 'order', entity_id: order.id, limit: 50 }).subscribe({
+        this.auditApi.list({ entity_type: 'order', entity_id: groupIds[0], limit: 50 }).subscribe({
           next: (res: any) => {
             const el = document.getElementById('timeline-content');
             if (!el) return;

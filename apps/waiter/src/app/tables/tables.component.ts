@@ -148,9 +148,9 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   loadOpenTabs() {
     this.tabsSub?.unsubscribe();
-    this.tabsSub = this.tabsApi.getAllTabs({ per_page: '1000' }).subscribe({
+    this.tabsSub = this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
       next: (tabs) => {
-        this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
+        this.openTabs.set(Array.isArray(tabs) ? tabs : []);
       },
       error: () => {}  // poll will retry; errors are non-critical
     });
@@ -241,10 +241,9 @@ export class TablesComponent implements OnInit, OnDestroy {
 
     if (!tab && table.status === 'occupied') {
       try {
-        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ per_page: '1000' }));
-        const allOpen = Array.isArray(allTabs) ? allTabs.filter(t => t.status === 'open') : [];
-        this.openTabs.set(allOpen);
-        tab = allOpen.find(t => {
+        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open' }));
+        this.openTabs.set(Array.isArray(allTabs) ? allTabs : []);
+        tab = (Array.isArray(allTabs) ? allTabs : []).find(t => {
           if (t.tableId === table.id) return true;
           const tableObj = (t as any).table;
           return tableObj?.id === table.id;
@@ -359,8 +358,8 @@ export class TablesComponent implements OnInit, OnDestroy {
     // Cancel the stale subscribe-based load so it doesn't overwrite our fresh data
     this.tabsSub?.unsubscribe();
     try {
-      const tabs = await firstValueFrom(this.tabsApi.getAllTabs({ per_page: '1000' }));
-      this.openTabs.set(Array.isArray(tabs) ? tabs.filter(t => t.status === 'open') : []);
+      const tabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open' }));
+      this.openTabs.set(Array.isArray(tabs) ? tabs : []);
       return true;
     } catch {
       return false;

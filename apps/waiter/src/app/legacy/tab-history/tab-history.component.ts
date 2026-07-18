@@ -93,9 +93,9 @@ export class LegacyTabHistoryComponent implements OnInit {
     this.shiftsApi.list().subscribe({
       next: (shifts) => this.shifts.set(Array.isArray(shifts) ? shifts : [])
     });
-    this.tabsApi.getAllTabs({ per_page: '1000' }).subscribe({
+    this.tabsApi.getAllTabsUnpaginated().subscribe({
       next: (tabs) => {
-        const closed = tabs.filter(t => t.status === 'paid' || t.status === 'voided');
+        const closed = Array.isArray(tabs) ? tabs.filter(t => t.status === 'paid' || t.status === 'voided') : [];
         this.closedTabs.set(closed);
         this.isLoading.set(false);
       },

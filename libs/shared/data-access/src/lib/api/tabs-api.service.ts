@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, EMPTY } from 'rxjs';
+import { expand, reduce, map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
@@ -16,9 +16,26 @@ export class TabsApiService extends BaseApiService {
     super(http, env);
   }
 
-  // Get all tabs (optionally include closed/completed)
+  /**
+   * Fetch all tabs matching the given query params.
+   * Internally uses getPaginated with a multi-page loop to ensure ALL matching
+   * records are returned, regardless of the server's per_page ceiling (100).
+   * Pass status: 'open' to fetch only open tabs.
+   */
   getAllTabs(queryParams?: Record<string, string>): Observable<Tab[]> {
-    return this.get<Tab[]>(API_CONFIG.endpoints.tabs.list, undefined, queryParams);
+    const params = { per_page: '100', ...queryParams, page: '1' };
+    return this.getPaginated<{ data: Tab[]; meta: { total: number; page: number; perPage: number; totalPages: number } }>(
+      API_CONFIG.endpoints.tabs.list, undefined, params
+    ).pipe(
+      expand(res => {
+        if (res.meta.page >= res.meta.totalPages) return EMPTY;
+        return this.getPaginated<{ data: Tab[]; meta: { total: number; page: number; perPage: number; totalPages: number } }>(
+          API_CONFIG.endpoints.tabs.list, undefined,
+          { ...queryParams, per_page: '100', page: String(res.meta.page + 1) }
+        );
+      }),
+      reduce((acc, res) => [...acc, ...res.data], [] as Tab[]),
+    );
   }
 
   // Get a single tab
@@ -44,6 +61,37 @@ export class TabsApiService extends BaseApiService {
   // Delete a tab
   deleteTab(id: string): Observable<void> {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.tabs.delete, { id }));
+  }
+
+  /**
+   * Fetch ALL tabs matching optional filters by walking paginated pages.
+   * Use this when the caller needs the complete dataset (e.g. history, bills,
+   * search, dashboard stats). For the common "which tables have open tabs" case
+   * use getAllTabs({ status: 'open' }) instead.
+   */
+  getAllTabsUnpaginated(filters?: Record<string, string>): Observable<Tab[]> {
+    return new Observable<Tab[]>(observer => {
+      const acc: Tab[] = [];
+      const perPage = '100';
+      const fetchPage = (page: number) => {
+        const params: Record<string, string> = { ...filters, page: String(page), per_page: perPage };
+        this.getPaginated<{ data: Tab[]; meta: { total: number; totalPages: number } }>(
+          API_CONFIG.endpoints.tabs.list, undefined, params
+        ).subscribe({
+          next: (res) => {
+            acc.push(...res.data);
+            if (page < res.meta.totalPages) {
+              fetchPage(page + 1);
+            } else {
+              observer.next(acc);
+              observer.complete();
+            }
+          },
+          error: (err) => observer.error(err),
+        });
+      };
+      fetchPage(1);
+    });
   }
 
   // Alias for convenience

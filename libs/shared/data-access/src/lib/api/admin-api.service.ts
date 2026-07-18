@@ -54,7 +54,7 @@ export class AdminApiService extends BaseApiService {
     const queryParams: Record<string, string> = {};
     if (page) queryParams['page'] = String(page);
     if (perPage) queryParams['per_page'] = String(perPage);
-    return this.get<{ data: AdminBusiness[]; meta: any }>(
+    return this.getPaginated<{ data: AdminBusiness[]; meta: any }>(
       API_CONFIG.endpoints.admin.businesses,
       undefined,
       Object.keys(queryParams).length ? queryParams : undefined,

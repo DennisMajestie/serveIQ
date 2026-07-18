@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { OrderItem, AddOrderItemsRequest, Order, ApproveOrderRequest, DeclineOrderRequest } from '@serveiq/shared/models';
+import { OrderItem, AddOrderItemsRequest, Order, OrderGroup, ApproveOrderRequest, DeclineOrderRequest } from '@serveiq/shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class OrdersApiService extends BaseApiService {
@@ -35,8 +35,8 @@ export class OrdersApiService extends BaseApiService {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.orders.delete, { id }));
   }
 
-  getPending(): Observable<Order[]> {
-    return this.get<Order[]>(API_CONFIG.endpoints.orders.pending);
+  getPending(): Observable<OrderGroup[]> {
+    return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.pending);
   }
 
   approveOrder(id: string, body: ApproveOrderRequest): Observable<Order> {
@@ -47,12 +47,12 @@ export class OrdersApiService extends BaseApiService {
     return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.decline, { id }), body);
   }
 
-  getPreparing(): Observable<Order[]> {
-    return this.get<Order[]>(API_CONFIG.endpoints.orders.preparing);
+  getPreparing(): Observable<OrderGroup[]> {
+    return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.preparing);
   }
 
-  getReadyForPickup(): Observable<Order[]> {
-    return this.get<Order[]>(API_CONFIG.endpoints.orders.readyForPickup);
+  getReadyForPickup(): Observable<OrderGroup[]> {
+    return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.readyForPickup);
   }
 
   deliverOrder(id: string): Observable<Order> {

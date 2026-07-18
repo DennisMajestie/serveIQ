@@ -529,6 +529,37 @@ export interface Order {
   trackingCode?: string;
 }
 
+export interface OrderGroup {
+  tabId: string;
+  createdAt: string;
+  tableId: string;
+  tableNumber: string;
+  waiterId: string;
+  waiterName: string;
+  totalKobo: number;
+  timerEndsAt?: string;
+  departmentId?: string;
+  departmentName?: string;
+  items: OrderGroupItem[];
+}
+
+export interface OrderGroupItem {
+  id: string;
+  menuItemId: string;
+  menuItemName: string;
+  quantity: number;
+  unitPriceKobo: number;
+  subtotalKobo: number;
+  notes?: string;
+  modifiers?: any;
+  orderStatus?: string;
+  timerEndsAt?: string;
+  trackingCode?: string;
+  declineReason?: string;
+  createdAt?: string;
+  _actionDone?: boolean;
+}
+
 export interface ApproveOrderRequest {
   department: string;
   estimatedPreparationTimeSeconds: number;

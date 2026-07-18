@@ -155,42 +155,53 @@
           </div>
         } @else {
           <div class="order-list">
-            @for (order of pendingOrders(); track order.id) {
-              <div class="order-card pending-card">
+            @for (group of pendingOrders(); track group.tabId + group.createdAt) {
+              <div class="order-card pending-card" [class.processing]="isProcessingGroup(group)" [class.partial-failure]="getGroupProgress(group)?.failed">
                 <div class="order-head">
                   <div class="order-table-label">
                     <span class="material-symbols-outlined">table_restaurant</span>
-                    <span>Table {{ getTableLabel(order) }}</span>
+                    <span>Table {{ getTableLabel(group) }}</span>
                   </div>
-                  <span class="order-time">{{ formatTime(order.createdAt) }}</span>
+                  <span class="order-time">{{ formatTime(group.createdAt) }}</span>
+                  <span class="items-total">{{ formatKobo(group.totalKobo) }}</span>
                 </div>
                 <div class="order-body">
                   <div class="order-waiter">
                     <span class="material-symbols-outlined">person</span>
-                    <span>{{ getWaiterLabel(order) }}</span>
+                    <span>{{ getWaiterLabel(group) }}</span>
                   </div>
                   <div class="order-items">
-                    <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>
+                    <span class="items-label">{{ group.items.length }} item(s)</span>
                     <div class="items-tags">
-                      @for (item of (order.items || []).slice(0, 4); track item.id) {
-                        <span class="item-tag">{{ item.menuItemName || item.menu_item_name || 'Item' }}</span>
+                      @for (item of group.items.slice(0, 4); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName }} <span class="item-qty">x{{ item.quantity }}</span></span>
                       }
-                      @if ((order.items?.length || 0) > 4) {
-                        <span class="item-tag more">+{{ (order.items?.length || 0) - 4 }} more</span>
+                      @if (group.items.length > 4) {
+                        <span class="item-tag more">+{{ group.items.length - 4 }} more</span>
                       }
                     </div>
                   </div>
                 </div>
+                @if (getGroupProgress(group); as progress) {
+                  <div class="group-progress" [class.error]="progress.failed">
+                    @if (progress.failed) {
+                      <span class="progress-text">Failed at {{ progress.completed + 1 }} of {{ progress.total }} — {{ progress.errorMessage }}</span>
+                      <button class="btn-retry" (click)="retryGroup(group)">Retry Remaining</button>
+                    } @else {
+                      <span class="progress-text">Processing {{ progress.completed + 1 }} of {{ progress.total }}...</span>
+                    </div>
+                  }
+                }
                 <div class="order-actions">
-                  <button class="btn-approve" [disabled]="isProcessingAction()" (click)="openApproveModal(order)">
+                  <button class="btn-approve" [disabled]="isProcessingAction() || isProcessingGroup(group)" (click)="openApproveModal(group)">
                     <span class="material-symbols-outlined">check_circle</span>
-                    {{ isProcessingAction() ? 'Working...' : 'Approve' }}
+                    {{ isProcessingGroup(group) ? 'Approving...' : 'Approve' }}
                   </button>
-                  <button class="btn-decline" [disabled]="isProcessingAction()" (click)="openDeclineModal(order)">
+                  <button class="btn-decline" [disabled]="isProcessingAction() || isProcessingGroup(group)" (click)="openDeclineModal(group)">
                     <span class="material-symbols-outlined">cancel</span>
-                    {{ isProcessingAction() ? 'Working...' : 'Decline' }}
+                    {{ isProcessingGroup(group) ? 'Processing...' : 'Decline' }}
                   </button>
-                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(order)">
+                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>
                   </button>
                 </div>
@@ -213,40 +224,42 @@
           </div>
         } @else {
           <div class="order-list">
-            @for (order of preparingOrders(); track order.id) {
-              <div class="order-card preparing-card">
+            @for (group of preparingOrders(); track group.tabId + group.createdAt) {
+              <div class="order-card preparing-card" [class.processing]="isProcessingGroup(group)">
                 <div class="order-head">
                   <div class="order-table-label">
                     <span class="material-symbols-outlined">table_restaurant</span>
-                    <span>Table {{ getTableLabel(order) }}</span>
+                    <span>Table {{ getTableLabel(group) }}</span>
                   </div>
-                  <div class="countdown" [class.urgent]="getRemainingSeconds(order) <= 60">
+                  <div class="countdown" [class.urgent]="getRemainingSeconds(group) <= 60">
                     <span class="material-symbols-outlined">timer</span>
-                    <span>{{ formatCountdown(order) }}</span>
+                    <span>{{ formatCountdown(group) }}</span>
                   </div>
                 </div>
                 <div class="order-body">
                   <div class="order-waiter">
                     <span class="material-symbols-outlined">person</span>
-                    <span>{{ getWaiterLabel(order) }}</span>
+                    <span>{{ getWaiterLabel(group) }}</span>
                   </div>
-                  @if (order.department) {
-                    <div class="dept-badge">{{ order.department.name }}</div>
+                  @if (group.departmentName) {
+                    <div class="dept-badge">{{ group.departmentName }}</div>
                   }
-                  <button class="btn-timeline-icon" title="View activity timeline" (click)="viewOrderTimeline(order)">
-                    <span class="material-symbols-outlined">history</span>
-                  </button>
                   <div class="order-items">
-                    <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>
+                    <span class="items-label">{{ group.items.length }} item(s)</span>
                     <div class="items-tags">
-                      @for (item of (order.items || []).slice(0, 3); track item.id) {
-                        <span class="item-tag">{{ item.menuItemName || item.menu_item_name || 'Item' }}</span>
+                      @for (item of group.items.slice(0, 3); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName }} <span class="item-qty">x{{ item.quantity }}</span></span>
                       }
-                      @if ((order.items?.length || 0) > 3) {
-                        <span class="item-tag more">+{{ (order.items?.length || 0) - 3 }} more</span>
+                      @if (group.items.length > 3) {
+                        <span class="item-tag more">+{{ group.items.length - 3 }} more</span>
                       }
                     </div>
                   </div>
+                </div>
+                <div class="order-actions">
+                  <button class="btn-timeline-icon" title="View activity timeline" (click)="viewOrderTimeline(group)">
+                    <span class="material-symbols-outlined">history</span>
+                  </button>
                 </div>
               </div>
             }
@@ -267,38 +280,48 @@
           </div>
         } @else {
           <div class="order-list">
-            @for (order of readyOrders(); track order.id) {
-              <div class="order-card ready-card">
+            @for (group of readyOrders(); track group.tabId + group.createdAt) {
+              <div class="order-card ready-card" [class.processing]="isProcessingGroup(group)" [class.partial-failure]="getGroupProgress(group)?.failed">
                 <div class="order-head">
                   <div class="order-table-label">
                     <span class="material-symbols-outlined">table_restaurant</span>
-                    <span>Table {{ getTableLabel(order) }}</span>
+                    <span>Table {{ getTableLabel(group) }}</span>
                   </div>
                   <span class="ready-pill">Ready</span>
                 </div>
                 <div class="order-body">
                   <div class="order-waiter">
                     <span class="material-symbols-outlined">person</span>
-                    <span>{{ getWaiterLabel(order) }}</span>
+                    <span>{{ getWaiterLabel(group) }}</span>
                   </div>
                   <div class="order-items">
-                    <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>
+                    <span class="items-label">{{ group.items.length }} item(s)</span>
                     <div class="items-tags">
-                      @for (item of (order.items || []).slice(0, 3); track item.id) {
-                        <span class="item-tag">{{ item.menuItemName || item.menu_item_name || 'Item' }}</span>
+                      @for (item of group.items.slice(0, 3); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName }} <span class="item-qty">x{{ item.quantity }}</span></span>
                       }
-                      @if ((order.items?.length || 0) > 3) {
-                        <span class="item-tag more">+{{ (order.items?.length || 0) - 3 }} more</span>
+                      @if (group.items.length > 3) {
+                        <span class="item-tag more">+{{ group.items.length - 3 }} more</span>
                       }
                     </div>
                   </div>
                 </div>
+                @if (getGroupProgress(group); as progress) {
+                  <div class="group-progress" [class.error]="progress.failed">
+                    @if (progress.failed) {
+                      <span class="progress-text">Failed at {{ progress.completed + 1 }} of {{ progress.total }} — {{ progress.errorMessage }}</span>
+                      <button class="btn-retry" (click)="retryGroup(group)">Retry Remaining</button>
+                    } @else {
+                      <span class="progress-text">Processing {{ progress.completed + 1 }} of {{ progress.total }}...</span>
+                    }
+                  </div>
+                }
                 <div class="order-actions">
-                  <button class="btn-deliver" [disabled]="isProcessingAction()" (click)="deliverOrder(order)">
+                  <button class="btn-deliver" [disabled]="isProcessingAction() || isProcessingGroup(group)" (click)="deliverOrder(group)">
                     <span class="material-symbols-outlined">task_alt</span>
-                    {{ isProcessingAction() ? 'Working...' : 'Mark Delivered' }}
+                    {{ isProcessingGroup(group) ? 'Delivering...' : 'Mark Delivered' }}
                   </button>
-                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(order)">
+                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>
                   </button>
                 </div>

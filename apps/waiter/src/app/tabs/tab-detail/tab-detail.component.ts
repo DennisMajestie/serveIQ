@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, ENVIRONMENT_CONFIG, showApiErrorToast, NotificationsApiService } from '@serveiq/shared/data-access';
-import { Tab, OrderItem, Table, MenuItem, resolveImageUrl, Order, NotificationType } from '@serveiq/shared/models';
+import { Tab, OrderItem, Table, MenuItem, resolveImageUrl, OrderGroup, NotificationType } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { interval, Subscription } from 'rxjs';
 
@@ -32,11 +32,11 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   isLoading = signal(true);
   toastMessage = signal<string | null>(null);
 
-  activeOrder = signal<Order | null>(null);
-  orderStatus = computed(() => this.activeOrder()?.status ?? null);
-  declineReason = computed(() => this.activeOrder()?.declineReason ?? null);
+  activeOrder = signal<OrderGroup | null>(null);
+  orderStatus = computed(() => this.activeOrder()?.items[0]?.orderStatus ?? null);
+  declineReason = computed(() => this.activeOrder()?.items[0]?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
-  trackingCode = computed(() => this.activeOrder()?.trackingCode ?? null);
+  trackingCode = computed(() => this.activeOrder()?.items[0]?.trackingCode ?? null);
 
   copiedId = signal<string | null>(null);
 

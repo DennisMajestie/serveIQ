@@ -542,9 +542,9 @@ export class TableDetailComponent implements OnInit {
   }
 
   loadTabForTable(tableId: string) {
-    this.tabsApi.getAllTabs().subscribe({
+    this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
       next: (tabs) => {
-        const openTab = tabs.find(t => t.tableId === tableId && t.status === 'open');
+        const openTab = tabs.find(t => t.tableId === tableId);
         if (openTab) {
           this.tab.set(openTab);
           this.loadOrders(openTab.id);
