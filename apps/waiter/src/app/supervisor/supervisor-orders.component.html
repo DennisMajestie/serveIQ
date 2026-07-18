@@ -160,14 +160,14 @@
                 <div class="order-head">
                   <div class="order-table-label">
                     <span class="material-symbols-outlined">table_restaurant</span>
-                    <span>Table {{ order.tab?.table?.tableNumber || order.tab?.tableId || '—' }}</span>
+                    <span>Table {{ getTableLabel(order) }}</span>
                   </div>
                   <span class="order-time">{{ formatTime(order.createdAt) }}</span>
                 </div>
                 <div class="order-body">
                   <div class="order-waiter">
                     <span class="material-symbols-outlined">person</span>
-                    <span>{{ order.waiter?.fullName || 'Unknown Waiter' }}</span>
+                    <span>{{ getWaiterLabel(order) }}</span>
                   </div>
                   <div class="order-items">
                     <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>
@@ -218,7 +218,7 @@
                 <div class="order-head">
                   <div class="order-table-label">
                     <span class="material-symbols-outlined">table_restaurant</span>
-                    <span>Table {{ order.tab?.table?.tableNumber || order.tab?.tableId || '—' }}</span>
+                    <span>Table {{ getTableLabel(order) }}</span>
                   </div>
                   <div class="countdown" [class.urgent]="getRemainingSeconds(order) <= 60">
                     <span class="material-symbols-outlined">timer</span>
@@ -228,7 +228,7 @@
                 <div class="order-body">
                   <div class="order-waiter">
                     <span class="material-symbols-outlined">person</span>
-                    <span>{{ order.waiter?.fullName || 'Unknown Waiter' }}</span>
+                    <span>{{ getWaiterLabel(order) }}</span>
                   </div>
                   @if (order.department) {
                     <div class="dept-badge">{{ order.department.name }}</div>
@@ -272,14 +272,14 @@
                 <div class="order-head">
                   <div class="order-table-label">
                     <span class="material-symbols-outlined">table_restaurant</span>
-                    <span>Table {{ order.tab?.table?.tableNumber || order.tab?.tableId || '—' }}</span>
+                    <span>Table {{ getTableLabel(order) }}</span>
                   </div>
                   <span class="ready-pill">Ready</span>
                 </div>
                 <div class="order-body">
                   <div class="order-waiter">
                     <span class="material-symbols-outlined">person</span>
-                    <span>{{ order.waiter?.fullName || 'Unknown Waiter' }}</span>
+                    <span>{{ getWaiterLabel(order) }}</span>
                   </div>
                   <div class="order-items">
                     <span class="items-label">{{ order.items?.length || 0 }} item(s)</span>

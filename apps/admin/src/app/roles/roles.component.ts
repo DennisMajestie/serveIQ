@@ -105,7 +105,12 @@ export class RolesComponent implements OnInit {
       },
       error: (err) => {
         this.isSaving.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to Save', text: err.error?.message || 'An error occurred' });
+        const msg = err.error?.message || '';
+        if (msg.includes('Cannot modify the Owner role')) {
+          Swal.fire({ icon: 'info', title: 'Owner Role Locked', text: 'The Owner role permissions cannot be changed.', timer: 2000, showConfirmButton: false });
+          return;
+        }
+        Swal.fire({ icon: 'error', title: 'Failed to Save', text: msg || 'An error occurred' });
       }
     });
   }

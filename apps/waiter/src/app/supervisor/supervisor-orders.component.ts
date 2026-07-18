@@ -249,6 +249,22 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     return this.getOrderStatusClass(match.status);
   }
 
+  getTableLabel(order: Order): string {
+    if (order.tab?.table?.tableNumber) return order.tab.table.tableNumber;
+    const tab = this.tabs().find(t => t.id === order.tabId);
+    if (tab) {
+      const table = this.tables().find(t => t.id === tab.tableId);
+      if (table) return table.tableNumber;
+    }
+    return order.tab?.tableId || '—';
+  }
+
+  getWaiterLabel(order: Order): string {
+    if (order.waiter?.fullName) return order.waiter.fullName;
+    const waiter = this.waiters().find(w => w.id === order.waiterId);
+    return waiter?.fullName || 'Unknown Waiter';
+  }
+
   getTableTooltip(table: Table): string {
     const status = table.status || 'available';
     const orders = [
@@ -495,7 +511,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     if (this.isProcessingAction()) return;
     Swal.fire({
       title: 'Mark as Delivered?',
-      text: `Confirm that this order has been delivered to Table ${order.tab?.table?.tableNumber || order.tab?.tableId || '—'}.`,
+      text: `Confirm that this order has been delivered to Table ${this.getTableLabel(order)}.`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Yes, Delivered',
@@ -523,7 +539,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   }
 
   viewOrderTimeline(order: Order) {
-    const tableNum = order.tab?.table?.tableNumber || order.tab?.tableId || '?';
+    const tableNum = this.getTableLabel(order);
     Swal.fire({
       title: `Order Timeline — Table ${tableNum}`,
       html: '<div id="timeline-content" style="text-align:left;color:#ccc;min-height:60px;">Loading...</div>',
