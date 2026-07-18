@@ -189,8 +189,8 @@
                       <button class="btn-retry" (click)="retryGroup(group)">Retry Remaining</button>
                     } @else {
                       <span class="progress-text">Processing {{ progress.completed + 1 }} of {{ progress.total }}...</span>
-                    </div>
-                  }
+                    }
+                  </div>
                 }
                 <div class="order-actions">
                   <button class="btn-approve" [disabled]="isProcessingAction() || isProcessingGroup(group)" (click)="openApproveModal(group)">
