@@ -10,6 +10,11 @@ export const managerOrOwnerGuard: CanActivateFn = () => {
     if (permService.hasPermission('view_dashboard')) {
       return true;
     }
+    // Legacy fallback: user has no role_id but has legacy role string
+    const role = localStorage.getItem('userRole');
+    if (role === 'owner' || role === 'manager' || role === 'super_admin') {
+      return true;
+    }
     return router.parseUrl('/login');
   }
 
