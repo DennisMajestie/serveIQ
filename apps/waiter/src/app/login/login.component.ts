@@ -73,22 +73,24 @@ export class LoginComponent implements OnInit {
     if (!businessId) return;
 
     this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
-      next: (res: any) => {
-        const userRole = (res?.data?.user?.role || localStorage.getItem('userRole') || '').toLowerCase();
-        const permissions = res?.data?.user?.permissions || res?.data?.permissions || [];
-        const hasManager = permissions.includes('manage_subscription') || permissions.includes('view_dashboard');
-        const hasSupervisor = permissions.includes('approve_orders') || permissions.includes('mark_ready') || permissions.includes('mark_delivered');
+      next: () => {
+        this.userService.getMe().subscribe({
+          next: (user) => {
+            const role = (user.role || '').toLowerCase();
+            const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
 
-        if (hasManager || permissions.includes('view_dashboard') || userRole === 'owner' || userRole === 'manager') {
-          const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
-          window.location.assign(adminUrl + '/app/dashboard');
-          return;
-        }
-        if (hasSupervisor) {
-          this.router.navigate(['/supervisor/orders']);
-          return;
-        }
-        this.router.navigate(['/tables']);
+            if (role === 'owner' || role === 'manager') {
+              window.location.assign(adminUrl + '/app/dashboard');
+            } else if (role === 'supervisor') {
+              this.router.navigate(['/supervisor/orders']);
+            } else {
+              this.router.navigate(['/tables']);
+            }
+          },
+          error: () => {
+            this.router.navigate(['/tables']);
+          }
+        });
       },
       error: (err) => {
         this.pinError.set(true);
