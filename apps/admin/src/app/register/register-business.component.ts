@@ -97,7 +97,8 @@ export class RegisterBusinessComponent {
         this.isLoading.set(false);
 
         if (err.status === 409) {
-          Swal.fire({ icon: 'error', title: 'Registration Failed', text: 'This email is already registered' });
+          const msg = err.error?.message || err.error?.error || err.message || 'This email is already registered';
+          Swal.fire({ icon: 'error', title: 'Registration Failed', text: msg });
         } else if (err.status === 400) {
           Swal.fire({ icon: 'error', title: 'Registration Failed', text: err.error?.message || 'Invalid registration data' });
         } else {

@@ -1,6 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { RolesApiService } from '@serveiq/shared/data-access';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { Observable, ReplaySubject, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
@@ -8,18 +8,34 @@ export class PermissionService {
 
   private permissionCodes = signal<Set<string>>(new Set());
   readonly permissionsLoaded = signal(false);
+  private load$: Observable<{ permissions: string[] }> | null = null;
 
-  loadPermissions() {
-    this.rolesApi.getMyPermissions().subscribe({
-      next: (res) => {
-        this.permissionCodes.set(new Set(res.permissions));
-        this.permissionsLoaded.set(true);
-      },
-      error: () => {
-        this.permissionCodes.set(new Set());
-        this.permissionsLoaded.set(true);
-      }
-    });
+  loadPermissions(): Observable<{ permissions: string[] }> {
+    if (this.permissionsLoaded()) {
+      return new Observable(sub => {
+        sub.next({ permissions: [...this.permissionCodes()] });
+        sub.complete();
+      });
+    }
+    if (!this.load$) {
+      const subject = new ReplaySubject<{ permissions: string[] }>(1);
+      this.load$ = subject.asObservable();
+      this.rolesApi.getMyPermissions().subscribe({
+        next: res => {
+          this.permissionCodes.set(new Set(res.permissions));
+          this.permissionsLoaded.set(true);
+          subject.next(res);
+          subject.complete();
+        },
+        error: () => {
+          this.permissionCodes.set(new Set());
+          this.permissionsLoaded.set(true);
+          subject.next({ permissions: [] });
+          subject.complete();
+        }
+      });
+    }
+    return this.load$;
   }
 
   hasPermission(code: string): boolean {

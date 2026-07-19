@@ -1,28 +1,35 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { PermissionService } from './permission.service';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-export const managerOrOwnerGuard: CanActivateFn = () => {
+export const managerOrOwnerGuard: CanActivateFn = (): Observable<boolean | UrlTree> => {
   const router = inject(Router);
   const permService = inject(PermissionService);
 
-  if (permService.permissionsLoaded()) {
-    if (permService.hasPermission('view_dashboard')) {
-      return true;
-    }
-    // Legacy fallback: user has no role_id but has legacy role string
+  const legacyRoleOk = () => {
     const role = localStorage.getItem('userRole');
-    if (role === 'owner' || role === 'manager' || role === 'super_admin') {
-      return true;
+    return role === 'owner' || role === 'manager' || role === 'super_admin';
+  };
+
+  if (permService.permissionsLoaded()) {
+    if (permService.hasPermission('view_dashboard') || legacyRoleOk()) {
+      return new Observable(sub => { sub.next(true); sub.complete(); });
     }
-    return router.parseUrl('/login');
+    return new Observable(sub => { sub.next(router.parseUrl('/login')); sub.complete(); });
   }
 
-  const role = localStorage.getItem('userRole');
-  if (role === 'owner' || role === 'manager' || role === 'super_admin') {
-    return true;
+  if (legacyRoleOk()) {
+    return new Observable(sub => { sub.next(true); sub.complete(); });
   }
 
-  permService.loadPermissions();
-  return router.parseUrl('/login');
+  return permService.loadPermissions().pipe(
+    map(() => {
+      if (permService.hasPermission('view_dashboard') || legacyRoleOk()) {
+        return true;
+      }
+      return router.parseUrl('/login');
+    })
+  );
 };
