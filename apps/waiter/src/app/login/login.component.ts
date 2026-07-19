@@ -76,9 +76,10 @@ export class LoginComponent implements OnInit {
       next: () => {
         const role = (localStorage.getItem('userRole') || '').toLowerCase();
         const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
+        const staffToken = localStorage.getItem('staffToken');
 
         if (role === 'owner' || role === 'manager') {
-          window.location.assign(adminUrl + '/app/dashboard');
+          window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
         } else if (role === 'supervisor') {
           this.router.navigate(['/supervisor/orders']);
         } else {

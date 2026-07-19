@@ -1,6 +1,6 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@serveiq/shared/data-access';
 import { PermissionService } from '../core/permission.service';
@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email = signal('');
   password = signal('');
   showPassword = signal(false);
@@ -21,7 +21,30 @@ export class LoginComponent {
 
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private permissionService = inject(PermissionService);
+
+  ngOnInit() {
+    const token = this.route.snapshot.queryParamMap.get('token');
+    const userRole = this.route.snapshot.queryParamMap.get('role') || localStorage.getItem('userRole');
+    if (token) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('staffToken', token);
+      if (userRole) {
+        localStorage.setItem('userRole', userRole);
+      }
+      this.permissionService.loadPermissions().subscribe({
+        next: () => {
+          const target = localStorage.getItem('userRole') === 'super_admin' ? '/app/admin/dashboard' : '/app/dashboard';
+          window.location.href = target;
+        },
+        error: () => {
+          const target = localStorage.getItem('userRole') === 'super_admin' ? '/app/admin/dashboard' : '/app/dashboard';
+          window.location.href = target;
+        }
+      });
+    }
+  }
 
   forgotPassword() {
     Swal.fire({
