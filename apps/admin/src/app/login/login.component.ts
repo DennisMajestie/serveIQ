@@ -66,7 +66,6 @@ export class LoginComponent {
 
     this.authService.login(this.email(), this.password()).subscribe({
       next: () => {
-        this.permissionService.loadPermissions();
         Swal.fire({
           icon: 'success',
           title: 'Welcome Back!',
@@ -76,15 +75,27 @@ export class LoginComponent {
           timerProgressBar: true,
           iconColor: '#F97316'
         });
-        this.isLoading.set(false);
-        setTimeout(() => {
-          const userRole = localStorage.getItem('userRole');
-          if (userRole === 'super_admin') {
-            this.router.navigate(['/app/admin/dashboard']);
-          } else {
-            this.router.navigate(['/app/dashboard']);
+
+        this.permissionService.loadPermissions().subscribe({
+          next: () => {
+            this.isLoading.set(false);
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'super_admin') {
+              this.router.navigate(['/app/admin/dashboard']);
+            } else {
+              this.router.navigate(['/app/dashboard']);
+            }
+          },
+          error: () => {
+            this.isLoading.set(false);
+            const userRole = localStorage.getItem('userRole');
+            if (userRole === 'super_admin') {
+              this.router.navigate(['/app/admin/dashboard']);
+            } else {
+              this.router.navigate(['/app/dashboard']);
+            }
           }
-        }, 1500);
+        });
       },
       error: (err) => {
         this.isLoading.set(false);
