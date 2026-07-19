@@ -74,23 +74,16 @@ export class LoginComponent implements OnInit {
 
     this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
       next: () => {
-        this.userService.getMe().subscribe({
-          next: (user) => {
-            const role = (user.role || '').toLowerCase();
-            const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
+        const role = (localStorage.getItem('userRole') || '').toLowerCase();
+        const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
 
-            if (role === 'owner' || role === 'manager') {
-              window.location.assign(adminUrl + '/app/dashboard');
-            } else if (role === 'supervisor') {
-              this.router.navigate(['/supervisor/orders']);
-            } else {
-              this.router.navigate(['/tables']);
-            }
-          },
-          error: () => {
-            this.router.navigate(['/tables']);
-          }
-        });
+        if (role === 'owner' || role === 'manager') {
+          window.location.assign(adminUrl + '/app/dashboard');
+        } else if (role === 'supervisor') {
+          this.router.navigate(['/supervisor/orders']);
+        } else {
+          this.router.navigate(['/tables']);
+        }
       },
       error: (err) => {
         this.pinError.set(true);

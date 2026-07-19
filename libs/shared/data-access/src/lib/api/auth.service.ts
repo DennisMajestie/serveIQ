@@ -145,7 +145,7 @@ export class AuthService {
         const resData = response.data || response;
         const token = resData.access_token || resData.token || response.access_token || response.token;
         const branchId = resData.user?.branch || resData.branchId || resData.branch?.id;
-        const userRole = resData.user?.role || resData.role;
+        const userRole = resData.user?.role || resData.role || '';
         const normalizedRole = userRole === 'superadmin' ? 'super_admin' : userRole;
         if (token) {
           setStaffToken(token);
@@ -154,9 +154,7 @@ export class AuthService {
         if (branchId && branchId !== 'default-branch') {
           localStorage.setItem('branchId', branchId);
         }
-        if (normalizedRole) {
-          localStorage.setItem('userRole', normalizedRole);
-        }
+        localStorage.setItem('userRole', normalizedRole || 'staff');
       })
     );
   }
