@@ -74,11 +74,12 @@ export class LoginComponent implements OnInit {
 
     this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
       next: (res: any) => {
+        const userRole = (res?.data?.user?.role || localStorage.getItem('userRole') || '').toLowerCase();
         const permissions = res?.data?.user?.permissions || res?.data?.permissions || [];
         const hasManager = permissions.includes('manage_subscription') || permissions.includes('view_dashboard');
         const hasSupervisor = permissions.includes('approve_orders') || permissions.includes('mark_ready') || permissions.includes('mark_delivered');
 
-        if (hasManager || permissions.includes('view_dashboard')) {
+        if (hasManager || permissions.includes('view_dashboard') || userRole === 'owner' || userRole === 'manager') {
           const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
           window.location.assign(adminUrl + '/app/dashboard');
           return;
