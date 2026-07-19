@@ -70,14 +70,17 @@ export class LoginComponent implements OnInit {
 
     this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
       next: (res: any) => {
-        const role = (res?.data?.user?.role || res?.data?.role || localStorage.getItem('userRole') || '').toString().toLowerCase();
-        if (role === 'supervisor') {
-          this.router.navigate(['/supervisor/orders']);
-          return;
-        }
-        if (role === 'manager' || role === 'owner') {
+        const permissions = res?.data?.user?.permissions || res?.data?.permissions || [];
+        const hasManager = permissions.includes('manage_subscription') || permissions.includes('view_dashboard');
+        const hasSupervisor = permissions.includes('approve_orders') || permissions.includes('mark_ready') || permissions.includes('mark_delivered');
+
+        if (hasManager || permissions.includes('view_dashboard')) {
           const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
           window.location.assign(adminUrl + '/app/dashboard');
+          return;
+        }
+        if (hasSupervisor) {
+          this.router.navigate(['/supervisor/orders']);
           return;
         }
         this.router.navigate(['/tables']);

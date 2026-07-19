@@ -62,7 +62,7 @@ interface NavItem {
             </li>
           </ul>
 
-          <ul class="nav-list" *ngIf="profile().role === 'owner' || profile().role === 'manager'">
+<ul class="nav-list" *ngIf="permissionService.hasPermission('view_dashboard')">
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/dashboard" routerLinkActive="active">
                 <span class="material-symbols-outlined">dashboard</span>
@@ -88,89 +88,91 @@ interface NavItem {
               </a>
             </li>
             <li class="nav-section-label">Operations</li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('accept_payment')">
               <a class="nav-link" routerLink="/app/bills" routerLinkActive="active">
                 <span class="material-symbols-outlined">receipt_long</span>
                 <span>Bills</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_daily_sales')">
               <a class="nav-link" routerLink="/app/reports" routerLinkActive="active">
                 <span class="material-symbols-outlined">bar_chart</span>
                 <span>Reports</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
               <a class="nav-link" routerLink="/app/analytics" routerLinkActive="active">
                 <span class="material-symbols-outlined">analytics</span>
                 <span>Analytics</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_staff')">
               <a class="nav-link" routerLink="/app/departments" routerLinkActive="active">
                 <span class="material-symbols-outlined">category</span>
                 <span>Departments</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
               <a class="nav-link" routerLink="/app/ads" routerLinkActive="active">
                 <span class="material-symbols-outlined">campaign</span>
                 <span>Advertisements</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('manage_suppliers')">
               <a class="nav-link" routerLink="/app/suppliers" routerLinkActive="active">
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span>Suppliers</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
               <a class="nav-link" routerLink="/app/shifts" routerLinkActive="active">
                 <span class="material-symbols-outlined">schedule</span>
                 <span>Shifts</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_inventory')">
               <a class="nav-link" routerLink="/app/inventory" routerLinkActive="active">
                 <span class="material-symbols-outlined">inventory_2</span>
                 <span>Inventory</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_inventory')">
               <a class="nav-link" routerLink="/app/inventory/audit" routerLinkActive="active">
                 <span class="material-symbols-outlined">fact_check</span>
                 <span>Audit</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('adjust_stock')">
               <a class="nav-link" routerLink="/app/inventory/reconcile" routerLinkActive="active">
                 <span class="material-symbols-outlined">balance</span>
                 <span>Reconcile</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_inventory')">
               <a class="nav-link" routerLink="/app/inventory/daily-tally" routerLinkActive="active">
                 <span class="material-symbols-outlined">summarize</span>
                 <span>Daily Tally</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
               <a class="nav-link" routerLink="/app/pos" routerLinkActive="active">
                 <span class="material-symbols-outlined">point_of_sale</span>
                 <span>POS</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('manage_subscription')">
               <a class="nav-link" routerLink="/app/billing" routerLinkActive="active">
                 <span class="material-symbols-outlined">credit_card</span>
                 <span>Billing</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_staff')">
               <a class="nav-link" routerLink="/app/roles" routerLinkActive="active">
                 <span class="material-symbols-outlined">lock_manager</span>
                 <span>Roles</span>
               </a>
+            </li>
+            <li class="nav-item" *ngIf="permissionService.hasPermission('restaurant_settings')">
               <a class="nav-link" routerLink="/app/settings" routerLinkActive="active">
                 <span class="material-symbols-outlined">settings</span>
                 <span>Settings</span>
@@ -228,7 +230,7 @@ interface NavItem {
             <div class="user-profile">
               <div class="user-info">
                 <p class="user-name">{{ profile().fullName || 'Admin' }}</p>
-                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : (profile().role === 'super_admin' ? 'Super Admin' : (profile().role === 'manager' ? 'Manager' : (profile().role === 'supervisor' ? 'Supervisor' : (profile().role === 'chef' ? 'Chef' : 'Staff')))) }}</p>
+                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : (profile().role === 'super_admin' ? 'Super Admin' : (permissionService.hasPermission('create_staff') ? 'Manager' : (profile().role === 'supervisor' ? 'Supervisor' : (profile().role === 'chef' ? 'Chef' : 'Staff')))) }}</p>
               </div>
               <img [src]="profile().avatarUrl || 'https://ui-avatars.com/api/?name=' + (profile().fullName || 'A') + '&background=9d4300&color=fff'" alt="Profile">
             </div>
