@@ -20,7 +20,7 @@ import { RouterModule, Router } from '@angular/router';
         <h1 class="title">Payment Successful!</h1>
         <p class="subtitle">Your subscription has been activated. You now have access to all the features of your chosen plan.</p>
         <div class="redirect-message">
-          <p>Redirecting to dashboard in <strong>{{ countdown }}</strong> seconds...</p>
+          <p>Redirecting to dashboard in <strong>{{ countdown() }}</strong> seconds...</p>
         </div>
         <button class="btn btn-primary" (click)="goToDashboard()">Go to Dashboard</button>
       </div>
