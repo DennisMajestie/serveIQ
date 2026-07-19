@@ -33,16 +33,8 @@ export class LoginComponent implements OnInit {
       if (userRole) {
         localStorage.setItem('userRole', userRole);
       }
-      this.permissionService.loadPermissions().subscribe({
-        next: () => {
-          const target = localStorage.getItem('userRole') === 'super_admin' ? '/app/admin/dashboard' : '/app/dashboard';
-          window.location.href = target;
-        },
-        error: () => {
-          const target = localStorage.getItem('userRole') === 'super_admin' ? '/app/admin/dashboard' : '/app/dashboard';
-          window.location.href = target;
-        }
-      });
+      const target = userRole === 'super_admin' ? '/app/admin/dashboard' : '/app/dashboard';
+      window.location.href = target;
     }
   }
 
