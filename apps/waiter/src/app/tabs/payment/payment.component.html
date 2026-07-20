@@ -142,11 +142,25 @@
             [class.text-[#4be277]]="selectedMethod === 'transfer'"
             [class.text-[#dce1fb]]="selectedMethod !== 'transfer'">Transfer</span>
         </button>
-
+        <button (click)="selectMethod('ussd')" class="glass-card p-6 rounded-2xl flex flex-col items-center gap-4 border active:scale-95 transition-all group"
+          [class.border-[#4be277]/30]="selectedMethod === 'ussd'"
+          [class.bg-[#4be277]/5]="selectedMethod === 'ussd'"
+          [class.border-white/5]="selectedMethod !== 'ussd'">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+            [class.bg-[#4be277]/20]="selectedMethod === 'ussd'"
+            [class.bg-white/5]="selectedMethod !== 'ussd'"
+            [class.text-[#4be277]]="selectedMethod === 'ussd'"
+            [class.text-[#bccbb9]]="selectedMethod !== 'ussd'">
+            <span class="material-symbols-outlined text-3xl">dialpad</span>
+          </div>
+          <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif"
+            [class.text-[#4be277]]="selectedMethod === 'ussd'"
+            [class.text-[#dce1fb]]="selectedMethod !== 'ussd'">USSD</span>
+        </button>
       </section>
 
       <!-- POS Terminal Selector -->
-      @if (selectedMethod !== 'cash') {
+      @if (selectedMethod === 'card') {
         <section class="glass-card rounded-2xl p-6 border border-white/5">
           <p class="text-[14px] leading-none font-semibold text-[#bccbb9] uppercase tracking-[0.08em] mb-4" style="font-family:'Inter',sans-serif">POS Terminal</p>
           <select [(ngModel)]="selectedTerminalId" class="w-full bg-[#070d1f] border border-white/10 rounded-xl px-4 py-3 text-[#dce1fb] text-[16px] leading-[1.5] font-medium outline-none appearance-none focus:border-[#4be277]/50 transition-colors" style="font-family:'Inter',sans-serif">

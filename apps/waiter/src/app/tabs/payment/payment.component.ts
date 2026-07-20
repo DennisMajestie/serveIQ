@@ -29,7 +29,7 @@ export class PaymentComponent implements OnInit {
   bill = signal<Bill | null>(null);
   items = computed(() => this.bill()?.orderItems ?? []);
   isLoading = signal(true);
-  selectedMethod: 'cash' | 'card' | 'transfer' | 'pos' = 'cash';
+  selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' = 'cash';
   currentAmount = signal('0');
   isEditingAmount = false;
   isProcessing = signal(false);
@@ -105,7 +105,7 @@ export class PaymentComponent implements OnInit {
     return parts.join('.');
   }
 
-  selectMethod(method: 'cash' | 'card' | 'transfer' | 'pos') {
+  selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd') {
     this.selectedMethod = method;
     if (method !== 'cash') {
       this.loadActiveTerminals();
@@ -234,10 +234,10 @@ export class PaymentComponent implements OnInit {
       Swal.fire({ icon: 'warning', title: 'Incomplete Allocation', text: 'Allocate the full bill amount across guests before completing payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       return;
     }
-    if (this.selectedMethod !== 'cash' && !this.selectedTerminalId()) {
-      Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal to process this payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
-      return;
-    }
+      if (this.selectedMethod === 'card' && !this.selectedTerminalId()) {
+        Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal to process card payments.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+        return;
+      }
 
     Swal.fire({
       title: 'Confirm Payment?',
@@ -266,11 +266,12 @@ export class PaymentComponent implements OnInit {
 
       this.isProcessing.set(true);
       const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
+      const apiMethod = this.selectedMethod === 'ussd' ? 'transfer' : this.selectedMethod;
 
       this.billsApi.recordPayment(this.tabId(), {
         amount,
-        method: this.selectedMethod,
-        terminal_id: this.selectedMethod !== 'cash' ? this.selectedTerminalId() : undefined,
+        method: apiMethod,
+        terminal_id: this.selectedMethod === 'card' ? this.selectedTerminalId() : undefined,
       }).subscribe({
         next: () => {
           this.isProcessing.set(false);
