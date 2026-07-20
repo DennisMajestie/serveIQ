@@ -302,7 +302,9 @@ export class BillsComponent implements OnInit {
   });
 
   filteredTotalFormatted = computed(() => {
-    const total = this.filteredSortedBills().reduce((s, e) => s + e.bill.totalKobo, 0);
+    const total = this.filteredSortedBills()
+      .filter(e => !!e.bill.paidAt)
+      .reduce((s, e) => s + e.bill.totalKobo, 0);
     return '₦' + (total / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   });
 
