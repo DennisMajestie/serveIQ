@@ -11,6 +11,7 @@ import { ReceiptComponent } from './tabs/receipt/receipt.component';
 import { TabHistoryComponent } from './tabs/tab-history/tab-history.component';
 import { ProfileComponent } from './profile/profile.component';
 import { OpenTabComponent } from './tables/open-tab/open-tab.component';
+import { WaiterNotificationsComponent } from './notifications/notifications.component';
 
 import { LegacyTablesComponent } from './legacy/tables/tables.component';
 import { LegacyTabDetailComponent } from './legacy/tab-detail/tab-detail.component';
@@ -55,6 +56,9 @@ export const appRoutes: Route[] = [
 
   // ===== Activity History =====
   { path: 'activity', canActivate: [authGuard], component: ActivityHistoryComponent },
+
+  // ===== Notifications =====
+  { path: 'notifications', canActivate: [authGuard], component: WaiterNotificationsComponent },
 
   { path: '', redirectTo: 'tables', pathMatch: 'full' }
 ];

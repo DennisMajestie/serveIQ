@@ -349,26 +349,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   openNotifications() {
-    const notes = this.notifications();
-    Swal.fire({
-      title: 'Notifications',
-      html: notes.length === 0
-        ? '<p style="color:#bccbb9;padding:24px 0">No notifications yet</p>'
-        : notes.map(n => `
-          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);text-align:left">
-            <span class="material-symbols-outlined" style="font-size:20px;color:${n.isRead ? '#bccbb9' : '#4be277'}">${n.isRead ? 'notifications' : 'notifications_active'}</span>
-            <div style="flex:1">
-              <p style="margin:0;font-size:14px;font-weight:600;color:#dce1fb">${n.title}</p>
-              <p style="margin:2px 0 0;font-size:12px;color:#bccbb9">${n.message}</p>
-            </div>
-            <span style="font-size:11px;color:#bccbb9/60">${new Date(n.createdAt).toLocaleDateString()}</span>
-          </div>
-        `).join(''),
-      confirmButtonText: 'Close',
-      background: '#0c1324',
-      color: '#dce1fb',
-      width: 400,
-    });
+    this.router.navigate(['/notifications']);
   }
 
   private async refreshOpenTabs(): Promise<boolean> {

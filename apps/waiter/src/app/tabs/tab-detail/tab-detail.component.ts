@@ -46,6 +46,30 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     this.showToast('Copied!');
     setTimeout(() => { this.copiedId.set(null); }, 2000);
   }
+
+  markDelivered() {
+    const orderId = this.activeOrder()?.items[0]?.id;
+    if (!orderId) return;
+    Swal.fire({
+      title: 'Confirm Delivery',
+      text: 'Mark this order as delivered to the customer?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delivered',
+      cancelButtonText: 'Cancel',
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.orderService.deliverOrder(orderId).subscribe({
+        next: () => {
+          Swal.fire({ icon: 'success', title: 'Delivered!', timer: 1500, showConfirmButton: false });
+          this.loadTab(this.tabId());
+        },
+        error: (err) => {
+          Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'Failed to mark delivered' });
+        },
+      });
+    });
+  }
   private countdownTick = signal(0);
 
   get remainingSeconds(): number {

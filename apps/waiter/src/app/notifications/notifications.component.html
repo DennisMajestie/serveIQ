@@ -1,0 +1,66 @@
+<div class="mesh-gradient min-h-screen">
+  <header class="fixed top-0 w-full backdrop-blur-[32px] bg-white/10 z-50 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+    <div class="flex items-center justify-between px-6 py-4">
+      <button (click)="goBack()" class="w-10 h-10 rounded-full bg-[#4be277]/20 flex items-center justify-center active:scale-95 transition-transform">
+        <span class="material-symbols-outlined text-[#4be277]">arrow_back</span>
+      </button>
+      <h1 class="text-[24px] font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">Notifications</h1>
+      @if (unreadCount() > 0) {
+        <button (click)="markAllRead()" class="text-xs text-[#bccbb9] underline active:scale-95 transition-transform">Mark all read</button>
+      } @else {
+        <div class="w-20"></div>
+      }
+    </div>
+  </header>
+
+  <main class="pt-20 px-4 max-w-2xl mx-auto pb-32">
+    @if (loading()) {
+      <div class="flex justify-center py-24">
+        <span class="material-symbols-outlined text-[#4be277] animate-spin">refresh</span>
+      </div>
+    } @else if (notifications().length === 0) {
+      <div class="flex flex-col items-center justify-center py-24 text-[#bccbb9] gap-4">
+        <span class="material-symbols-outlined text-5xl opacity-40">notifications_off</span>
+        <p class="text-sm">No notifications yet</p>
+      </div>
+    } @else {
+      <div class="flex flex-col gap-2">
+        @for (n of notifications(); track n.id) {
+          <div
+            (click)="handleAction(n)"
+            class="flex items-start gap-3 p-4 rounded-2xl cursor-pointer active:scale-[0.98] transition-all"
+            [class.bg-[#4be277]/5]="!n.isRead"
+            [class.bg-white/5]="n.isRead"
+          >
+            <div class="w-10 h-10 rounded-xl bg-[#4be277]/15 flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-[#4be277] text-xl">notifications</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="text-sm font-semibold text-[#dce1fb] truncate">{{ n.title }}</h3>
+                <span class="text-[10px] text-[#bccbb9] whitespace-nowrap">{{ n.createdAt | date:'MMM d, h:mm a' }}</span>
+              </div>
+              <p class="text-xs text-[#bccbb9] mt-1 leading-relaxed">{{ n.message }}</p>
+              @if (n.type === 'order_ready') {
+                <button
+                  (click)="markDelivered((n as any).data?.order_id, $event)"
+                  class="mt-2 px-4 py-1.5 rounded-full bg-[#4be277] text-[#020617] text-xs font-semibold active:scale-95 transition-transform"
+                >
+                  Mark Delivered
+                </button>
+              }
+            </div>
+            @if (!n.isRead) {
+              <button
+                (click)="markRead(n.id); $event.stopPropagation()"
+                class="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#4be277]/20 active:scale-90 transition-all"
+              >
+                <span class="material-symbols-outlined text-[#4be277] text-sm">check_circle</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>

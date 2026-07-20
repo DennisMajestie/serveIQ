@@ -66,12 +66,17 @@
         </div>
       }
       @if (orderStatus() === 'READY_FOR_PICKUP') {
-        <div class="mb-5 p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center gap-3">
-          <span class="material-symbols-outlined text-blue-400">inventory_2</span>
-          <div>
-            <p class="text-blue-300 text-sm font-semibold">Ready for Pickup</p>
-            <p class="text-blue-200/60 text-xs">Your order is ready. Collect from the counter.</p>
+        <div class="mb-5 p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col gap-3">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-blue-400">inventory_2</span>
+            <div>
+              <p class="text-blue-300 text-sm font-semibold">Ready for Pickup</p>
+              <p class="text-blue-200/60 text-xs">Collect from counter and deliver to customer.</p>
+            </div>
           </div>
+          <button (click)="markDelivered()" class="self-start px-5 py-2 rounded-full bg-[#4be277] text-[#020617] text-sm font-semibold active:scale-95 transition-transform">
+            Mark Delivered
+          </button>
         </div>
       }
       @if (orderStatus() === 'DELIVERED') {
