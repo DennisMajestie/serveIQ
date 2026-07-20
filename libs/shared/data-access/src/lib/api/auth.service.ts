@@ -210,6 +210,49 @@ export class AuthService {
     return this.http.post<void>(`${this.apiUrl}/api/v1/auth/verify-email`, data);
   }
 
+  impersonate(businessId: string, branchId?: string, businessName?: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/v1/auth/impersonate`, { businessId, branchId })    .pipe(
+      tap((response: any) => {
+        const data = response.data || response;
+        const token = data.access_token || data.token || response.access_token || response.token;
+        if (token) {
+          const currentToken = localStorage.getItem('token');
+          if (currentToken) localStorage.setItem('originalToken', currentToken);
+          localStorage.setItem('originalBusinessId', localStorage.getItem('businessId') || '');
+          localStorage.setItem('originalBranchId', localStorage.getItem('branchId') || '');
+
+          localStorage.setItem('token', token);
+          localStorage.setItem('businessId', businessId);
+          if (branchId) localStorage.setItem('branchId', branchId);
+          localStorage.setItem('impersonating', businessName || 'true');
+          this.tokenSubject.next(token);
+        }
+      })
+    );
+  }
+
+  stopImpersonating(): void {
+    const originalToken = localStorage.getItem('originalToken');
+    const originalBusinessId = localStorage.getItem('originalBusinessId');
+    const originalBranchId = localStorage.getItem('originalBranchId');
+
+    if (originalToken) {
+      localStorage.setItem('token', originalToken);
+      this.tokenSubject.next(originalToken);
+    }
+    if (originalBusinessId) localStorage.setItem('businessId', originalBusinessId);
+    if (originalBranchId) localStorage.setItem('branchId', originalBranchId);
+
+    localStorage.removeItem('originalToken');
+    localStorage.removeItem('originalBusinessId');
+    localStorage.removeItem('originalBranchId');
+    localStorage.removeItem('impersonating');
+  }
+
+  isImpersonating(): boolean {
+    return !!localStorage.getItem('impersonating');
+  }
+
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');

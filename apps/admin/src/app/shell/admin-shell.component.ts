@@ -258,6 +258,16 @@ interface NavItem {
           </div>
         </div>
 
+        <!-- Impersonation Banner -->
+        <div class="impersonation-banner" *ngIf="impersonating()">
+          <span class="material-symbols-outlined">visibility</span>
+          <span>Viewing <strong>{{ impersonating() }}</strong> dashboard</span>
+          <button class="back-to-admin-btn" (click)="stopImpersonating()">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Back to Admin
+          </button>
+        </div>
+
         <!-- Router Outlet -->
         <main class="content-area">
           <router-outlet></router-outlet>
@@ -630,6 +640,37 @@ interface NavItem {
       flex: 1;
       overflow-y: auto;
     }
+
+    .impersonation-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .impersonation-banner .material-symbols-outlined { font-size: 20px; }
+    .back-to-admin-btn {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 16px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .back-to-admin-btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
   `]
 })
 export class AdminShellComponent implements OnInit, OnDestroy {
@@ -645,6 +686,8 @@ export class AdminShellComponent implements OnInit, OnDestroy {
     if (!sub || this.profile().role === 'super_admin') return null;
     return sub;
   });
+
+  impersonating = computed(() => localStorage.getItem('impersonating'));
 
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
@@ -760,6 +803,11 @@ export class AdminShellComponent implements OnInit, OnDestroy {
 
   openNotifications() {
     this.router.navigate(['/app/notifications']);
+  }
+
+  stopImpersonating() {
+    this.authService.stopImpersonating();
+    this.router.navigate(['/app/admin/dashboard']);
   }
 
   private pollNotifications() {

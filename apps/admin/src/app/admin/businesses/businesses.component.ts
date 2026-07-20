@@ -1,8 +1,8 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data-access';
+import { Router, RouterModule } from '@angular/router';
+import { AdminApiService, AdminBusiness, AdminStats, AuthService } from '@serveiq/shared/data-access';
 
 @Component({
   selector: 'app-admin-businesses',
@@ -78,7 +78,7 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
               </tr>
             </thead>
             <tbody>
-              <tr class="data-row" *ngFor="let biz of businesses(); trackBy: trackById">
+              <tr class="data-row" *ngFor="let biz of businesses(); trackBy: trackById" (click)="openDashboard(biz)" style="cursor:pointer;">
                 <td class="cell-name">
                   <div class="biz-info">
                     <span class="biz-name">{{ biz.name }}</span>
@@ -94,7 +94,14 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
                     {{ (biz.isActive ?? biz.is_active) ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
-                <td class="cell-actions">
+                <td class="cell-actions" (click)="$event.stopPropagation()">
+                  <button class="action-icon-btn" (click)="openDashboard(biz)" title="Open business dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/>
+                      <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </button>
                   <button class="action-icon-btn" (click)="toggleActive(biz)" [title]="biz.is_active ? 'Deactivate' : 'Activate'">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <circle cx="12" cy="12" r="10"/>
@@ -162,6 +169,8 @@ import { AdminApiService, AdminBusiness, AdminStats } from '@serveiq/shared/data
 })
 export class BusinessesComponent implements OnInit {
   private adminApi = inject(AdminApiService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   isLoading = signal(true);
   businesses = signal<AdminBusiness[]>([]);
@@ -186,8 +195,6 @@ export class BusinessesComponent implements OnInit {
     this.isLoading.set(true);
     this.adminApi.listBusinesses().subscribe({
       next: (res) => {
-        // `BaseApiService` may unwrap nested `data` and return either an array
-        // or an object like `{ data: [...], meta: {...} }`. Handle both shapes.
         const list = Array.isArray(res)
           ? res
           : (res && Array.isArray((res as any).data) ? (res as any).data : []);
@@ -206,6 +213,14 @@ export class BusinessesComponent implements OnInit {
           list.map(b => b.id === updated.id ? { ...b, ...updated } : b)
         );
       },
+    });
+  }
+
+  openDashboard(biz: AdminBusiness) {
+    const branchId = biz.branches?.[0]?.id;
+    this.authService.impersonate(biz.id, branchId, biz.name).subscribe({
+      next: () => this.router.navigate(['/app/dashboard']),
+      error: () => {},
     });
   }
 }
