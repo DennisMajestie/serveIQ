@@ -58,6 +58,11 @@ export class WaiterNotificationsComponent implements OnInit {
     });
   }
 
+  onMarkDelivered(n: Notification, event: Event) {
+    const orderId = (n as any).data?.order_id;
+    if (orderId) this.markDelivered(orderId, event);
+  }
+
   handleAction(n: Notification) {
     const data = (n as any).data;
     if (data?.order_id) {

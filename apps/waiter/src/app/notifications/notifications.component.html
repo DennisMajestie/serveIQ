@@ -43,7 +43,7 @@
               <p class="text-xs text-[#bccbb9] mt-1 leading-relaxed">{{ n.message }}</p>
               @if (n.type === 'order_ready') {
                 <button
-                  (click)="markDelivered((n as any).data?.order_id, $event)"
+                  (click)="onMarkDelivered(n, $event)"
                   class="mt-2 px-4 py-1.5 rounded-full bg-[#4be277] text-[#020617] text-xs font-semibold active:scale-95 transition-transform"
                 >
                   Mark Delivered
