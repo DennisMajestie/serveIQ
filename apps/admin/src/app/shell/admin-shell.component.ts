@@ -31,7 +31,15 @@ interface NavItem {
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
   template: `
-    <div class="admin-shell">
+      <div class="admin-shell">
+      <!-- Impersonation Loader Overlay -->
+      <div class="impersonate-overlay" *ngIf="impersLoading()">
+        <div class="impersonate-loader">
+          <div class="spinner"></div>
+          <p>Returning to Super Admin dashboard…</p>
+        </div>
+      </div>
+
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-header">
@@ -670,10 +678,16 @@ interface NavItem {
     .back-to-admin-btn:hover {
       background: rgba(255,255,255,0.25);
     }
+    .impersonate-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+    .impersonate-loader { background: var(--surface-container-lowest); border-radius: 16px; padding: 40px 48px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+    .impersonate-loader p { margin: 16px 0 0; font-size: 15px; color: var(--on-surface); }
+    .spinner { width: 40px; height: 40px; margin: 0 auto; border: 3px solid var(--outline-variant); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
 export class AdminShellComponent implements OnInit, OnDestroy {
   sidebarCollapsed = signal(false);
+  impersLoading = signal(false);
   profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: localStorage.getItem('userRole') || '' });
   hasNotifications = signal(false);
   notifLoading = signal(true);
@@ -807,6 +821,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
   }
 
   stopImpersonating() {
+    this.impersLoading.set(true);
     this.authService.stopImpersonating();
     window.location.href = '/app/admin/dashboard';
   }
