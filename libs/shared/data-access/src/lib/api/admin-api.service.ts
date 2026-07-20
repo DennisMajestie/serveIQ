@@ -16,6 +16,8 @@ export interface AdminBusiness {
   currency: string;
   // snake_case (from API)
   subscription_plan: string;
+  subscription_status?: string;
+  subscription_expires_at?: string;
   is_active: boolean;
   created_at: string;
   branches?: { id: string; name: string }[];
@@ -23,20 +25,34 @@ export interface AdminBusiness {
 
   // camelCase aliases (optional) used after client-side conversion
   subscriptionPlan?: string;
+  subscriptionStatus?: string;
+  subscriptionExpiresAt?: string;
   isActive?: boolean;
   createdAt?: string;
 }
+
+export type SubscriptionFilter = 'all' | 'active' | 'expired' | 'trialing' | 'past_due' | 'canceled';
 
 export interface AdminStats {
   // snake_case (from API)
   total_businesses: number;
   active_businesses: number;
+  subscription_active?: number;
+  subscription_expired?: number;
+  subscription_past_due?: number;
+  subscription_trialing?: number;
+  subscription_canceled?: number;
   total_branches: number;
   total_waiters: number;
 
   // camelCase equivalents (optional)
   totalBusinesses?: number;
   activeBusinesses?: number;
+  subscriptionActive?: number;
+  subscriptionExpired?: number;
+  subscriptionPastDue?: number;
+  subscriptionTrialing?: number;
+  subscriptionCanceled?: number;
   totalBranches?: number;
   totalWaiters?: number;
 }
