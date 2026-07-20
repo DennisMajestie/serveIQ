@@ -225,6 +225,7 @@ export class AuthService {
           localStorage.setItem('businessId', businessId);
           if (branchId) localStorage.setItem('branchId', branchId);
           localStorage.setItem('impersonating', businessName || 'true');
+          localStorage.setItem('userRole', 'owner');
           this.tokenSubject.next(token);
         }
       })
