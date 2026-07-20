@@ -60,6 +60,13 @@ interface NavItem {
                 <span>Autopilot AI</span>
               </a>
             </li>
+            <li class="nav-section-label">Platform Features</li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/ads" routerLinkActive="active">
+                <span class="material-symbols-outlined">campaign</span>
+                <span>Advertisements</span>
+              </a>
+            </li>
           </ul>
 
 <ul class="nav-list" *ngIf="permissionService.hasPermission('view_dashboard')">
@@ -112,12 +119,6 @@ interface NavItem {
                 <span>Departments</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
-              <a class="nav-link" routerLink="/app/ads" routerLinkActive="active">
-                <span class="material-symbols-outlined">campaign</span>
-                <span>Advertisements</span>
-              </a>
-            </li>
             <li class="nav-item" *ngIf="permissionService.hasPermission('manage_suppliers')">
               <a class="nav-link" routerLink="/app/suppliers" routerLinkActive="active">
                 <span class="material-symbols-outlined">local_shipping</span>
@@ -166,7 +167,7 @@ interface NavItem {
                 <span>Billing</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_staff')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('assign_roles')">
               <a class="nav-link" routerLink="/app/roles" routerLinkActive="active">
                 <span class="material-symbols-outlined">lock_manager</span>
                 <span>Roles</span>

@@ -149,7 +149,7 @@ export const appRoutes: Route[] = [
           },
           {
             path: 'roles',
-            canActivate: [permissionGuard('view_staff')],
+            canActivate: [permissionGuard('assign_roles')],
             loadComponent: () => import('./roles/roles.component').then(m => m.RolesComponent)
           },
           {
@@ -176,7 +176,7 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'ads',
-        canActivate: [permissionGuard('view_dashboard')],
+        canActivate: [superAdminGuard],
         loadComponent: () => import('./ads/ads.component').then(m => m.AdsComponent)
       }
     ]
