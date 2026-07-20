@@ -439,7 +439,6 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     const depts = this.departments();
     let selectedDept = '';
     let selectedTime = 5;
-    let deptName = '';
 
     const timeOptions = [5, 10, 15, 25];
     let customTime = 5;
@@ -448,15 +447,10 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
       <div style="text-align:left;">
         <div style="margin-bottom:16px;">
           <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#888;">Department</label>
-          ${depts.length > 0 ? `
           <select id="swal-dept" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(64,71,88,0.3);background:#1A1A1A;color:#fff;font-size:14px;font-family:inherit;">
             <option value="">Select department...</option>
             ${depts.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}
           </select>
-          ` : `
-          <input id="swal-dept-name" type="text" placeholder="e.g. Kitchen, Bar, Grill" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(64,71,88,0.3);background:#1A1A1A;color:#fff;font-size:14px;font-family:inherit;box-sizing:border-box;" />
-          <p style="font-size:11px;color:#888;margin:4px 0 0;">Departments unavailable — type a department name to assign this order.</p>
-          `}
         </div>
         <div style="margin-bottom:16px;">
           <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#888;">Estimated Preparation Time</label>
@@ -503,14 +497,13 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
       },
       preConfirm: () => {
         const deptSelect = document.getElementById('swal-dept') as HTMLSelectElement;
-        const deptInput = document.getElementById('swal-dept-name') as HTMLInputElement;
-        selectedDept = deptSelect?.value || deptInput?.value?.trim() || '';
+        selectedDept = deptSelect?.value || '';
         const customInput = document.getElementById('swal-custom-time') as HTMLInputElement;
         const val = parseInt(customInput?.value || '5', 10);
         if (val > 0) selectedTime = val;
 
         if (!selectedDept) {
-          Swal.showValidationMessage('Please select or enter a department');
+          Swal.showValidationMessage('Please select a department');
           return false;
         }
         return { department: selectedDept, estimatedPreparationTimeSeconds: selectedTime * 60 };
