@@ -161,7 +161,7 @@ interface NavItem {
                 <span>POS</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('manage_subscription')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('manage_subscription') && profile().role !== 'super_admin'">
               <a class="nav-link" routerLink="/app/billing" routerLinkActive="active">
                 <span class="material-symbols-outlined">credit_card</span>
                 <span>Billing</span>

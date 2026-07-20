@@ -55,6 +55,11 @@ import Swal from 'sweetalert2';
           <div class="sub-actions" *ngIf="sub.status === 'active' || sub.status === 'trialing'">
             <button class="btn btn-secondary" (click)="cancelSubscription()">Cancel Subscription</button>
           </div>
+          <div class="sub-actions" *ngIf="sub.status === 'past_due' || sub.status === 'expired'">
+            <button class="btn btn-primary" (click)="retryPayment()" [disabled]="isProcessing()">
+              {{ isProcessing() ? 'Processing...' : 'Retry Payment' }}
+            </button>
+          </div>
         </div>
 
         <div class="plans-section" *ngIf="subService.status !== 'active' || !subService.subscription()?.plan">
@@ -222,6 +227,16 @@ export class BillingComponent implements OnInit {
         Swal.fire({ icon: 'error', title: 'Failed to initiate payment' });
       },
     });
+  }
+
+  retryPayment(): void {
+    const sub = this.subService.subscription();
+    const plan = sub?.plan;
+    if (!plan || !plan.id) {
+      Swal.fire({ icon: 'error', title: 'No plan selected', text: 'Please choose a plan below.' });
+      return;
+    }
+    this.choosePaidPlan(plan);
   }
 
   cancelSubscription(): void {
