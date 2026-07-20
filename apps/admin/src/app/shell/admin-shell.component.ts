@@ -60,16 +60,15 @@ interface NavItem {
                 <span>Autopilot AI</span>
               </a>
             </li>
-            <li class="nav-section-label">Platform Features</li>
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/ads" routerLinkActive="active">
                 <span class="material-symbols-outlined">campaign</span>
-                <span>Advertisements</span>
+                <span>Ads</span>
               </a>
             </li>
           </ul>
 
-<ul class="nav-list" *ngIf="permissionService.hasPermission('view_dashboard')">
+<ul class="nav-list" *ngIf="permissionService.hasPermission('view_dashboard') && profile().role !== 'super_admin'">
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/dashboard" routerLinkActive="active">
                 <span class="material-symbols-outlined">dashboard</span>
