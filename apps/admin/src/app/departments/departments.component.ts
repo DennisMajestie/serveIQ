@@ -175,8 +175,7 @@ export class DepartmentsComponent implements OnInit {
 
   loadDepartments() {
     this.isLoading.set(true);
-    const branchId = localStorage.getItem('branchId') || undefined;
-    this.departmentsApi.getAll(true, branchId).subscribe({
+    this.departmentsApi.getAll(true).subscribe({
       next: (data) => {
         this.departments.set(data);
         this.isLoading.set(false);
