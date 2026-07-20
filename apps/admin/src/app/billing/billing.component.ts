@@ -162,7 +162,14 @@ export class BillingComponent implements OnInit {
     const biz = this.business();
     const allPlans = this.subService.plans();
     if (!biz || !allPlans.length) return [];
-    return allPlans.filter(p => p.currency === biz.currency);
+    const seen = new Set<string>();
+    return allPlans.filter(p => {
+      if (p.currency !== biz.currency) return false;
+      const key = p.name.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   });
 
   ngOnInit() {
