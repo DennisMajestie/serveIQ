@@ -109,7 +109,7 @@ export class LegacyPaymentComponent implements OnInit {
     return parts.join('.');
   }
 
-  selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos') {
+  selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd') {
     this.selectedMethod = method;
   }
 
