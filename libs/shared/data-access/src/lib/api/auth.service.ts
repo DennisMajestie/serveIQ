@@ -220,6 +220,7 @@ export class AuthService {
           if (currentToken) localStorage.setItem('originalToken', currentToken);
           localStorage.setItem('originalBusinessId', localStorage.getItem('businessId') || '');
           localStorage.setItem('originalBranchId', localStorage.getItem('branchId') || '');
+          localStorage.setItem('originalUserRole', localStorage.getItem('userRole') || '');
 
           localStorage.setItem('token', token);
           localStorage.setItem('businessId', businessId);
@@ -236,6 +237,7 @@ export class AuthService {
     const originalToken = localStorage.getItem('originalToken');
     const originalBusinessId = localStorage.getItem('originalBusinessId');
     const originalBranchId = localStorage.getItem('originalBranchId');
+    const originalUserRole = localStorage.getItem('originalUserRole');
 
     if (originalToken) {
       localStorage.setItem('token', originalToken);
@@ -243,10 +245,13 @@ export class AuthService {
     }
     if (originalBusinessId) localStorage.setItem('businessId', originalBusinessId);
     if (originalBranchId) localStorage.setItem('branchId', originalBranchId);
+    const roleToRestore = originalUserRole || 'super_admin';
+    localStorage.setItem('userRole', roleToRestore);
 
     localStorage.removeItem('originalToken');
     localStorage.removeItem('originalBusinessId');
     localStorage.removeItem('originalBranchId');
+    localStorage.removeItem('originalUserRole');
     localStorage.removeItem('impersonating');
   }
 

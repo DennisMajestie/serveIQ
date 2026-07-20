@@ -808,7 +808,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
 
   stopImpersonating() {
     this.authService.stopImpersonating();
-    this.router.navigate(['/app/admin/dashboard']);
+    window.location.href = '/app/admin/dashboard';
   }
 
   private pollNotifications() {
