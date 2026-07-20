@@ -69,19 +69,19 @@ interface NavItem {
                 <span>Dashboard</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('open_table')">
               <a class="nav-link" routerLink="/app/tables" routerLinkActive="active">
                 <span class="material-symbols-outlined">table_restaurant</span>
                 <span>Tables</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('create_menu')">
               <a class="nav-link" routerLink="/app/menu" routerLinkActive="active">
                 <span class="material-symbols-outlined">restaurant_menu</span>
                 <span>Menu</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_staff')">
               <a class="nav-link" routerLink="/app/staff" routerLinkActive="active">
                 <span class="material-symbols-outlined">group</span>
                 <span>Staff</span>
