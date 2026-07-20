@@ -224,7 +224,12 @@ export class AuthService {
 
           localStorage.setItem('token', token);
           localStorage.setItem('businessId', businessId);
-          if (branchId) localStorage.setItem('branchId', branchId);
+          const responseBranchId = data.branchId;
+          if (responseBranchId) {
+            localStorage.setItem('branchId', responseBranchId);
+          } else {
+            localStorage.removeItem('branchId');
+          }
           localStorage.setItem('impersonating', businessName || 'true');
           localStorage.setItem('userRole', 'owner');
           this.tokenSubject.next(token);
@@ -248,6 +253,7 @@ export class AuthService {
     const roleToRestore = originalUserRole || 'super_admin';
     localStorage.setItem('userRole', roleToRestore);
 
+    localStorage.removeItem('staffToken');
     localStorage.removeItem('originalToken');
     localStorage.removeItem('originalBusinessId');
     localStorage.removeItem('originalBranchId');
