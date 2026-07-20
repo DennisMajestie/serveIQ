@@ -240,7 +240,7 @@ export class BusinessesComponent implements OnInit {
   }
 
   subStatus(biz: AdminBusiness): string {
-    return (biz.subscriptionStatus ?? biz.subscription_status || 'active').toLowerCase();
+    return ((biz.subscriptionStatus ?? biz.subscription_status) || 'active').toLowerCase();
   }
 
   subLabel(biz: AdminBusiness): string {
