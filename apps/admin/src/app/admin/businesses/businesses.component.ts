@@ -9,6 +9,14 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
+    <!-- Impersonation Loader Overlay -->
+    <div class="impersonate-overlay" *ngIf="impersonatingId()">
+      <div class="impersonate-loader">
+        <div class="spinner"></div>
+        <p>Opening <strong>{{ impersonatingId() }}</strong> dashboard…</p>
+      </div>
+    </div>
+
     <div class="admin-page">
       <header class="page-header">
         <div class="header-content">
@@ -197,6 +205,11 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
     .action-icon-btn svg { width: 20px; height: 20px; }
     .empty-state { text-align: center; padding: 48px; color: var(--secondary); font-size: 14px; }
     .loading-state { text-align: center; padding: 48px; color: var(--secondary); }
+    .impersonate-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+    .impersonate-loader { background: var(--surface-container-lowest); border-radius: 16px; padding: 40px 48px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+    .impersonate-loader p { margin: 16px 0 0; font-size: 15px; color: var(--on-surface); }
+    .spinner { width: 40px; height: 40px; margin: 0 auto; border: 3px solid var(--outline-variant); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
 export class BusinessesComponent implements OnInit {
@@ -208,6 +221,7 @@ export class BusinessesComponent implements OnInit {
   businesses = signal<AdminBusiness[]>([]);
   stats = signal<AdminStats | null>(null);
   subFilter = signal<SubscriptionFilter>('all');
+  impersonatingId = signal<string | null>(null);
 
   filteredBusinesses = computed(() => {
     const list = this.businesses();
@@ -287,10 +301,11 @@ export class BusinessesComponent implements OnInit {
   }
 
   openDashboard(biz: AdminBusiness) {
+    this.impersonatingId.set(biz.name);
     const branchId = biz.branches?.[0]?.id;
     this.authService.impersonate(biz.id, branchId, biz.name).subscribe({
       next: () => this.router.navigate(['/app/dashboard']),
-      error: () => {},
+      error: () => this.impersonatingId.set(null),
     });
   }
 
