@@ -687,7 +687,9 @@ export class AdminShellComponent implements OnInit, OnDestroy {
     return sub;
   });
 
-  impersonating = computed(() => localStorage.getItem('impersonating'));
+  impersonating(): string | null {
+    return localStorage.getItem('impersonating');
+  }
 
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
