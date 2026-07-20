@@ -206,6 +206,7 @@ export const API_CONFIG = {
       business: '/api/v1/admin/businesses/:id',
       toggleBusinessActive: '/api/v1/admin/businesses/:id/toggle-active',
       stats: '/api/v1/admin/stats',
+      extend: '/api/v1/admin/businesses/extend',
     },
   } as const,
 };

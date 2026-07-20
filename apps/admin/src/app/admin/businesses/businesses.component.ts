@@ -123,6 +123,12 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
                       <path *ngIf="!biz.is_active" d="M12 2a10 10 0 0 1 0 20"/>
                     </svg>
                   </button>
+                  <button class="action-icon-btn" *ngIf="subStatus(biz) === 'expired' || subStatus(biz) === 'past_due'" (click)="extendSubscription(biz)" title="Extend subscription">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                  </button>
                 </td>
               </tr>
               <tr *ngIf="!filteredBusinesses().length">
@@ -284,6 +290,17 @@ export class BusinessesComponent implements OnInit {
     this.authService.impersonate(biz.id, branchId, biz.name).subscribe({
       next: () => this.router.navigate(['/app/dashboard']),
       error: () => {},
+    });
+  }
+
+  extendSubscription(biz: AdminBusiness) {
+    const days = 30;
+    this.adminApi.extendSubscription(biz.id, days).subscribe({
+      next: () => {
+        this.businesses.update(list =>
+          list.map(b => b.id === biz.id ? { ...b, subscription_status: 'active', subscriptionStatus: 'active' } : b)
+        );
+      },
     });
   }
 }

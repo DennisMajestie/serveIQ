@@ -92,4 +92,8 @@ export class AdminApiService extends BaseApiService {
   getStats(): Observable<AdminStats> {
     return this.get<AdminStats>(API_CONFIG.endpoints.admin.stats);
   }
+
+  extendSubscription(businessId: string, days: number = 30): Observable<any> {
+    return this.post<any>(API_CONFIG.endpoints.admin.extend, { business_id: businessId, days });
+  }
 }
