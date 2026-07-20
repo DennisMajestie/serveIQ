@@ -25,7 +25,7 @@ export class LegacyPaymentComponent implements OnInit {
   table = signal<Table | null>(null);
   bill = signal<Bill | null>(null);
   isLoading = signal(true);
-  selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos' = 'cash';
+  selectedMethod: 'cash' | 'card' | 'transfer' | 'pos' = 'cash';
   currentAmount = signal('0');
   isEditingAmount = false;
   isProcessing = signal(false);

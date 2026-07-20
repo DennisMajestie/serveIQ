@@ -142,21 +142,7 @@
             [class.text-[#4be277]]="selectedMethod === 'transfer'"
             [class.text-[#dce1fb]]="selectedMethod !== 'transfer'">Transfer</span>
         </button>
-        <button (click)="selectMethod('ussd')" class="glass-card p-6 rounded-2xl flex flex-col items-center gap-4 border active:scale-95 transition-all group"
-          [class.border-[#4be277]/30]="selectedMethod === 'ussd'"
-          [class.bg-[#4be277]/5]="selectedMethod === 'ussd'"
-          [class.border-white/5]="selectedMethod !== 'ussd'">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
-            [class.bg-[#4be277]/20]="selectedMethod === 'ussd'"
-            [class.bg-white/5]="selectedMethod !== 'ussd'"
-            [class.text-[#4be277]]="selectedMethod === 'ussd'"
-            [class.text-[#bccbb9]]="selectedMethod !== 'ussd'">
-            <span class="material-symbols-outlined text-3xl">dialpad</span>
-          </div>
-          <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif"
-            [class.text-[#4be277]]="selectedMethod === 'ussd'"
-            [class.text-[#dce1fb]]="selectedMethod !== 'ussd'">USSD</span>
-        </button>
+
       </section>
 
       <!-- POS Terminal Selector -->
