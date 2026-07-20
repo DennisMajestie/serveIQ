@@ -246,7 +246,8 @@ export class BusinessesComponent implements OnInit {
   }
 
   subStatus(biz: AdminBusiness): string {
-    return ((biz.subscriptionStatus ?? biz.subscription_status) || 'active').toLowerCase();
+    const status = biz.subscriptionStatus ?? biz.subscription_status;
+    return status ? status.toLowerCase() : 'expired';
   }
 
   subLabel(biz: AdminBusiness): string {
