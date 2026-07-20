@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService, ShiftsApiService, NotificationsApiService } from '@serveiq/shared/data-access';
 import { Table, Tab, User, Business, Shift, Notification } from '@serveiq/shared/models';
-import { interval, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin, interval, Subscription } from 'rxjs';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -28,6 +27,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   branchName = signal('');
   isSynced = signal(false);
   isLoading = signal(true);
+  isDataReady = signal(false);
   toastMessage = signal<string | null>(null);
   currentShift = signal<Shift | null>(null);
   hasOpenShift = computed(() => !!(this.currentShift() && this.currentShift()!.status === 'open'));
@@ -112,8 +112,22 @@ export class TablesComponent implements OnInit, OnDestroy {
   private seenOrderReadyIds = new Set<string>();
 
   ngOnInit() {
-    this.loadTables();
-    this.loadOpenTabs();
+    forkJoin({
+      tables: this.tablesApi.getAllTables(),
+      tabs: this.tabsApi.getAllTabs({ status: 'open' }),
+    }).subscribe({
+      next: (result) => {
+        this.tables.set(Array.isArray(result.tables) ? result.tables : []);
+        this.openTabs.set(Array.isArray(result.tabs) ? result.tabs : []);
+        this.isDataReady.set(true);
+        this.isSynced.set(true);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.isDataReady.set(true);
+      },
+    });
     this.loadCurrentUser();
     this.loadBusiness();
     this.loadCurrentShift();
@@ -139,10 +153,9 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.tablesApi.getAllTables().subscribe({
       next: (tables) => {
         this.tables.set(tables);
-        this.isLoading.set(false);
         this.isSynced.set(true);
       },
-      error: () => this.isLoading.set(false)
+      error: () => {},
     });
   }
 
@@ -237,6 +250,10 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   async onTableClick(table: Table) {
+    if (!this.isDataReady()) {
+      Swal.fire({ icon: 'info', title: 'Loading', text: 'Please wait…', timer: 1000, showConfirmButton: false });
+      return;
+    }
     let tab = this.getTabForTable(table.id);
 
     if (!tab && table.status === 'occupied') {
