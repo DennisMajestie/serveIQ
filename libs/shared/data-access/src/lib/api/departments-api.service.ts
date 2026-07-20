@@ -12,9 +12,10 @@ export class DepartmentsApiService extends BaseApiService {
     super(http, env);
   }
 
-  getAll(includeInactive?: boolean): Observable<Department[]> {
+  getAll(includeInactive?: boolean, branchId?: string): Observable<Department[]> {
     const params: Record<string, string> = {};
     if (includeInactive) params['include_inactive'] = 'true';
+    if (branchId) params['branch_id'] = branchId;
     return this.get<Department[]>(API_CONFIG.endpoints.departments.list, undefined, params);
   }
 

@@ -151,8 +151,10 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   }
 
   loadDepartments() {
-    this.departmentsApi.getAll().subscribe({
+    const branchId = localStorage.getItem('branchId') || undefined;
+    this.departmentsApi.getAll(false, branchId).subscribe({
       next: (depts) => this.departments.set(depts || []),
+      error: () => {},
     });
   }
 
