@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { OrdersApiService, AuthService } from '@serveiq/shared/data-access';
 import { OrderGroup } from '@serveiq/shared/models';
-import Swal from 'sweetalert2';
 import { interval, Subscription } from 'rxjs';
 
 type KitchenTab = 'preparing' | 'ready';
@@ -27,7 +26,6 @@ export class ChefComponent implements OnInit, OnDestroy {
 
   isLoadingPreparing = signal(false);
   isLoadingReady = signal(false);
-  isProcessing = signal(false);
 
   businessName = signal(localStorage.getItem('businessName') || 'ServeIQ');
 
@@ -100,49 +98,9 @@ export class ChefComponent implements OnInit, OnDestroy {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   }
 
-  markReady(group: OrderGroup) {
-    if (this.isProcessing()) return;
-    Swal.fire({
-      title: 'Mark as Ready?',
-      text: `Confirm that Table ${group.tableNumber} order is ready for pickup.`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Ready',
-      confirmButtonColor: '#22c55e',
-      cancelButtonText: 'Cancel',
-      background: '#1A1A1A',
-      color: '#fff',
-    }).then(result => {
-      if (!result.isConfirmed) return;
-      this.isProcessing.set(true);
-      const items = group.items;
-      let completed = 0;
-      items.forEach(item => {
-        this.ordersApi.markReady(item.id).subscribe({
-          next: () => {
-            completed++;
-            if (completed === items.length) {
-              this.isProcessing.set(false);
-              this.preparingOrders.update(list => list.filter(g => g.tabId !== group.tabId || g.createdAt !== group.createdAt));
-              this.loadReady();
-            }
-          },
-          error: (err) => {
-            this.isProcessing.set(false);
-            Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'Failed to mark ready' });
-          }
-        });
-      });
-    });
-  }
-
   formatTime(iso: string): string {
     if (!iso) return '';
     return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  }
-
-  formatKobo(kobo: number): string {
-    return '₦' + (kobo / 100).toLocaleString('en-US', { minimumFractionDigits: 2 });
   }
 
   logout() {
