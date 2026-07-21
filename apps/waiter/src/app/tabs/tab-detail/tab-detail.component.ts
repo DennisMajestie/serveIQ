@@ -44,7 +44,11 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     const status = this.orderStatus();
     return !!status && status !== 'PENDING_SUPERVISOR_APPROVAL';
   });
-  canDeliver = computed(() => this.orderStatus() === 'OUT_FOR_DELIVERY');
+  /** Tracks whether the order was seen in the ready-for-pickup list */
+  private readyOrderRef = signal<OrderGroup | null>(null);
+  /** Set when the order leaves the ready list (supervisor confirmed pickup) */
+  private confirmedPickup = signal(false);
+  canDeliver = computed(() => this.confirmedPickup());
 
   copiedId = signal<string | null>(null);
 
@@ -74,6 +78,8 @@ export class TabDetailComponent implements OnInit, OnDestroy {
             (item as any)._actionDone = true;
             completed++;
             if (completed === items.length) {
+              this.confirmedPickup.set(false);
+              this.readyOrderRef.set(null);
               Swal.fire({ icon: 'success', title: 'Delivered!', timer: 1500, showConfirmButton: false });
               this.loadTab(this.tabId());
             }
@@ -233,68 +239,55 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     const findMatch = (orders: OrderGroup[] | null) =>
       (orders || []).find(o => o.tabId === tid) || null;
 
-    const checkByTab = () => {
-      this.orderService.getByTab(tid).subscribe({
-        next: (items: any[]) => {
-          if (items?.length > 0) {
-            const s = items[0]?.orderStatus || items[0]?.order_status || '';
-            this.activeOrder.set({
-              tabId: tid,
-              createdAt: items[0].createdAt || new Date().toISOString(),
-              tableId: '',
-              tableNumber: '',
-              waiterId: '',
-              waiterName: '',
-              totalKobo: items.reduce((n: number, i: any) => n + (i.subtotalKobo ?? 0), 0),
-              items: items as any,
-            });
-          }
+    const onRdy = (ready: OrderGroup[] | null) => {
+      const rmatch = findMatch(ready);
+      if (rmatch) {
+        this.readyOrderRef.set(rmatch);
+        this.confirmedPickup.set(false);
+        this.activeOrder.set(rmatch);
+      } else if (this.readyOrderRef()) {
+        this.confirmedPickup.set(true);
+        this.activeOrder.set(this.readyOrderRef());
+      }
+    };
+
+    const next = (orders: OrderGroup[] | null) => {
+      const match = findMatch(orders);
+      if (match) { this.activeOrder.set(match); return; }
+      this.orderService.getPreparing().subscribe({
+        next: (preparing) => {
+          const pmatch = findMatch(preparing);
+          if (pmatch) { this.activeOrder.set(pmatch); return; }
+          this.orderService.getReadyForPickup().subscribe({
+            next: (rdy) => onRdy(rdy),
+            error: () => {}
+          });
         },
-        error: () => {}
+        error: () => {
+          this.orderService.getReadyForPickup().subscribe({
+            next: (rdy) => onRdy(rdy),
+            error: () => {}
+          });
+        }
       });
     };
 
-    const handleRdy = (ready: OrderGroup[] | null) => {
-      const rmatch = findMatch(ready);
-      if (rmatch) { this.activeOrder.set(rmatch); return; }
-      checkByTab();
-    };
-
     this.orderService.getPending().subscribe({
-      next: (orders) => {
-        const match = findMatch(orders);
-        if (match) { this.activeOrder.set(match); return; }
-        this.orderService.getPreparing().subscribe({
-          next: (preparing) => {
-            const pmatch = findMatch(preparing);
-            if (pmatch) { this.activeOrder.set(pmatch); return; }
-            this.orderService.getReadyForPickup().subscribe({
-              next: (rdy) => handleRdy(rdy),
-              error: () => checkByTab()
-            });
-          },
-          error: () => {
-            this.orderService.getReadyForPickup().subscribe({
-              next: (rdy) => handleRdy(rdy),
-              error: () => checkByTab()
-            });
-          }
-        });
-      },
+      next: (orders) => next(orders),
       error: () => {
         this.orderService.getPreparing().subscribe({
           next: (preparing) => {
             const pmatch = findMatch(preparing);
             if (pmatch) { this.activeOrder.set(pmatch); return; }
             this.orderService.getReadyForPickup().subscribe({
-              next: (rdy) => handleRdy(rdy),
-              error: () => checkByTab()
+              next: (rdy) => onRdy(rdy),
+              error: () => {}
             });
           },
           error: () => {
             this.orderService.getReadyForPickup().subscribe({
-              next: (rdy) => handleRdy(rdy),
-              error: () => checkByTab()
+              next: (rdy) => onRdy(rdy),
+              error: () => {}
             });
           }
         });
