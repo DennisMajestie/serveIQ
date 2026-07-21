@@ -27,7 +27,7 @@
       <div class="flex flex-col gap-2">
         @for (n of notifications(); track n.id) {
           <div
-            (click)="handleAction(n)"
+            (click)="openDetail(n)"
             class="flex items-start gap-3 p-4 rounded-2xl cursor-pointer active:scale-[0.98] transition-all"
             [class.bg-[#4be277]/5]="!n.isRead"
             [class.bg-white/5]="n.isRead"
@@ -41,14 +41,6 @@
                 <span class="text-[10px] text-[#bccbb9] whitespace-nowrap">{{ n.createdAt | date:'MMM d, h:mm a' }}</span>
               </div>
               <p class="text-xs text-[#bccbb9] mt-1 leading-relaxed">{{ n.message }}</p>
-              @if (n.type === 'order_ready') {
-                <button
-                  (click)="onMarkDelivered(n, $event)"
-                  class="mt-2 px-4 py-1.5 rounded-full bg-[#4be277] text-[#020617] text-xs font-semibold active:scale-95 transition-transform"
-                >
-                  Mark Delivered
-                </button>
-              }
             </div>
             @if (!n.isRead) {
               <button
