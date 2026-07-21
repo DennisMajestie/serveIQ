@@ -278,18 +278,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
         this.activeOrder.set(this.readyOrderRef());
         return;
       }
-      this.orderService.getOutForDelivery().subscribe({
-        next: (out) => {
-          const omatch = findMatch(out);
-          if (omatch) {
-            this.confirmedPickup.set(true);
-            this.activeOrder.set(omatch);
-            return;
-          }
-          checkTabFallback();
-        },
-        error: () => checkTabFallback(),
-      });
+      checkTabFallback();
     };
 
     const next = (orders: OrderGroup[] | null) => {
