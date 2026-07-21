@@ -584,6 +584,7 @@ export interface Notification {
   type: NotificationType;
   isRead: boolean;
   createdAt: Date;
+  data?: { orderId?: string; tabId?: string };
 }
 
 export interface AuditLog {

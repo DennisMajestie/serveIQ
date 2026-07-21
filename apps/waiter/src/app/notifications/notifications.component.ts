@@ -59,7 +59,7 @@ export class WaiterNotificationsComponent implements OnInit {
   }
 
   openDetail(n: Notification) {
-    const data = (n as any).data;
+    const data = n.data;
     const html = `
       <div style="text-align:left;padding:8px 0">
         <p style="margin:0 0 4px;font-size:13px;color:#bccbb9">${n.title}</p>
@@ -71,7 +71,7 @@ export class WaiterNotificationsComponent implements OnInit {
             <p style="margin:0;font-size:20px;color:#4be277;font-weight:700;letter-spacing:2px">${data.tracking_code}</p>
           </div>
         ` : ''}
-        ${n.type === 'order_ready' && data?.order_id ? `
+        ${n.type === 'order_ready' && (data?.orderId || data?.order_id) ? `
           <div style="margin-top:16px">
             <button id="swal-deliver-btn" style="width:100%;padding:12px;border:none;border-radius:12px;background:#4be277;color:#020617;font-size:15px;font-weight:600;cursor:pointer">Mark Delivered</button>
           </div>
@@ -90,7 +90,7 @@ export class WaiterNotificationsComponent implements OnInit {
         if (btn) {
           btn.addEventListener('click', () => {
             Swal.close();
-            this.doDeliver(data.order_id);
+            this.doDeliver(data.orderId || data.order_id);
           });
         }
       },
