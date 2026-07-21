@@ -65,15 +65,22 @@
         } @else {
           <div class="grid grid-cols-2 gap-5">
             @for (item of filteredItems; track item.id) {
-              <div class="glass-card rounded-3xl overflow-hidden group">
-                <div class="h-36 overflow-hidden">
+              <div class="glass-card rounded-3xl overflow-hidden group" [class.sold-out]="!item.isAvailable">
+                <div class="h-36 overflow-hidden relative">
                   <img [src]="item.image" [alt]="item.name" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                  @if (!item.isAvailable) {
+                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span class="px-4 py-1.5 rounded-full bg-red-500/80 text-white text-xs font-semibold uppercase tracking-wider">Sold out</span>
+                    </div>
+                  }
                 </div>
                 <div class="card-content p-4 space-y-3">
                   <h3 class="text-[16px] leading-[1.5] font-medium text-[#dce1fb] line-clamp-1" style="font-family:'Inter',sans-serif">{{ item.name }}</h3>
                   <div class="flex justify-between items-center">
-                    <span class="text-[18px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">₦{{ getDisplayPrice(item).toLocaleString('en-NG', {minimumFractionDigits: 2}) }}</span>
-                    @if (getItemQty(item.id) === 0) {
+                    <span class="text-[18px] leading-none font-semibold text-[#4be277]" [class.text-[#bccbb9]]="!item.isAvailable" style="font-family:'Space Grotesk',sans-serif">₦{{ getDisplayPrice(item).toLocaleString('en-NG', {minimumFractionDigits: 2}) }}</span>
+                    @if (!item.isAvailable) {
+                      <span class="text-xs text-[#bccbb9] font-medium">Unavailable</span>
+                    } @else if (getItemQty(item.id) === 0) {
                       <button (click)="addToSelection(item)" class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center active:scale-90 transition-transform hover:bg-white/20">
                         <span class="material-symbols-outlined text-sm">add</span>
                       </button>

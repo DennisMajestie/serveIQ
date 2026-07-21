@@ -12,6 +12,7 @@ interface LocalMenuItem {
   category: string;
   image: string;
   price: number;
+  isAvailable: boolean;
   portions?: Portion[];
   defaultPortionId?: string;
 }
@@ -70,7 +71,8 @@ export class MenuComponent implements OnInit {
           name: i.name,
           category: i.category,
           image: resolveImageUrl(i.imageUrl, this.env.apiUrl),
-          price: (i.priceKobo ?? i.price_kobo ?? 0) / 100
+          price: (i.priceKobo ?? i.price_kobo ?? 0) / 100,
+          isAvailable: i.isAvailable !== false,
         }));
         const cats = ['All', ...new Set(items.map(i => i.category))];
         this.categories.set(cats);
