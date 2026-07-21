@@ -37,7 +37,6 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     const item = this.activeOrder()?.items?.[0] as any;
     return item?.orderStatus || item?.order_status || null;
   });
-  orderIsRdy = signal(false);
   declineReason = computed(() => this.activeOrder()?.items[0]?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
   trackingCode = computed(() => this.activeOrder()?.items[0]?.trackingCode ?? null);
@@ -45,11 +44,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     const status = this.orderStatus();
     return !!status && status !== 'PENDING_SUPERVISOR_APPROVAL';
   });
-  canDeliver = computed(() => {
-    if (this.orderIsRdy()) return true;
-    const status = this.orderStatus();
-    return status === 'READY_FOR_PICKUP' || status === 'OUT_FOR_DELIVERY';
-  });
+  canDeliver = computed(() => this.orderStatus() === 'OUT_FOR_DELIVERY');
 
   copiedId = signal<string | null>(null);
 
@@ -243,23 +238,26 @@ export class TabDetailComponent implements OnInit, OnDestroy {
         next: (items: any[]) => {
           if (items?.length > 0) {
             const s = items[0]?.orderStatus || items[0]?.order_status || '';
-            if (s === 'READY_FOR_PICKUP' || s === 'OUT_FOR_DELIVERY') {
-              this.orderIsRdy.set(true);
-              this.activeOrder.set({
-                tabId: tid,
-                createdAt: items[0].createdAt || new Date().toISOString(),
-                tableId: '',
-                tableNumber: '',
-                waiterId: '',
-                waiterName: '',
-                totalKobo: items.reduce((n: number, i: any) => n + (i.subtotalKobo ?? 0), 0),
-                items: items as any,
-              });
-            }
+            this.activeOrder.set({
+              tabId: tid,
+              createdAt: items[0].createdAt || new Date().toISOString(),
+              tableId: '',
+              tableNumber: '',
+              waiterId: '',
+              waiterName: '',
+              totalKobo: items.reduce((n: number, i: any) => n + (i.subtotalKobo ?? 0), 0),
+              items: items as any,
+            });
           }
         },
         error: () => {}
       });
+    };
+
+    const handleRdy = (ready: OrderGroup[] | null) => {
+      const rmatch = findMatch(ready);
+      if (rmatch) { this.activeOrder.set(rmatch); return; }
+      checkByTab();
     };
 
     this.orderService.getPending().subscribe({
@@ -271,27 +269,13 @@ export class TabDetailComponent implements OnInit, OnDestroy {
             const pmatch = findMatch(preparing);
             if (pmatch) { this.activeOrder.set(pmatch); return; }
             this.orderService.getReadyForPickup().subscribe({
-              next: (ready) => {
-                const rmatch = findMatch(ready);
-                if (rmatch) {
-                  this.activeOrder.set(rmatch);
-                  this.orderIsRdy.set(true);
-                  return;
-                }
-                this.orderIsRdy.set(false);
-                checkByTab();
-              },
+              next: (rdy) => handleRdy(rdy),
               error: () => checkByTab()
             });
           },
           error: () => {
             this.orderService.getReadyForPickup().subscribe({
-              next: (ready) => {
-                const rmatch = findMatch(ready);
-                if (rmatch) { this.activeOrder.set(rmatch); this.orderIsRdy.set(true); return; }
-                this.orderIsRdy.set(false);
-                checkByTab();
-              },
+              next: (rdy) => handleRdy(rdy),
               error: () => checkByTab()
             });
           }
@@ -303,23 +287,13 @@ export class TabDetailComponent implements OnInit, OnDestroy {
             const pmatch = findMatch(preparing);
             if (pmatch) { this.activeOrder.set(pmatch); return; }
             this.orderService.getReadyForPickup().subscribe({
-              next: (ready) => {
-                const rmatch = findMatch(ready);
-                if (rmatch) { this.activeOrder.set(rmatch); this.orderIsRdy.set(true); return; }
-                this.orderIsRdy.set(false);
-                checkByTab();
-              },
+              next: (rdy) => handleRdy(rdy),
               error: () => checkByTab()
             });
           },
           error: () => {
             this.orderService.getReadyForPickup().subscribe({
-              next: (ready) => {
-                const rmatch = findMatch(ready);
-                if (rmatch) { this.activeOrder.set(rmatch); this.orderIsRdy.set(true); return; }
-                this.orderIsRdy.set(false);
-                checkByTab();
-              },
+              next: (rdy) => handleRdy(rdy),
               error: () => checkByTab()
             });
           }
