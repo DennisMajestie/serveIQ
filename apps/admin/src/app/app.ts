@@ -1,7 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -20,10 +19,7 @@ import { ThemeService } from './core/theme.service';
   `]
 })
 export class App implements OnInit {
-  private themeService = inject(ThemeService);
-
   ngOnInit() {
-    this.themeService.restoreBrandColors();
     if ('fonts' in document) {
       (document as any).fonts.ready.then(() => {
         document.body.classList.add('fonts-loaded');

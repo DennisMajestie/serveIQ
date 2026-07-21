@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
-import { ThemeService } from '../core/theme.service';
 import { Branch, User, Business } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -24,7 +23,6 @@ export class SettingsComponent implements OnInit {
   private businessApi = inject(BusinessApiService);
   private router = inject(Router);
   private uploadService = inject(UploadApiService);
-  private themeService = inject(ThemeService);
   private env = inject<EnvironmentConfig>(ENVIRONMENT_CONFIG);
   activeSection = signal<Section>('branch-setup');
   branches = signal<Branch[]>([]);
@@ -156,7 +154,6 @@ export class SettingsComponent implements OnInit {
         this.timezone.set(b.timezone || 'Africa/Lagos');
         this.brandPrimaryColor.set(b.brandPrimaryColor || '#F97316');
         this.brandAccentColor.set(b.brandAccentColor || '#d97706');
-        this.themeService.applyBrandColors(this.brandPrimaryColor(), this.brandAccentColor());
       }
     });
   }
@@ -209,7 +206,6 @@ export class SettingsComponent implements OnInit {
       next: () => {
         this.isSavingBranding.set(false);
         this.brandLogoFile.set(null);
-        this.themeService.applyBrandColors(this.brandPrimaryColor(), this.brandAccentColor());
         Swal.fire({ icon: 'success', title: 'Branding Saved', timer: 1500, showConfirmButton: false });
       },
       error: () => {
