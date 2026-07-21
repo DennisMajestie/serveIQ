@@ -238,11 +238,11 @@ export class TabDetailComponent implements OnInit, OnDestroy {
               next: (ready) => {
                 const rmatch = findMatch(ready);
                 if (rmatch) { this.activeOrder.set(rmatch); return; }
-                // Fallback: fetch all orders for this tab directly
+                // Fallback: fetch raw orders for this tab when status-based lists miss it
                 this.orderService.getByTab(tid).subscribe({
-                  next: (items) => {
-                    if (items && items.length > 0) {
-                      const statuses = [...new Set(items.map(i => i.orderStatus).filter(Boolean))];
+                  next: (items: any[]) => {
+                    if (items?.length > 0) {
+                      const statuses = [...new Set(items.map((i: any) => i.orderStatus).filter(Boolean))];
                       if (statuses.length > 0) {
                         this.activeOrder.set({
                           tabId: tid,
@@ -251,7 +251,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
                           tableNumber: '',
                           waiterId: '',
                           waiterName: '',
-                          totalKobo: 0,
+                          totalKobo: items.reduce((s: number, i: any) => s + (i.subtotalKobo ?? 0), 0),
                           items: items as any,
                         });
                       }
