@@ -65,10 +65,10 @@ export class WaiterNotificationsComponent implements OnInit {
         <p style="margin:0 0 4px;font-size:13px;color:#bccbb9">${n.title}</p>
         <p style="margin:0 0 4px;font-size:15px;color:#dce1fb;font-weight:600">${n.message}</p>
         <p style="margin:0;font-size:11px;color:#bccbb9">${new Date(n.createdAt).toLocaleString()}</p>
-        ${n.type === 'order_approved' && data?.tracking_code ? `
+        ${n.type === 'order_approved' && (data as any)?.tracking_code ? `
           <div style="margin-top:12px;padding:10px;background:rgba(75,226,119,0.08);border-radius:8px;text-align:center">
             <p style="margin:0 0 4px;font-size:11px;color:#bccbb9">TRACKING CODE</p>
-            <p style="margin:0;font-size:20px;color:#4be277;font-weight:700;letter-spacing:2px">${data.tracking_code}</p>
+            <p style="margin:0;font-size:20px;color:#4be277;font-weight:700;letter-spacing:2px">${(data as any).tracking_code}</p>
           </div>
         ` : ''}
         ${n.type === 'order_ready' && (data?.orderId || data?.order_id) ? `
