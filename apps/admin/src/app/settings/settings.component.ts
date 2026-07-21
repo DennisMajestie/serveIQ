@@ -53,6 +53,8 @@ export class SettingsComponent implements OnInit {
   isSavingBranch = signal(false);
   activeBranchId = signal(localStorage.getItem('activeBranchId') || '');
   businessSettings = signal<Business | null>(null);
+  businessCode = signal('');
+  copiedCode = signal(false);
   taxRate = signal<number | null>(null);
   currency = signal('NGN');
   timezone = signal('Africa/Lagos');
@@ -146,6 +148,7 @@ export class SettingsComponent implements OnInit {
     this.businessApi.getBusiness().subscribe({
       next: (b) => {
         this.businessSettings.set(b);
+        this.businessCode.set(b.businessCode || '');
         this.taxRate.set(b.taxRate ?? null);
         this.currency.set(b.currency || 'NGN');
         this.timezone.set(b.timezone || 'Africa/Lagos');
@@ -554,5 +557,11 @@ export class SettingsComponent implements OnInit {
 
   getPublicMenuUrl(branchId: string): string {
     return `${this.env.publicMenuBaseUrl}/public/menu/${branchId}`;
+  }
+
+  copyBusinessCode() {
+    navigator.clipboard.writeText(this.businessCode());
+    this.copiedCode.set(true);
+    setTimeout(() => this.copiedCode.set(false), 2000);
   }
 }
