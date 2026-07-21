@@ -2,7 +2,7 @@ import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService, UserApiService } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -24,6 +24,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private userService = inject(UserApiService);
   private router = inject(Router);
+  private env = inject<EnvironmentConfig>(ENVIRONMENT_CONFIG);
 
   onResolveBusiness() {
     if (!this.businessCode.trim()) return;
@@ -60,6 +61,10 @@ export class LoginComponent {
         const role = (localStorage.getItem('userRole') || '').toLowerCase();
         if (role === 'supervisor') {
           this.router.navigate(['/supervisor/orders']);
+        } else if (role === 'manager') {
+          const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
+          const staffToken = localStorage.getItem('staffToken');
+          window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
         } else {
           this.router.navigate(['/tables']);
         }
