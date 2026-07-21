@@ -248,6 +248,28 @@ export class TabDetailComponent implements OnInit, OnDestroy {
       } else if (this.readyOrderRef()) {
         this.confirmedPickup.set(true);
         this.activeOrder.set(this.readyOrderRef());
+      } else {
+        this.orderService.getByTab(tid).subscribe({
+          next: (orders) => {
+            if (!orders || orders.length === 0) return;
+            const hasDelivered = orders.some(o => (o as any).orderStatus === 'DELIVERED' || (o as any).order_status === 'DELIVERED');
+            const hasOutForDelivery = orders.some(o => (o as any).orderStatus === 'OUT_FOR_DELIVERY' || (o as any).order_status === 'OUT_FOR_DELIVERY');
+            if (hasDelivered) {
+              this.confirmedPickup.set(false);
+              this.readyOrderRef.set(null);
+              this.activeOrder.set({ tabId: tid, items: orders.map(o => ({ ...o, orderStatus: 'DELIVERED' })) } as any);
+            } else if (hasOutForDelivery) {
+              this.confirmedPickup.set(true);
+              this.activeOrder.set({ tabId: tid, items: orders.map(o => ({ ...o, orderStatus: 'OUT_FOR_DELIVERY' })) } as any);
+            } else {
+              const status = (orders[0] as any).orderStatus || (orders[0] as any).order_status;
+              if (status) {
+                this.activeOrder.set({ tabId: tid, items: orders } as any);
+              }
+            }
+          },
+          error: () => {},
+        });
       }
     };
 

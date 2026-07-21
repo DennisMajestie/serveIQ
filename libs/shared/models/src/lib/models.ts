@@ -110,6 +110,8 @@ export interface OrderItem {
   quantity: number;
   qty?: number;
   notes?: string;
+  orderStatus?: string;
+  order_status?: string;
 }
 
 export interface Bill {
