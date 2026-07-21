@@ -35,7 +35,8 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   activeOrder = signal<OrderGroup | null>(null);
   orderStatus = computed(() => {
     const item = this.activeOrder()?.items?.[0] as any;
-    return item?.orderStatus || item?.order_status || null;
+    const s = item?.orderStatus || item?.order_status || null;
+    return s ? (s as string).toUpperCase() : null;
   });
   declineReason = computed(() => this.activeOrder()?.items[0]?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
@@ -247,16 +248,17 @@ export class TabDetailComponent implements OnInit, OnDestroy {
       this.orderService.getByTab(tid).subscribe({
         next: (orders) => {
           if (!orders || orders.length === 0) return;
-          const s = (orders[0] as any).orderStatus || (orders[0] as any).order_status;
-          if (s === 'DELIVERED') {
+          const s = ((orders[0] as any).orderStatus || (orders[0] as any).order_status || '') as string;
+          const up = s.toUpperCase();
+          if (up === 'DELIVERED') {
             this.confirmedPickup.set(false);
             this.readyOrderRef.set(null);
             setOrder(orders, 'DELIVERED');
-          } else if (s === 'OUT_FOR_DELIVERY') {
+          } else if (up === 'OUT_FOR_DELIVERY') {
             this.confirmedPickup.set(true);
             setOrder(orders, 'OUT_FOR_DELIVERY');
           } else if (s) {
-            setOrder(orders, s);
+            setOrder(orders, up);
           }
         },
         error: () => {},
