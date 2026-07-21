@@ -104,6 +104,14 @@ export class AuthService {
     );
   }
 
+  /** Resolve a business code to get business ID and name */
+  resolveBusinessCode(code: string): Observable<{ business_id: string; business_name: string }> {
+    return this.http.post<{ business_id: string; business_name: string }>(
+      `${this.apiUrl}/api/v1/auth/resolve-business`,
+      { business_code: code }
+    );
+  }
+
   /** Activate a terminal device using Admin credentials */
   activateTerminal(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(

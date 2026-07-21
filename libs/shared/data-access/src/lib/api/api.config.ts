@@ -11,6 +11,7 @@ export const API_CONFIG = {
       refresh: '/api/v1/auth/refresh',
       logout: '/api/v1/auth/logout',
       activate: '/api/v1/auth/activate',
+      resolveBusiness: '/api/v1/auth/resolve-business',
       staffLogin: '/api/v1/auth/waiter-login',
       forgotPassword: '/api/v1/auth/forgot-password',
       resetPassword: '/api/v1/auth/reset-password',

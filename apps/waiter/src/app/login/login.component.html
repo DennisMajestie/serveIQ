@@ -1,103 +1,88 @@
-<!-- Background Atmospheric Elements -->
 <div class="atmospheric-background">
   <div class="atmosphere-blob blob-1"></div>
   <div class="atmosphere-blob blob-2"></div>
 </div>
 
-<!-- Main Login Canvas -->
 <main class="login-main">
-  <!-- Top Section -->
   <div class="login-header">
-    <h1 class="login-title">{{ businessName() }}</h1>
-    <p class="login-subtitle">{{ isActivated() ? 'Staff Authentication' : 'Terminal Activation' }}</p>
+    <h1 class="login-title">{{ isResolved() ? businessName() : 'ServeIQ' }}</h1>
+    <p class="login-subtitle">{{ isResolved() ? 'Staff Authentication' : 'Enter Business Code' }}</p>
   </div>
 
-  <!-- Login Screen (Admin) -->
-  <div class="login-card glass-card" *ngIf="!isActivated()">
-    <div class="avatar-section">
-      <div class="avatar-text">
-        <h2 class="pin-header">Link Terminal</h2>
-        <p class="shift-info">Sign in to connect this device</p>
-      </div>
-    </div>
-
-    <div class="activation-form" style="width: 100%; display: flex; flex-direction: column; gap: 16px;">
-      <div class="form-group">
-        <label style="font-size: 12px; color: var(--on-surface-variant); font-weight: 600;">EMAIL</label>
-        <input type="email" [(ngModel)]="adminEmail" class="numpad-input" placeholder="Enter your email" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; color: white;">
-      </div>
-      <div class="form-group">
-        <label style="font-size: 12px; color: var(--on-surface-variant); font-weight: 600;">PASSWORD</label>
-        <input type="password" [(ngModel)]="adminPassword" class="numpad-input" placeholder="Enter your password" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; color: white;">
-      </div>
-      
-      <button class="activate-btn" (click)="onActivateTerminal()" [disabled]="isActivating()" style="width: 100%; padding: 16px; background: var(--primary); color: #002109; border: none; border-radius: 16px; font-weight: 700; cursor: pointer; margin-top: 8px;">
-        {{ isActivating() ? 'Signing in...' : 'Sign In' }}
-      </button>
-    </div>
-  </div>
-
-  <!-- PIN Entry Screen (Staff) -->
-  <div class="login-card glass-card" *ngIf="isActivated()">
-    <!-- Avatar Section -->
-    <div class="avatar-section">
-      <div class="avatar-wrapper">
-        <div class="profile-avatar">
-          <img
-            src="https://ui-avatars.com/api/?name=Waiter&background=9d4300&color=fff"
-            alt="Staff"
-            class="profile-image"
-          />
+  <!-- Business Code Screen -->
+  @if (!isResolved()) {
+    <div class="login-card glass-card">
+      <div class="avatar-section">
+        <div class="avatar-text">
+          <h2 class="pin-header">Business Code</h2>
+          <p class="shift-info">Enter the code from your admin dashboard</p>
         </div>
-        <div class="status-indicator"></div>
       </div>
-      <div class="avatar-text">
-        <h2 class="pin-header">Enter Staff PIN</h2>
-        <p class="shift-info">{{ businessName() }} Access</p>
-      </div>
-    </div>
-
-    <!-- PIN Indicators -->
-    <div class="pin-indicators" [class.error]="pinError()">
-      <div class="pin-dot" [class.active]="pin().length > 0"></div>
-      <div class="pin-dot" [class.active]="pin().length > 1"></div>
-      <div class="pin-dot" [class.active]="pin().length > 2"></div>
-      <div class="pin-dot" [class.active]="pin().length > 3"></div>
-    </div>
-
-    <!-- Numpad Grid -->
-    <div class="numpad-grid">
-      <button class="numpad-btn" (click)="onDigit('1')"><span class="digit-text">1</span></button>
-      <button class="numpad-btn" (click)="onDigit('2')"><span class="digit-text">2</span></button>
-      <button class="numpad-btn" (click)="onDigit('3')"><span class="digit-text">3</span></button>
-      <button class="numpad-btn" (click)="onDigit('4')"><span class="digit-text">4</span></button>
-      <button class="numpad-btn" (click)="onDigit('5')"><span class="digit-text">5</span></button>
-      <button class="numpad-btn" (click)="onDigit('6')"><span class="digit-text">6</span></button>
-      <button class="numpad-btn" (click)="onDigit('7')"><span class="digit-text">7</span></button>
-      <button class="numpad-btn" (click)="onDigit('8')"><span class="digit-text">8</span></button>
-      <button class="numpad-btn" (click)="onDigit('9')"><span class="digit-text">9</span></button>
-      <div class="numpad-empty">
-        <button class="clear-btn" (click)="clearPin()">CLEAR</button>
-      </div>
-      <button class="numpad-btn" (click)="onDigit('0')"><span class="digit-text">0</span></button>
-      <div class="numpad-empty">
-        <button class="fingerprint-btn">
-          <span class="material-symbols-outlined fingerprint-icon">fingerprint</span>
+      <div style="width:100%;display:flex;flex-direction:column;gap:16px;">
+        <div class="form-group" style="width:100%;">
+          <input type="text" [(ngModel)]="businessCode" class="numpad-input" placeholder="e.g. ABC123XY" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:16px;border-radius:16px;color:white;font-size:24px;text-align:center;letter-spacing:4px;text-transform:uppercase;font-weight:600;" maxlength="12" (keyup.enter)="onResolveBusiness()">
+        </div>
+        <button (click)="onResolveBusiness()" [disabled]="isResolving() || !businessCode.trim()" style="width:100%;padding:16px;background:var(--primary);color:#002109;border:none;border-radius:16px;font-weight:700;cursor:pointer;font-size:16px;">
+          {{ isResolving() ? 'Verifying...' : 'Continue' }}
         </button>
       </div>
     </div>
+  }
 
-    <!-- Footer Section -->
-    <div class="login-footer">
-      <button class="forgot-pin" (click)="resetActivation()" style="background:none; border:none; padding:0; cursor:pointer;">Reset Terminal</button>
-      <div class="secure-indicator">
-        <span class="material-symbols-outlined lock-icon">lock</span>
-        <span class="secure-text">Secure Terminal</span>
+  <!-- PIN Entry Screen -->
+  @if (isResolved()) {
+    <div class="login-card glass-card">
+      <div class="avatar-section">
+        <div class="avatar-wrapper">
+          <div class="profile-avatar">
+            <img src="https://ui-avatars.com/api/?name=Staff&background=9d4300&color=fff" alt="Staff" class="profile-image" />
+          </div>
+          <div class="status-indicator"></div>
+        </div>
+        <div class="avatar-text">
+          <h2 class="pin-header">Enter PIN</h2>
+          <p class="shift-info">{{ businessName() }} Access</p>
+        </div>
+      </div>
+
+      <div class="pin-indicators" [class.error]="pinError()">
+        <div class="pin-dot" [class.active]="pin().length > 0"></div>
+        <div class="pin-dot" [class.active]="pin().length > 1"></div>
+        <div class="pin-dot" [class.active]="pin().length > 2"></div>
+        <div class="pin-dot" [class.active]="pin().length > 3"></div>
+      </div>
+
+      <div class="numpad-grid">
+        <button class="numpad-btn" (click)="onDigit('1')"><span class="digit-text">1</span></button>
+        <button class="numpad-btn" (click)="onDigit('2')"><span class="digit-text">2</span></button>
+        <button class="numpad-btn" (click)="onDigit('3')"><span class="digit-text">3</span></button>
+        <button class="numpad-btn" (click)="onDigit('4')"><span class="digit-text">4</span></button>
+        <button class="numpad-btn" (click)="onDigit('5')"><span class="digit-text">5</span></button>
+        <button class="numpad-btn" (click)="onDigit('6')"><span class="digit-text">6</span></button>
+        <button class="numpad-btn" (click)="onDigit('7')"><span class="digit-text">7</span></button>
+        <button class="numpad-btn" (click)="onDigit('8')"><span class="digit-text">8</span></button>
+        <button class="numpad-btn" (click)="onDigit('9')"><span class="digit-text">9</span></button>
+        <div class="numpad-empty">
+          <button class="clear-btn" (click)="clearPin()">CLEAR</button>
+        </div>
+        <button class="numpad-btn" (click)="onDigit('0')"><span class="digit-text">0</span></button>
+        <div class="numpad-empty">
+          <button class="fingerprint-btn">
+            <span class="material-symbols-outlined fingerprint-icon">fingerprint</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="login-footer">
+        <button class="forgot-pin" (click)="resetBusiness()" style="background:none;border:none;padding:0;cursor:pointer;">Change Business</button>
+        <div class="secure-indicator">
+          <span class="material-symbols-outlined lock-icon">lock</span>
+          <span class="secure-text">Secure Terminal</span>
+        </div>
       </div>
     </div>
-  </div>
+  }
 
-  <!-- Help Section -->
   <div class="help-section">
     <div class="help-card glass-card" (click)="callManager()">
       <div class="help-icon-wrapper help-icon-secondary">

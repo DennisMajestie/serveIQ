@@ -33,6 +33,7 @@ export interface Business {
   logoUrl?: string;
   brandPrimaryColor?: string;
   brandAccentColor?: string;
+  businessCode?: string;
   isActive?: boolean;
   branches?: Branch[];
 }
