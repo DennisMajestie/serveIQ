@@ -66,17 +66,18 @@ export class MenuComponent implements OnInit {
           this.isLoading.set(false);
           return;
         }
-        console.debug('[Menu] API items:', items);
         this.menuItems = items.map(i => {
-          const isAvail = (i.isAvailable ?? i.is_available ?? i.available ?? true) !== false;
-          if (!isAvail) console.debug('[Menu] Unavailable item:', i.name, i);
+          const isManuallyAvailable = (i.isAvailable ?? i.is_available ?? i.available ?? true) !== false;
+          const trackStock = i.trackStock ?? i.track_stock ?? false;
+          const stock = parseFloat(i.quantityInStock ?? i.quantity_in_stock ?? '0');
+          const outOfStock = trackStock && stock <= 0;
           return {
             id: i.id,
             name: i.name,
             category: i.category,
             image: resolveImageUrl(i.imageUrl, this.env.apiUrl),
             price: (i.priceKobo ?? i.price_kobo ?? 0) / 100,
-            isAvailable: isAvail,
+            isAvailable: isManuallyAvailable && !outOfStock,
           };
         });
         const cats = ['All', ...new Set(items.map(i => i.category))];
