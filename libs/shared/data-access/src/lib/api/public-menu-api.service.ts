@@ -20,6 +20,8 @@ export interface PublicMenuData {
   businessName: string;
   branchName: string;
   logoUrl?: string;
+  brandPrimaryColor?: string;
+  brandAccentColor?: string;
   items: PublicMenuItem[];
 }
 

@@ -1,0 +1,66 @@
+{
+  "name": "public-menu",
+  "root": "apps/public-menu",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/public-menu/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/public-menu",
+        "browser": "apps/public-menu/src/main.ts",
+        "tsConfig": "apps/public-menu/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [{ "glob": "**/*", "input": "apps/public-menu/public" }],
+        "styles": ["apps/public-menu/src/styles.scss"],
+        "fileReplacements": [
+          {
+            "replace": "apps/public-menu/src/environments/environment.ts",
+            "with": "apps/public-menu/src/environments/environment.prod.ts"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            { "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" },
+            { "type": "anyComponentStyle", "maximumWarning": "15kb", "maximumError": "20kb" }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": { "buildTarget": "public-menu:build:production" },
+        "development": { "buildTarget": "public-menu:build:development" }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "public-menu:build",
+        "port": 4300,
+        "staticFilePath": "dist/apps/public-menu/browser",
+        "spa": true
+      }
+    }
+  }
+}
