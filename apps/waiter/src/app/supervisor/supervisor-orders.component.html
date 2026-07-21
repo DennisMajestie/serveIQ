@@ -317,6 +317,10 @@
                   </div>
                 }
                 <div class="order-actions">
+                  <button class="btn-approve" [disabled]="isProcessingAction()" (click)="confirmPickup(group)">
+                    <span class="material-symbols-outlined">handshake</span>
+                    Confirm Pickup
+                  </button>
                   <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>
                   </button>

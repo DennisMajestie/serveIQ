@@ -58,4 +58,8 @@ export class OrdersApiService extends BaseApiService {
   deliverOrder(id: string): Observable<Order> {
     return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.deliver, { id }), {});
   }
+
+  confirmPickup(id: string): Observable<Order> {
+    return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.confirmPickup, { id }), {});
+  }
 }

@@ -561,25 +561,39 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     });
   }
 
-  deliverOrder(group: OrderGroup) {
+  confirmPickup(group: OrderGroup) {
     if (this.isProcessingAction() || this.isProcessingGroup(group)) return;
     Swal.fire({
-      title: 'Mark as Delivered?',
-      text: `Confirm that this order has been delivered to Table ${this.getTableLabel(group)}.`,
+      title: 'Confirm Waiter Pickup?',
+      text: `Has the waiter collected the order for Table ${this.getTableLabel(group)}?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delivered',
-      confirmButtonColor: '#f97316',
+      confirmButtonText: 'Yes, Picked Up',
+      confirmButtonColor: '#22c55e',
       cancelButtonText: 'Cancel',
       background: '#1A1A1A',
       color: '#fff',
     }).then(result => {
-      if (result.isConfirmed) {
-        this.isProcessingAction.set(true);
-        this.executeSequentially(group, 'deliver').finally(() => {
-          this.isProcessingAction.set(false);
+      if (!result.isConfirmed) return;
+      this.isProcessingAction.set(true);
+      const items = group.items.filter(i => !i._actionDone);
+      let completed = 0;
+      items.forEach(item => {
+        this.ordersApi.confirmPickup(item.id).subscribe({
+          next: () => {
+            item._actionDone = true;
+            completed++;
+            if (completed === items.length) {
+              this.isProcessingAction.set(false);
+              this.readyOrders.update(list => list.filter(g => g.tabId !== group.tabId || g.createdAt !== group.createdAt));
+            }
+          },
+          error: (err) => {
+            this.isProcessingAction.set(false);
+            Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'Failed to confirm pickup' });
+          }
         });
-      }
+      });
     });
   }
 
