@@ -317,10 +317,6 @@
                   </div>
                 }
                 <div class="order-actions">
-                  <button class="btn-deliver" [disabled]="isProcessingAction() || isProcessingGroup(group)" (click)="deliverOrder(group)">
-                    <span class="material-symbols-outlined">task_alt</span>
-                    {{ isProcessingGroup(group) ? 'Delivering...' : 'Mark Delivered' }}
-                  </button>
                   <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>
                   </button>
