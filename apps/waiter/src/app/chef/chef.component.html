@@ -1,0 +1,156 @@
+<div class="chef-wrapper">
+  <div class="chef-content">
+    <!-- Header -->
+    <div class="chef-header">
+      <div>
+        <h1 class="chef-title">{{ businessName() }}</h1>
+        <p class="chef-subtitle">Kitchen Display — Track and fulfill orders</p>
+      </div>
+      <div class="header-actions">
+        <button class="glass-btn" (click)="logout()">
+          <span class="material-symbols-outlined">logout</span>
+          <span class="btn-label">Logout</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="chef-stats">
+      <div class="stat-card prep-stat">
+        <span class="stat-icon material-symbols-outlined">cooking</span>
+        <div>
+          <div class="stat-value">{{ preparingOrders().length }}</div>
+          <div class="stat-label">Preparing</div>
+        </div>
+      </div>
+      <div class="stat-card ready-stat">
+        <span class="stat-icon material-symbols-outlined">checklist</span>
+        <div>
+          <div class="stat-value">{{ readyOrders().length }}</div>
+          <div class="stat-label">Ready</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="chef-tabs">
+      <button class="chef-tab" [class.active]="activeTab() === 'preparing'" (click)="switchTab('preparing')">
+        <span class="material-symbols-outlined">cooking</span>
+        Preparing
+        @if (preparingOrders().length > 0) {
+          <span class="tab-badge">{{ preparingOrders().length }}</span>
+        }
+      </button>
+      <button class="chef-tab" [class.active]="activeTab() === 'ready'" (click)="switchTab('ready')">
+        <span class="material-symbols-outlined">checklist</span>
+        Ready
+        @if (readyOrders().length > 0) {
+          <span class="tab-badge">{{ readyOrders().length }}</span>
+        }
+      </button>
+    </div>
+
+    <!-- Preparing Tab -->
+    @if (activeTab() === 'preparing') {
+      @if (isLoadingPreparing()) {
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      } @else if (preparingOrders().length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined">timer_off</span>
+          <h3>No Orders Preparing</h3>
+          <p>Approved orders will appear here with live countdowns.</p>
+        </div>
+      } @else {
+        @for (deptEntry of departments() | keyvalue; track deptEntry.key) {
+          <div class="dept-section">
+            <div class="dept-header">
+              <span class="material-symbols-outlined">kitchen</span>
+              <h3>{{ deptEntry.key }}</h3>
+              <span class="dept-count">{{ deptEntry.value.length }}</span>
+            </div>
+            <div class="order-grid">
+              @for (group of deptEntry.value; track group.tabId + group.createdAt) {
+                <div class="order-card" [class.urgent]="getRemainingSeconds(group) <= 120">
+                  <div class="card-head">
+                    <div class="table-badge">Table {{ group.tableNumber }}</div>
+                    <div class="countdown" [class.urgent]="getRemainingSeconds(group) <= 60">
+                      <span class="material-symbols-outlined">timer</span>
+                      <span>{{ formatCountdown(group) }}</span>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="waiter-info">
+                      <span class="material-symbols-outlined">person</span>
+                      <span>{{ group.waiterName || 'Unknown' }}</span>
+                    </div>
+                    <div class="item-list">
+                      @for (item of group.items; track item.id) {
+                        <div class="item-row">
+                          <span class="item-qty">{{ item.quantity }}x</span>
+                          <span class="item-name">{{ item.menuItemName }}</span>
+                          @if (item.notes) {
+                            <span class="item-notes">{{ item.notes }}</span>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  <button class="btn-ready" [disabled]="isProcessing()" (click)="markReady(group)">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    Mark Ready
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+    }
+
+    <!-- Ready Tab -->
+    @if (activeTab() === 'ready') {
+      @if (isLoadingReady()) {
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      } @else if (readyOrders().length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined">inventory_2</span>
+          <h3>No Orders Ready</h3>
+          <p>Orders marked as ready will appear here awaiting pickup.</p>
+        </div>
+      } @else {
+        <div class="order-list">
+          @for (group of readyOrders(); track group.tabId + group.createdAt) {
+            <div class="order-card ready-card">
+              <div class="card-head">
+                <div class="table-badge">Table {{ group.tableNumber }}</div>
+                <span class="ready-pill">Ready</span>
+              </div>
+              <div class="card-body">
+                <div class="waiter-info">
+                  <span class="material-symbols-outlined">person</span>
+                  <span>{{ group.waiterName || 'Unknown' }}</span>
+                </div>
+                @if (group.departmentName) {
+                  <div class="dept-tag">{{ group.departmentName }}</div>
+                }
+                <div class="item-list">
+                  @for (item of group.items.slice(0, 4); track item.id) {
+                    <div class="item-row">
+                      <span class="item-qty">{{ item.quantity }}x</span>
+                      <span class="item-name">{{ item.menuItemName }}</span>
+                    </div>
+                  }
+                  @if (group.items.length > 4) {
+                    <div class="item-more">+{{ group.items.length - 4 }} more</div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

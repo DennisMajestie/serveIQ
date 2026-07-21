@@ -86,6 +86,7 @@ export const API_CONFIG = {
       readyForPickup: '/api/v1/orders/ready-for-pickup',
       deliver: '/api/v1/orders/:id/deliver',
       confirmPickup: '/api/v1/orders/:id/confirm-pickup',
+      markReady: '/api/v1/orders/:id/mark-ready',
     },
     // Bills
     bills: {

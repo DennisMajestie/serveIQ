@@ -61,6 +61,8 @@ export class LoginComponent {
         const role = (localStorage.getItem('userRole') || '').toLowerCase();
         if (role === 'supervisor') {
           this.router.navigate(['/supervisor/orders']);
+        } else if (role === 'chef') {
+          this.router.navigate(['/chef']);
         } else if (role === 'manager') {
           const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
           const staffToken = localStorage.getItem('staffToken');

@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { SupervisorOrdersComponent } from './supervisor/supervisor-orders.component';
+import { ChefComponent } from './chef/chef.component';
 import { ActivityHistoryComponent } from './activity/activity-history.component';
 import { TablesComponent } from './tables/tables.component';
 import { TabDetailComponent } from './tabs/tab-detail/tab-detail.component';
@@ -53,6 +54,9 @@ export const appRoutes: Route[] = [
 
   // ===== Supervisor (no theme guards) =====
   { path: 'supervisor/orders', canActivate: [authGuard], component: SupervisorOrdersComponent },
+
+  // ===== Chef Kitchen Display =====
+  { path: 'chef', canActivate: [authGuard], component: ChefComponent },
 
   // ===== Activity History =====
   { path: 'activity', canActivate: [authGuard], component: ActivityHistoryComponent },
