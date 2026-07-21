@@ -290,13 +290,13 @@ export class TabDetailComponent implements OnInit, OnDestroy {
           if (pmatch) { this.activeOrder.set(pmatch); return; }
           this.orderService.getReadyForPickup().subscribe({
             next: (rdy) => onRdy(rdy),
-            error: () => {}
+            error: () => checkTabFallback()
           });
         },
         error: () => {
           this.orderService.getReadyForPickup().subscribe({
             next: (rdy) => onRdy(rdy),
-            error: () => {}
+            error: () => checkTabFallback()
           });
         }
       });
@@ -311,13 +311,13 @@ export class TabDetailComponent implements OnInit, OnDestroy {
             if (pmatch) { this.activeOrder.set(pmatch); return; }
             this.orderService.getReadyForPickup().subscribe({
               next: (rdy) => onRdy(rdy),
-              error: () => {}
+              error: () => checkTabFallback()
             });
           },
           error: () => {
             this.orderService.getReadyForPickup().subscribe({
               next: (rdy) => onRdy(rdy),
-              error: () => {}
+              error: () => checkTabFallback()
             });
           }
         });
