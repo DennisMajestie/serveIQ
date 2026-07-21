@@ -34,4 +34,27 @@ export class ThemeService {
   getCssVar(name: string): string {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   }
+
+  private readonly BRAND_STORAGE_KEY = 'serveiq-brand-colors';
+
+  /** Apply brand colors to CSS custom properties on :root and persist to localStorage. */
+  applyBrandColors(primary: string, accent: string): void {
+    const root = document.documentElement;
+    root.style.setProperty('--primary', primary);
+    root.style.setProperty('--secondary', accent);
+    localStorage.setItem(this.BRAND_STORAGE_KEY, JSON.stringify({ primary, accent }));
+  }
+
+  /** Restore brand colors from localStorage (call on app startup). */
+  restoreBrandColors(): void {
+    const stored = localStorage.getItem(this.BRAND_STORAGE_KEY);
+    if (stored) {
+      try {
+        const { primary, accent } = JSON.parse(stored);
+        const root = document.documentElement;
+        root.style.setProperty('--primary', primary);
+        root.style.setProperty('--secondary', accent);
+      } catch { /* ignore corrupt data */ }
+    }
+  }
 }

@@ -23,6 +23,7 @@ export class App implements OnInit {
   private themeService = inject(ThemeService);
 
   ngOnInit() {
+    this.themeService.restoreBrandColors();
     if ('fonts' in document) {
       (document as any).fonts.ready.then(() => {
         document.body.classList.add('fonts-loaded');
