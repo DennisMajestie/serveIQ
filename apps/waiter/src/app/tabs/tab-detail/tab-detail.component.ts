@@ -41,6 +41,10 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     const status = this.orderStatus();
     return !!status && status !== 'PENDING_SUPERVISOR_APPROVAL';
   });
+  canDeliver = computed(() => {
+    const status = this.orderStatus();
+    return status === 'READY_FOR_PICKUP' || status === 'OUT_FOR_DELIVERY';
+  });
 
   copiedId = signal<string | null>(null);
 
@@ -218,18 +222,43 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   private pollOrderStatus() {
     const tid = this.tabId();
     if (!tid) return;
+
+    const findMatch = (orders: OrderGroup[] | null) =>
+      (orders || []).find(o => o.tabId === tid) || null;
+
     this.orderService.getPending().subscribe({
       next: (orders) => {
-        const match = (orders || []).find(o => o.tabId === tid);
+        const match = findMatch(orders);
         if (match) { this.activeOrder.set(match); return; }
         this.orderService.getPreparing().subscribe({
           next: (preparing) => {
-            const pmatch = (preparing || []).find(o => o.tabId === tid);
+            const pmatch = findMatch(preparing);
             if (pmatch) { this.activeOrder.set(pmatch); return; }
             this.orderService.getReadyForPickup().subscribe({
               next: (ready) => {
-                const rmatch = (ready || []).find(o => o.tabId === tid);
+                const rmatch = findMatch(ready);
                 if (rmatch) { this.activeOrder.set(rmatch); return; }
+                // Fallback: fetch all orders for this tab directly
+                this.orderService.getByTab(tid).subscribe({
+                  next: (items) => {
+                    if (items && items.length > 0) {
+                      const statuses = [...new Set(items.map(i => i.orderStatus).filter(Boolean))];
+                      if (statuses.length > 0) {
+                        this.activeOrder.set({
+                          tabId: tid,
+                          createdAt: items[0].createdAt || new Date().toISOString(),
+                          tableId: '',
+                          tableNumber: '',
+                          waiterId: '',
+                          waiterName: '',
+                          totalKobo: 0,
+                          items: items as any,
+                        });
+                      }
+                    }
+                  },
+                  error: () => {}
+                });
               },
               error: () => {}
             });
