@@ -33,7 +33,11 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   toastMessage = signal<string | null>(null);
 
   activeOrder = signal<OrderGroup | null>(null);
-  orderStatus = computed(() => this.activeOrder()?.items[0]?.orderStatus ?? null);
+  orderStatus = computed(() => {
+    const item = this.activeOrder()?.items?.[0] as any;
+    return item?.orderStatus || item?.order_status || null;
+  });
+  orderIsRdy = signal(false);
   declineReason = computed(() => this.activeOrder()?.items[0]?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
   trackingCode = computed(() => this.activeOrder()?.items[0]?.trackingCode ?? null);
@@ -42,6 +46,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     return !!status && status !== 'PENDING_SUPERVISOR_APPROVAL';
   });
   canDeliver = computed(() => {
+    if (this.orderIsRdy()) return true;
     const status = this.orderStatus();
     return status === 'READY_FOR_PICKUP' || status === 'OUT_FOR_DELIVERY';
   });
@@ -226,6 +231,30 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     const findMatch = (orders: OrderGroup[] | null) =>
       (orders || []).find(o => o.tabId === tid) || null;
 
+    const checkByTab = () => {
+      this.orderService.getByTab(tid).subscribe({
+        next: (items: any[]) => {
+          if (items?.length > 0) {
+            const s = items[0]?.orderStatus || items[0]?.order_status || '';
+            if (s === 'READY_FOR_PICKUP' || s === 'OUT_FOR_DELIVERY') {
+              this.orderIsRdy.set(true);
+              this.activeOrder.set({
+                tabId: tid,
+                createdAt: items[0].createdAt || new Date().toISOString(),
+                tableId: '',
+                tableNumber: '',
+                waiterId: '',
+                waiterName: '',
+                totalKobo: items.reduce((n: number, i: any) => n + (i.subtotalKobo ?? 0), 0),
+                items: items as any,
+              });
+            }
+          }
+        },
+        error: () => {}
+      });
+    };
+
     this.orderService.getPending().subscribe({
       next: (orders) => {
         const match = findMatch(orders);
@@ -237,36 +266,58 @@ export class TabDetailComponent implements OnInit, OnDestroy {
             this.orderService.getReadyForPickup().subscribe({
               next: (ready) => {
                 const rmatch = findMatch(ready);
-                if (rmatch) { this.activeOrder.set(rmatch); return; }
-                // Fallback: fetch raw orders for this tab when status-based lists miss it
-                this.orderService.getByTab(tid).subscribe({
-                  next: (items: any[]) => {
-                    if (items?.length > 0) {
-                      const statuses = [...new Set(items.map((i: any) => i.orderStatus).filter(Boolean))];
-                      if (statuses.length > 0) {
-                        this.activeOrder.set({
-                          tabId: tid,
-                          createdAt: items[0].createdAt || new Date().toISOString(),
-                          tableId: '',
-                          tableNumber: '',
-                          waiterId: '',
-                          waiterName: '',
-                          totalKobo: items.reduce((s: number, i: any) => s + (i.subtotalKobo ?? 0), 0),
-                          items: items as any,
-                        });
-                      }
-                    }
-                  },
-                  error: () => {}
-                });
+                if (rmatch) {
+                  this.activeOrder.set(rmatch);
+                  this.orderIsRdy.set(true);
+                  return;
+                }
+                this.orderIsRdy.set(false);
+                checkByTab();
               },
-              error: () => {}
+              error: () => checkByTab()
             });
           },
-          error: () => {}
+          error: () => {
+            this.orderService.getReadyForPickup().subscribe({
+              next: (ready) => {
+                const rmatch = findMatch(ready);
+                if (rmatch) { this.activeOrder.set(rmatch); this.orderIsRdy.set(true); return; }
+                this.orderIsRdy.set(false);
+                checkByTab();
+              },
+              error: () => checkByTab()
+            });
+          }
         });
       },
-      error: () => {}
+      error: () => {
+        this.orderService.getPreparing().subscribe({
+          next: (preparing) => {
+            const pmatch = findMatch(preparing);
+            if (pmatch) { this.activeOrder.set(pmatch); return; }
+            this.orderService.getReadyForPickup().subscribe({
+              next: (ready) => {
+                const rmatch = findMatch(ready);
+                if (rmatch) { this.activeOrder.set(rmatch); this.orderIsRdy.set(true); return; }
+                this.orderIsRdy.set(false);
+                checkByTab();
+              },
+              error: () => checkByTab()
+            });
+          },
+          error: () => {
+            this.orderService.getReadyForPickup().subscribe({
+              next: (ready) => {
+                const rmatch = findMatch(ready);
+                if (rmatch) { this.activeOrder.set(rmatch); this.orderIsRdy.set(true); return; }
+                this.orderIsRdy.set(false);
+                checkByTab();
+              },
+              error: () => checkByTab()
+            });
+          }
+        });
+      }
     });
   }
 
