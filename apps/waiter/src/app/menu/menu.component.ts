@@ -72,7 +72,7 @@ export class MenuComponent implements OnInit {
           category: i.category,
           image: resolveImageUrl(i.imageUrl, this.env.apiUrl),
           price: (i.priceKobo ?? i.price_kobo ?? 0) / 100,
-          isAvailable: i.isAvailable !== false,
+          isAvailable: (i.isAvailable ?? i.is_available ?? i.available ?? true) !== false,
         }));
         const cats = ['All', ...new Set(items.map(i => i.category))];
         this.categories.set(cats);
