@@ -37,6 +37,10 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   declineReason = computed(() => this.activeOrder()?.items[0]?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
   trackingCode = computed(() => this.activeOrder()?.items[0]?.trackingCode ?? null);
+  canViewBill = computed(() => {
+    const status = this.orderStatus();
+    return !!status && status !== 'PENDING_SUPERVISOR_APPROVAL';
+  });
 
   copiedId = signal<string | null>(null);
 
