@@ -239,38 +239,55 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     const findMatch = (orders: OrderGroup[] | null) =>
       (orders || []).find(o => o.tabId === tid) || null;
 
+    const setOrder = (items: any[], status: string) => {
+      this.activeOrder.set({ tabId: tid, createdAt: new Date().toISOString(), tableId: '', tableNumber: '', waiterId: '', waiterName: '', totalKobo: 0, items: items.map((o: any) => ({ ...o, orderStatus: status })) } as any);
+    };
+
+    const checkTabFallback = () => {
+      this.orderService.getByTab(tid).subscribe({
+        next: (orders) => {
+          if (!orders || orders.length === 0) return;
+          const s = (orders[0] as any).orderStatus || (orders[0] as any).order_status;
+          if (s === 'DELIVERED') {
+            this.confirmedPickup.set(false);
+            this.readyOrderRef.set(null);
+            setOrder(orders, 'DELIVERED');
+          } else if (s === 'OUT_FOR_DELIVERY') {
+            this.confirmedPickup.set(true);
+            setOrder(orders, 'OUT_FOR_DELIVERY');
+          } else if (s) {
+            setOrder(orders, s);
+          }
+        },
+        error: () => {},
+      });
+    };
+
     const onRdy = (ready: OrderGroup[] | null) => {
       const rmatch = findMatch(ready);
       if (rmatch) {
         this.readyOrderRef.set(rmatch);
         this.confirmedPickup.set(false);
         this.activeOrder.set(rmatch);
-      } else if (this.readyOrderRef()) {
+        return;
+      }
+      if (this.readyOrderRef()) {
         this.confirmedPickup.set(true);
         this.activeOrder.set(this.readyOrderRef());
-      } else {
-        this.orderService.getByTab(tid).subscribe({
-          next: (orders) => {
-            if (!orders || orders.length === 0) return;
-            const hasDelivered = orders.some(o => (o as any).orderStatus === 'DELIVERED' || (o as any).order_status === 'DELIVERED');
-            const hasOutForDelivery = orders.some(o => (o as any).orderStatus === 'OUT_FOR_DELIVERY' || (o as any).order_status === 'OUT_FOR_DELIVERY');
-            if (hasDelivered) {
-              this.confirmedPickup.set(false);
-              this.readyOrderRef.set(null);
-              this.activeOrder.set({ tabId: tid, items: orders.map(o => ({ ...o, orderStatus: 'DELIVERED' })) } as any);
-            } else if (hasOutForDelivery) {
-              this.confirmedPickup.set(true);
-              this.activeOrder.set({ tabId: tid, items: orders.map(o => ({ ...o, orderStatus: 'OUT_FOR_DELIVERY' })) } as any);
-            } else {
-              const status = (orders[0] as any).orderStatus || (orders[0] as any).order_status;
-              if (status) {
-                this.activeOrder.set({ tabId: tid, items: orders } as any);
-              }
-            }
-          },
-          error: () => {},
-        });
+        return;
       }
+      this.orderService.getOutForDelivery().subscribe({
+        next: (out) => {
+          const omatch = findMatch(out);
+          if (omatch) {
+            this.confirmedPickup.set(true);
+            this.activeOrder.set(omatch);
+            return;
+          }
+          checkTabFallback();
+        },
+        error: () => checkTabFallback(),
+      });
     };
 
     const next = (orders: OrderGroup[] | null) => {

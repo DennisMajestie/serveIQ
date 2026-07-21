@@ -55,6 +55,10 @@ export class OrdersApiService extends BaseApiService {
     return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.readyForPickup);
   }
 
+  getOutForDelivery(): Observable<OrderGroup[]> {
+    return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.outForDelivery);
+  }
+
   deliverOrder(id: string): Observable<Order> {
     return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.deliver, { id }), {});
   }

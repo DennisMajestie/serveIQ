@@ -84,6 +84,7 @@ export const API_CONFIG = {
       decline: '/api/v1/orders/:id/decline',
       preparing: '/api/v1/orders/preparing',
       readyForPickup: '/api/v1/orders/ready-for-pickup',
+      outForDelivery: '/api/v1/orders/out-for-delivery',
       deliver: '/api/v1/orders/:id/deliver',
       confirmPickup: '/api/v1/orders/:id/confirm-pickup',
     },
