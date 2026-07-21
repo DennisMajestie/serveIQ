@@ -570,7 +570,7 @@ export interface DeclineOrderRequest {
 }
 
 // ===== Notifications =====
-export type NotificationType = 'low_stock' | 'shift_reminder' | 'payment' | 'system' | 'order_ready';
+export type NotificationType = 'low_stock' | 'shift_reminder' | 'payment' | 'system' | 'order_ready' | 'order_approved';
 
 export interface Notification {
   id: string;
