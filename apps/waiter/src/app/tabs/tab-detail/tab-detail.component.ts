@@ -61,25 +61,32 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   }
 
   markDelivered() {
-    const orderId = this.activeOrder()?.items[0]?.id;
-    if (!orderId) return;
+    const items = this.activeOrder()?.items?.filter(i => !(i as any)._actionDone) || [];
+    if (items.length === 0) return;
     Swal.fire({
       title: 'Confirm Delivery',
-      text: 'Mark this order as delivered to the customer?',
+      text: `Mark ${items.length} item${items.length > 1 ? 's' : ''} as delivered to the customer?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Yes, Delivered',
       cancelButtonText: 'Cancel',
     }).then(result => {
       if (!result.isConfirmed) return;
-      this.orderService.deliverOrder(orderId).subscribe({
-        next: () => {
-          Swal.fire({ icon: 'success', title: 'Delivered!', timer: 1500, showConfirmButton: false });
-          this.loadTab(this.tabId());
-        },
-        error: (err) => {
-          Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'Failed to mark delivered' });
-        },
+      let completed = 0;
+      items.forEach(item => {
+        this.orderService.deliverOrder(item.id).subscribe({
+          next: () => {
+            (item as any)._actionDone = true;
+            completed++;
+            if (completed === items.length) {
+              Swal.fire({ icon: 'success', title: 'Delivered!', timer: 1500, showConfirmButton: false });
+              this.loadTab(this.tabId());
+            }
+          },
+          error: (err) => {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'Failed to mark delivered' });
+          },
+        });
       });
     });
   }
