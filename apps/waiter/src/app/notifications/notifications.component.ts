@@ -59,19 +59,19 @@ export class WaiterNotificationsComponent implements OnInit {
   }
 
   openDetail(n: Notification) {
-    const data = n.data;
+    const d = n.data as any;
     const html = `
       <div style="text-align:left;padding:8px 0">
         <p style="margin:0 0 4px;font-size:13px;color:#bccbb9">${n.title}</p>
         <p style="margin:0 0 4px;font-size:15px;color:#dce1fb;font-weight:600">${n.message}</p>
         <p style="margin:0;font-size:11px;color:#bccbb9">${new Date(n.createdAt).toLocaleString()}</p>
-        ${n.type === 'order_approved' && (data as any)?.tracking_code ? `
+        ${n.type === 'order_approved' && d?.tracking_code ? `
           <div style="margin-top:12px;padding:10px;background:rgba(75,226,119,0.08);border-radius:8px;text-align:center">
             <p style="margin:0 0 4px;font-size:11px;color:#bccbb9">TRACKING CODE</p>
-            <p style="margin:0;font-size:20px;color:#4be277;font-weight:700;letter-spacing:2px">${(data as any).tracking_code}</p>
+            <p style="margin:0;font-size:20px;color:#4be277;font-weight:700;letter-spacing:2px">${d.tracking_code}</p>
           </div>
         ` : ''}
-        ${n.type === 'order_ready' && (data?.orderId || data?.order_id) ? `
+        ${n.type === 'order_ready' && (d?.orderId || d?.order_id) ? `
           <div style="margin-top:16px">
             <button id="swal-deliver-btn" style="width:100%;padding:12px;border:none;border-radius:12px;background:#4be277;color:#020617;font-size:15px;font-weight:600;cursor:pointer">Mark Delivered</button>
           </div>
@@ -90,12 +90,13 @@ export class WaiterNotificationsComponent implements OnInit {
         if (btn) {
           btn.addEventListener('click', () => {
             Swal.close();
-            this.doDeliver(data.orderId || data.order_id);
+            this.doDeliver(d.orderId || d.order_id);
           });
         }
       },
     }).then(() => this.load());
   }
+
 
   private doDeliver(orderId: string) {
     Swal.fire({
