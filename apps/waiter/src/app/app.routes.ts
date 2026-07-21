@@ -25,6 +25,7 @@ import { LegacyProfileComponent } from './legacy/profile/profile.component';
 import { LegacyOpenTabComponent } from './legacy/open-tab/open-tab.component';
 
 import { authGuard } from './core/auth.guard';
+import { supervisorGuard } from './core/role.guards';
 import { prefersCurrentTheme, prefersLegacyTheme } from './core/theme.guards';
 
 export const appRoutes: Route[] = [
@@ -53,7 +54,7 @@ export const appRoutes: Route[] = [
   { path: 'profile', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyProfileComponent },
 
   // ===== Supervisor (no theme guards) =====
-  { path: 'supervisor/orders', canActivate: [authGuard], component: SupervisorOrdersComponent },
+  { path: 'supervisor/orders', canActivate: [authGuard, supervisorGuard], component: SupervisorOrdersComponent },
 
   // ===== Chef Kitchen Display =====
   { path: 'chef', canActivate: [authGuard], component: ChefComponent },
