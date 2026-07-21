@@ -495,6 +495,7 @@ export type OrderStatus =
   | 'ASSIGNED_TO_DEPARTMENT'
   | 'PREPARING'
   | 'READY_FOR_PICKUP'
+  | 'OUT_FOR_DELIVERY'
   | 'DELIVERED'
   | 'COMPLETED'
   | 'DECLINED';
