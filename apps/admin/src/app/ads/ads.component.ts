@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdsApiService, Ad, UploadApiService } from '@serveiq/shared/data-access';
+import { AdsApiService, Ad, UploadApiService, BranchesApiService, Branch } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -37,6 +37,7 @@ import Swal from 'sweetalert2';
               <tr>
                 <th>Image</th>
                 <th>Title</th>
+                <th>Branch</th>
                 <th>Status</th>
                 <th>Sort Order</th>
                 <th>Actions</th>
@@ -55,6 +56,7 @@ import Swal from 'sweetalert2';
                     }
                   </td>
                   <td class="cell-name">{{ ad.title }}</td>
+                  <td class="cell-branch">{{ branchName(ad.branchId) }}</td>
                   <td>
                     <span class="status-badge" [class.active]="ad.isActive !== false" [class.inactive]="ad.isActive === false">
                       {{ ad.isActive === false ? 'Inactive' : 'Active' }}
@@ -104,6 +106,14 @@ import Swal from 'sweetalert2';
               <input type="url" [(ngModel)]="formLinkUrl" placeholder="https://example.com/offer" class="form-input" />
             </div>
             <div class="form-group">
+              <label>Branch</label>
+              <select [(ngModel)]="formBranchId" class="form-input">
+                @for (b of branches(); track b.id) {
+                  <option [value]="b.id">{{ b.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group">
               <label>Sort Order</label>
               <input type="number" [(ngModel)]="formSortOrder" class="form-input" style="width:100px" />
             </div>
@@ -151,6 +161,7 @@ import Swal from 'sweetalert2';
     .data-table tr:hover td { background: rgba(255,255,255,0.02); }
     .cell-name { font-weight: 500; color: #e0e0e0; }
     .cell-order { color: #888; font-size: 13px; }
+    .cell-branch { color: #aaa; font-size: 13px; }
     .cell-actions { display: flex; gap: 4px; }
     .status-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
     .status-badge.active { background: rgba(76,175,80,0.15); color: #81c784; }
@@ -179,8 +190,10 @@ import Swal from 'sweetalert2';
 export class AdsComponent implements OnInit {
   private adsApi = inject(AdsApiService);
   private uploadService = inject(UploadApiService);
+  private branchesApi = inject(BranchesApiService);
 
   ads = signal<Ad[]>([]);
+  branches = signal<Branch[]>([]);
   isLoading = signal(true);
 
   showModal = signal(false);
@@ -188,6 +201,7 @@ export class AdsComponent implements OnInit {
   formTitle = '';
   formLinkUrl = '';
   formSortOrder = 0;
+  formBranchId = '';
   formIsActive = true;
   formImagePreview = signal<string | null>(null);
   private selectedFile: File | null = null;
@@ -196,6 +210,14 @@ export class AdsComponent implements OnInit {
 
   ngOnInit() {
     this.loadAds();
+    this.branchesApi.list().subscribe({
+      next: (b) => {
+        this.branches.set(b);
+        if (b.length > 0 && !this.formBranchId) {
+          this.formBranchId = b[0].id;
+        }
+      }
+    });
   }
 
   loadAds() {
@@ -216,6 +238,7 @@ export class AdsComponent implements OnInit {
     this.formTitle = '';
     this.formLinkUrl = '';
     this.formSortOrder = 0;
+    this.formBranchId = localStorage.getItem('branchId') || (this.branches().length > 0 ? this.branches()[0].id : '');
     this.formIsActive = true;
     this.formImagePreview.set(null);
     this.selectedFile = null;
@@ -228,6 +251,7 @@ export class AdsComponent implements OnInit {
     this.formTitle = ad.title;
     this.formLinkUrl = ad.linkUrl || '';
     this.formSortOrder = ad.sortOrder || 0;
+    this.formBranchId = ad.branchId || '';
     this.formIsActive = ad.isActive !== false;
     this.formImagePreview.set(null);
     this.selectedFile = null;
@@ -271,7 +295,7 @@ export class AdsComponent implements OnInit {
       }
     }
 
-    const branchId = localStorage.getItem('branchId') || localStorage.getItem('businessId') || '';
+    const branchId = this.formBranchId || localStorage.getItem('branchId') || '';
 
     if (this.editingAd()) {
       const id = this.editingAd()!.id;
@@ -313,6 +337,10 @@ export class AdsComponent implements OnInit {
         }
       });
     }
+  }
+
+  branchName(id: string): string {
+    return this.branches().find(b => b.id === id)?.name || id.slice(0, 8) + '...';
   }
 
   deleteAd(ad: Ad) {
