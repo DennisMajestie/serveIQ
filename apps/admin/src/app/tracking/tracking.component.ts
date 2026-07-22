@@ -19,432 +19,465 @@ interface Stage {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="tracking-page">
+    <div class="page">
       @if (isLoading()) {
-        <div class="loading">
+        <div class="state-view">
           <div class="spinner"></div>
-          <p>Loading order status...</p>
+          <p class="state-text">Loading order status...</p>
         </div>
       } @else if (errorType()) {
-        <div class="error">
+        <div class="state-view">
           @if (errorType() === 'invalid_code') {
-            <span class="material-symbols-outlined">qr_code_scanner</span>
-            <h2>Invalid Tracking Code</h2>
-            <p>The code you entered doesn't match the expected format (e.g. SVQ-XXXX-XXX).</p>
+            <span class="material-symbols-outlined state-icon">qr_code_scanner</span>
+            <h2 class="state-heading">Invalid Code</h2>
+            <p class="state-desc">The code doesn't match the expected format.</p>
           } @else if (errorType() === 'not_found') {
-            <span class="material-symbols-outlined">search_off</span>
-            <h2>Order Not Found</h2>
-            <p>No order was found with this tracking code. It may have expired or the code is incorrect.</p>
+            <span class="material-symbols-outlined state-icon">search_off</span>
+            <h2 class="state-heading">Not Found</h2>
+            <p class="state-desc">No order was found with this tracking code.</p>
           } @else if (errorType() === 'declined') {
-            <span class="material-symbols-outlined">cancel</span>
-            <h2>Order Declined</h2>
-            <p>{{ declinedReason() || 'The order was declined by the restaurant.' }}</p>
+            <span class="material-symbols-outlined state-icon">cancel</span>
+            <h2 class="state-heading">Order Declined</h2>
+            <p class="state-desc">{{ declinedReason() || 'The order was declined by the restaurant.' }}</p>
           } @else {
-            <span class="material-symbols-outlined">error_outline</span>
-            <h2>Something Went Wrong</h2>
-            <p>Unable to load tracking information. Please try again later.</p>
+            <span class="material-symbols-outlined state-icon">error_outline</span>
+            <h2 class="state-heading">Something Went Wrong</h2>
+            <p class="state-desc">Unable to load tracking information.</p>
           }
-          <button class="back-btn" (click)="goBack()">
+          <button class="btn-back" (click)="goBack()">
             <span class="material-symbols-outlined">arrow_back</span>
             Back to Menu
           </button>
         </div>
       } @else {
         <header class="header">
+          <button class="header-back" (click)="goBack()">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
           @if (trackingData()?.logoUrl) {
-            <img [src]="trackingData()?.logoUrl" alt="Logo" class="logo" />
+            <img [src]="trackingData()?.logoUrl" alt="" class="header-logo" />
           }
-          <h1>{{ trackingData()?.businessName }}</h1>
-          <p class="subtitle">{{ trackingData()?.branchName }}</p>
+          <div class="header-info">
+            <span class="header-name">{{ trackingData()?.businessName }}</span>
+            <span class="header-branch">{{ trackingData()?.branchName }}</span>
+          </div>
         </header>
 
-        <div class="ads-strip">
-          @if (ads().length > 0) {
-            <div class="ads-banner">
+        @if (ads().length > 0) {
+          <div class="ad-strip">
+            <div class="ad-banner">
               <a [href]="currentAd()?.linkUrl" target="_blank" rel="noopener" class="ad-link">
-                <img [src]="currentAd()?.imageUrl" [alt]="currentAd()?.title" class="ad-image" />
-                <div class="ad-overlay">
-                  <p class="ad-title">{{ currentAd()?.title }}</p>
-                </div>
+                <img [src]="currentAd()?.imageUrl" [alt]="currentAd()?.title" class="ad-img" />
               </a>
               @if (ads().length > 1) {
                 <div class="ad-dots">
                   @for (ad of ads(); track ad.id; let i = $index) {
-                    <span class="dot" [class.active]="i === currentAdIndex()" (click)="currentAdIndex.set(i)"></span>
+                    <span class="ad-dot" [class.active]="i === currentAdIndex()" (click)="currentAdIndex.set(i)"></span>
                   }
                 </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="body">
+          <div class="code-pill">{{ code() }}</div>
+
+          <div class="stepper">
+            @for (stage of stages(); track stage.key; let i = $index; let last = $last) {
+              <div class="step" [class.done]="stage.done" [class.active]="stage.key === currentStageKey()">
+                <div class="step-indicator">
+                  <div class="step-dot">
+                    @if (stage.done) {
+                      <span class="material-symbols-outlined step-icon">check</span>
+                    }
+                  </div>
+                  @if (!last) {
+                    <div class="step-line" [class.filled]="stage.done"></div>
+                  }
+                </div>
+                <span class="step-label">{{ stage.label }}</span>
+              </div>
+            }
+          </div>
+
+          @if (isTerminal() && !isDeclined()) {
+            <div class="delivered-msg">
+              <span class="material-symbols-outlined">celebration</span>
+              <span>Enjoy your meal!</span>
+            </div>
+          }
+
+          @if (showCountdown()) {
+            <div class="countdown">
+              <span class="material-symbols-outlined cntdwn-icon">schedule</span>
+              <span class="cntdwn-value">{{ countdownLabel }}</span>
+              <span class="cntdwn-label">remaining</span>
+            </div>
+          }
+
+          @if (order()?.items?.length) {
+            <div class="items-row">
+              @for (item of order()?.items!; track item.id; let i = $index; let total = $count) {
+                @if (i < 3) {
+                  <span class="item-chip">{{ item.quantity }}<span class="item-times">x</span>{{ item.menuItemName || item.menu_item_name || 'Item' }}</span>
+                  @if (i < total - 1 && i < 2) {
+                    <span class="item-sep">&bull;</span>
+                  }
+                }
+              }
+              @if ((order()?.items?.length ?? 0) > 3) {
+                <span class="item-more">+{{ (order()?.items?.length ?? 0) - 3 }} more</span>
               }
             </div>
           }
         </div>
 
-        <main class="content">
-          <div class="tracking-hero">
-            <span class="code-label">Tracking Code</span>
-            <span class="code-value">{{ code() }}</span>
-          </div>
-
-          <div class="timeline-card">
-            <h3>Order Progress</h3>
-            <div class="progress-bar-track">
-              <div class="progress-bar-fill" [style.width.%]="progressPercent()"></div>
-            </div>
-            <div class="stages">
-              @for (stage of stages(); track stage.key) {
-                <div class="stage" [class.done]="stage.done" [class.active]="stage.key === currentStageKey()">
-                  <div class="stage-icon">
-                    @if (stage.done) {
-                      <span class="material-symbols-outlined">check_circle</span>
-                    } @else {
-                      <span class="material-symbols-outlined">{{ stage.icon }}</span>
-                    }
-                  </div>
-                  <div class="stage-info">
-                    <span class="stage-label">{{ stage.label }}</span>
-                    @if (stage.timestamp) {
-                      <span class="stage-time">{{ formatTime(stage.timestamp) }}</span>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-            @if (isTerminal() && !isDeclined()) {
-              <div class="delivered-banner">
-                <span class="material-symbols-outlined">celebration</span>
-                <span>Your order has been delivered! Enjoy your meal.</span>
-              </div>
-            }
-          </div>
-
-          @if (showCountdown()) {
-            <div class="countdown-card">
-              <span class="material-symbols-outlined">timer</span>
-              <div>
-                <p class="countdown-label">Estimated time remaining</p>
-                <p class="countdown-value">{{ countdownLabel }}</p>
-              </div>
-            </div>
-          }
-
-          <div class="items-card" *ngIf="order()?.items?.length">
-            <h3>Order Items</h3>
-            <div class="item-list">
-              @for (item of order()?.items; track item.id) {
-                <div class="item-row">
-                  <span class="item-qty">{{ item.quantity }}x</span>
-                  <span class="item-name">{{ item.menuItemName || item.menu_item_name || 'Item' }}</span>
-                </div>
-              }
-            </div>
-          </div>
-        </main>
-
-        <footer class="footer">
-          <p>Powered by ServeIQ Mgt</p>
-        </footer>
+        <button class="footer-back" (click)="goBack()">Back to Menu</button>
       }
     </div>
   `,
   styles: [`
-    .tracking-page {
-      min-height: 100vh;
-      background: #f8f9fa;
-      color: #1a1a2e;
+    .page {
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #f5f2ed;
+      color: #1a1515;
       font-family: 'Inter', sans-serif;
     }
-    .loading, .error {
+
+    .state-view {
+      height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 60vh;
-      gap: 16px;
-      color: #6c757d;
-      text-align: center;
+      gap: 12px;
       padding: 24px;
+      text-align: center;
+      color: #8c7e72;
     }
-    .error { color: #dc3545; }
-    .error h2 { margin: 0; font-size: 20px; color: #1a1a2e; }
-    .error p { margin: 0; font-size: 14px; max-width: 360px; }
+    .state-icon {
+      font-size: 48px;
+      color: #d4cfc9;
+    }
+    .state-heading {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1515;
+    }
+    .state-desc {
+      margin: 0;
+      font-size: 14px;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+
     .spinner {
-      width: 40px; height: 40px;
-      border: 3px solid #e9ecef;
-      border-top-color: #4be277;
+      width: 36px;
+      height: 36px;
+      border: 3px solid #e5dfd8;
+      border-top-color: #d97706;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     .header {
-      text-align: center;
-      padding: 40px 24px 24px;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: #1a1515;
+      color: #faf8f5;
+      min-height: 44px;
+      flex-shrink: 0;
     }
-    .logo {
-      width: 72px; height: 72px;
+    .header-back {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: #faf8f5;
+      cursor: pointer;
+      padding: 4px;
+      margin: -4px;
+    }
+    .header-back .material-symbols-outlined {
+      font-size: 24px;
+    }
+    .header-logo {
+      width: 28px;
+      height: 28px;
       object-fit: contain;
-      border-radius: 14px;
-      margin: 0 auto 14px;
-      display: block;
-      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      flex-shrink: 0;
     }
-    .header h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      margin: 0 0 4px;
+    .header-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
     }
-    .header .subtitle {
+    .header-name {
       font-size: 14px;
-      opacity: 0.7;
-      margin: 0;
-    }
-    .content {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 16px 16px 80px;
-    }
-    .tracking-hero {
-      text-align: center;
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-    .code-label {
-      display: block;
-      font-size: 12px;
       font-weight: 600;
-      color: #6c757d;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
-    .code-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 28px;
-      font-weight: 700;
-      color: #1a1a2e;
-      letter-spacing: 3px;
-    }
-    .timeline-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      margin-bottom: 16px;
-    }
-    .timeline-card h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      margin: 0 0 16px;
-      font-size: 18px;
-    }
-    .progress-bar-track {
-      height: 6px;
-      background: #e9ecef;
-      border-radius: 3px;
-      margin-bottom: 20px;
+      white-space: nowrap;
       overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #4be277, #22c55e);
-      border-radius: 3px;
-      transition: width 0.5s ease;
-    }
-    .stages {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .stage {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 12px;
-      border-radius: 10px;
-      background: #f8f9fa;
-      transition: all 0.3s;
-    }
-    .stage.done {
-      background: #e8f5e9;
-    }
-    .stage.active {
-      background: #fff3e0;
-      border: 1px solid #ffe0b2;
-    }
-    .stage-icon .material-symbols-outlined {
-      font-size: 24px;
-      color: #adb5bd;
-    }
-    .stage.done .stage-icon .material-symbols-outlined {
-      color: #4be277;
-    }
-    .stage.active .stage-icon .material-symbols-outlined {
-      color: #f97316;
-    }
-    .stage-info {
-      display: flex;
-      flex-direction: column;
-    }
-    .stage-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1a1a2e;
-    }
-    .stage-time {
+    .header-branch {
       font-size: 11px;
-      color: #6c757d;
-      margin-top: 2px;
-    }
-    .stage.done .stage-label { color: #2e7d32; }
-    .stage.active .stage-label { color: #e65100; }
-    .delivered-banner {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 16px;
-      padding: 12px 16px;
-      background: #e8f5e9;
-      border-radius: 12px;
-      color: #2e7d32;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .delivered-banner .material-symbols-outlined { color: #4be277; }
-    .countdown-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      margin-bottom: 16px;
-    }
-    .countdown-card .material-symbols-outlined {
-      font-size: 32px;
-      color: #f97316;
-    }
-    .countdown-label {
-      margin: 0;
-      font-size: 12px;
-      color: #6c757d;
-    }
-    .countdown-value {
-      margin: 2px 0 0;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 24px;
-      font-weight: 700;
-      color: #1a1a2e;
-    }
-    .items-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      margin-bottom: 16px;
-    }
-    .items-card h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      margin: 0 0 12px;
-      font-size: 18px;
-    }
-    .item-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .item-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-    }
-    .item-qty {
-      font-weight: 700;
-      color: #f97316;
-      min-width: 28px;
-    }
-    .item-name {
-      color: #1a1a2e;
-    }
-    .ads-strip {
-      background: #1a1a2e;
-      padding: 0 16px;
-    }
-    .ads-banner {
-      position: relative;
-      max-width: 800px;
-      margin: 0 auto;
-      border-radius: 0 0 16px 16px;
+      opacity: 0.6;
+      white-space: nowrap;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      aspect-ratio: 16 / 7;
-      background: #16213e;
+      text-overflow: ellipsis;
     }
-    .ads-banner .ad-link {
+
+    .ad-strip {
+      flex-shrink: 0;
+    }
+    .ad-banner {
+      position: relative;
+      height: 56px;
+      overflow: hidden;
+      background: #1a1515;
+    }
+    .ad-link {
       display: block;
       width: 100%;
       height: 100%;
       text-decoration: none;
     }
-    .ads-banner .ad-image {
+    .ad-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
       transition: opacity 0.5s ease;
     }
-    .ads-banner .ad-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 24px 16px 16px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.7));
-    }
-    .ads-banner .ad-title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
     .ad-dots {
       position: absolute;
-      bottom: 8px;
-      right: 16px;
+      bottom: 4px;
+      right: 8px;
       display: flex;
-      gap: 6px;
+      gap: 4px;
     }
-    .ad-dots .dot {
-      width: 8px;
-      height: 8px;
+    .ad-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: rgba(255,255,255,0.4);
       cursor: pointer;
       transition: all 0.3s;
     }
-    .ad-dots .dot.active {
+    .ad-dot.active {
       background: #fff;
       transform: scale(1.3);
     }
-    .footer {
-      text-align: center;
-      padding: 24px;
-      color: #adb5bd;
-      font-size: 13px;
+
+    .body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      gap: 12px;
+      min-height: 0;
     }
-    .back-btn {
+
+    .code-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #8c7e72;
+      background: #fff;
+      padding: 4px 14px;
+      border-radius: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .stepper {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      max-width: 400px;
+      padding: 4px 0;
+    }
+    .step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .step-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #d4cfc9;
+      background: #f5f2ed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+      transition: all 0.3s;
+      box-sizing: border-box;
+    }
+    .step.done .step-dot {
+      background: #059669;
+      border-color: #059669;
+    }
+    .step.active .step-dot {
+      background: #d97706;
+      border-color: #d97706;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(217,119,6,0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(217,119,6,0); }
+    }
+    .step-icon {
+      font-size: 16px !important;
+      color: #fff;
+      font-weight: 700;
+    }
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: #e5dfd8;
+      margin: 0 -1px;
+      transition: background 0.3s;
+    }
+    .step-line.filled {
+      background: #059669;
+    }
+    .step-label {
+      font-size: 10px;
+      color: #8c7e72;
+      margin-top: 6px;
+      text-align: center;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    .step.done .step-label {
+      color: #059669;
+    }
+    .step.active .step-label {
+      color: #d97706;
+      font-weight: 600;
+    }
+
+    .delivered-msg {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #f0fdf4;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #059669;
+    }
+    .delivered-msg .material-symbols-outlined {
+      font-size: 18px;
+      color: #059669;
+    }
+
+    .countdown {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fffbeb;
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+    .cntdwn-icon {
+      font-size: 18px !important;
+      color: #d97706;
+    }
+    .cntdwn-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #d97706;
+    }
+    .cntdwn-label {
+      font-size: 11px;
+      color: #8c7e72;
+    }
+
+    .items-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+    }
+    .item-chip {
+      font-size: 12px;
+      color: #1a1515;
+      background: #fff;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 500;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .item-times {
+      margin-right: 1px;
+    }
+    .item-sep {
+      color: #d4cfc9;
+      font-size: 12px;
+    }
+    .item-more {
+      font-size: 11px;
+      color: #8c7e72;
+    }
+
+    .footer-back {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: none;
+      color: #8c7e72;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .footer-back:hover {
+      color: #1a1515;
+    }
+
+    .btn-back {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      margin-top: 16px;
-      padding: 10px 20px;
+      margin-top: 8px;
+      padding: 8px 18px;
       border: none;
       border-radius: 10px;
-      background: #1a1a2e;
-      color: #fff;
-      font-size: 14px;
+      background: #1a1515;
+      color: #faf8f5;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
@@ -476,10 +509,10 @@ export class TrackingComponent implements OnInit, OnDestroy {
     const o = this.order();
     if (!o) return [];
     return [
-      { key: 'received', label: 'Order Received', icon: 'receipt', done: true, timestamp: o.createdAt },
+      { key: 'received', label: 'Received', icon: 'receipt', done: true, timestamp: o.createdAt },
       { key: 'approved', label: 'Approved', icon: 'thumb_up', done: !!o.approvedAt, timestamp: o.approvedAt },
       { key: 'preparing', label: 'Preparing', icon: 'cooking', done: !!o.preparingAt, timestamp: o.preparingAt },
-      { key: 'ready', label: 'On its way', icon: 'route', done: !!o.actualReadyTime, timestamp: o.actualReadyTime },
+      { key: 'ready', label: 'Ready', icon: 'route', done: !!o.actualReadyTime, timestamp: o.actualReadyTime },
       { key: 'delivered', label: 'Delivered', icon: 'check_circle', done: !!o.deliveredAt, timestamp: o.deliveredAt },
     ];
   });
@@ -490,13 +523,6 @@ export class TrackingComponent implements OnInit, OnDestroy {
       if (s[i].done) return s[i].key;
     }
     return s[0]?.key ?? 'received';
-  });
-
-  progressPercent = computed(() => {
-    const s = this.stages();
-    if (s.length === 0) return 0;
-    const done = s.filter(st => st.done).length;
-    return Math.round((done / s.length) * 100);
   });
 
   isDeclined = computed(() => this.order()?.status === 'DECLINED');
