@@ -58,6 +58,26 @@ interface Stage {
           <p class="subtitle">{{ trackingData()?.branchName }}</p>
         </header>
 
+        <div class="ads-strip">
+          @if (ads().length > 0) {
+            <div class="ads-banner">
+              <a [href]="currentAd()?.linkUrl" target="_blank" rel="noopener" class="ad-link">
+                <img [src]="currentAd()?.imageUrl" [alt]="currentAd()?.title" class="ad-image" />
+                <div class="ad-overlay">
+                  <p class="ad-title">{{ currentAd()?.title }}</p>
+                </div>
+              </a>
+              @if (ads().length > 1) {
+                <div class="ad-dots">
+                  @for (ad of ads(); track ad.id; let i = $index) {
+                    <span class="dot" [class.active]="i === currentAdIndex()" (click)="currentAdIndex.set(i)"></span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
         <main class="content">
           <div class="tracking-hero">
             <span class="code-label">Tracking Code</span>
@@ -117,17 +137,6 @@ interface Stage {
               }
             </div>
           </div>
-
-          @if (ads().length > 0) {
-            <div class="ads-card">
-              <a [href]="currentAd()?.linkUrl" target="_blank" rel="noopener" class="ad-link">
-                @if (currentAd()?.imageUrl) {
-                  <img [src]="currentAd()?.imageUrl" [alt]="currentAd()?.title" class="ad-image" />
-                }
-                <p class="ad-title">{{ currentAd()?.title }}</p>
-              </a>
-            </div>
-          }
         </main>
 
         <footer class="footer">
@@ -358,30 +367,66 @@ interface Stage {
     .item-name {
       color: #1a1a2e;
     }
-    .ads-card {
-      border-radius: 16px;
+    .ads-strip {
+      background: #1a1a2e;
+      padding: 0 16px;
+    }
+    .ads-banner {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: 0 0 16px 16px;
       overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      aspect-ratio: 16 / 7;
+      background: #16213e;
     }
-    .ad-link {
+    .ads-banner .ad-link {
       display: block;
-      text-decoration: none;
-      color: inherit;
-    }
-    .ad-image {
       width: 100%;
-      height: 180px;
+      height: 100%;
+      text-decoration: none;
+    }
+    .ads-banner .ad-image {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       display: block;
+      transition: opacity 0.5s ease;
     }
-    .ad-title {
+    .ads-banner .ad-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 16px 16px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    }
+    .ads-banner .ad-title {
       margin: 0;
-      padding: 12px 16px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .ad-dots {
+      position: absolute;
+      bottom: 8px;
+      right: 16px;
+      display: flex;
+      gap: 6px;
+    }
+    .ad-dots .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .ad-dots .dot.active {
       background: #fff;
-      color: #1a1a2e;
+      transform: scale(1.3);
     }
     .footer {
       text-align: center;
@@ -540,11 +585,11 @@ export class TrackingComponent implements OnInit, OnDestroy {
       next: (ads) => {
         console.log('[Tracking] ads response:', ads);
         this.ads.set(ads);
-        if (ads.length > 1) {
-          this.adRotateInterval = setInterval(() => {
-            this.currentAdIndex.update(i => i + 1);
-          }, 20000);
-        }
+          if (ads.length > 1) {
+            this.adRotateInterval = setInterval(() => {
+              this.currentAdIndex.update(i => i + 1);
+            }, 5000);
+          }
       },
       error: (err) => {
         console.error('[Tracking] ads load error:', err);
