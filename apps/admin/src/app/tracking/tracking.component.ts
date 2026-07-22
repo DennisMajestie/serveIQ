@@ -512,6 +512,7 @@ export class TrackingComponent implements OnInit, OnDestroy {
   private fetchTracking() {
     this.trackingApi.getTracking(this.code()).subscribe({
       next: (data) => {
+        console.log('[Tracking] tracking data received:', data);
         this.trackingData.set(data);
         if (data.order.status === 'DECLINED') {
           this.errorType.set('declined');
@@ -534,8 +535,10 @@ export class TrackingComponent implements OnInit, OnDestroy {
   }
 
   private loadAds(branchId: string) {
+    console.log('[Tracking] loadAds called with branchId:', branchId);
     this.adsApi.getAds(branchId).subscribe({
       next: (ads) => {
+        console.log('[Tracking] ads response:', ads);
         this.ads.set(ads);
         if (ads.length > 1) {
           this.adRotateInterval = setInterval(() => {
@@ -543,7 +546,9 @@ export class TrackingComponent implements OnInit, OnDestroy {
           }, 20000);
         }
       },
-      error: () => {}
+      error: (err) => {
+        console.error('[Tracking] ads load error:', err);
+      }
     });
   }
 
