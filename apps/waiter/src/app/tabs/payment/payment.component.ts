@@ -234,8 +234,8 @@ export class PaymentComponent implements OnInit {
       Swal.fire({ icon: 'warning', title: 'Incomplete Allocation', text: 'Allocate the full bill amount across guests before completing payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       return;
     }
-      if (this.selectedMethod === 'card' && !this.selectedTerminalId()) {
-        Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal to process card payments.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      if (this.selectedMethod !== 'cash' && !this.selectedTerminalId()) {
+        Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal to process this payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
         return;
       }
 
@@ -271,7 +271,7 @@ export class PaymentComponent implements OnInit {
       this.billsApi.recordPayment(this.tabId(), {
         amount,
         method: apiMethod,
-        terminal_id: this.selectedMethod === 'card' ? this.selectedTerminalId() : undefined,
+        terminal_id: this.selectedMethod !== 'cash' ? this.selectedTerminalId() : undefined,
       }).subscribe({
         next: () => {
           this.isProcessing.set(false);

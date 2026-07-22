@@ -160,7 +160,7 @@
       </section>
 
       <!-- POS Terminal Selector -->
-      @if (selectedMethod === 'card') {
+      @if (selectedMethod !== 'cash') {
         <section class="glass-card rounded-2xl p-6 border border-white/5">
           <p class="text-[14px] leading-none font-semibold text-[#bccbb9] uppercase tracking-[0.08em] mb-4" style="font-family:'Inter',sans-serif">POS Terminal</p>
           <select [(ngModel)]="selectedTerminalId" class="w-full bg-[#070d1f] border border-white/10 rounded-xl px-4 py-3 text-[#dce1fb] text-[16px] leading-[1.5] font-medium outline-none appearance-none focus:border-[#4be277]/50 transition-colors" style="font-family:'Inter',sans-serif">

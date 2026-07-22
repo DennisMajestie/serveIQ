@@ -117,7 +117,7 @@
     </section>
 
     <!-- POS Terminal Selector -->
-    @if (selectedMethod === 'card') {
+    @if (selectedMethod !== 'cash') {
       <section class="pos-section">
         <label class="pos-label">POS Terminal</label>
         <select [(ngModel)]="selectedTerminalId" class="pos-select">
