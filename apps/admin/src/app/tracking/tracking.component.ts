@@ -51,34 +51,12 @@ interface Stage {
         </div>
       } @else {
         <header class="header">
-          <button class="header-back" (click)="goBack()">
-            <span class="material-symbols-outlined">chevron_left</span>
-          </button>
           @if (trackingData()?.logoUrl) {
-            <img [src]="trackingData()?.logoUrl" alt="" class="header-logo" />
+            <img [src]="trackingData()?.logoUrl" alt="Logo" class="logo" />
           }
-          <div class="header-info">
-            <span class="header-name">{{ trackingData()?.businessName }}</span>
-            <span class="header-branch">{{ trackingData()?.branchName }}</span>
-          </div>
+          <h1>{{ trackingData()?.businessName }}</h1>
+          <p class="subtitle">{{ trackingData()?.branchName }}</p>
         </header>
-
-        @if (ads().length > 0) {
-          <div class="ad-strip">
-            <div class="ad-banner">
-              <a [href]="currentAd()?.linkUrl" target="_blank" rel="noopener" class="ad-link">
-                <img [src]="currentAd()?.imageUrl" [alt]="currentAd()?.title" class="ad-img" />
-              </a>
-              @if (ads().length > 1) {
-                <div class="ad-dots">
-                  @for (ad of ads(); track ad.id; let i = $index) {
-                    <span class="ad-dot" [class.active]="i === currentAdIndex()" (click)="currentAdIndex.set(i)"></span>
-                  }
-                </div>
-              }
-            </div>
-          </div>
-        }
 
         <div class="body">
           <div class="code-pill">{{ code() }}</div>
@@ -132,6 +110,26 @@ interface Stage {
             </div>
           }
         </div>
+
+        @if (ads().length > 0) {
+          <div class="ads-strip">
+            <div class="ads-banner">
+              <a [href]="currentAd()?.linkUrl" target="_blank" rel="noopener" class="ad-link">
+                <img [src]="currentAd()?.imageUrl" [alt]="currentAd()?.title" class="ad-image" />
+                <div class="ad-overlay">
+                  <p class="ad-title">{{ currentAd()?.title }}</p>
+                </div>
+              </a>
+              @if (ads().length > 1) {
+                <div class="ad-dots">
+                  @for (ad of ads(); track ad.id; let i = $index) {
+                    <span class="dot" [class.active]="i === currentAdIndex()" (click)="currentAdIndex.set(i)"></span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
 
         <button class="footer-back" (click)="goBack()">Back to Menu</button>
       }
@@ -189,94 +187,92 @@ interface Stage {
     }
 
     .header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 16px;
-      background: #1a1515;
-      color: #faf8f5;
-      min-height: 44px;
+      text-align: center;
+      padding: 24px 24px 20px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
       flex-shrink: 0;
     }
-    .header-back {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: none;
-      border: none;
-      color: #faf8f5;
-      cursor: pointer;
-      padding: 4px;
-      margin: -4px;
-    }
-    .header-back .material-symbols-outlined {
-      font-size: 24px;
-    }
-    .header-logo {
-      width: 28px;
-      height: 28px;
+    .logo {
+      width: 72px;
+      height: 72px;
       object-fit: contain;
-      border-radius: 6px;
-      flex-shrink: 0;
+      border-radius: 14px;
+      margin: 0 auto 10px;
+      display: block;
+      background: rgba(255,255,255,0.1);
     }
-    .header-info {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
+    .header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin: 0 0 4px;
     }
-    .header-name {
-      font-size: 14px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .header-branch {
-      font-size: 11px;
-      opacity: 0.6;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .header .subtitle {
+      font-size: 13px;
+      opacity: 0.7;
+      margin: 0;
     }
 
-    .ad-strip {
+    .ads-strip {
       flex-shrink: 0;
+      background: #1a1a2e;
+      padding: 0 16px;
     }
-    .ad-banner {
+    .ads-banner {
       position: relative;
-      height: 56px;
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: 0 0 16px 16px;
       overflow: hidden;
-      background: #1a1515;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      aspect-ratio: 16 / 7;
+      background: #16213e;
     }
-    .ad-link {
+    .ads-banner .ad-link {
       display: block;
       width: 100%;
       height: 100%;
       text-decoration: none;
     }
-    .ad-img {
+    .ads-banner .ad-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
       transition: opacity 0.5s ease;
     }
+    .ads-banner .ad-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 16px 12px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    }
+    .ads-banner .ad-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
     .ad-dots {
       position: absolute;
-      bottom: 4px;
-      right: 8px;
+      bottom: 6px;
+      right: 14px;
       display: flex;
-      gap: 4px;
+      gap: 6px;
     }
-    .ad-dot {
-      width: 6px;
-      height: 6px;
+    .ad-dots .dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: rgba(255,255,255,0.4);
       cursor: pointer;
       transition: all 0.3s;
     }
-    .ad-dot.active {
+    .ad-dots .dot.active {
       background: #fff;
       transform: scale(1.3);
     }
