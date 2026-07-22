@@ -15,6 +15,16 @@
       </div>
     </div>
 
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+      <span class="step-badge">Step {{ currentStep() }}/{{ totalSteps }}</span>
+      <div class="step-dots">
+        <span class="dot" [class.active]="currentStep() >= 1" [class.done]="currentStep() > 1">1</span>
+        <span class="dot-line" [class.filled]="currentStep() > 1"></span>
+        <span class="dot" [class.active]="currentStep() >= 2" [class.done]="currentStep() > 2">2</span>
+      </div>
+    </div>
+
     <!-- Progress Bar -->
     <div class="progress-track">
       <div class="progress-fill" [style.width.%]="stepPercent"></div>
@@ -83,7 +93,7 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label class="input-label">Full Name</label>
+              <label class="input-label">Legal Name</label>
               <input
                 type="text"
                 class="form-input"
@@ -108,23 +118,15 @@
         </div>
       }
 
-      <!-- Stats Bento -->
-      <div class="stats-grid">
-        <div class="stat-cell">
-          <span class="material-symbols-outlined text-primary/60 text-sm">auto_awesome</span>
-          <div>
-            <p class="stat-value">AI-READY</p>
-            <p class="stat-label">Optimized Engine</p>
-          </div>
+      <!-- Demo Button -->
+      <button type="button" class="demo-btn" (click)="playDemo()">
+        <span class="material-symbols-outlined demo-icon">play_circle</span>
+        <div class="demo-text">
+          <span class="demo-title">View Demo</span>
+          <span class="demo-sub">See ServeIQ in action</span>
         </div>
-        <div class="stat-cell">
-          <span class="material-symbols-outlined text-secondary/60 text-sm">shield</span>
-          <div>
-            <p class="stat-value">ENCRYPTED</p>
-            <p class="stat-label">AES-256 Vault</p>
-          </div>
-        </div>
-      </div>
+        <span class="material-symbols-outlined demo-arrow">arrow_forward</span>
+      </button>
 
       <!-- Navigation -->
       <div class="nav-row">

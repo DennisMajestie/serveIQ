@@ -2,8 +2,8 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { BranchesApiService, BusinessApiService } from '@serveiq/shared/data-access';
-import { Business, Branch } from '@serveiq/shared/models';
+import { BranchesApiService, BusinessApiService, UserApiService } from '@serveiq/shared/data-access';
+import { Business, Branch, CreateWaiterRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>
           </div>
           <h1>Welcome to ServeIQ</h1>
-          <p class="subtitle">Let's set up your restaurant profile</p>
+          <p class="subtitle">Get your restaurant running in minutes</p>
         </div>
 
         <!-- Step indicator -->
@@ -33,9 +33,14 @@ import Swal from 'sweetalert2';
             <span class="step-label">Branch</span>
           </div>
           <div class="step-line" [class.done]="currentStep() > 2"></div>
-          <div class="step" [class.active]="currentStep() >= 3">
+          <div class="step" [class.active]="currentStep() >= 3" [class.done]="currentStep() > 3">
             <span class="step-num">3</span>
-            <span class="step-label">Done</span>
+            <span class="step-label">Team</span>
+          </div>
+          <div class="step-line" [class.done]="currentStep() > 3"></div>
+          <div class="step" [class.active]="currentStep() >= 4">
+            <span class="step-num">4</span>
+            <span class="step-label">Ready</span>
           </div>
         </div>
 
@@ -98,20 +103,55 @@ import Swal from 'sweetalert2';
             <input type="text" class="form-input" [value]="branchLocation()" (change)="branchLocation.set($any($event.target).value)" placeholder="Lagos, Nigeria">
           </div>
           <div class="form-actions">
+            <button class="btn-ghost skip-btn" (click)="skipToDashboard()">Skip</button>
             <button class="btn-secondary" (click)="currentStep.set(1)">Back</button>
             <button class="btn-primary" (click)="createBranch()" [disabled]="savingBranch()">
-              {{ savingBranch() ? 'Creating...' : 'Create Branch' }}
+              {{ savingBranch() ? 'Creating...' : 'Continue' }}
             </button>
           </div>
         </div>
 
-        <!-- Step 3: Done -->
-        <div *ngIf="currentStep() === 3" class="step-content done-step">
+        <!-- Step 3: Team Setup -->
+        <div *ngIf="currentStep() === 3" class="step-content">
+          <h2>Invite Your Team</h2>
+          <p class="step-desc">Add staff members to get started</p>
+          <div class="form-group">
+            <label>Staff Name</label>
+            <input type="text" class="form-input" [value]="staffName()" (change)="staffName.set($any($event.target).value)" placeholder="e.g. Jane Doe">
+          </div>
+          <div class="form-group">
+            <label>Staff Email</label>
+            <input type="email" class="form-input" [value]="staffEmail()" (change)="staffEmail.set($any($event.target).value)" placeholder="e.g. jane@example.com">
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <select class="form-input" [value]="staffRole()" (change)="staffRole.set($any($event.target).value)">
+              <option value="waiter">Waiter</option>
+              <option value="chef">Chef</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="manager">Manager</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button class="btn-ghost skip-btn" (click)="skipToDashboard()">Skip</button>
+            <button class="btn-secondary" (click)="currentStep.set(2)">Back</button>
+            <button class="btn-primary" (click)="inviteStaff()" [disabled]="invitingStaff()">
+              {{ invitingStaff() ? 'Inviting...' : 'Invite' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 4: Ready -->
+        <div *ngIf="currentStep() === 4" class="step-content done-step">
           <div class="done-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
           <h2>All Set!</h2>
-          <p class="step-desc">Your business is ready. Let's go to your dashboard.</p>
+          <p class="step-desc">Your business is ready to go.</p>
+          <div class="bg-loading">
+            <div class="loader"></div>
+            <span>Finalizing account setup...</span>
+          </div>
           <button class="btn-primary" (click)="goToDashboard()">Go to Dashboard</button>
         </div>
       </div>
@@ -246,7 +286,7 @@ import Swal from 'sweetalert2';
       gap: 12px;
       margin-top: 28px;
     }
-    .btn-primary, .btn-secondary {
+    .btn-primary, .btn-secondary, .btn-ghost {
       flex: 1;
       padding: 14px 24px;
       border: none;
@@ -267,6 +307,15 @@ import Swal from 'sweetalert2';
       color: var(--secondary);
       &:hover:not(:disabled) { background: var(--surface-container-high); }
     }
+    .btn-ghost {
+      background: transparent;
+      color: var(--secondary);
+      border: 1px solid var(--outline-variant);
+      &:hover:not(:disabled) { background: var(--surface-container-low); }
+    }
+    .skip-btn {
+      flex: 0.5;
+    }
     .done-step {
       text-align: center;
       padding: 24px 0;
@@ -282,6 +331,26 @@ import Swal from 'sweetalert2';
       margin-bottom: 20px;
       svg { width: 32px; height: 32px; }
     }
+    .bg-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      font-size: 0.8125rem;
+      color: var(--secondary);
+    }
+    .loader {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--outline-variant);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
     .done-step .btn-primary { max-width: 240px; margin: 24px auto 0; }
     @media (max-width: 480px) {
       .setup-card { padding: 32px 24px; }
@@ -292,11 +361,13 @@ import Swal from 'sweetalert2';
 export class BusinessSetupComponent implements OnInit {
   private businessApi = inject(BusinessApiService);
   private branchesApi = inject(BranchesApiService);
+  private userApi = inject(UserApiService);
   private router = inject(Router);
 
   currentStep = signal(1);
   savingBusiness = signal(false);
   savingBranch = signal(false);
+  invitingStaff = signal(false);
 
   businessName = signal('');
   businessType = signal('restaurant');
@@ -306,6 +377,10 @@ export class BusinessSetupComponent implements OnInit {
   branchAddress = signal('');
   branchPhone = signal('');
   branchLocation = signal('');
+
+  staffName = signal('');
+  staffEmail = signal('');
+  staffRole = signal('waiter');
 
   ngOnInit() {
     this.businessApi.getBusiness().subscribe({
@@ -319,7 +394,7 @@ export class BusinessSetupComponent implements OnInit {
     this.branchesApi.list().subscribe({
       next: (branches) => {
         if (branches.length > 0) {
-          this.router.navigate(['/app/dashboard']);
+          this.currentStep.set(4);
         }
       },
       error: () => {}
@@ -368,6 +443,38 @@ export class BusinessSetupComponent implements OnInit {
         Swal.fire({ icon: 'error', title: 'Failed to create branch' });
       }
     });
+  }
+
+  inviteStaff() {
+    if (!this.staffName().trim() || !this.staffEmail().trim()) {
+      Swal.fire({ icon: 'warning', title: 'Staff name and email are required' });
+      return;
+    }
+    const branchId = localStorage.getItem('branchId');
+    if (!branchId) {
+      Swal.fire({ icon: 'warning', title: 'No branch found. Create a branch first.' });
+      return;
+    }
+    this.invitingStaff.set(true);
+    this.userApi.createWaiter({
+      fullName: this.staffName().trim(),
+      email: this.staffEmail().trim(),
+      role: this.staffRole() as 'waiter' | 'supervisor',
+      branchId,
+    }).subscribe({
+      next: () => {
+        this.invitingStaff.set(false);
+        this.currentStep.set(4);
+      },
+      error: () => {
+        this.invitingStaff.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to invite staff' });
+      }
+    });
+  }
+
+  skipToDashboard() {
+    this.router.navigate(['/app/dashboard']);
   }
 
   goToDashboard() {

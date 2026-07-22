@@ -56,6 +56,22 @@ export class RegisterBusinessComponent {
     }
   }
 
+  playDemo() {
+    Swal.fire({
+      title: 'ServeIQ — At a Glance',
+      html: `
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin-bottom:12px">
+          <iframe style="position:absolute;top:0;left:0;width:100%;height:100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <p style="font-size:14px;color:#a0a0a0;line-height:1.6;margin:0">AI-powered order management, real-time tracking, POS integration, and intelligent analytics — all in one platform.</p>
+      `,
+      confirmButtonText: 'Close',
+      width: 640,
+      background: '#1e293b',
+      color: '#fff',
+    });
+  }
+
   onSubmit() {
     if (!this.businessName() || !this.fullName() || !this.email() || !this.pin()) {
       Swal.fire({
