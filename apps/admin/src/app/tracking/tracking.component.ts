@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TrackingApiService, TrackingData, PublicAdsApiService, Ad } from '@serveiq/shared/data-access';
 import { interval, Subscription } from 'rxjs';
+
+interface ConfettiParticle { x: number; y: number; r: number; color: string; d: number; tilt: number; tiltAngle: number; }
 
 type TrackingErrorType = 'invalid_code' | 'not_found' | 'declined' | 'generic' | null;
 
@@ -84,6 +86,7 @@ interface Stage {
               <span class="material-symbols-outlined">celebration</span>
               <span>Enjoy your meal!</span>
             </div>
+            <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
           }
 
           @if (showCountdown()) {
@@ -386,10 +389,21 @@ interface Stage {
       font-size: 13px;
       font-weight: 600;
       color: #059669;
+      position: relative;
+      z-index: 1;
     }
     .delivered-msg .material-symbols-outlined {
       font-size: 18px;
       color: #059669;
+    }
+    .confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
     }
 
     .countdown {
@@ -480,7 +494,7 @@ interface Stage {
     }
   `]
 })
-export class TrackingComponent implements OnInit, OnDestroy {
+export class TrackingComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private trackingApi = inject(TrackingApiService);
@@ -498,6 +512,13 @@ export class TrackingComponent implements OnInit, OnDestroy {
   private countdownTick = signal(0);
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
   private adRotateInterval: ReturnType<typeof setInterval> | null = null;
+
+  private canvas: HTMLCanvasElement | null = null;
+  private ctx: CanvasRenderingContext2D | null = null;
+  private particles: ConfettiParticle[] = [];
+  private animationId: number | null = null;
+  private confettiColors = ['#f97316', '#22c55e', '#ef4444', '#3b82f6', '#a855f7', '#facc15'];
+  private confettiLaunched = false;
 
   order = computed(() => this.trackingData()?.order ?? null);
 
@@ -570,10 +591,64 @@ export class TrackingComponent implements OnInit, OnDestroy {
     this.startCountdown();
   }
 
+  ngAfterViewInit(): void {
+    this.tryLaunchConfetti();
+  }
+
+  private tryLaunchConfetti() {
+    if (this.confettiLaunched) return;
+    if (!this.isDelivered()) return;
+    this.initConfetti();
+  }
+
+  private initConfetti() {
+    this.canvas = document.getElementById('confettiCanvas') as HTMLCanvasElement;
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext('2d');
+    if (!this.ctx) return;
+    this.resizeCanvas();
+    window.addEventListener('resize', () => this.resizeCanvas());
+    this.launchConfetti();
+  }
+
+  private resizeCanvas() {
+    if (!this.canvas) return;
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  }
+
+  private launchConfetti() {
+    if (!this.canvas) return;
+    this.confettiLaunched = true;
+    for (let i = 0; i < 200; i++) {
+      this.particles.push({ x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height - this.canvas.height, r: Math.random() * 8 + 4, color: this.confettiColors[Math.floor(Math.random() * this.confettiColors.length)], d: Math.random() * 10 + 5, tilt: Math.random() * 10 - 5, tiltAngle: 0 });
+    }
+    this.animate();
+    setTimeout(() => this.stopConfetti(), 5000);
+  }
+
+  private animate() {
+    if (!this.ctx || !this.canvas) return;
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    for (const p of this.particles) {
+      p.tiltAngle += 0.1; p.y += p.d; p.tilt = Math.sin(p.tiltAngle) * 15;
+      this.ctx.beginPath(); this.ctx.lineWidth = p.r; this.ctx.strokeStyle = p.color;
+      this.ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+      this.ctx.lineTo(p.x + p.tilt - p.r / 2, p.y + p.tilt + p.r / 2);
+      this.ctx.stroke();
+    }
+    this.animationId = requestAnimationFrame(() => this.animate());
+  }
+
+  private stopConfetti() {
+    if (this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; }
+  }
+
   ngOnDestroy(): void {
     this.pollSub?.unsubscribe();
     if (this.countdownInterval) clearInterval(this.countdownInterval);
     if (this.adRotateInterval) clearInterval(this.adRotateInterval);
+    this.stopConfetti();
   }
 
   private fetchTracking() {
@@ -589,6 +664,7 @@ export class TrackingComponent implements OnInit, OnDestroy {
           this.loadAds(data.branchId);
         }
         this.isLoading.set(false);
+        this.tryLaunchConfetti();
       },
       error: (err) => {
         this.isLoading.set(false);
@@ -635,6 +711,7 @@ export class TrackingComponent implements OnInit, OnDestroy {
           if (!!data.order.deliveredAt || data.order.status === 'DECLINED') {
             this.pollSub?.unsubscribe();
           }
+          this.tryLaunchConfetti();
         },
         error: () => {}
       });
