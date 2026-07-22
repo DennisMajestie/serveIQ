@@ -364,7 +364,7 @@ export class SettingsComponent implements OnInit {
 
   loadWaiters() {
     this.isLoadingWaiters.set(true);
-    this.userApi.listWaiters().subscribe({
+    this.userApi.listStaff().subscribe({
       next: (w) => {
         this.waiters.set(Array.isArray(w) ? w : []);
         this.isLoadingWaiters.set(false);
