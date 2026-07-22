@@ -46,3 +46,22 @@
   box-shadow: 0 0 40px rgba(75, 226, 119, 0.6);
   transform: translateY(-2px);
 }
+
+.branding-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 0 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(188, 203, 185, 0.5);
+  text-transform: uppercase;
+}
+
+.branding-icon {
+  font-size: 10px;
+  opacity: 0.4;
+}
