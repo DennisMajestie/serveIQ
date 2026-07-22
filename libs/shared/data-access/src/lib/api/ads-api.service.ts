@@ -14,7 +14,7 @@ export interface Ad {
   linkUrl?: string;
   isActive: boolean;
   sortOrder: number;
-  branchId: string;
+  branchId?: string;
   createdAt?: string;
 }
 
@@ -58,7 +58,7 @@ export class AdsApiService extends BaseApiService {
     return this.get<Ad>(buildUrl(API_CONFIG.endpoints.ads.get, { id }));
   }
 
-  create(data: { title: string; image_url?: string; link_url?: string; branch_id: string; sort_order?: number }): Observable<Ad> {
+  create(data: { title: string; image_url?: string; link_url?: string; branch_id?: string; sort_order?: number }): Observable<Ad> {
     return this.post<Ad>(API_CONFIG.endpoints.ads.create, data);
   }
 
