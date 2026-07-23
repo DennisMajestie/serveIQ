@@ -134,10 +134,11 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.loadNotifications();
     this.pollSub = interval(30000).subscribe(async () => {
       try {
+        const tabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open' }));
+        this.openTabs.set(Array.isArray(tabs) ? tabs : []);
         const tables = await firstValueFrom(this.tablesApi.getAllTables());
         if (Array.isArray(tables)) this.tables.set(tables);
         this.isSynced.set(true);
-        this.refreshOpenTabs();
       } catch {}
       this.loadCurrentShift();
       this.loadNotifications();
@@ -272,28 +273,9 @@ export class TablesComponent implements OnInit, OnDestroy {
 
     if (!tab) {
       if (table.status === 'occupied') {
-        console.warn('[TableMismatch] table=%s occupied but no matching tab found. openTabs=%o', table.id, this.openTabs().map(t => ({ id: t.id, tableId: t.tableId, table: (t as any).table, status: t.status })));
-        const result = await Swal.fire({
-          icon: 'error',
-          title: 'Table Mismatch',
-          text: 'This table shows as occupied but no active tab was found.',
-          showConfirmButton: true,
-          showDenyButton: true,
-          confirmButtonText: 'Reset Table',
-          denyButtonText: 'Refresh',
-        });
-        if (result.isConfirmed) {
-          try {
-            await firstValueFrom(this.tablesApi.updateTableStatus(table.id!, 'available' as any));
-            this.loadTables();
-            this.loadOpenTabs();
-          } catch {
-            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to reset table status' });
-          }
-        } else if (result.isDenied) {
-          this.loadTables();
-          this.loadOpenTabs();
-        }
+        console.warn('[TableMismatch] table=%s occupied but no matching tab found. Auto-recovering...', table.id);
+        await firstValueFrom(this.tablesApi.updateTableStatus(table.id!, 'available')).catch(() => {});
+        await this.router.navigate(['/tabs/create', table.id]);
         return;
       }
       if (!this.hasOpenShift()) {
