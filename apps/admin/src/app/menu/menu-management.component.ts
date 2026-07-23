@@ -75,15 +75,25 @@ export class MenuManagementComponent implements OnInit {
 
   categories = computed(() => {
     const items = this.items();
-    if (!Array.isArray(items)) return [{ name: 'All', count: 0, imageUrl: '' }];
+    if (!Array.isArray(items)) return [{ name: 'All', count: 0, imageUrl: '', imageUrls: [] as string[] }];
     const cats = ['All', ...new Set(items.map(i => i.category))];
     return cats.map(c => {
       const catItems = c === 'All' ? items : items.filter(i => i.category === c);
       const firstWithImage = catItems.find(i => i.imageUrl);
+      const imageUrls = c === 'All'
+        ? [...new Set(items.filter(i => i.imageUrl).map(i => i.category))]
+            .slice(0, 10)
+            .map(cat => {
+              const item = items.find(i => i.category === cat && i.imageUrl);
+              return item ? resolveImageUrl(item.imageUrl!, this.env.apiUrl) : '';
+            })
+            .filter(Boolean)
+        : [];
       return {
         name: c,
         count: catItems.length,
-        imageUrl: firstWithImage ? resolveImageUrl(firstWithImage.imageUrl, this.env.apiUrl) : ''
+        imageUrl: firstWithImage ? resolveImageUrl(firstWithImage.imageUrl, this.env.apiUrl) : '',
+        imageUrls: imageUrls.length ? imageUrls : (firstWithImage ? [resolveImageUrl(firstWithImage.imageUrl, this.env.apiUrl)] : [])
       };
     });
   });

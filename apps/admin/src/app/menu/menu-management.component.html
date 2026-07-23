@@ -26,7 +26,19 @@
     <!-- Category Grid -->
     <div class="grid grid-cols-12 gap-5">
       <div *ngFor="let cat of categories()" class="col-span-12 md:col-span-4 bento-card relative h-[220px] rounded-[32px] overflow-hidden group cursor-pointer" [class.ring-2]="selectedCategory() === cat.name" [class.ring-[var(--primary)]]="selectedCategory() === cat.name" (click)="selectCategory(cat.name)">
-        <div class="absolute inset-0 bg-cover bg-center" [style.background-image]="cat.imageUrl ? 'url(' + cat.imageUrl + ')' : ''"></div>
+        <ng-container *ngIf="cat.name === 'All' && cat.imageUrls.length > 1; else singleBg">
+          <div class="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-0">
+            <div *ngFor="let url of cat.imageUrls.slice(0, 9); let idx = index"
+                 class="overflow-hidden"
+                 [class.col-span-2]="idx === 0 && cat.imageUrls.length >= 3"
+                 [class.row-span-2]="idx === 0 && cat.imageUrls.length >= 3">
+              <img [src]="url" class="w-full h-full object-cover" />
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #singleBg>
+          <div class="absolute inset-0 bg-cover bg-center" [style.background-image]="cat.imageUrl ? 'url(' + cat.imageUrl + ')' : ''"></div>
+        </ng-template>
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"></div>
         <div class="absolute bottom-0 left-0 p-6 w-full">
           <span class="bg-primary-20 backdrop-blur-md text-[var(--primary)] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">{{ cat.name === 'All' ? 'All Items' : cat.name | titlecase }}</span>
