@@ -4,7 +4,7 @@ import { CanActivateFn, Router } from '@angular/router';
 export const supervisorGuard: CanActivateFn = () => {
   const router = inject(Router);
   const role = (localStorage.getItem('userRole') || '').toLowerCase();
-  if (role !== 'supervisor') {
+  if (role !== 'supervisor' && role !== 'owner') {
     return router.createUrlTree(['/tables']);
   }
   return true;

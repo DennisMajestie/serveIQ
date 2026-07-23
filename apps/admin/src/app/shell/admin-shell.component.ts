@@ -186,6 +186,13 @@ interface NavItem {
                 <span>Settings</span>
               </a>
             </li>
+            <li class="nav-section-label" *ngIf="profile().role === 'owner'">Supervisor</li>
+            <li class="nav-item" *ngIf="profile().role === 'owner'">
+              <a class="nav-link" (click)="openSupervisorPage()">
+                <span class="material-symbols-outlined">fact_check</span>
+                <span>Orders Queue</span>
+              </a>
+            </li>
           </ul>
 
         </nav>
@@ -818,6 +825,11 @@ export class AdminShellComponent implements OnInit, OnDestroy {
 
   openNotifications() {
     this.router.navigate(['/app/notifications']);
+  }
+
+  openSupervisorPage() {
+    const waiterUrl = (this.env as any).waiterBaseUrl || 'http://localhost:4201';
+    window.open(`${waiterUrl}/supervisor/orders`, '_blank');
   }
 
   stopImpersonating() {
