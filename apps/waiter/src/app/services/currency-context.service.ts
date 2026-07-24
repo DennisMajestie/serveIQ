@@ -69,12 +69,16 @@ export class CurrencyContextService {
     });
   }
 
-  formatNaira(amount: number): string {
+  formatPlain(amount: number): string {
     const currency = this._currency();
     return amount.toLocaleString(currency.locale, {
       minimumFractionDigits: currency.decimals,
       maximumFractionDigits: currency.decimals,
     });
+  }
+
+  formatNaira(amount: number): string {
+    return this.formatPlain(amount);
   }
 
   formatAmount(amount: number): string {

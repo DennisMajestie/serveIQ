@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MenuApiService } from '@serveiq/shared/data-access';
 import { MenuItem } from '@serveiq/shared/models';
-import { CurrencyContextService } from '../../services/currency-context.service';
+import { CurrencyContextService } from '../../../services/currency-context.service';
 
 @Component({
   selector: 'app-add-order-item-modal',

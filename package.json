@@ -31,6 +31,7 @@
     "@capacitor/core": "^8.4.0",
     "@capacitor/ios": "^8.4.0",
     "@ionic/angular": "^7.8.6",
+    "@sentry/browser": "^10.68.0",
     "chart.js": "^4.5.1",
     "express": "^4.22.2",
     "openai": "^6.42.0",

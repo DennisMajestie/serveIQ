@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-node-
+      - name: Install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Lint
+        run: npm run lint -w apps/api
+      - name: Test
+        run: npm test -w apps/api
+      - name: Build
+        run: npm run build -w apps/api
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-frontend-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-node-
+      - name: Install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Test admin
+        run: npx nx test admin
+      - name: Test waiter
+        run: npx nx test waiter
+      - name: Build
+        run: npm run build

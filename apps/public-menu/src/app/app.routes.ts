@@ -3,5 +3,6 @@ import { PublicMenuPageComponent } from './public-menu-page/public-menu-page.com
 
 export const appRoutes: Route[] = [
   { path: 'public/menu/:branchId', component: PublicMenuPageComponent },
-  { path: '**', redirectTo: '' },
+  { path: '', redirectTo: '/public/menu/default', pathMatch: 'full' },
+  { path: '**', redirectTo: '/public/menu/default' },
 ];

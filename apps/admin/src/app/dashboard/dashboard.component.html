@@ -140,7 +140,7 @@
                   <p class="text-[11px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">x{{ order.quantity }} • {{ order.createdAt | date:'short' }}</p>
                 </div>
               </div>
-              <span class="font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">₦{{ (order.subtotalKobo / 100).toLocaleString() }}</span>
+              <span class="font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ currency.getSymbol() }}{{ (order.subtotalKobo / 100).toLocaleString() }}</span>
             </div>
           </ng-container>
           <ng-template #emptyOrders>

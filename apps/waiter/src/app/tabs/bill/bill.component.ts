@@ -174,18 +174,6 @@ export class BillComponent implements OnInit {
     this.router.navigate(['/tabs/detail', this.tabId()]);
   }
 
-  formatAmount(amount: number): string {
-    return this.currency.formatPlain(amount);
-  }
-
-  formatCurrency(kobo: number): string {
-    return this.currency.formatKobo(kobo);
-  }
-
-  get currencySymbol(): string {
-    return this.currency.getSymbol();
-  }
-
   get hasDiscount(): boolean {
     return (this.bill()?.discountKobo ?? 0) > 0;
   }

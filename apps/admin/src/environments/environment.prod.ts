@@ -4,4 +4,5 @@ export const environment = {
   nemotronUrl: 'https://integrate.api.nvidia.com',
   publicMenuBaseUrl: 'https://serve-iq-one.vercel.app',
   waiterBaseUrl: 'https://serve-iq-one.vercel.app',
+  sentryDsn: '',
 };

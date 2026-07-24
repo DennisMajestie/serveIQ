@@ -2,6 +2,7 @@ import { Component, signal, computed, inject, OnInit, OnDestroy, AfterViewInit }
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { BranchesApiService, ReportsApiService, DashboardStats, UserApiService } from '@serveiq/shared/data-access';
+import { CurrencyContextService } from '../core/currency-context.service';
 import { PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry } from '@serveiq/shared/models';
 import { Subscription, interval } from 'rxjs';
 
@@ -17,6 +18,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private reportsService = inject(ReportsApiService);
   private userApi = inject(UserApiService);
   private router = inject(Router);
+  private currency = inject(CurrencyContextService);
 
   isLoading = signal(true);
   branchName = signal('');
@@ -178,7 +180,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   kpiCards = computed(() => {
     const s = this.stats();
     return [
-      { label: 'Today\'s Revenue', value: `₦${(s.realTimeSales / 100).toLocaleString()}`, subValue: 'Sales', icon: 'payments', iconBg: '#00D166' },
+      { label: 'Today\'s Revenue', value: `${this.currency.getSymbol()}${(s.realTimeSales / 100).toLocaleString()}`, subValue: 'Sales', icon: 'payments', iconBg: '#00D166' },
       { label: 'Active Tables', value: s.activeTables.toString(), subValue: `of ${s.totalTables}`, icon: 'table_restaurant', iconBg: '#FF7043' },
       { label: 'Open Tabs', value: s.openTabs.toString(), subValue: 'Current', icon: 'receipt_long', iconBg: '#0059bb' },
       { label: 'Tabs Completed', value: s.todayTabsCount.toString(), subValue: 'Today', icon: 'check_circle', iconBg: '#8b5cf6' }
@@ -192,7 +194,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   openTabs = computed(() => this.stats().openTabs);
   dailyRevenue = computed(() => this.stats().dailyRevenue);
   todayTabsCount = computed(() => this.stats().todayTabsCount);
-  revenueDisplay = computed(() => `₦${(this.stats().realTimeSales / 100).toLocaleString()}`);
+  revenueDisplay = computed(() => `${this.currency.getSymbol()}${(this.stats().realTimeSales / 100).toLocaleString()}`);
   staffCount = computed(() => (this.stats().waiterPerformance || []).length);
   staffOnDuty = computed(() => this.staffCount());
   avgTableVelocity = computed(() => {
