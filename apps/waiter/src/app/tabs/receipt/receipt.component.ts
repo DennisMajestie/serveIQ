@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillsApiService, TablesApiService } from '@serveiq/shared/data-access';
 import { OrderItem, Table } from '@serveiq/shared/models';
+import { CurrencyContextService } from '../../services/currency-context.service';
 
 interface ConfettiParticle { x: number; y: number; r: number; color: string; d: number; tilt: number; tiltAngle: number; }
 
@@ -18,6 +19,7 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private billsApi = inject(BillsApiService);
   private tableService = inject(TablesApiService);
+  private currency = inject(CurrencyContextService);
 
   tabId = signal('');
   receipt = signal<any>(null);
@@ -72,6 +74,13 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
     if (id === '—' || id.length <= 13) return id;
     return id.slice(0, 8) + '...' + id.slice(-4);
   });
+
+  currencySymbol = computed(() => this.currency.getSymbol());
+  currencyCode = computed(() => this.currency.getCode());
+
+  formatAmount(amount: number): string {
+    return this.currency.formatPlain(amount);
+  }
 
   copiedId = signal<string | null>(null);
   toastMessage = signal<string | null>(null);
@@ -150,19 +159,19 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
     for (const item of this.items()) {
       const qty = item.quantity > 1 ? ` ×${item.quantity}` : '';
-      lines.push(`${item.menuItemName}${qty} — ₦${((item.priceKobo * item.quantity) / 100).toLocaleString('en-NG', {minimumFractionDigits: 2})}`);
+      lines.push(`${item.menuItemName}${qty} — ${this.currencySymbol()}${((item.priceKobo * item.quantity) / 100).toLocaleString(this.currency.getLocale(), {minimumFractionDigits: 2})}`);
     }
     lines.push(
       ``,
-      `Subtotal: ₦${this.subtotalNaira().toLocaleString('en-NG', {minimumFractionDigits: 2})}`,
-      `VAT: ₦${this.vatNaira().toLocaleString('en-NG', {minimumFractionDigits: 2})}`,
-      `Service Charge: ₦${this.serviceChargeNaira().toLocaleString('en-NG', {minimumFractionDigits: 2})}`,
+      `Subtotal: ${this.currencySymbol()}${this.subtotalNaira().toLocaleString(this.currency.getLocale(), {minimumFractionDigits: 2})}`,
+      `VAT: ${this.currencySymbol()}${this.vatNaira().toLocaleString(this.currency.getLocale(), {minimumFractionDigits: 2})}`,
+      `Service Charge: ${this.currencySymbol()}${this.serviceChargeNaira().toLocaleString(this.currency.getLocale(), {minimumFractionDigits: 2})}`,
     );
     if (this.discountNaira() > 0) {
-      lines.push(`Discount: -₦${this.discountNaira().toLocaleString('en-NG', {minimumFractionDigits: 2})}`);
+      lines.push(`Discount: -${this.currencySymbol()}${this.discountNaira().toLocaleString(this.currency.getLocale(), {minimumFractionDigits: 2})}`);
     }
     lines.push(
-      `*Total: ₦${this.total().toLocaleString('en-NG', {minimumFractionDigits: 2})}*`,
+      `*Total: ${this.currencySymbol()}${this.total().toLocaleString(this.currency.getLocale(), {minimumFractionDigits: 2})}*`,
       ``,
       `${this.date()}`,
     );

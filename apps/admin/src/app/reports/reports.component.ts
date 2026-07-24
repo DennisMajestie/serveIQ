@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReportsApiService } from '@serveiq/shared/data-access';
 import { SalesEntry, TopItemEntry, PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry } from '@serveiq/shared/models';
+import { CurrencyContextService } from '../core/currency-context.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -32,7 +33,7 @@ import Swal from 'sweetalert2';
           <div class="summary-cards">
             <div class="summary-card">
               <span class="label">Total Revenue</span>
-              <span class="value">{{ totalRevenue() | currency:'NGN':'symbol-narrow':'1.2-2' }}</span>
+              <span class="value">{{ formatCurrency(totalRevenueKobo()) }}</span>
             </div>
             <div class="summary-card">
               <span class="label">Total Orders</span>
@@ -49,17 +50,17 @@ import Swal from 'sweetalert2';
                   <th>Payment Method</th>
                 </tr>
               </thead>
-              <tbody>
+<tbody>
                 <tr *ngFor="let entry of salesData()">
                   <td>{{ entry.date | date:'mediumDate' }}</td>
-                  <td>{{ toNaira(entry.revenueKobo) | currency:'NGN':'symbol-narrow':'1.2-2' }}</td>
+                  <td>{{ formatCurrency(entry.revenueKobo) }}</td>
                   <td>{{ entry.orderCount }}</td>
                   <td>{{ entry.paymentMethod }}</td>
-                </tr>
-                <tr *ngIf="salesData().length === 0">
-                  <td colspan="4" class="empty-state">No sales data for this period</td>
-                </tr>
-              </tbody>
+        </tr>
+        <tr *ngIf="salesData().length === 0">
+          <td colspan="4" class="empty-state">No sales data for this period</td>
+        </tr>
+      </tbody>
             </table>
           </div>
         </ng-container>
@@ -92,18 +93,18 @@ import Swal from 'sweetalert2';
                   <th>Revenue</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr *ngFor="let item of topItemsData(); let i = index">
-                  <td>{{ i + 1 }}</td>
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.category }}</td>
-                  <td>{{ item.quantitySold }}</td>
-                  <td>{{ toNaira(item.revenueKobo) | currency:'NGN':'symbol-narrow':'1.2-2' }}</td>
-                </tr>
-                <tr *ngIf="topItemsData().length === 0">
-                  <td colspan="5" class="empty-state">No items sold in this period</td>
-                </tr>
-              </tbody>
+<tbody>
+        <tr *ngFor="let item of topItemsData(); let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.quantitySold }}</td>
+          <td>{{ formatCurrency(item.revenueKobo) }}</td>
+        </tr>
+        <tr *ngIf="topItemsData().length === 0">
+          <td colspan="5" class="empty-state">No items sold in this period</td>
+        </tr>
+      </tbody>
             </table>
           </div>
         </ng-container>
@@ -188,6 +189,7 @@ import Swal from 'sweetalert2';
 })
 export class ReportsComponent implements OnInit {
   private reportsApi = inject(ReportsApiService);
+  private currency = inject(CurrencyContextService);
 
   dateFrom = signal('');
   dateTo = signal('');
@@ -200,12 +202,20 @@ export class ReportsComponent implements OnInit {
   velocityData = signal<TableVelocityEntry[]>([]);
   efficiencyData = signal<PeakEfficiencyEntry[]>([]);
 
-  totalRevenue = computed(() => this.salesData().reduce((sum, e) => sum + e.revenueKobo / 100, 0));
+  totalRevenue = computed(() => this.salesData().reduce((sum, e) => sum + e.revenueKobo, 0));
+  totalRevenueKobo = computed(() => this.salesData().reduce((sum, e) => sum + e.revenueKobo, 0));
   totalOrders = computed(() => this.salesData().reduce((sum, e) => sum + e.orderCount, 0));
   maxPeakCount = computed(() => Math.max(...this.peakHoursData().map(e => e.orderCount), 1));
 
+  currencyCode = computed(() => this.currency.getCode());
+  currencySymbol = computed(() => this.currency.getSymbol());
+
   toNaira(kobo: number): number {
     return kobo / 100;
+  }
+
+  formatCurrency(kobo: number): string {
+    return this.currency.formatKobo(kobo);
   }
 
   tabs = [

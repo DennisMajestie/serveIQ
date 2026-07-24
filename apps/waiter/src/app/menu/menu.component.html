@@ -77,7 +77,7 @@
                 <div class="card-content p-4 space-y-3">
                   <h3 class="text-[16px] leading-[1.5] font-medium text-[#dce1fb] line-clamp-1" style="font-family:'Inter',sans-serif">{{ item.name }}</h3>
                   <div class="flex justify-between items-center">
-                    <span class="text-[18px] leading-none font-semibold text-[#4be277]" [class.text-[#bccbb9]]="!item.isAvailable" style="font-family:'Space Grotesk',sans-serif">₦{{ getDisplayPrice(item).toLocaleString('en-NG', {minimumFractionDigits: 2}) }}</span>
+                    <span class="text-[18px] leading-none font-semibold text-[#4be277]" [class.text-[#bccbb9]]="!item.isAvailable" style="font-family:'Space Grotesk',sans-serif">{{ formatAmount(getDisplayPrice(item)) }}</span>
                     @if (!item.isAvailable) {
                       <span class="text-xs text-[#bccbb9] font-medium">Unavailable</span>
                     } @else if (getItemQty(item.id) === 0) {
@@ -130,7 +130,7 @@
           </div>
           <div>
             <span class="block text-[12px] leading-none font-medium text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">@if (tableNumber) { Table {{ tableNumber }} } @else { Menu Items }</span>
-            <span class="block text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">₦{{ selectionTotal.toLocaleString('en-NG', {minimumFractionDigits: 2}) }} Total</span>
+            <span class="block text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ formatAmount(selectionTotal) }} Total</span>
           </div>
         </div>
         <button (click)="confirmSelection()" class="action-btn bg-[#4be277] text-[#003915] px-6 py-3 rounded-xl text-[14px] leading-none font-semibold font-bold active:scale-95 transition-transform shadow-[0_0_15px_rgba(75,226,119,0.4)]" style="font-family:'Inter',sans-serif">

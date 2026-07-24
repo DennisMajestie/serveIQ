@@ -41,7 +41,7 @@
                 <div class="item-info">
                   <h3 class="item-name">{{ item.name }}</h3>
                   <span class="item-category">{{ item.category }}</span>
-                  <div class="item-price">₦{{ formatPrice(item.priceKobo) }}</div>
+                  <div class="item-price">{{ formatPrice(item.priceKobo) }}</div>
                 </div>
                 @if (isItemSelected(item.id)) {
                   <span class="selection-indicator">
@@ -58,7 +58,7 @@
               <div class="summary-content">
                 <div class="summary-item-info">
                   <span class="summary-item-name">{{ getSelectedItem()?.name }}</span>
-                  <span class="summary-item-price">₦{{ formatPrice(getSelectedItem()?.priceKobo || 0) }}</span>
+                  <span class="summary-item-price">{{ formatPrice(getSelectedItem()?.priceKobo || 0) }}</span>
                 </div>
                 <div class="quantity-control">
                   <button class="qty-btn" (click)="decrementQuantity()" [disabled]="quantity() <= 1" type="button">

@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { InventoryApiService } from '@serveiq/shared/data-access';
 import { DailyTallyReport } from '@serveiq/shared/models';
+import { CurrencyContextService } from '../../core/currency-context.service';
 
 @Component({
   selector: 'app-daily-tally',
@@ -120,6 +121,7 @@ import { DailyTallyReport } from '@serveiq/shared/models';
 })
 export class DailyTallyComponent implements OnInit {
   private inventoryApi = inject(InventoryApiService);
+  private currency = inject(CurrencyContextService);
 
   selectedDate = signal(new Date().toISOString().split('T')[0]);
   report = signal<DailyTallyReport | null>(null);
@@ -156,6 +158,6 @@ export class DailyTallyComponent implements OnInit {
 
   formatCurrency(amount?: number): string {
     if (amount == null) return '\u2014';
-    return (amount / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.currency.formatKobo(amount);
   }
 }

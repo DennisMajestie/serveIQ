@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MenuApiService } from '@serveiq/shared/data-access';
 import { MenuItem } from '@serveiq/shared/models';
+import { CurrencyContextService } from '../../services/currency-context.service';
 
 @Component({
   selector: 'app-add-order-item-modal',
@@ -13,6 +14,7 @@ import { MenuItem } from '@serveiq/shared/models';
 })
 export class AddOrderItemModalComponent implements OnInit {
   private menuService = inject(MenuApiService);
+  private currency = inject(CurrencyContextService);
 
   @Input() isOpen = false;
   @Output() close = new EventEmitter<void>();
@@ -89,7 +91,7 @@ export class AddOrderItemModalComponent implements OnInit {
   }
 
   formatPrice(kobo: number): string {
-    return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    return this.currency.formatKobo(kobo);
   }
 
   getSelectedItem(): MenuItem | undefined {

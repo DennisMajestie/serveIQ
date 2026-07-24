@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TabsApiService } from '@serveiq/shared/data-access';
 import { Tab } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { CurrencyContextService } from '../core/currency-context.service';
 
 @Component({
   selector: 'app-tabs-management',
@@ -16,6 +17,7 @@ import Swal from 'sweetalert2';
 export class TabsManagementComponent implements OnInit {
   private tabsApi = inject(TabsApiService);
   private router = inject(Router);
+  private currency = inject(CurrencyContextService);
 
   tabs = signal<Tab[]>([]);
   isLoading = signal(true);
@@ -69,8 +71,8 @@ export class TabsManagementComponent implements OnInit {
   }
 
   formatKobo(kobo: number): string {
-    if (!kobo) return '₦0.00';
-    return '₦' + (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (!kobo) return this.currency.formatKobo(0);
+    return this.currency.formatKobo(kobo);
   }
 
   getTotalKobo(tab: Tab): number {

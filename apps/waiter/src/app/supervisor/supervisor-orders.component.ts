@@ -6,6 +6,7 @@ import { OrdersApiService, DepartmentsApiService, TablesApiService, ShiftsApiSer
 import { OrderGroup, Department, Table, Shift, User, AuditLog } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { interval, Subscription } from 'rxjs';
+import { CurrencyContextService } from '../services/currency-context.service';
 
 type QueueTab = 'pending' | 'preparing' | 'ready';
 
@@ -25,6 +26,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   private shiftsApi = inject(ShiftsApiService);
   private userApi = inject(UserApiService);
   private auditApi = inject(AuditApiService);
+  private currency = inject(CurrencyContextService);
 
   activeTab = signal<QueueTab>('pending');
 
@@ -274,7 +276,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   }
 
   formatKobo(kobo: number): string {
-    return '₦' + (kobo / 100).toLocaleString('en-US', { minimumFractionDigits: 2 });
+    return this.currency.formatKobo(kobo);
   }
 
   encodeURI(name: string): string {

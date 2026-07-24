@@ -1,10 +1,11 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService } from '@serveiq/shared/data-access';
-import { Bill, Tab, Table, MenuItem } from '@serveiq/shared/models';
+import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService, BusinessApiService } from '@serveiq/shared/data-access';
+import { Bill, Tab, Table, MenuItem, Business } from '@serveiq/shared/models';
 import { catchError, of, switchMap, map } from 'rxjs';
 import Swal from 'sweetalert2';
+import { CurrencyContextService } from '../../services/currency-context.service';
 
 @Component({
   selector: 'app-bill',
@@ -22,6 +23,8 @@ export class BillComponent implements OnInit {
   private tabService = inject(TabsApiService);
   private ordersService = inject(OrdersApiService);
   private menuService = inject(MenuApiService);
+  private businessApi = inject(BusinessApiService);
+  private currency = inject(CurrencyContextService);
 
   private currentDiscountKobo = 0;
 
@@ -33,6 +36,7 @@ export class BillComponent implements OnInit {
   waiterName = signal('Waiter');
   time = signal(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   menuItems = signal<MenuItem[]>([]);
+  businessSettings = signal<Business | null>(null);
 
   subtotalNaira = computed(() => (this.bill()?.subtotalKobo ?? 0) / 100);
   serviceChargeNaira = computed(() => (this.bill()?.serviceChargeKobo ?? 0) / 100);
@@ -41,14 +45,29 @@ export class BillComponent implements OnInit {
 
   items = computed(() => this.bill()?.orderItems ?? []);
 
+  currencySymbol = computed(() => this.currency.getSymbol());
+  currencyCode = computed(() => this.currency.getCode());
+
   getSubtotal = () => this.subtotalNaira();
-  getVat = () => Math.round((this.subtotalNaira() * 0.075) * 100) / 100;
+  getVat = () => Math.round((this.subtotalNaira() * (this.businessSettings()?.taxRate || 7.5) / 100) * 100) / 100;
   getServiceCharge = () => this.serviceChargeNaira();
   getTotal = () => this.totalNaira();
+
+  formatAmount(amount: number): string {
+    return this.currency.formatPlain(amount);
+  }
+
+  formatKobo(kobo: number): string {
+    return this.currency.formatKobo(kobo);
+  }
 
   ngOnInit() {
     this.menuService.getAllItems().subscribe({
       next: (items) => this.menuItems.set(items || []),
+      error: () => {}
+    });
+    this.businessApi.getBusiness().subscribe({
+      next: (business) => this.businessSettings.set(business),
       error: () => {}
     });
     this.route.paramMap.subscribe(params => {
@@ -155,8 +174,16 @@ export class BillComponent implements OnInit {
     this.router.navigate(['/tabs/detail', this.tabId()]);
   }
 
-  formatNaira(amount: number): string {
-    return amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  formatAmount(amount: number): string {
+    return this.currency.formatPlain(amount);
+  }
+
+  formatCurrency(kobo: number): string {
+    return this.currency.formatKobo(kobo);
+  }
+
+  get currencySymbol(): string {
+    return this.currency.getSymbol();
   }
 
   get hasDiscount(): boolean {
@@ -165,25 +192,25 @@ export class BillComponent implements OnInit {
 
   applyDiscount() {
     const currentKobo = this.bill()?.discountKobo ?? 0;
-    const currentNaira = currentKobo / 100;
+    const currentAmount = currentKobo / 100;
 
     Swal.fire({
       title: 'Apply Discount',
       html: `
         <div style="margin-bottom: 16px; color: #a0a0a0; font-size: 14px;">
-          Enter amount in Naira (₦)
+          Enter amount in ${this.currencySymbol}
         </div>
         <input
           id="discount-input"
           type="number"
           min="0"
           step="0.01"
-          value="${currentNaira || ''}"
+          value="${currentAmount || ''}"
           style="width: 100%; padding: 14px; border-radius: 10px; border: 2px solid rgba(249,115,22,0.3); background: #1A1A1A; color: #fff; font-size: 28px; font-weight: 700; text-align: center; font-family: 'JetBrains Mono', monospace; outline: none; box-sizing: border-box;"
           placeholder="0.00"
         />
         <div style="margin-top: 8px; color: #666; font-size: 12px;">
-          Max: ₦${this.formatNaira(this.subtotalNaira())}
+          Max: ${this.currencySymbol}${this.formatAmount(this.subtotalNaira())}
         </div>
       `,
       showCancelButton: true,
@@ -205,7 +232,7 @@ export class BillComponent implements OnInit {
           return false;
         }
         if (value > this.subtotalNaira()) {
-          Swal.showValidationMessage('Discount cannot exceed subtotal of ₦' + this.formatNaira(this.subtotalNaira()));
+          Swal.showValidationMessage('Discount cannot exceed subtotal of ' + this.currencySymbol + this.formatAmount(this.subtotalNaira()));
           return false;
         }
         return Math.round(value * 100);

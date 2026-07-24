@@ -1,9 +1,11 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
+import { CurrencyContextService } from '../core/currency-context.service';
 
-@Pipe({ name: 'kobo' })
+@Pipe({ name: 'kobo', pure: false })
 export class KoboPipe implements PipeTransform {
+  private currency = inject(CurrencyContextService);
+
   transform(value: number): string {
-    const naira = value / 100;
-    return naira.toLocaleString('en-NG', { style: 'currency', currency: 'NGN' });
+    return this.currency.formatKobo(value);
   }
 }

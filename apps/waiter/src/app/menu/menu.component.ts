@@ -1,8 +1,9 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
 import { MenuItem, Table, Tab, resolveImageUrl } from '@serveiq/shared/models';
+import { CurrencyContextService } from '../services/currency-context.service';
 
 interface Portion { id: string; name: string; price: number; }
 
@@ -39,6 +40,10 @@ export class MenuComponent implements OnInit {
   private readonly tabsApi = inject(TabsApiService);
   private readonly tablesApi = inject(TablesApiService);
   private readonly env = inject(ENVIRONMENT_CONFIG);
+  private readonly currency = inject(CurrencyContextService);
+
+  currencySymbol = computed(() => this.currency.getSymbol());
+  formatAmount = (amount: number) => this.currency.formatAmount(amount);
 
   selectedCategory = 'All';
   categories = signal<string[]>(['All']);

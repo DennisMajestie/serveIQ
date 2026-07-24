@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, showApiErrorToast } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table, MenuItem, ApplyDiscountRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { CurrencyContextService } from '../core/currency-context.service';
 
 @Component({
   selector: 'app-tab-detail',
@@ -22,6 +23,7 @@ export class TabDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private location = inject(Location);
+  private currency = inject(CurrencyContextService);
 
   tabId = '';
   tab = signal<Tab | null>(null);
@@ -273,9 +275,9 @@ export class TabDetailComponent implements OnInit {
       title: 'Generate Bill',
       html: `
         <div style="text-align:left;font-size:0.9rem">
-          <p><strong>Subtotal:</strong> ₦${this.formatKobo(this.getSubtotal())}</p>
-          <p><strong>VAT (7.5%):</strong> ₦${this.formatKobo(this.getVat())}</p>
-          <p><strong>Total:</strong> ₦${this.formatKobo(this.getGrandTotal())}</p>
+          <p><strong>Subtotal:</strong> ${this.formatKobo(this.getSubtotal())}</p>
+          <p><strong>VAT (7.5%):</strong> ${this.formatKobo(this.getVat())}</p>
+          <p><strong>Total:</strong> ${this.formatKobo(this.getGrandTotal())}</p>
         </div>
       `,
       icon: 'question',
@@ -293,10 +295,10 @@ export class TabDetailComponent implements OnInit {
                 title: 'Tab Closed',
                 html: `
                   <div style="text-align:left;font-family:monospace;font-size:0.9rem">
-                    <p><strong>Subtotal:</strong> ₦${this.formatKobo(bill.subtotalKobo)}</p>
+                    <p><strong>Subtotal:</strong> ${this.formatKobo(bill.subtotalKobo)}</p>
                     <p><strong>Service Charge:</strong> ${bill.serviceChargePercent}%</p>
-                    <p><strong>Discount:</strong> ₦${this.formatKobo(bill.discountKobo)}</p>
-                    <p><strong>Total:</strong> ₦${this.formatKobo(bill.totalKobo)}</p>
+                    <p><strong>Discount:</strong> ${this.formatKobo(bill.discountKobo)}</p>
+                    <p><strong>Total:</strong> ${this.formatKobo(bill.totalKobo)}</p>
                   </div>
                 `,
                 confirmButtonText: 'View Bills',
@@ -315,7 +317,7 @@ export class TabDetailComponent implements OnInit {
   }
 
   formatKobo(kobo: number): string {
-    return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.currency.formatKobo(kobo);
   }
 
   getSubtotal(): number {

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TabsApiService, TablesApiService, ShiftsApiService } from '@serveiq/shared/data-access';
 import { Tab, Shift } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { CurrencyContextService } from '../../services/currency-context.service';
 
 interface Transaction {
   id: string;
@@ -34,6 +35,7 @@ export class TabHistoryComponent implements OnInit {
   private tabsApi = inject(TabsApiService);
   private tablesApi = inject(TablesApiService);
   private shiftsApi = inject(ShiftsApiService);
+  private currency = inject(CurrencyContextService);
 
   isLoading = signal(true);
   closedTabs = signal<Tab[]>([]);
@@ -41,6 +43,8 @@ export class TabHistoryComponent implements OnInit {
   expandedShift = signal<string | null>(null);
 
   tableNumbers = signal<Record<string, string>>({});
+
+  currencySymbol = computed(() => this.currency.getSymbol());
 
   shiftGroups = computed<ShiftGroup[]>(() => {
     const tabs = this.closedTabs();
@@ -92,7 +96,7 @@ export class TabHistoryComponent implements OnInit {
     return groups;
   });
 
-  grandTotal = computed(() => this.shiftGroups().reduce((s, g) => s + g.totalKobo, 0) / 100);
+  grandTotalKobo = computed(() => this.shiftGroups().reduce((s, g) => s + g.totalKobo, 0));
   transactionCount = computed(() => this.shiftGroups().reduce((s, g) => s + g.transactions.length, 0));
 
   ngOnInit() {
@@ -132,7 +136,7 @@ export class TabHistoryComponent implements OnInit {
   }
 
   formatKobo(kobo: number): string {
-    return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    return this.currency.formatKobo(kobo);
   }
 
   openTransactionById(id: string) {

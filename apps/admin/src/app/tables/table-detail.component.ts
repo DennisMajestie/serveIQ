@@ -4,6 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, showApiErrorToast } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { CurrencyContextService } from '../core/currency-context.service';
 
 @Component({
   selector: 'app-table-detail',
@@ -85,8 +86,8 @@ import Swal from 'sweetalert2';
                         </div>
                       </td>
                       <td class="text-center">{{ item.quantity || item.qty }}</td>
-                      <td class="text-right">₦{{ formatKobo(item.priceKobo || item.price_kobo || item.unit_price_kobo || 0) }}</td>
-                      <td class="text-right total">₦{{ formatKobo((item.priceKobo || item.price_kobo || item.unit_price_kobo || 0) * (item.quantity || item.qty || 1)) }}</td>
+                      <td class="text-right">{{ formatKobo(item.priceKobo || item.price_kobo || item.unit_price_kobo || 0) }}</td>
+                      <td class="text-right total">{{ formatKobo((item.priceKobo || item.price_kobo || item.unit_price_kobo || 0) * (item.quantity || item.qty || 1)) }}</td>
                       <td class="text-center">
                         <button class="delete-btn" (click)="removeOrderItem(item)" title="Remove item">
                           <span class="material-symbols-outlined">delete</span>
@@ -107,19 +108,19 @@ import Swal from 'sweetalert2';
               <div class="summary-content">
                 <div class="summary-row">
                   <span class="label">Subtotal</span>
-                  <span class="value">₦{{ formatKobo(getSubtotal()) }}</span>
+                  <span class="value">{{ formatKobo(getSubtotal()) }}</span>
                 </div>
                 <div class="summary-row">
                   <span class="label">VAT (7.5%)</span>
-                  <span class="value">₦{{ formatKobo(getVat()) }}</span>
+                  <span class="value">{{ formatKobo(getVat()) }}</span>
                 </div>
                 <div class="summary-row">
                   <span class="label">Service Charge</span>
-                  <span class="value">₦{{ formatKobo(getServiceCharge()) }}</span>
+                  <span class="value">{{ formatKobo(getServiceCharge()) }}</span>
                 </div>
                 <div class="summary-row total">
                   <span class="label">Total Amount</span>
-                  <span class="value">₦{{ formatKobo(getTotal()) }}</span>
+                  <span class="value">{{ formatKobo(getTotal()) }}</span>
                 </div>
               </div>
               <div class="summary-footer">
@@ -170,7 +171,7 @@ import Swal from 'sweetalert2';
               <div class="item-card-details">
                 <h4>{{ item.name }}</h4>
                 <span class="item-category">{{ item.category }}</span>
-                <span class="item-price">₦{{ formatKobo(item.priceKobo || 0) }}</span>
+                <span class="item-price">{{ formatKobo(item.priceKobo || 0) }}</span>
                 <button class="btn-add-item" (click)="addItemToSelection(item)">
                   + Add
                 </button>
@@ -485,6 +486,7 @@ export class TableDetailComponent implements OnInit {
   private tablesApi = inject(TablesApiService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private currency = inject(CurrencyContextService);
 
   tableId = signal('');
   table = signal<Table | null>(null);
@@ -704,9 +706,9 @@ export class TableDetailComponent implements OnInit {
               title: 'Tab Closed',
               html: `
                 <div style="text-align:left;font-family:monospace;font-size:0.9rem">
-                  <p><strong>Subtotal:</strong> ₦${this.formatKobo(bill.subtotalKobo)}</p>
+                  <p><strong>Subtotal:</strong> ${this.formatKobo(bill.subtotalKobo)}</p>
                   <p><strong>Service Charge:</strong> ${bill.serviceChargePercent}%</p>
-                  <p><strong>Total:</strong> ₦${this.formatKobo(bill.totalKobo)}</p>
+                  <p><strong>Total:</strong> ${this.formatKobo(bill.totalKobo)}</p>
                 </div>
               `,
               confirmButtonText: 'View Bills',
@@ -779,7 +781,7 @@ export class TableDetailComponent implements OnInit {
   }
 
   formatKobo(kobo: number): string {
-    return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.currency.formatKobo(kobo);
   }
 
   getTimeAgo(date: Date | string): string {

@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, ENVIRONMENT_CONFIG, showApiErrorToast, NotificationsApiService } from '@serveiq/shared/data-access';
+import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, BusinessApiService, ENVIRONMENT_CONFIG, showApiErrorToast, NotificationsApiService } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table, MenuItem, resolveImageUrl, OrderGroup, NotificationType } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { interval, Subscription } from 'rxjs';
+import { CurrencyContextService } from '../../services/currency-context.service';
 
 @Component({
   selector: 'app-tab-detail',
@@ -23,7 +24,10 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   private menuService = inject(MenuApiService);
   private env = inject(ENVIRONMENT_CONFIG);
   private notificationsApi = inject(NotificationsApiService);
+  private currency = inject(CurrencyContextService);
+  private businessApi = inject(BusinessApiService);
 
+  businessSettings = signal<any>(null);
   tabId = signal('');
   tab = signal<Tab | null>(null);
   table = signal<Table | null>(null);
@@ -112,14 +116,19 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   private pollSub: Subscription | null = null;
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
+  currencySymbol = computed(() => this.currency.getSymbol());
   subtotal = computed(() => {
     const items = this.items();
     return Array.isArray(items) ? items.reduce((sum, i) => sum + (i.priceKobo * i.quantity), 0) : 0;
   });
-  vat = computed(() => Math.round(this.subtotal() * 0.075));
+  vatRate = computed(() => this.businessSettings()?.taxRate ?? 7.5);
+  vat = computed(() => Math.round(this.subtotal() * this.vatRate() / 100));
   total = computed(() => this.subtotal() + this.vat());
 
   ngOnInit() {
+    this.businessApi.getBusiness().subscribe({
+      next: (b) => this.businessSettings.set(b),
+    });
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -371,11 +380,11 @@ export class TabDetailComponent implements OnInit, OnDestroy {
           </div>
           <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
             <span style="color: #888;">Unit Price</span>
-            <span style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">₦${this.formatKobo(item.priceKobo)}</span>
+            <span style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">${this.formatKobo(item.priceKobo)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 8px 0;">
             <span style="color: #888;">Line Total</span>
-            <span style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">₦${this.formatKobo(item.priceKobo * item.quantity)}</span>
+            <span style="font-weight: 600; font-family: 'JetBrains Mono', monospace;">${this.formatKobo(item.priceKobo * item.quantity)}</span>
           </div>
           ${item.notes ? `
           <div style="padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.06);">
@@ -487,7 +496,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   }
 
   formatKobo(kobo: number): string {
-    return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    return this.currency.formatKobo(kobo);
   }
 
   padNumber(n: number | string | undefined | null, len: number = 2): string {

@@ -38,9 +38,9 @@
             <div class="flex justify-between items-start">
               <div class="flex-1">
                 <p class="text-[16px] leading-[1.5] font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ getItemName(item) }}</p>
-                <p class="text-[14px] leading-[1.4] text-[#bccbb9]" style="font-family:'JetBrains Mono',monospace">{{ item.quantity }}x @ ₦{{ formatNaira(item.priceKobo / 100) }}</p>
+                <p class="text-[14px] leading-[1.4] text-[#bccbb9]" style="font-family:'JetBrains Mono',monospace">{{ item.quantity }}x @ {{ currencySymbol }}{{ formatAmount(item.priceKobo / 100) }}</p>
               </div>
-              <p class="text-[14px] leading-[1.4] font-bold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira((item.priceKobo / 100) * item.quantity) }}</p>
+              <p class="text-[14px] leading-[1.4] font-bold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ currencySymbol }}{{ formatAmount((item.priceKobo / 100) * item.quantity) }}</p>
             </div>
           }
         </div>
@@ -52,20 +52,20 @@
         <div class="space-y-2 mb-6">
           <div class="flex justify-between text-[#bccbb9]">
             <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">Subtotal</span>
-            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira(getSubtotal()) }}</span>
+            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">{{ currencySymbol }}{{ formatAmount(getSubtotal()) }}</span>
           </div>
           <div class="flex justify-between text-[#bccbb9]">
-            <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">VAT (7.5%)</span>
-            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira(getVat()) }}</span>
+            <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">VAT ({{ businessSettings()?.taxRate || 7.5 }}%)</span>
+            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">{{ currencySymbol }}{{ formatAmount(getVat()) }}</span>
           </div>
           <div class="flex justify-between text-[#bccbb9]">
             <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">Service Charge</span>
-            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">₦{{ formatNaira(getServiceCharge()) }}</span>
+            <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">{{ currencySymbol }}{{ formatAmount(getServiceCharge()) }}</span>
           </div>
           @if (hasDiscount) {
             <div class="flex justify-between text-[#ffb4ab]">
               <span class="text-[14px] leading-[1.4] font-medium" style="font-family:'Inter',sans-serif">Discount</span>
-              <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">-₦{{ formatNaira(discountNaira()) }}</span>
+              <span class="text-[14px] leading-[1.4]" style="font-family:'JetBrains Mono',monospace">-{{ currencySymbol }}{{ formatAmount(discountNaira()) }}</span>
             </div>
           }
         </div>
@@ -73,7 +73,7 @@
         <!-- Grand Total -->
         <div class="flex flex-col items-end pt-4 border-t border-white/5">
           <p class="text-[14px] leading-none font-semibold text-[#4be277] uppercase tracking-widest mb-1" style="font-family:'Inter',sans-serif">Total Amount</p>
-          <p class="text-[32px] leading-[1.2] font-bold text-[#dce1fb] tracking-tight" style="font-family:'Space Grotesk',sans-serif">₦{{ formatNaira(getTotal()) }}</p>
+          <p class="text-[32px] leading-[1.2] font-bold text-[#dce1fb] tracking-tight" style="font-family:'Space Grotesk',sans-serif">{{ currencySymbol }}{{ formatAmount(getTotal()) }}</p>
         </div>
       </div>
 
@@ -81,7 +81,7 @@
       @if (hasDiscount) {
         <button (click)="removeDiscount()" class="w-full flex items-center justify-center gap-2 py-4 rounded-xl border border-[#ffb4ab]/30 text-[#ffb4ab] text-[14px] leading-none font-semibold active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
           <span class="material-symbols-outlined">local_offer</span>
-          Remove Discount (₦{{ formatNaira(discountNaira()) }})
+          Remove Discount ({{ currencySymbol }}{{ formatAmount(discountNaira()) }})
         </button>
       } @else {
         <button (click)="applyDiscount()" class="w-full flex items-center justify-center gap-2 py-4 rounded-xl border border-[#4be277]/30 text-[#4be277] text-[14px] leading-none font-semibold active:scale-95 transition-all" style="font-family:'Inter',sans-serif">

@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { BillsApiService, TabsApiService, TablesApiService, PosApiService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { CurrencyContextService } from '../../services/currency-context.service';
 
 @Component({
   selector: 'app-payment',
@@ -23,6 +24,7 @@ export class PaymentComponent implements OnInit {
   private tableService = inject(TablesApiService);
   private http = inject(HttpClient);
   private posApi = inject(PosApiService);
+  private currency = inject(CurrencyContextService);
 
   tabId = signal('');
   table = signal<Table | null>(null);
@@ -95,14 +97,32 @@ export class PaymentComponent implements OnInit {
   }
 
   get totalDueNaira(): string {
-    const total = this.bill()?.totalKobo ?? 0;
-    return (total / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    return this.totalDue;
   }
 
   get formattedAmount(): string {
     const parts = this.currentAmount().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return parts.join('.');
+  }
+
+  currencySymbol = computed(() => this.currency.getSymbol());
+  currencyCode = computed(() => this.currency.getCode());
+
+  get totalDue(): string {
+    const total = (this.bill()?.totalKobo ?? 0) / 100;
+    return total.toLocaleString(this.currency.getLocale(), { minimumFractionDigits: 2 });
+  }
+
+  formatAmount(amount: number): string {
+    return amount.toLocaleString(this.currency.getLocale(), {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  formatKobo(kobo: number): string {
+    return this.currency.formatKobo(kobo);
   }
 
   selectMethod(method: 'cash' | 'card' | 'transfer' | 'ussd') {
@@ -165,7 +185,7 @@ export class PaymentComponent implements OnInit {
   }
 
   getSplitNaira(index: number): string {
-    return ((this.splitAmounts()[index] ?? 0) / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    return ((this.splitAmounts()[index] ?? 0) / 100).toLocaleString(this.currency.getLocale(), { minimumFractionDigits: 2 });
   }
 
   getRemainingKobo(): number {
@@ -184,11 +204,11 @@ export class PaymentComponent implements OnInit {
   }
 
   get remainingNaira(): string {
-    return (this.getRemainingKobo() / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    return (this.getRemainingKobo() / 100).toLocaleString(this.currency.getLocale(), { minimumFractionDigits: 2 });
   }
 
   get paidNaira(): string {
-    return (this.totalPaidKobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    return (this.totalPaidKobo / 100).toLocaleString(this.currency.getLocale(), { minimumFractionDigits: 2 });
   }
 
   customizeSplit(index: number) {
@@ -196,7 +216,7 @@ export class PaymentComponent implements OnInit {
     Swal.fire({
       title: `Guest ${index + 1} Amount`,
       html: `
-        <div style="margin-bottom: 12px; color: #a0a0a0; font-size: 14px;">Enter amount in Naira (₦)</div>
+        <div style="margin-bottom: 12px; color: #a0a0a0; font-size: 14px;">Enter amount in ${this.currencySymbol()}</div>
         <input id="split-amount" type="number" step="0.01" value="${currentNaira}"
           style="width: 100%; padding: 14px; border-radius: 10px; border: 2px solid rgba(249,115,22,0.3); background: #1A1A1A; color: #fff; font-size: 24px; font-weight: 700; text-align: center; font-family: 'JetBrains Mono', monospace; outline: none; box-sizing: border-box;" />
       `,

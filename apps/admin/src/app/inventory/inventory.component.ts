@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { InventoryApiService, SuppliersApiService } from '@serveiq/shared/data-access';
 import { MenuItem, Supplier, RestockRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { CurrencyContextService } from '../core/currency-context.service';
 
 @Component({
   selector: 'app-inventory',
@@ -18,6 +19,7 @@ export class InventoryComponent implements OnInit {
   private inventoryApi = inject(InventoryApiService);
   private suppliersApi = inject(SuppliersApiService);
   private router = inject(Router);
+  private currency = inject(CurrencyContextService);
 
   inventory = signal<MenuItem[]>([]);
   suppliers = signal<Supplier[]>([]);
@@ -265,7 +267,7 @@ export class InventoryComponent implements OnInit {
 
   formatCurrency(amount?: number): string {
     if (amount == null) return '\u2014';
-    return (amount / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.currency.formatKobo(amount);
   }
 
   // Navigate to full-page views

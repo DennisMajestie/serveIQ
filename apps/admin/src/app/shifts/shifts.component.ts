@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ShiftsApiService } from '@serveiq/shared/data-access';
 import { Shift, OpenShiftRequest, CloseShiftRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { CurrencyContextService } from '../core/currency-context.service';
 
 @Component({
   selector: 'app-shifts',
@@ -14,6 +15,7 @@ import Swal from 'sweetalert2';
 })
 export class ShiftsComponent implements OnInit {
   private shiftsApi = inject(ShiftsApiService);
+  private currency = inject(CurrencyContextService);
 
   shifts = signal<Shift[]>([]);
   currentShift = signal<Shift | null>(null);
@@ -166,7 +168,7 @@ export class ShiftsComponent implements OnInit {
   }
 
   formatKobo(kobo: number): string {
-    return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.currency.formatKobo(kobo);
   }
 
   getShiftStatusColor(status: string): string {

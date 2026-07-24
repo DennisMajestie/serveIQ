@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/shared/data-access';
+import { CurrencyContextService } from '../core/currency-context.service';
 
 @Component({
   selector: 'app-public-menu',
@@ -113,7 +114,7 @@ import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/s
                     }
                     <div class="card-footer">
                       <span class="price" [class.text-muted]="item.isSoldOut">
-                        &#8358;{{ (item.priceKobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 }) }}
+                        {{ formatKobo(item.priceKobo) }}
                       </span>
                     </div>
                   </div>
@@ -415,6 +416,7 @@ export class PublicMenuComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private publicMenuApi = inject(PublicMenuApiService);
+  private currency = inject(CurrencyContextService);
 
   isLoading = signal(true);
   error = signal<string | null>(null);
@@ -475,5 +477,9 @@ export class PublicMenuComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  formatKobo(kobo: number): string {
+    return this.currency.formatKobo(kobo);
   }
 }

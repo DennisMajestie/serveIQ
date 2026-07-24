@@ -7,6 +7,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ReportsApiService, BranchesApiService } from '@serveiq/shared/data-access';
 import { DashboardStats, SalesEntry, TopItemEntry, PeakHoursEntry } from '@serveiq/shared/models';
+import { CurrencyContextService } from '../core/currency-context.service';
 
 interface AnalyticsMetric {
   label: string;
@@ -48,6 +49,7 @@ interface CategoryROI {
 export class AnalyticsComponent implements OnInit {
   private reportsApi = inject(ReportsApiService);
   private branchesApi = inject(BranchesApiService);
+  private currency = inject(CurrencyContextService);
 
   kpiMetrics = signal<AnalyticsMetric[]>([]);
   categoryROI = signal<CategoryROI[]>([]);
@@ -156,8 +158,8 @@ export class AnalyticsComponent implements OnInit {
     const avgTicket = totalOrders > 0 ? totalKobo / totalOrders : 0;
 
     this.kpiMetrics.set([
-      { label: 'Total Revenue', value: `₦${(totalKobo / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'payments', color: '#00D166' },
-      { label: 'Avg Ticket', value: `₦${(avgTicket / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'receipt', color: '#0059bb' },
+      { label: 'Total Revenue', value: this.formatKobo(totalKobo), change: '—', trend: 'neutral', icon: 'payments', color: '#00D166' },
+      { label: 'Avg Ticket', value: this.formatKobo(avgTicket), change: '—', trend: 'neutral', icon: 'receipt', color: '#0059bb' },
       { label: 'Active Tabs', value: stats.openTabs.toString(), change: '—', trend: 'neutral', icon: 'table_restaurant', color: '#8b5cf6' },
       { label: 'Tables Occupied', value: stats.activeTables.toString(), change: '—', trend: 'neutral', icon: 'person', color: '#FF7043' },
     ]);
@@ -169,8 +171,8 @@ export class AnalyticsComponent implements OnInit {
     const avgTicket = totalOrders > 0 ? totalKobo / totalOrders : 0;
 
     this.kpiMetrics.set([
-      { label: 'Total Revenue', value: `₦${(totalKobo / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'payments', color: '#00D166' },
-      { label: 'Avg Ticket', value: `₦${(avgTicket / 100).toLocaleString()}`, change: '—', trend: 'neutral', icon: 'receipt', color: '#0059bb' },
+      { label: 'Total Revenue', value: this.formatKobo(totalKobo), change: '—', trend: 'neutral', icon: 'payments', color: '#00D166' },
+      { label: 'Avg Ticket', value: this.formatKobo(avgTicket), change: '—', trend: 'neutral', icon: 'receipt', color: '#0059bb' },
       { label: 'Active Tabs', value: '—', change: '—', trend: 'neutral', icon: 'table_restaurant', color: '#8b5cf6' },
       { label: 'Tables Occupied', value: '—', change: '—', trend: 'neutral', icon: 'person', color: '#FF7043' },
     ]);
@@ -226,7 +228,7 @@ export class AnalyticsComponent implements OnInit {
   }
 
   formatKobo(kobo: number): string {
-    return (kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return this.currency.formatKobo(kobo);
   }
 
   getHoursForChart(hour: number): string {

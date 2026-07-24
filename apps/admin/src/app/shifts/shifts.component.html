@@ -23,11 +23,11 @@
         </div>
         <div class="stat">
           <span class="stat-label">Starting Cash</span>
-          <span class="stat-value">₦{{ formatKobo(currentShift()?.startingCashKobo || 0) }}</span>
+          <span class="stat-value">{{ formatKobo(currentShift()?.startingCashKobo || 0) }}</span>
         </div>
         <div class="stat">
           <span class="stat-label">Expected Cash</span>
-          <span class="stat-value">₦{{ formatKobo(currentShift()?.expectedCashKobo || 0) }}</span>
+          <span class="stat-value">{{ formatKobo(currentShift()?.expectedCashKobo || 0) }}</span>
         </div>
       </div>
     </div>
@@ -62,11 +62,11 @@
         <tbody>
           <tr *ngFor="let shift of shifts()">
             <td>{{ shift.openedAt | date:'mediumDate' }}</td>
-            <td>₦{{ formatKobo(shift.startingCashKobo || 0) }}</td>
-            <td>₦{{ formatKobo(shift.expectedCashKobo || 0) }}</td>
-            <td>₦{{ formatKobo(shift.actualCashKobo || 0) }}</td>
+            <td>{{ formatKobo(shift.startingCashKobo || 0) }}</td>
+            <td>{{ formatKobo(shift.expectedCashKobo || 0) }}</td>
+            <td>{{ formatKobo(shift.actualCashKobo || 0) }}</td>
             <td [style.color]="(shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0) >= 0 ? '#22c55e' : '#dc2626'" [title]="varianceExplanationFor(shift)">
-              {{ (shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0) >= 0 ? '+' : '' }}₦{{ formatKobo((shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0)) }}
+              {{ (shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0) >= 0 ? '+' : '' }}{{ formatKobo((shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0)) }}
             </td>
             <td><span class="status-badge" [style.background]="getShiftStatusColor(shift.status)">{{ shift.status }}</span></td>
           </tr>
@@ -110,7 +110,7 @@
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">Expected Cash</label>
-        <p class="form-value">₦{{ formatKobo(currentShift()?.expectedCashKobo || 0) }}</p>
+        <p class="form-value">{{ formatKobo(currentShift()?.expectedCashKobo || 0) }}</p>
       </div>
       <div class="form-group">
         <label class="form-label" for="closeCash">Actual Cash (₦)</label>
