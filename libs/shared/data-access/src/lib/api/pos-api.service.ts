@@ -9,6 +9,7 @@ export interface PosTerminal {
   id: string;
   label: string;
   isActive: boolean;
+  accountNumber?: string;
   branchId?: string;
   createdAt?: string;
   updatedAt?: string;

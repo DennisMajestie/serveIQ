@@ -12,6 +12,7 @@ export interface TrackingData {
   branchName: string;
   logoUrl?: string;
   branchId: string;
+  paymentAccountNumber?: string;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -8,6 +8,7 @@ interface PosTerminal {
   id: string;
   label: string;
   isActive: boolean;
+  accountNumber?: string;
 }
 
 @Component({
@@ -26,6 +27,7 @@ export class PosManagementComponent implements OnInit {
   editingTerminal = signal<PosTerminal | null>(null);
   formLabel = signal('');
   formActive = signal(true);
+  formAccountNumber = signal('');
 
   ngOnInit() { this.loadTerminals(); }
 
@@ -47,6 +49,7 @@ export class PosManagementComponent implements OnInit {
     this.editingTerminal.set(null);
     this.formLabel.set('');
     this.formActive.set(true);
+    this.formAccountNumber.set('');
     this.showModal.set(true);
   }
 
@@ -54,11 +57,13 @@ export class PosManagementComponent implements OnInit {
     this.editingTerminal.set(t);
     this.formLabel.set(t.label);
     this.formActive.set(t.isActive);
+    this.formAccountNumber.set(t.accountNumber || '');
     this.showModal.set(true);
   }
 
   saveTerminal() {
-    const body = { label: this.formLabel(), is_active: this.formActive() };
+    const body: any = { label: this.formLabel(), is_active: this.formActive() };
+    if (this.formAccountNumber()) body.account_number = this.formAccountNumber();
     const obs = this.editingTerminal()
       ? this.posApi.update(this.editingTerminal()!.id, body)
       : this.posApi.create(body);

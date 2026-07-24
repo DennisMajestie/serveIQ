@@ -29,6 +29,13 @@
   }
 }
 
+.mono {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: #18181b;
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;

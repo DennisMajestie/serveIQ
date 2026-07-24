@@ -130,9 +130,9 @@ describe('TableDetailComponent', () => {
   });
 
   it('should format kobo correctly', () => {
-    expect(component.formatKobo(10000)).toBe('100.00');
-    expect(component.formatKobo(10500)).toBe('105.00');
-    expect(component.formatKobo(0)).toBe('0.00');
-    expect(component.formatKobo(1234)).toBe('12.34');
+    expect(component.formatKobo(10000)).toBe('₦100.00');
+    expect(component.formatKobo(10500)).toBe('₦105.00');
+    expect(component.formatKobo(0)).toBe('₦0.00');
+    expect(component.formatKobo(1234)).toBe('₦12.34');
   });
 });

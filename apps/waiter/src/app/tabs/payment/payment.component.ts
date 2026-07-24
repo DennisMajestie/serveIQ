@@ -114,8 +114,8 @@ export class PaymentComponent implements OnInit {
     return total.toLocaleString(this.currency.getLocale(), { minimumFractionDigits: 2 });
   }
 
-  formatAmount(amount: number): string {
-    return amount.toLocaleString(this.currency.getLocale(), {
+  formatAmount(amount: string | number): string {
+    return (typeof amount === 'string' ? parseFloat(amount) || 0 : amount).toLocaleString(this.currency.getLocale(), {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });

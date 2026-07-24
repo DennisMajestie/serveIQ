@@ -81,6 +81,17 @@ interface Stage {
             }
           </div>
 
+          @if (paymentAccountNumber()) {
+            <div class="account-card" (click)="copyAccountNumber()">
+              <div class="account-label">Pay to this account</div>
+              <div class="account-number">{{ paymentAccountNumber() }}</div>
+              <div class="account-copy">
+                <span class="material-symbols-outlined account-copy-icon">{{ copied() ? 'check' : 'content_copy' }}</span>
+                <span>{{ copied() ? 'Copied!' : 'Tap to copy' }}</span>
+              </div>
+            </div>
+          }
+
           @if (isTerminal() && !isDeclined()) {
             <div class="delivered-msg">
               <span class="material-symbols-outlined">celebration</span>
@@ -429,6 +440,54 @@ interface Stage {
       color: #8c7e72;
     }
 
+    .account-card {
+      background: #fff;
+      border: 1px solid #e5dfd8;
+      border-radius: 16px;
+      padding: 14px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      max-width: 280px;
+      width: 100%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .account-card:hover {
+      border-color: #d97706;
+      box-shadow: 0 2px 10px rgba(217,119,6,0.12);
+    }
+    .account-card:active {
+      transform: scale(0.97);
+    }
+    .account-label {
+      font-size: 11px;
+      color: #8c7e72;
+      font-weight: 500;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .account-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1515;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .account-copy {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #d97706;
+      font-weight: 600;
+    }
+    .account-copy-icon {
+      font-size: 14px !important;
+    }
+
     .items-row {
       display: flex;
       align-items: center;
@@ -520,6 +579,8 @@ export class TrackingComponent implements OnInit, AfterViewInit, OnDestroy {
   private confettiColors = ['#f97316', '#22c55e', '#ef4444', '#3b82f6', '#a855f7', '#facc15'];
   private confettiLaunched = false;
 
+  paymentAccountNumber = computed(() => this.trackingData()?.paymentAccountNumber ?? '');
+  copied = signal(false);
   order = computed(() => this.trackingData()?.order ?? null);
 
   stages = computed<Stage[]>(() => {
@@ -739,5 +800,14 @@ export class TrackingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   goBack() {
     this.router.navigate(['/public/menu', this.trackingData()?.branchId || '']);
+  }
+
+  copyAccountNumber() {
+    const num = this.paymentAccountNumber();
+    if (!num) return;
+    navigator.clipboard.writeText(num).then(() => {
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 2000);
+    }).catch(() => {});
   }
 }
