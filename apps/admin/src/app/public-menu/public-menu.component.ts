@@ -36,10 +36,10 @@ import { CurrencyContextService } from '../core/currency-context.service';
             <input
               type="text"
               class="tracking-input"
-              placeholder="Track your order — enter code (SVQ-XXXX-XXX)"
+              placeholder="Track your order — enter code (e.g. A7KM3)"
               [(ngModel)]="trackingCode"
               (keydown.enter)="submitTracking()"
-              maxlength="13"
+              maxlength="16"
             />
             <button class="track-btn" (click)="submitTracking()" [disabled]="!trackingCode.trim()">
               Track
@@ -444,13 +444,13 @@ export class PublicMenuComponent implements OnInit {
   trackingCode = '';
   trackingError = signal('');
 
-  private readonly TRACKING_CODE_REGEX = /^SVQ-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{3}$/i;
+  private readonly TRACKING_CODE_REGEX = /^(?:SVQ-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{3}|[A-HJ-NP-Z2-9]{5})$/i;
 
   submitTracking() {
     const code = this.trackingCode.trim();
     if (!code) return;
     if (!this.TRACKING_CODE_REGEX.test(code)) {
-      this.trackingError.set('Invalid format. Expected: SVQ-XXXX-XXX');
+      this.trackingError.set('Invalid code. Enter 5 characters (e.g. A7KM3) or an SVQ code.');
       return;
     }
     this.trackingError.set('');

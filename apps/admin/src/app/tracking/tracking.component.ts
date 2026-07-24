@@ -636,7 +636,7 @@ export class TrackingComponent implements OnInit, AfterViewInit, OnDestroy {
     return list.length > 0 ? list[this.currentAdIndex() % list.length] : null;
   });
 
-  private readonly TRACKING_CODE_REGEX = /^SVQ-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{3}$/i;
+  private readonly TRACKING_CODE_REGEX = /^(?:SVQ-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{3}|[A-HJ-NP-Z2-9]{5})$/i;
 
   ngOnInit(): void {
     const rawCode = this.route.snapshot.paramMap.get('code') || '';
