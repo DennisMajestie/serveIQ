@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private reportsService = inject(ReportsApiService);
   private userApi = inject(UserApiService);
   private router = inject(Router);
-  private currency = inject(CurrencyContextService);
+  currency = inject(CurrencyContextService);
 
   isLoading = signal(true);
   branchName = signal('');

@@ -186,8 +186,8 @@ interface NavItem {
                 <span>Settings</span>
               </a>
             </li>
-            <li class="nav-section-label" *ngIf="profile().role === 'owner'">Supervisor</li>
-            <li class="nav-item" *ngIf="profile().role === 'owner'">
+            <li class="nav-section-label" *ngIf="permissionService.hasPermission('approve_orders')">Supervisor</li>
+            <li class="nav-item" *ngIf="permissionService.hasPermission('approve_orders')">
               <a class="nav-link" (click)="openSupervisorPage()">
                 <span class="material-symbols-outlined">fact_check</span>
                 <span>Orders Queue</span>

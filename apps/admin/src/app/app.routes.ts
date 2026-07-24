@@ -1,7 +1,6 @@
 import { Route } from '@angular/router';
 import { authGuard } from './core/auth.guard';
 import { superAdminGuard } from './core/super-admin.guard';
-import { managerOrOwnerGuard } from './core/manager-or-owner.guard';
 import { permissionGuard } from './core/permission.guard';
 
 export const appRoutes: Route[] = [
