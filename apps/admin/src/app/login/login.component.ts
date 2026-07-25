@@ -28,8 +28,7 @@ export class LoginComponent implements OnInit {
     const token = this.route.snapshot.queryParamMap.get('token');
     const userRole = this.route.snapshot.queryParamMap.get('role') || localStorage.getItem('userRole');
     if (token) {
-      localStorage.setItem('token', token);
-      localStorage.setItem('staffToken', token);
+      this.authService.setToken(token);
       if (userRole) {
         localStorage.setItem('userRole', userRole);
       }

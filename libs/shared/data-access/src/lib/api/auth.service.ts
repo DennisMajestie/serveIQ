@@ -23,23 +23,12 @@ export interface AuthResponse {
   };
 }
 
-function getStaffToken(): string | null {
-  return localStorage.getItem('staffToken');
-}
-
-function setStaffToken(token: string): void {
-  localStorage.setItem('staffToken', token);
-}
-
-function removeStaffToken(): void {
-  localStorage.removeItem('staffToken');
-}
+let _adminToken: string | null = null;
+let _staffToken: string | null = null;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private tokenSubject = new BehaviorSubject<string | null>(
-    getStaffToken() || localStorage.getItem('token')
-  );
+  private tokenSubject = new BehaviorSubject<string | null>(null);
   token$ = this.tokenSubject.asObservable();
 
   constructor(
@@ -48,15 +37,20 @@ export class AuthService {
   ) {}
 
   get isAuthenticated(): boolean {
-    return !!(localStorage.getItem('token') || getStaffToken());
+    return !!(this.getToken());
   }
 
   isLoggedIn(): boolean {
-    return !!(localStorage.getItem('token') || getStaffToken());
+    return !!(this.getToken());
   }
 
   getToken(): string | null {
-    return getStaffToken() || localStorage.getItem('token');
+    return _staffToken || _adminToken;
+  }
+
+  setToken(token: string): void {
+    _adminToken = token;
+    this.tokenSubject.next(token);
   }
 
   private get apiUrl(): string {
@@ -66,12 +60,12 @@ export class AuthService {
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/login`, {
       email, password
-    }).pipe(
+    }, { withCredentials: true }).pipe(
       tap((response: any) => {
         const data = response.data || response;
         const token = data.access_token || data.token || response.access_token || response.token;
         if (token) {
-          localStorage.setItem('token', token);
+          _adminToken = token;
 
           const branchId = data.branch?.id ||
                            data.branchId ||
@@ -117,7 +111,7 @@ export class AuthService {
     return this.http.post<AuthResponse>(
       `${this.apiUrl}/api/v1/auth/activate`,
       { email, password },
-      { headers: { 'Content-Type': 'application/json' } }
+      { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
     ).pipe(
       tap((response: any) => {
         const resData = response.data || response;
@@ -136,7 +130,7 @@ export class AuthService {
         if (normalizedRole) localStorage.setItem('userRole', normalizedRole);
         
         if (token) {
-          localStorage.setItem('token', token);
+          _adminToken = token;
           this.tokenSubject.next(token);
         }
       })
@@ -147,7 +141,8 @@ export class AuthService {
   verifyStaffPin(pin: string, businessId: string): Observable<AuthResponse> {
     const branchId = localStorage.getItem('branchId');
     return this.http.post<AuthResponse>(
-      `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, business_id: businessId, branch_id: branchId || undefined }
+      `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, business_id: businessId, branch_id: branchId || undefined },
+      { withCredentials: true }
     ).pipe(
       tap((response: any) => {
         const resData = response.data || response;
@@ -156,7 +151,7 @@ export class AuthService {
         const userRole = resData.user?.role || resData.role || '';
         const normalizedRole = userRole === 'superadmin' ? 'super_admin' : userRole;
         if (token) {
-          setStaffToken(token);
+          _staffToken = token;
           this.tokenSubject.next(token);
         }
         if (branchId && branchId !== 'default-branch') {
@@ -179,17 +174,17 @@ export class AuthService {
 
   /** Refresh the access token using the refresh token */
   refreshToken(): Observable<AuthResponse> {
-    const currentToken = getStaffToken() || localStorage.getItem('token');
-    const isStaff = !!getStaffToken();
+    const currentToken = this.getToken();
+    const isStaff = !!_staffToken;
     
-    return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/refresh`, { refresh_token: currentToken }).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/api/v1/auth/refresh`, { refresh_token: currentToken }, { withCredentials: true }).pipe(
       tap(response => {
         const token = response.data?.access_token;
         if (token) {
           if (isStaff) {
-            setStaffToken(token);
+            _staffToken = token;
           } else {
-            localStorage.setItem('token', token);
+            _adminToken = token;
           }
           this.tokenSubject.next(token);
         }
@@ -198,8 +193,8 @@ export class AuthService {
   }
 
   serverLogout(): Observable<void> {
-    const refreshToken = getStaffToken() || localStorage.getItem('token') || '';
-    return this.http.post<void>(`${this.apiUrl}/api/v1/auth/logout`, { refresh_token: refreshToken });
+    const refreshToken = this.getToken() || '';
+    return this.http.post<void>(`${this.apiUrl}/api/v1/auth/logout`, { refresh_token: refreshToken }, { withCredentials: true });
   }
 
   forgotPassword(data: ForgotPasswordRequest): Observable<{ token: string }> {
@@ -219,18 +214,18 @@ export class AuthService {
   }
 
   impersonate(businessId: string, branchId?: string, businessName?: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/api/v1/auth/impersonate`, { businessId, branchId })    .pipe(
+    return this.http.post<any>(`${this.apiUrl}/api/v1/auth/impersonate`, { businessId, branchId }, { withCredentials: true }).pipe(
       tap((response: any) => {
         const data = response.data || response;
         const token = data.access_token || data.token || response.access_token || response.token;
         if (token) {
-          const currentToken = localStorage.getItem('token');
+          const currentToken = _adminToken;
           if (currentToken) localStorage.setItem('originalToken', currentToken);
           localStorage.setItem('originalBusinessId', localStorage.getItem('businessId') || '');
           localStorage.setItem('originalBranchId', localStorage.getItem('branchId') || '');
           localStorage.setItem('originalUserRole', localStorage.getItem('userRole') || '');
 
-          localStorage.setItem('token', token);
+          _adminToken = token;
           localStorage.setItem('businessId', businessId);
           const responseBranchId = data.branchId;
           if (responseBranchId) {
@@ -253,7 +248,7 @@ export class AuthService {
     const originalUserRole = localStorage.getItem('originalUserRole');
 
     if (originalToken) {
-      localStorage.setItem('token', originalToken);
+      _adminToken = originalToken;
       this.tokenSubject.next(originalToken);
     }
     if (originalBusinessId) localStorage.setItem('businessId', originalBusinessId);
@@ -261,7 +256,6 @@ export class AuthService {
     const roleToRestore = originalUserRole || 'super_admin';
     localStorage.setItem('userRole', roleToRestore);
 
-    localStorage.removeItem('staffToken');
     localStorage.removeItem('originalToken');
     localStorage.removeItem('originalBusinessId');
     localStorage.removeItem('originalBranchId');
@@ -274,9 +268,9 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token');
+    _adminToken = null;
+    _staffToken = null;
     localStorage.removeItem('userRole');
-    removeStaffToken();
     localStorage.removeItem('businessId');
     localStorage.removeItem('businessName');
     this.tokenSubject.next(null);

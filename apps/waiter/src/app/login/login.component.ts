@@ -114,7 +114,8 @@ export class LoginComponent {
     this.userService.listWaiters().subscribe({
       next: (waiters) => {
         const arr = Array.isArray(waiters) ? waiters : [];
-        const rows = arr.map(w => `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><div><div style="font-weight:600;font-size:14px;color:#fff;">${w.fullName || 'Unknown'}</div><div style="font-size:12px;color:#888;margin-top:2px;">${w.email || ''}</div></div><span style="font-size:12px;font-weight:500;color:#4be277;text-transform:uppercase;letter-spacing:0.05em;">${w.role || 'staff'}</span></div>`).join('');
+        const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] || c);
+        const rows = arr.map(w => `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><div><div style="font-weight:600;font-size:14px;color:#fff;">${esc(w.fullName || 'Unknown')}</div><div style="font-size:12px;color:#888;margin-top:2px;">${esc(w.email || '')}</div></div><span style="font-size:12px;font-weight:500;color:#4be277;text-transform:uppercase;letter-spacing:0.05em;">${esc(w.role || 'staff')}</span></div>`).join('');
         Swal.fire({
           title: 'Staff Roster',
           html: `<div style="max-height:320px;overflow-y:auto;">${rows || '<div style="color:#888;text-align:center;padding:16px;">No staff found</div>'}</div>`,

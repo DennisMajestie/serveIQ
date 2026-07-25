@@ -136,10 +136,11 @@ export class WaiterManagementComponent implements OnInit {
         this.closeModal();
         const roleLabel = this.getRoleLabel(createdWaiter.role || this.formRole() || 'waiter');
         const pin = createdWaiter.pin || w.pin || '';
+        const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] || c);
         Swal.fire({
           icon: 'success',
           title: 'Staff Created',
-          html: `${roleLabel} added successfully!${pin ? `<br><strong style="font-size:22px;letter-spacing:4px">${pin}</strong><br><small>Share this PIN with the staff member to log in.</small>` : ''}`,
+          html: `${esc(roleLabel)} added successfully!${pin ? `<br><strong style="font-size:22px;letter-spacing:4px">${esc(pin)}</strong><br><small>Share this PIN with the staff member to log in.</small>` : ''}`,
         });
       },
       error: (err) => {
@@ -174,10 +175,11 @@ export class WaiterManagementComponent implements OnInit {
           next: (response: any) => {
             const pin = response?.pin || '1234';
             this.waiters.update(ws => ws.map(w => w.id === id ? { ...w, pin } : w));
+            const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] || c);
             Swal.fire({
               icon: 'success',
               title: 'PIN Reset',
-              html: `New PIN generated!<br><strong>${pin}</strong><br><small>Share this PIN with the ${role}</small>`,
+              html: `New PIN generated!<br><strong>${esc(pin)}</strong><br><small>Share this PIN with the ${esc(role)}</small>`,
               timer: 3000,
               showConfirmButton: true
             });

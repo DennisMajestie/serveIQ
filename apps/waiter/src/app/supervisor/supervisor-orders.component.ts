@@ -615,6 +615,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
             const el = document.getElementById('timeline-content');
             if (!el) return;
             const logs = Array.isArray(res) ? res : (res.data || []);
+            const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] || c);
             if (logs.length === 0) {
               el.innerHTML = '<div style="text-align:center;padding:20px;color:#666;">No activity recorded for this order.</div>';
               return;
@@ -622,10 +623,10 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
             el.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">' +
               logs.map((log: any) => `
                 <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);">
-                  <span style="font-size:18px;">${this.getTimelineIcon(log.action)}</span>
+                  <span style="font-size:18px;">${esc(this.getTimelineIcon(log.action))}</span>
                   <div style="flex:1;">
-                    <div style="font-size:13px;font-weight:500;color:#e0e0e0;">${this.formatActionName(log.action)}</div>
-                    <div style="font-size:11px;color:#888;margin-top:2px;">${this.formatActivityTime(log.createdAt)}</div>
+                    <div style="font-size:13px;font-weight:500;color:#e0e0e0;">${esc(this.formatActionName(log.action))}</div>
+                    <div style="font-size:11px;color:#888;margin-top:2px;">${esc(this.formatActivityTime(log.createdAt))}</div>
                   </div>
                 </div>
               `).join('') +

@@ -32,25 +32,22 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
-    const staffToken = localStorage.getItem('staffToken');
-    const token = localStorage.getItem('token');
-    
-    // Prioritize staff token for waiter operations, then fallback to admin/terminal token
-    const activeToken = staffToken || token;
+    const token = this.authService.getToken();
+    request = request.clone({ withCredentials: true });
 
-    if (activeToken) {
+    if (token) {
       request = request.clone({
-        setHeaders: { Authorization: `Bearer ${activeToken}` }
+        setHeaders: { Authorization: `Bearer ${token}` }
       });
     }
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && activeToken) {
+        if (error.status === 401 && token) {
           if (this.isRefreshing) {
             // Another request is already refreshing, wait for it
             return this.refreshTokenSubject.pipe(
-              filter(token => token !== null),
+              filter(t => t !== null),
               take(1),
               switchMap(newToken => {
                 if (!newToken) {
@@ -71,12 +68,12 @@ export class AuthInterceptor implements HttpInterceptor {
 
           return this.authService.refreshToken().pipe(
             tap(() => {
-              const newToken = localStorage.getItem('staffToken') || localStorage.getItem('token');
+              const newToken = this.authService.getToken();
               this.refreshTokenSubject.next(newToken || '');
             }),
             switchMap(() => {
               this.isRefreshing = false;
-              const newToken = localStorage.getItem('staffToken') || localStorage.getItem('token');
+              const newToken = this.authService.getToken();
               if (newToken) {
                 const retryRequest = request.clone({
                   setHeaders: { Authorization: `Bearer ${newToken}` }
@@ -88,7 +85,6 @@ export class AuthInterceptor implements HttpInterceptor {
             }),
             catchError(() => {
               this.isRefreshing = false;
-              // Unblock queued requests with empty token so they fail fast
               this.refreshTokenSubject.next('');
               this.authService.logout();
               return throwError(() => error);

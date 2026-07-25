@@ -8,8 +8,6 @@ describe('AuthService', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    localStorage.clear();
-
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
@@ -24,7 +22,6 @@ describe('AuthService', () => {
 
   afterEach(() => {
     httpMock.verify();
-    localStorage.clear();
   });
 
   it('should be created', () => {
@@ -34,7 +31,7 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should send login request and store token', () => {
       service.login('test@test.com', 'password123').subscribe(() => {
-        expect(localStorage.getItem('token')).toBe('test-token-123');
+        expect(service.getToken()).toBe('test-token-123');
       });
 
       const req = httpMock.expectOne('https://test-api.com/api/v1/auth/login');
@@ -100,12 +97,7 @@ describe('AuthService', () => {
     });
 
     it('should return true when token exists', () => {
-      localStorage.setItem('token', 'some-token');
-      expect(service.isAuthenticated).toBe(true);
-    });
-
-    it('should return true when staffToken exists', () => {
-      localStorage.setItem('staffToken', 'staff-token');
+      service.setToken('some-token');
       expect(service.isAuthenticated).toBe(true);
     });
   });
@@ -115,26 +107,22 @@ describe('AuthService', () => {
       expect(service.getToken()).toBeNull();
     });
 
-    it('should prefer staffToken over regular token', () => {
-      localStorage.setItem('token', 'regular-token');
-      localStorage.setItem('staffToken', 'staff-token');
-      expect(service.getToken()).toBe('staff-token');
+    it('should return the stored token', () => {
+      service.setToken('test-token');
+      expect(service.getToken()).toBe('test-token');
     });
   });
 
   describe('logout', () => {
     it('should clear tokens and notify subscribers', () => {
-      localStorage.setItem('token', 'some-token');
-      localStorage.setItem('staffToken', 'staff-token');
-      localStorage.setItem('userRole', 'waiter');
-      localStorage.setItem('branchId', 'branch-1');
-      localStorage.setItem('businessId', 'biz-1');
+      service.setToken('some-token');
+      const tokenValues: (string | null)[] = [];
+      service.token$.subscribe(v => tokenValues.push(v));
 
       service.logout();
 
-      expect(localStorage.getItem('token')).toBeNull();
-      expect(localStorage.getItem('staffToken')).toBeNull();
-      expect(localStorage.getItem('userRole')).toBeNull();
+      expect(service.getToken()).toBeNull();
+      expect(tokenValues).toContain(null);
     });
   });
 });
