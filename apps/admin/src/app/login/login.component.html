@@ -10,9 +10,44 @@
         <span class="text-[24px] leading-[32px] font-semibold tracking-tight font-extrabold" style="font-family:'Inter',sans-serif;color:var(--on-surface);">ServeIQ</span>
       </div>
       <!-- Header -->
-      <div class="w-full mb-8">
+      <div class="w-full mb-6">
         <h1 class="text-[24px] leading-[32px] font-semibold text-center font-bold" style="font-family:'Inter',sans-serif;color:var(--on-background);">Welcome back</h1>
         <p class="text-[16px] leading-[24px] text-center mt-2" style="font-family:'Inter',sans-serif;color:var(--on-surface-variant);">Enter your credentials to manage your floor.</p>
+      </div>
+
+      <!-- Demo Credentials -->
+      <div class="w-full mb-6 p-3 rounded-lg" style="background:color-mix(in srgb, var(--primary) 10%, transparent);border:1px solid color-mix(in srgb, var(--primary) 25%, transparent);">
+        <p class="text-[12px] leading-[16px] font-semibold text-center uppercase tracking-wider mb-2" style="color:var(--primary);font-family:'Inter',sans-serif;">Demo Credentials</p>
+        <div class="flex flex-col gap-1 text-[13px] leading-[18px]" style="font-family:'JetBrains Mono',monospace;color:var(--on-surface-variant);">
+          <div class="flex justify-between items-center">
+            <span>Owner</span>
+            <div class="flex gap-2 items-center">
+              <span class="text-[11px] opacity-60">owner@demo.com</span>
+              <button type="button" class="border-none bg-transparent cursor-pointer p-0.5 rounded hover:opacity-80 transition-opacity" style="color:var(--primary);" (click)="email.set('owner@demo.com'); password.set('password123')" title="Fill credentials">
+                <span class="material-symbols-outlined text-[16px]">fill</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Manager</span>
+            <div class="flex gap-2 items-center">
+              <span class="text-[11px] opacity-60">manager@demo.com</span>
+              <button type="button" class="border-none bg-transparent cursor-pointer p-0.5 rounded hover:opacity-80 transition-opacity" style="color:var(--primary);" (click)="email.set('manager@demo.com'); password.set('password123')" title="Fill credentials">
+                <span class="material-symbols-outlined text-[16px]">fill</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Waiter</span>
+            <div class="flex gap-2 items-center">
+              <span class="text-[11px] opacity-60">waiter@demo.com</span>
+              <button type="button" class="border-none bg-transparent cursor-pointer p-0.5 rounded hover:opacity-80 transition-opacity" style="color:var(--primary);" (click)="email.set('waiter@demo.com'); password.set('password123')" title="Fill credentials">
+                <span class="material-symbols-outlined text-[16px]">fill</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <p class="mt-2 text-[11px] leading-[14px] text-center opacity-50" style="font-family:'Inter',sans-serif;color:var(--on-surface-variant);">Password for all: <span style="font-family:'JetBrains Mono',monospace;">password123</span></p>
       </div>
       <!-- Login Form -->
       <form class="w-full space-y-6" (ngSubmit)="onSubmit()">

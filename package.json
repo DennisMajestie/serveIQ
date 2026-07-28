@@ -5,8 +5,11 @@
   "scripts": {
     "build": "nx build admin",
     "build:admin": "nx build admin",
+    "build:waiter": "cross-env NG_BUILD_BUDGETS=false nx build waiter",
     "serve:waiter": "nx serve waiter",
-    "serve:admin": "nx serve admin"
+    "serve:admin": "nx serve admin",
+    "test:api": "nx test api",
+    "test:waiter": "nx test waiter"
   },
   "private": true,
   "workspaces": [
@@ -69,6 +72,7 @@
     "@typescript-eslint/utils": "^8.40.0",
     "angular-eslint": "^21.2.0",
     "autoprefixer": "^10.5.2",
+    "cross-env": "^10.1.0",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-playwright": "^1.6.2",

@@ -1,0 +1,84 @@
+<div class="menu-container">
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="state">
+      <div class="spinner"></div>
+      <p>Loading menu...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="state">
+      <span class="material-icon">error_outline</span>
+      <h2>Menu Unavailable</h2>
+      <p>Could not load the menu. Please try again later.</p>
+    </div>
+  }
+
+  <!-- Menu -->
+  @if (data(); as menu) {
+    <!-- Header -->
+    <header class="header">
+      @if (menu.logoUrl) {
+        <img [src]="menu.logoUrl" alt="Logo" class="logo" />
+      }
+      <h1 class="business-name">{{ menu.businessName }}</h1>
+      <p class="branch-name">{{ menu.branchName }}</p>
+    </header>
+
+    <!-- Category Tabs -->
+    <nav class="categories">
+      @for (cat of categories(); track cat) {
+        <button
+          class="category-btn"
+          [class.active]="selectedCategory() === cat"
+          (click)="selectedCategory.set(cat)"
+        >
+          {{ cat }}
+        </button>
+      }
+    </nav>
+
+    <!-- Items -->
+    <main class="items">
+      @for (item of groupItems(selectedCategory()!); track item.id) {
+        <div class="item" [class.sold-out]="item.isSoldOut">
+          @if (item.imageUrl) {
+            <img [src]="item.imageUrl" [alt]="item.name" class="item-image" />
+          }
+          <div class="item-info">
+            <div class="item-header">
+              <h3 class="item-name">{{ item.name }}</h3>
+              <span class="item-price">₦{{ (item.priceKobo / 100).toLocaleString() }}</span>
+            </div>
+            @if (item.description) {
+              <p class="item-desc">{{ item.description }}</p>
+            }
+            @if (item.isSoldOut) {
+              <span class="sold-out-badge">Sold Out</span>
+            }
+            @if (!item.isSoldOut) {
+              <button
+                class="add-btn"
+                [class.added]="addedItemId() === item.id"
+                (click)="addToCart(item)"
+              >
+                {{ addedItemId() === item.id ? 'Added' : 'Add' }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </main>
+  }
+</div>
+
+<!-- Cart FAB -->
+@if (cartService.itemCount() > 0) {
+  <button class="cart-fab" [routerLink]="['/public/menu', cartService.branchId(), 'cart']">
+    <span class="fab-icon">🛒</span>
+    <span class="fab-badge">{{ cartService.itemCount() }}</span>
+    <span class="fab-total">₦{{ (cartService.totalKobo() / 100).toLocaleString() }}</span>
+  </button>
+}

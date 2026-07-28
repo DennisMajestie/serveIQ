@@ -93,6 +93,7 @@ export interface Tab {
   closedAt?: Date;
   waiterId?: string;
   shiftId?: string;
+  tabType?: string;
   orderItems?: OrderItem[];
 }
 
@@ -239,6 +240,7 @@ export interface OpenTabRequest {
   party_size: number;
   customer_name?: string;
   notes?: string;
+  tab_type?: string;
 }
 
 export interface AddOrderItemsRequest {
@@ -544,6 +546,7 @@ export interface OrderGroup {
   timerEndsAt?: string;
   departmentId?: string;
   departmentName?: string;
+  tabType?: string;
   items: OrderGroupItem[];
 }
 

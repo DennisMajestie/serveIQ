@@ -52,6 +52,35 @@
           </button>
         </div>
       </div>
+
+      <!-- Dine In / Takeaway -->
+      <div class="flex flex-col gap-2">
+        <label class="text-[12px] leading-none font-semibold text-[#bccbb9] uppercase tracking-[0.08em]" style="font-family:'Inter',sans-serif">Order Type</label>
+        <div class="flex gap-3">
+          <button (click)="tabType = 'dine_in'"
+                  class="flex-1 h-14 rounded-2xl border-2 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2"
+                  [class.bg-[#4be277]/20]="tabType === 'dine_in'"
+                  [class.border-[#4be277]]="tabType === 'dine_in'"
+                  [class.bg-white/5]="tabType !== 'dine_in'"
+                  [class.border-white/10]="tabType !== 'dine_in'"
+                  [class.text-[#4be277]]="tabType === 'dine_in'"
+                  [class.text-[#bccbb9]]="tabType !== 'dine_in'"
+                  style="font-family:'Inter',sans-serif">
+            <span>🍽️</span> Dine In
+          </button>
+          <button (click)="tabType = 'takeaway'"
+                  class="flex-1 h-14 rounded-2xl border-2 font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2"
+                  [class.bg-[#4be277]/20]="tabType === 'takeaway'"
+                  [class.border-[#4be277]]="tabType === 'takeaway'"
+                  [class.bg-white/5]="tabType !== 'takeaway'"
+                  [class.border-white/10]="tabType !== 'takeaway'"
+                  [class.text-[#4be277]]="tabType === 'takeaway'"
+                  [class.text-[#bccbb9]]="tabType !== 'takeaway'"
+                  style="font-family:'Inter',sans-serif">
+            <span>🥡</span> Takeaway
+          </button>
+        </div>
+      </div>
     </div>
   </main>
 

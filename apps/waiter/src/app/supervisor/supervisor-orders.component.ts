@@ -242,6 +242,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   }
 
   getTableLabel(group: OrderGroup): string {
+    if (group.tabType === 'takeaway') return 'Takeaway';
     return group.tableNumber || '—';
   }
 

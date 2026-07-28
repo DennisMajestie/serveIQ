@@ -1,0 +1,134 @@
+<div class="status-page">
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="state">
+      <div class="spinner"></div>
+      <p>Loading order status...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="state">
+      <span class="big-icon">❌</span>
+      <h2>Error</h2>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (tabData(); as tab) {
+    <header class="status-header">
+      <span class="status-icon">{{ orderStatusIcon }}</span>
+      <h1>{{ orderStatusLabel }}</h1>
+      <div class="header-meta">
+        <span class="type-badge" [class.takeaway]="orderTypeLabel === 'Takeaway'">{{ orderTypeLabel }}</span>
+        @if (tab.trackingCode) {
+          <span class="tracking-code">Code: <strong>{{ tab.trackingCode }}</strong></span>
+        }
+      </div>
+      @if (polling()) {
+        <p class="polling-note">Auto-refreshing every 8s</p>
+      }
+    </header>
+
+    <!-- Progress bar -->
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="progressWidth()"></div>
+    </div>
+
+    <!-- Orders list -->
+    <section class="orders-section">
+      <h2>Order Items</h2>
+      @for (order of tab.orders; track order.id) {
+        <div class="order-card" [class.declined]="isDeclined(order.orderStatus)">
+          <div class="order-info">
+            <span class="order-name">{{ order.menuItemName || 'Item' }}</span>
+            <span class="order-qty">x{{ order.quantity }}</span>
+          </div>
+          <span class="order-status" [class]="statusClass(order.orderStatus)">
+            {{ formatStatus(order.orderStatus) }}
+          </span>
+          @if (isDeclined(order.orderStatus)) {
+            <p class="decline-reason">{{ order.declineReason || 'Declined' }}</p>
+          }
+          @if (order.timerEndsAt) {
+            <p class="timer">Est. ready by {{ order.timerEndsAt | date:'shortTime' }}</p>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Total -->
+    <div class="total-row">
+      <span>Total</span>
+      <span class="total-amount">₦{{ (tab.totalKobo / 100).toLocaleString() }}</span>
+    </div>
+
+    <!-- Payment section -->
+    @if (step() === 'payment') {
+      <section class="payment-section">
+        @if (!paymentInfo()) {
+          <button
+            class="pay-btn"
+            [disabled]="initializingPayment()"
+            (click)="payNow()"
+          >
+            {{ initializingPayment() ? 'Please wait...' : 'Pay Now' }}
+          </button>
+        }
+
+        @if (paymentInfo(); as pay) {
+          <div class="payment-details">
+            <h3>Pay ₦{{ (pay.amountKobo / 100).toLocaleString() }}</h3>
+
+            @for (method of pay.paymentMethods; track method.type) {
+              <div class="payment-method">
+                @if (method.type === 'transfer') {
+                  <div class="method-card transfer">
+                    <h4>📲 Bank Transfer</h4>
+                    <p>Account: <strong>{{ method.accountNumber }}</strong></p>
+                    <p>Amount: <strong>₦{{ (pay.amountKobo / 100).toFixed(2) }}</strong></p>
+                    <p class="note">Transfer to the account above, then notify staff</p>
+                  </div>
+                }
+                @if (method.type === 'pos') {
+                  <div class="method-card pos">
+                    <h4>💳 Pay with Card (POS)</h4>
+                    <p>Pay at the counter with any POS terminal</p>
+                  </div>
+                }
+                @if (method.type === 'cash') {
+                  <div class="method-card cash">
+                    <h4>💵 Cash</h4>
+                    <p>Pay at the counter</p>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (paymentStatus(); as ps) {
+              <div class="payment-status" [class.paid]="ps.paymentStatus === 'paid'">
+                @if (ps.paymentStatus === 'paid') {
+                  <p>✅ Payment confirmed! Thank you.</p>
+                } @else {
+                  <p>⏳ Waiting for payment confirmation...</p>
+                }
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    @if (step() === 'paid') {
+      <div class="paid-section">
+        <div class="paid-card">
+          <span class="big-icon">🎉</span>
+          <h2>Payment Successful!</h2>
+          <p>Thank you for dining with us.</p>
+        </div>
+      </div>
+    }
+  }
+</div>

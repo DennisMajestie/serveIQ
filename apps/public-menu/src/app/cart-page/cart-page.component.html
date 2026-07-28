@@ -1,0 +1,98 @@
+<div class="cart-page">
+  <header class="page-header">
+    <button class="back-btn" [routerLink]="['/public/menu', cartService.branchId()]">← Back</button>
+    <h1>Your Order</h1>
+  </header>
+
+  @if (placed) {
+    <div class="success-state">
+      <span class="big-icon">✅</span>
+      <h2>Order Placed!</h2>
+      <p>Your order has been sent to the kitchen.</p>
+      <button class="primary-btn" [routerLink]="['/public/status']">Track Order</button>
+    </div>
+  } @else if (cartService.items().length === 0) {
+    <div class="empty-state">
+      <span class="big-icon">🛒</span>
+      <h2>Cart is empty</h2>
+      <p>Add items from the menu to get started.</p>
+      <button class="primary-btn" [routerLink]="['/public/menu', cartService.branchId()]">Browse Menu</button>
+    </div>
+  } @else {
+    <!-- Customer info -->
+    <section class="customer-section">
+      <input
+        type="text"
+        [(ngModel)]="customerName"
+        placeholder="Your name (optional)"
+        class="input-field"
+      />
+      <div class="party-row">
+        <label>Party size:</label>
+        <div class="party-controls">
+          <button (click)="partySize = Math.max(1, partySize - 1)" class="qty-btn">−</button>
+          <span class="qty-value">{{ partySize }}</span>
+          <button (click)="partySize = Math.min(20, partySize + 1)" class="qty-btn">+</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Items -->
+    <section class="cart-items">
+      @for (item of cartService.items(); track item.menuItemId) {
+        <div class="cart-item">
+          <div class="item-details">
+            <span class="item-name">{{ item.name }}</span>
+            <span class="item-price">₦{{ (item.priceKobo / 100).toLocaleString() }}</span>
+          </div>
+          <div class="item-controls">
+            <button (click)="cartService.updateQuantity(item.menuItemId, item.quantity - 1)" class="qty-btn">−</button>
+            <span class="qty-value">{{ item.quantity }}</span>
+            <button (click)="cartService.updateQuantity(item.menuItemId, item.quantity + 1)" class="qty-btn">+</button>
+            <span class="line-total">₦{{ ((item.priceKobo * item.quantity) / 100).toLocaleString() }}</span>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Total -->
+    <div class="cart-total">
+      <span>Total</span>
+      <span class="total-amount">₦{{ (totalKobo / 100).toLocaleString() }}</span>
+    </div>
+
+    <!-- Place Order -->
+    <button
+      class="place-order-btn"
+      [disabled]="placing"
+      (click)="openTypeModal()"
+    >
+      {{ placing ? 'Placing Order...' : 'Place Order' }}
+    </button>
+  }
+</div>
+
+<!-- Dine In / Takeaway Modal -->
+@if (showTypeModal()) {
+  <div class="modal-overlay" (click)="showTypeModal.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>How would you like your order?</h2>
+      <div class="type-options">
+        <button class="type-card dine-in" [class.disabled]="!cartService.hasTable() && !cartService.tabId()" (click)="cartService.hasTable() || cartService.tabId() ? confirmType('dine_in') : null">
+          <span class="type-icon">🍽️</span>
+          <span class="type-label">Dine In</span>
+          <span class="type-desc">Eat at the table</span>
+          @if (!cartService.hasTable() && !cartService.tabId()) {
+            <span class="type-hint">Scan a table QR</span>
+          }
+        </button>
+        <button class="type-card takeaway" (click)="confirmType('takeaway')">
+          <span class="type-icon">🥡</span>
+          <span class="type-label">Takeaway</span>
+          <span class="type-desc">Pack and go</span>
+        </button>
+      </div>
+      <button class="cancel-btn" (click)="showTypeModal.set(false)">Cancel</button>
+    </div>
+  </div>
+}

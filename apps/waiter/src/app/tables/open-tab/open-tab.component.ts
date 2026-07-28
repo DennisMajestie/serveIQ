@@ -24,6 +24,7 @@ export class OpenTabComponent implements OnInit {
   tableName = 'Table —';
   customerName = '';
   numPeople = 1;
+  tabType: 'dine_in' | 'takeaway' = 'dine_in';
   isLoading = true;
 
   ngOnInit() {
@@ -75,6 +76,7 @@ export class OpenTabComponent implements OnInit {
       table_id: this.tableId,
       party_size: this.numPeople,
       customer_name: this.customerName || undefined,
+      tab_type: this.tabType,
     };
 
     this.tabsApi.createTab(request).subscribe({
