@@ -32,10 +32,26 @@
       }
     </header>
 
-    <!-- Progress bar -->
-    <div class="progress-bar">
-      <div class="progress-fill" [style.width.%]="progressWidth()"></div>
-    </div>
+    <!-- Progress tracker -->
+    @if (stages().length > 0) {
+      <div class="stepper">
+        @for (stage of stages(); track stage.key; let i = $index; let last = $last) {
+          <div class="step" [class.done]="stage.done" [class.active]="stage.key === currentStageKey()">
+            <div class="step-indicator">
+              <div class="step-dot">
+                @if (stage.done) {
+                  <span class="step-check">✓</span>
+                }
+              </div>
+              @if (!last) {
+                <div class="step-line" [class.filled]="stage.done"></div>
+              }
+            </div>
+            <span class="step-label">{{ stage.label }}</span>
+          </div>
+        }
+      </div>
+    }
 
     <!-- Orders list -->
     <section class="orders-section">
@@ -64,6 +80,39 @@
       <span>Total</span>
       <span class="total-amount">₦{{ (tab.totalKobo / 100).toLocaleString() }}</span>
     </div>
+
+    <!-- Ads -->
+    @if (ads().length > 0) {
+      <section class="ads-section">
+        @if (currentAd(); as ad) {
+          <a
+            class="ad-link"
+            [href]="ad.linkUrl"
+            target="_blank"
+            rel="noopener"
+          >
+            @if (ad.imageUrl) {
+              <img [src]="ad.imageUrl" [alt]="ad.title" class="ad-image" loading="lazy" />
+            }
+            @if (ad.title) {
+              <span class="ad-title">{{ ad.title }}</span>
+            }
+          </a>
+        }
+        @if (ads().length > 1) {
+          <div class="ad-dots">
+            @for (ad of ads(); track ad.id; let i = $index) {
+              <button
+                class="dot"
+                [class.active]="i === currentAdIndex()"
+                (click)="currentAdIndex.set(i)"
+                attr.aria-label="Ad {{ i + 1 }}"
+              ></button>
+            }
+          </div>
+        }
+      </section>
+    }
 
     <!-- Payment section -->
     @if (step() === 'payment') {

@@ -3,10 +3,17 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
 import { CustomerApiService, PaymentMethod, PaymentInitResponse, PaymentStatusResponse, TabStatusResponse } from '../services/customer-api.service';
-import { showApiErrorToast } from '@serveiq/shared/data-access';
+import { PublicAdsApiService, Ad, showApiErrorToast } from '@serveiq/shared/data-access';
 import { interval, Subscription, switchMap, finalize } from 'rxjs';
 
 type StatusStep = 'ordering' | 'pending_approval' | 'preparing' | 'ready' | 'payment' | 'paid';
+
+interface Stage {
+  key: string;
+  label: string;
+  icon: string;
+  done: boolean;
+}
 
 @Component({
   selector: 'app-status-page',
@@ -19,6 +26,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private api = inject(CustomerApiService);
+  private adsApi = inject(PublicAdsApiService);
   cartService = inject(CartService);
 
   tabData = signal<TabStatusResponse | null>(null);
@@ -30,7 +38,42 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   initializingPayment = signal(false);
   errorMessage = signal('');
 
+  ads = signal<Ad[]>([]);
+  currentAdIndex = signal(0);
+  adRotateInterval: ReturnType<typeof setInterval> | null = null;
+
   private pollSub?: Subscription;
+
+  readonly currentAd = computed(() => {
+    const list = this.ads();
+    return list.length > 0 ? list[this.currentAdIndex() % list.length] : null;
+  });
+
+  readonly stages = computed((): Stage[] => {
+    const tab = this.tabData();
+    if (!tab) return [];
+    const o = tab.orders;
+    const any = (pred: (s: string) => boolean) => o.some(x => pred((x.orderStatus || '').toLowerCase()));
+    const approved = any(s => ['approved', 'preparing', 'ready_for_pickup', 'delivered'].includes(s));
+    const preparing = any(s => ['preparing', 'ready_for_pickup', 'delivered'].includes(s));
+    const ready = any(s => ['ready_for_pickup', 'delivered'].includes(s));
+    const delivered = any(s => s === 'delivered');
+    return [
+      { key: 'received', label: 'Received', icon: 'receipt', done: o.length > 0 },
+      { key: 'approved', label: 'Approved', icon: 'thumb_up', done: approved },
+      { key: 'preparing', label: 'Preparing', icon: 'cooking', done: preparing },
+      { key: 'ready', label: 'Ready', icon: 'route', done: ready },
+      { key: 'delivered', label: 'Delivered', icon: 'check_circle', done: delivered },
+    ];
+  });
+
+  readonly currentStageKey = computed(() => {
+    const s = this.stages();
+    for (let i = s.length - 1; i >= 0; i--) {
+      if (s[i].done) return s[i].key;
+    }
+    return s[0]?.key ?? 'received';
+  });
 
   readonly step = computed((): StatusStep => {
     const tab = this.tabData();
@@ -82,6 +125,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
             this.startPolling(data.tabId, codeParam);
           }
           this.setTabFromTracking(data);
+          if (data.branchId) this.loadAds(data.branchId);
         },
         error: () => {
           this.loading.set(false);
@@ -92,6 +136,8 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     } else if (tabId && trackingCode) {
       this.loading.set(false);
       this.startPolling(tabId, trackingCode);
+      const branchId = this.cartService.branchId();
+      if (branchId) this.loadAds(branchId);
     } else {
       this.loading.set(false);
       this.error.set(true);
@@ -101,6 +147,24 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopPolling();
+    if (this.adRotateInterval) {
+      clearInterval(this.adRotateInterval);
+      this.adRotateInterval = null;
+    }
+  }
+
+  private loadAds(branchId: string) {
+    this.adsApi.getAds(branchId).subscribe({
+      next: (ads) => {
+        this.ads.set(ads);
+        if (ads.length > 1 && !this.adRotateInterval) {
+          this.adRotateInterval = setInterval(() => {
+            this.currentAdIndex.update(i => i + 1);
+          }, 5000);
+        }
+      },
+      error: () => this.ads.set([]),
+    });
   }
 
   private startPolling(tabId: string, trackingCode: string) {
