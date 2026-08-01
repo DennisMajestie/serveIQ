@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { PublicMenuApiService, PublicMenuData, showApiErrorToast } from '@serveiq/shared/data-access';
+import { PublicMenuApiService, PublicMenuData } from '@serveiq/shared/data-access';
 import { CartService, OrderType } from '../services/cart.service';
 import { finalize } from 'rxjs';
 
@@ -25,6 +25,7 @@ export class MenuPageComponent implements OnInit {
   selectedCategory = signal<string | null>(null);
   addedItemId = signal<string | null>(null);
   showTypeChooser = signal(false);
+  readOnly = signal(false);
 
   ngOnInit() {
     const branchId = this.route.snapshot.paramMap.get('branchId');
@@ -43,6 +44,7 @@ export class MenuPageComponent implements OnInit {
 
     // Ask for Dine In / Takeaway before showing the menu.
     this.maybeShowTypeChooser();
+    this.updateReadOnly();
 
     this.menuApi.getMenu(branchId).pipe(finalize(() => this.loading.set(false))).subscribe({
       next: (menu) => {
@@ -66,15 +68,20 @@ export class MenuPageComponent implements OnInit {
   }
 
   chooseType(type: OrderType) {
-    if (type === 'dine_in' && !this.cartService.hasTable()) {
-      showApiErrorToast(
-        { message: 'Please scan the QR code at your table to order dine-in, or choose Takeaway.' },
-        'Table required',
-      );
-      return;
-    }
     this.cartService.setOrderType(type);
     this.showTypeChooser.set(false);
+    this.updateReadOnly();
+  }
+
+  continueWithoutType() {
+    this.showTypeChooser.set(false);
+    this.updateReadOnly();
+  }
+
+  private updateReadOnly() {
+    // Dine In (or undecided) without a table is a read-only menu preview.
+    // Takeaway and Dine In at a scanned table are self-service.
+    this.readOnly.set(this.cartService.orderType() !== 'takeaway' && !this.cartService.hasTable());
   }
 
   private applyBrandColors(menu: PublicMenuData): void {

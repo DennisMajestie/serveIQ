@@ -49,6 +49,11 @@
         <span class="pill-change">Change</span>
       </button>
     }
+    @if (readOnly()) {
+      <div class="readonly-note">
+        🍽️ Dine-in menu preview — no ordering here. Scan the QR code at your table to order, or switch to Takeaway.
+      </div>
+    }
 
     <!-- Items -->
     <main class="items">
@@ -68,7 +73,7 @@
             @if (item.isSoldOut) {
               <span class="sold-out-badge">Sold Out</span>
             }
-            @if (!item.isSoldOut) {
+            @if (!item.isSoldOut && !readOnly()) {
               <button
                 class="add-btn"
                 [class.added]="addedItemId() === item.id"
@@ -86,7 +91,7 @@
 </div>
 
 <!-- Cart FAB -->
-@if (cartService.itemCount() > 0) {
+@if (!readOnly() && cartService.itemCount() > 0) {
   <button class="cart-fab" [routerLink]="['/public/menu', cartService.branchId(), 'cart']">
     <span class="fab-icon">🛒</span>
     <span class="fab-badge">{{ cartService.itemCount() }}</span>
@@ -96,7 +101,7 @@
 
 <!-- Dine In / Takeaway Chooser (on entry) -->
 @if (showTypeChooser()) {
-  <div class="modal-overlay" (click)="showTypeChooser.set(false)">
+  <div class="modal-overlay" (click)="continueWithoutType()">
     <div class="modal" (click)="$event.stopPropagation()">
       <span class="modal-icon">🍽️</span>
       <h2>How would you like to order?</h2>
@@ -106,7 +111,7 @@
           <span class="type-label">Dine In</span>
           <span class="type-desc">Eat at the table</span>
           @if (!cartService.hasTable()) {
-            <span class="type-hint">Scan the QR code at your table</span>
+            <span class="type-hint">Browse the menu — scan your table's QR to order</span>
           }
         </button>
         <button class="type-card takeaway" (click)="chooseType('takeaway')">
@@ -115,7 +120,7 @@
           <span class="type-desc">Pack and go</span>
         </button>
       </div>
-      <button class="cancel-btn" (click)="showTypeChooser.set(false)">Continue anyway</button>
+      <button class="cancel-btn" (click)="continueWithoutType()">Continue anyway</button>
     </div>
   </div>
 }
