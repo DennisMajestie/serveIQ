@@ -41,7 +41,8 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.26.25",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "zone.js": "~0.15.1"
   },
   "devDependencies": {
     "@angular-devkit/core": "~21.2.0",
