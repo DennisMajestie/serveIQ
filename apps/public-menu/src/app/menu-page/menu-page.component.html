@@ -18,6 +18,7 @@
 
   <!-- Menu -->
   @if (data(); as menu) {
+    @if (!showTypeChooser()) {
     <!-- Header -->
     <header class="header">
       @if (menu.logoUrl) {
@@ -80,6 +81,7 @@
         </div>
       }
     </main>
+    }
   }
 </div>
 

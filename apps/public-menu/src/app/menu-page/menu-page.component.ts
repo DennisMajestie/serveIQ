@@ -41,6 +41,9 @@ export class MenuPageComponent implements OnInit {
       this.cartService.setTableId(tableId);
     }
 
+    // Ask for Dine In / Takeaway before showing the menu.
+    this.maybeShowTypeChooser();
+
     this.menuApi.getMenu(branchId).pipe(finalize(() => this.loading.set(false))).subscribe({
       next: (menu) => {
         this.data.set(menu);
@@ -48,7 +51,6 @@ export class MenuPageComponent implements OnInit {
         const cats = [...new Set(menu.items.map(i => i.category))];
         this.categories.set(cats);
         this.selectedCategory.set(cats[0] ?? null);
-        this.maybeShowTypeChooser();
       },
       error: () => this.error.set(true),
     });
