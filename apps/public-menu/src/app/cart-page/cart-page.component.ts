@@ -23,6 +23,7 @@ export class CartPageComponent {
   customerName = '';
   partySize = 1;
   showTypeModal = signal(false);
+  showConfirmModal = signal(false);
   selectedType = signal<'dine_in' | 'takeaway'>(this.cartService.orderType() ?? 'dine_in');
 
   get totalKobo() {
@@ -35,7 +36,7 @@ export class CartPageComponent {
 
   onPlaceOrder() {
     if (this.cartService.orderType()) {
-      this.placeOrder();
+      this.showConfirmModal.set(true);
     } else {
       this.showTypeModal.set(true);
     }
@@ -48,7 +49,12 @@ export class CartPageComponent {
       showApiErrorToast({ message: 'No table selected. Please scan the QR code at your table.' }, 'Table not found');
       return;
     }
-    this.placeOrder(type);
+    this.showConfirmModal.set(true);
+  }
+
+  confirmPlaceOrder() {
+    this.showConfirmModal.set(false);
+    this.placeOrder();
   }
 
   placeOrder(tabType?: 'dine_in' | 'takeaway') {

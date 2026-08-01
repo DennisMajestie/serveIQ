@@ -50,6 +50,7 @@
             <span class="qty-value">{{ item.quantity }}</span>
             <button (click)="cartService.updateQuantity(item.menuItemId, item.quantity + 1)" class="qty-btn">+</button>
             <span class="line-total">₦{{ ((item.priceKobo * item.quantity) / 100).toLocaleString() }}</span>
+            <button (click)="cartService.removeItem(item.menuItemId)" class="remove-btn" title="Remove item">✕</button>
           </div>
         </div>
       }
@@ -93,6 +94,40 @@
         </button>
       </div>
       <button class="cancel-btn" (click)="showTypeModal.set(false)">Cancel</button>
+    </div>
+  </div>
+}
+
+<!-- Order Confirmation Modal -->
+@if (showConfirmModal()) {
+  <div class="modal-overlay" (click)="showConfirmModal.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <span class="modal-icon">🧾</span>
+      <h2>Confirm your order</h2>
+      <p class="confirm-type">
+        {{ selectedType() === 'takeaway' ? '🥡 Takeaway' : '🍽️ Dine In' }}
+      </p>
+
+      <div class="confirm-items">
+        @for (item of cartService.items(); track item.menuItemId) {
+          <div class="confirm-item">
+            <span class="confirm-name">{{ item.name }} <em>×{{ item.quantity }}</em></span>
+            <span class="confirm-price">₦{{ ((item.priceKobo * item.quantity) / 100).toLocaleString() }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="confirm-total">
+        <span>Total</span>
+        <span class="total-amount">₦{{ (totalKobo / 100).toLocaleString() }}</span>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="cancel-btn" (click)="showConfirmModal.set(false)">Cancel</button>
+        <button class="confirm-btn" [disabled]="placing" (click)="confirmPlaceOrder()">
+          {{ placing ? 'Placing...' : 'Confirm & Place Order' }}
+        </button>
+      </div>
     </div>
   </div>
 }

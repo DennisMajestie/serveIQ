@@ -271,3 +271,117 @@
   cursor: pointer;
   padding: 8px;
 }
+
+.remove-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid #fee2e2;
+  background: #fff1f2;
+  color: #dc2626;
+  font-size: 0.72rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2px;
+
+  &:hover {
+    background: #fee2e2;
+  }
+}
+
+.confirm-type {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: -8px 0 16px;
+}
+
+.confirm-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  max-height: 45vh;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.confirm-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.confirm-name {
+  font-size: 0.9rem;
+  color: var(--text);
+
+  em {
+    font-style: normal;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+}
+
+.confirm-price {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.confirm-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1.5px solid var(--border);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+
+  .total-amount {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+
+  .cancel-btn {
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .confirm-btn {
+    flex: 2;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
