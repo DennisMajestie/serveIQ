@@ -13,19 +13,20 @@
       "options": {
         "outputPath": "dist/apps/public-menu",
         "browser": "apps/public-menu/src/main.ts",
+        "polyfills": ["zone.js"],
         "tsConfig": "apps/public-menu/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [{ "glob": "**/*", "input": "apps/public-menu/public" }],
-        "styles": ["apps/public-menu/src/styles.scss"],
-        "fileReplacements": [
-          {
-            "replace": "apps/public-menu/src/environments/environment.ts",
-            "with": "apps/public-menu/src/environments/environment.prod.ts"
-          }
-        ]
+        "styles": ["apps/public-menu/src/styles.scss"]
       },
       "configurations": {
         "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/public-menu/src/environments/environment.ts",
+              "with": "apps/public-menu/src/environments/environment.prod.ts"
+            }
+          ],
           "budgets": [
             { "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" },
             { "type": "anyComponentStyle", "maximumWarning": "15kb", "maximumError": "20kb" }
@@ -43,6 +44,11 @@
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "options": {
+        "port": 4300,
+        "host": "0.0.0.0",
+        "proxyConfig": "apps/public-menu/proxy.conf.json"
+      },
       "configurations": {
         "production": { "buildTarget": "public-menu:build:production" },
         "development": { "buildTarget": "public-menu:build:development" }

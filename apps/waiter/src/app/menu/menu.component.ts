@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
+import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG, OfflineCacheService } from '@serveiq/shared/data-access';
 import { MenuItem, Table, Tab, resolveImageUrl } from '@serveiq/shared/models';
 import { CurrencyContextService } from '../services/currency-context.service';
+import { OfflineDataService } from '../services/offline-data.service';
 
 interface Portion { id: string; name: string; price: number; }
 
@@ -41,6 +42,8 @@ export class MenuComponent implements OnInit {
   private readonly tablesApi = inject(TablesApiService);
   private readonly env = inject(ENVIRONMENT_CONFIG);
   private readonly currency = inject(CurrencyContextService);
+  private readonly offlineData = inject(OfflineDataService);
+  private readonly cache = inject(OfflineCacheService);
 
   currencySymbol = computed(() => this.currency.getSymbol());
   formatAmount = (amount: number) => this.currency.formatAmount(amount);
@@ -65,33 +68,37 @@ export class MenuComponent implements OnInit {
       }
     });
 
-    this.menuApi.getAllItems().subscribe({
-      next: (items: any) => {
-        if (!Array.isArray(items)) {
-          this.isLoading.set(false);
-          return;
-        }
-        this.menuItems = items.map(i => {
-          const isManuallyAvailable = (i.isAvailable ?? i.is_available ?? i.available ?? true) !== false;
-          const trackStock = i.trackStock ?? i.track_stock ?? false;
-          const stock = parseFloat(i.quantityInStock ?? i.quantity_in_stock ?? '0');
-          const outOfStock = trackStock && stock <= 0;
-          return {
-            id: i.id,
-            name: i.name,
-            category: i.category,
-            image: resolveImageUrl(i.imageUrl, this.env.apiUrl),
-            price: (i.priceKobo ?? i.price_kobo ?? 0) / 100,
-            isAvailable: isManuallyAvailable && !outOfStock,
-          };
-        });
-        const cats = ['All', ...new Set(items.map(i => i.category))];
-        this.categories.set(cats);
-        this.selectedCategory = cats[0] ?? 'All';
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false)
+    this.cache.getCached<any>('menu').subscribe(cached => {
+      if (cached.length > 0) {
+        this.processMenuItems(cached);
+      }
     });
+    this.offlineData.getMenu().subscribe({
+      next: (items: any) => this.processMenuItems(items),
+      error: () => this.isLoading.set(false),
+    });
+  }
+
+  private processMenuItems(items: any[]): void {
+    if (!Array.isArray(items)) { this.isLoading.set(false); return; }
+    this.menuItems = items.map(i => {
+      const isManuallyAvailable = (i.isAvailable ?? i.is_available ?? i.available ?? true) !== false;
+      const trackStock = i.trackStock ?? i.track_stock ?? false;
+      const stock = parseFloat(i.quantityInStock ?? i.quantity_in_stock ?? '0');
+      const outOfStock = trackStock && stock <= 0;
+      return {
+        id: i.id,
+        name: i.name,
+        category: i.category,
+        image: resolveImageUrl(i.imageUrl, this.env.apiUrl),
+        price: (i.priceKobo ?? i.price_kobo ?? 0) / 100,
+        isAvailable: isManuallyAvailable && !outOfStock,
+      };
+    });
+    const cats = ['All', ...new Set(items.map(i => i.category))];
+    this.categories.set(cats);
+    this.selectedCategory = cats[0] ?? 'All';
+    this.isLoading.set(false);
   }
 
   loadTabInfo(tabId: string) {

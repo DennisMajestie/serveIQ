@@ -1,4 +1,6 @@
 export * from './lib/sync.store';
+export * from './lib/offline-cache.service';
+export * from './lib/network.service';
 export * from './lib/offline-sync.engine';
 
 // API Config

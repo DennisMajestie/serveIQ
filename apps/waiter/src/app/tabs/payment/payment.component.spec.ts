@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { of, Subject } from 'rxjs';
 import { PaymentComponent } from './payment.component';
-import { BillsApiService, TabsApiService, TablesApiService, PosApiService, BusinessApiService } from '@serveiq/shared/data-access';
+import { BillsApiService, TabsApiService, TablesApiService, PosApiService, BusinessApiService, ENVIRONMENT_CONFIG, OfflineCacheService } from '@serveiq/shared/data-access';
 import { CurrencyContextService } from '../../services/currency-context.service';
 
 describe('PaymentComponent', () => {
@@ -27,6 +27,15 @@ describe('PaymentComponent', () => {
     const mockBusinessApi = createMockService(['getBusiness']);
     mockBusinessApi.getBusiness.mockReturnValue(of({ currency: 'NGN' }));
     const mockHttp = { post: vi.fn() };
+    const mockCache = {
+      getByIndex: vi.fn().mockReturnValue(of([])),
+      getById: vi.fn().mockReturnValue(of(null)),
+      getCached: vi.fn().mockReturnValue(of([])),
+      getPendingMutations: vi.fn().mockReturnValue(of([])),
+      upsert: vi.fn(),
+      cacheAll: vi.fn(),
+      remove: vi.fn(),
+    };
 
     mockBillsApi.generate.mockReturnValue(of({
       id: 'bill-1',
@@ -59,6 +68,8 @@ describe('PaymentComponent', () => {
         { provide: TablesApiService, useValue: mockTableService },
         { provide: PosApiService, useValue: mockPosApi },
         { provide: BusinessApiService, useValue: mockBusinessApi },
+        { provide: OfflineCacheService, useValue: mockCache },
+        { provide: ENVIRONMENT_CONFIG, useValue: { apiUrl: 'http://test' } },
         { provide: HttpClient, useValue: mockHttp },
         { provide: ActivatedRoute, useValue: { paramMap: paramMapSubject.asObservable() } },
         { provide: Router, useValue: { navigate: vi.fn() } },

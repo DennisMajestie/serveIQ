@@ -6,6 +6,7 @@ import { BranchesApiService, AuthService, UserApiService, BusinessApiService, Up
 import { Branch, User, Business } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
+import { toDataURL } from '../../lib/qrcode/index';
 
 type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification';
 
@@ -29,6 +30,7 @@ export class SettingsComponent implements OnInit {
   isLoading = signal(true);
   showQrModal = signal(false);
   qrBranchName = signal('');
+  qrMenuUrl = signal('');
   qrBlobUrl = signal<string | null>(null);
   isDownloadingQr = signal<string | null>(null);
 
@@ -520,29 +522,26 @@ export class SettingsComponent implements OnInit {
 
   // ===== QR Code =====
 
-  downloadQrCode(branchId: string, branchName: string): void {
+  async downloadQrCode(branchId: string, branchName: string): Promise<void> {
     this.isDownloadingQr.set(branchId);
-    this.branchesApi.generateQrCode(branchId).subscribe({
-      next: (blob) => {
-        this.isDownloadingQr.set(null);
-        const url = URL.createObjectURL(blob);
-        this.qrBranchName.set(branchName);
-        this.qrBlobUrl.set(url);
-        this.showQrModal.set(true);
-      },
-      error: () => {
-        this.isDownloadingQr.set(null);
-        Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not generate QR code.' });
-      }
-    });
+    try {
+      const menuUrl = this.getPublicMenuUrl(branchId);
+      const dataUrl = await toDataURL(menuUrl, { width: 400, margin: 4 });
+      this.qrBranchName.set(branchName);
+      this.qrMenuUrl.set(menuUrl);
+      this.qrBlobUrl.set(dataUrl);
+      this.showQrModal.set(true);
+      this.isDownloadingQr.set(null);
+    } catch (e) {
+      this.isDownloadingQr.set(null);
+      Swal.fire({ icon: 'error', title: 'Failed', text: `Could not generate QR code: ${e instanceof Error ? e.message : 'Unknown error'}` });
+    }
   }
 
   closeQrModal(): void {
     this.showQrModal.set(false);
-    if (this.qrBlobUrl()) {
-      URL.revokeObjectURL(this.qrBlobUrl()!);
-    }
     this.qrBlobUrl.set(null);
+    this.qrMenuUrl.set('');
   }
 
   saveQrCode(): void {

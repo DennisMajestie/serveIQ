@@ -1,11 +1,12 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService, BusinessApiService } from '@serveiq/shared/data-access';
+import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService, BusinessApiService, OfflineCacheService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table, MenuItem, Business } from '@serveiq/shared/models';
-import { catchError, of, switchMap, map } from 'rxjs';
+import { catchError, of, switchMap, map, from } from 'rxjs';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../../services/currency-context.service';
+import { OfflineDataService } from '../../services/offline-data.service';
 
 @Component({
   selector: 'app-bill',
@@ -25,6 +26,8 @@ export class BillComponent implements OnInit {
   private menuService = inject(MenuApiService);
   private businessApi = inject(BusinessApiService);
   private currency = inject(CurrencyContextService);
+  private offlineData = inject(OfflineDataService);
+  private cache = inject(OfflineCacheService);
 
   private currentDiscountKobo = 0;
 
@@ -89,8 +92,9 @@ export class BillComponent implements OnInit {
   }
 
   loadTabAndGenerateBill(tabId: string) {
-    this.tabService.getTab(tabId).subscribe({
-      next: (tab: Tab) => {
+    this.offlineData.getTab(tabId).subscribe({
+      next: (tab: Tab | null) => {
+        if (!tab) { this.loadBill(tabId); return; }
         this.waiterName.set((tab as any).waiter?.fullName || 'Waiter');
         if (tab.tableId) {
           this.tableService.getTable(tab.tableId).subscribe({
@@ -109,7 +113,7 @@ export class BillComponent implements OnInit {
     return (items || []).map((o: any) => ({
       ...o,
       menuItemId: o.menuItemId ?? o.menu_item_id ?? o.menuItem?.id ?? o.menu_item?.id ?? '',
-      priceKobo: o.priceKobo ?? o.unitPriceKobo ?? 0,
+      priceKobo: o.priceKobo ?? o.unitPriceKobo ?? o.unit_price_kobo ?? 0,
     }));
   }
 
@@ -135,23 +139,32 @@ export class BillComponent implements OnInit {
   private loadBill(tabId: string) {
     this.isLoading.set(true);
     this.error.set('');
-    this.billService.generate(tabId, { serviceChargePercent: 5 }).pipe(
-      switchMap((bill) =>
-        this.ordersService.getByTab(tabId).pipe(
-          map((items) => {
-            bill.orderItems = this.mapOrderItems(items);
+    this.cache.getByIndex<Bill>('bills', 'tab_id', tabId).pipe(
+      map(bills => {
+        const sorted = [...(bills || [])].sort((a, b) =>
+          (new Date((b as any).createdAt ?? 0) as any) - (new Date((a as any).createdAt ?? 0) as any));
+        return sorted.length > 0 ? sorted[0] : null;
+      }),
+      switchMap(cached => cached ? of(cached) : this.offlineData.getBill(tabId)),
+      switchMap(bill => {
+        if (!bill) {
+          return this.offlineData.getOrdersByTab(tabId).pipe(
+            map(orders => this.buildBillFromOrders(tabId, this.currentDiscountKobo, this.mapOrderItems(orders))),
+            catchError(() => of(null))
+          );
+        }
+        return this.offlineData.getOrdersByTab(tabId).pipe(
+          map(orders => {
+            bill.orderItems = this.mapOrderItems(orders);
             this.currentDiscountKobo = bill.discountKobo;
             return bill;
           }),
           catchError(() => of(bill))
-        )
-      ),
+        );
+      }),
       catchError(() =>
-        this.ordersService.getByTab(tabId).pipe(
-          map((items) => {
-            const orderItems = this.mapOrderItems(items);
-            return this.buildBillFromOrders(tabId, this.currentDiscountKobo, orderItems);
-          }),
+        this.offlineData.getOrdersByTab(tabId).pipe(
+          map(orders => this.buildBillFromOrders(tabId, this.currentDiscountKobo, this.mapOrderItems(orders))),
           catchError(() => of(null))
         )
       )
@@ -161,6 +174,7 @@ export class BillComponent implements OnInit {
         this.isLoading.set(false);
         return;
       }
+      this.cache.upsert('bills', { ...bill, tab_id: (bill as any).tab_id ?? (bill as any).tabId });
       this.bill.set(bill);
       this.isLoading.set(false);
     });
@@ -251,39 +265,26 @@ export class BillComponent implements OnInit {
   private applyDiscountToBill(discountKobo: number) {
     this.isLoading.set(true);
     this.error.set('');
-    this.billService.applyDiscount(this.tabId(), { discountKobo }).pipe(
+    from(this.offlineData.generateBill(this.tabId(), { serviceChargePercent: 5, discountKobo })).pipe(
       switchMap((bill) =>
-        this.ordersService.getByTab(this.tabId()).pipe(
+        this.offlineData.getOrdersByTab(this.tabId()).pipe(
           map((items) => {
-            bill.orderItems = this.mapOrderItems(items);
-            this.currentDiscountKobo = bill.discountKobo;
-            return bill;
+            const orderItems = this.mapOrderItems(items);
+            const computed = this.buildBillFromOrders(this.tabId(), discountKobo, orderItems);
+            this.currentDiscountKobo = discountKobo;
+            return { ...computed, ...bill, id: (this.bill() as any)?.id || (bill as any).id, orderItems };
           }),
           catchError(() => of(bill))
         )
       ),
       catchError(() =>
-        this.billService.generate(this.tabId(), { serviceChargePercent: 5, discountKobo }).pipe(
-          switchMap((bill) =>
-            this.ordersService.getByTab(this.tabId()).pipe(
-              map((items) => {
-                bill.orderItems = this.mapOrderItems(items);
-                this.currentDiscountKobo = bill.discountKobo;
-                return bill;
-              }),
-              catchError(() => of(bill))
-            )
-          ),
-          catchError(() =>
-            this.ordersService.getByTab(this.tabId()).pipe(
-              map((items) => {
-                const orderItems = this.mapOrderItems(items);
-                this.currentDiscountKobo = discountKobo;
-                return this.buildBillFromOrders(this.tabId(), discountKobo, orderItems);
-              }),
-              catchError(() => of(null))
-            )
-          )
+        this.offlineData.getOrdersByTab(this.tabId()).pipe(
+          map((items) => {
+            const orderItems = this.mapOrderItems(items);
+            this.currentDiscountKobo = discountKobo;
+            return this.buildBillFromOrders(this.tabId(), discountKobo, orderItems);
+          }),
+          catchError(() => of(null))
         )
       )
     ).subscribe((bill: Bill | null) => {
@@ -292,6 +293,7 @@ export class BillComponent implements OnInit {
         this.isLoading.set(false);
         return;
       }
+      this.cache.upsert('bills', { ...bill, tab_id: (bill as any).tab_id ?? (bill as any).tabId });
       this.bill.set(bill);
       this.isLoading.set(false);
     });

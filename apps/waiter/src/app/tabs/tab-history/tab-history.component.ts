@@ -1,10 +1,12 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TabsApiService, TablesApiService, ShiftsApiService } from '@serveiq/shared/data-access';
+import { TabsApiService, TablesApiService, ShiftsApiService, OfflineCacheService } from '@serveiq/shared/data-access';
 import { Tab, Shift } from '@serveiq/shared/models';
+import { of, switchMap, map, catchError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../../services/currency-context.service';
+import { OfflineDataService } from '../../services/offline-data.service';
 
 interface Transaction {
   id: string;
@@ -36,6 +38,8 @@ export class TabHistoryComponent implements OnInit {
   private tablesApi = inject(TablesApiService);
   private shiftsApi = inject(ShiftsApiService);
   private currency = inject(CurrencyContextService);
+  private offlineData = inject(OfflineDataService);
+  private cache = inject(OfflineCacheService);
 
   isLoading = signal(true);
   closedTabs = signal<Tab[]>([]);
@@ -105,10 +109,22 @@ export class TabHistoryComponent implements OnInit {
         this.shifts.set(Array.isArray(shifts) ? shifts : []);
       }
     });
-    this.tabsApi.getAllTabsUnpaginated().subscribe({
-      next: (tabs) => {
+    this.cache.getCached<Tab>('tabs').pipe(
+      switchMap(cached => {
+        if (cached.length > 0) {
+          return of(cached);
+        }
+        return this.tabsApi.getAllTabsUnpaginated().pipe(
+          catchError(() => of([]))
+        );
+      }),
+      map(tabs => {
         const arr = Array.isArray(tabs) ? tabs : [];
-        this.closedTabs.set(arr.filter(t => t.status === 'paid' || t.status === 'voided'));
+        return arr.filter(t => t.status === 'paid' || t.status === 'voided');
+      })
+    ).subscribe({
+      next: (closed) => {
+        this.closedTabs.set(closed);
         this.isLoading.set(false);
         this.loadTableNumbers();
       },
@@ -120,7 +136,7 @@ export class TabHistoryComponent implements OnInit {
   }
 
   private loadTableNumbers() {
-    this.tablesApi.getAllTables().subscribe({
+    this.offlineData.getTables().subscribe({
       next: (tables) => {
         const map: Record<string, string> = {};
         (Array.isArray(tables) ? tables : []).forEach(t => {

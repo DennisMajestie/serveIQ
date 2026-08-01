@@ -26,6 +26,19 @@ export interface AuthResponse {
 let _adminToken: string | null = null;
 let _staffToken: string | null = null;
 
+const STAFF_TOKEN_KEY = 'serveiq_staff_token';
+const ADMIN_TOKEN_KEY = 'serveiq_admin_token';
+
+function persistStaffToken(token: string | null) {
+  if (token) localStorage.setItem(STAFF_TOKEN_KEY, token);
+  else localStorage.removeItem(STAFF_TOKEN_KEY);
+}
+
+function persistAdminToken(token: string | null) {
+  if (token) localStorage.setItem(ADMIN_TOKEN_KEY, token);
+  else localStorage.removeItem(ADMIN_TOKEN_KEY);
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenSubject = new BehaviorSubject<string | null>(null);
@@ -34,7 +47,14 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     @Inject(ENVIRONMENT_CONFIG) private env: EnvironmentConfig
-  ) {}
+  ) {
+    // Rehydrate session tokens after a page reload so guarded routes keep working
+    // (critical for the offline PWA where the shell is served from cache).
+    _staffToken = localStorage.getItem(STAFF_TOKEN_KEY) || _staffToken;
+    _adminToken = localStorage.getItem(ADMIN_TOKEN_KEY) || _adminToken;
+    const restored = _staffToken || _adminToken;
+    if (restored) this.tokenSubject.next(restored);
+  }
 
   get isAuthenticated(): boolean {
     return !!(this.getToken());
@@ -45,11 +65,14 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return _staffToken || _adminToken;
+    return _staffToken || _adminToken
+      || localStorage.getItem(STAFF_TOKEN_KEY)
+      || localStorage.getItem(ADMIN_TOKEN_KEY);
   }
 
   setToken(token: string): void {
     _adminToken = token;
+    persistAdminToken(token);
     this.tokenSubject.next(token);
   }
 
@@ -66,6 +89,7 @@ export class AuthService {
         const token = data.access_token || data.token || response.access_token || response.token;
         if (token) {
           _adminToken = token;
+          persistAdminToken(token);
 
           const branchId = data.branch?.id ||
                            data.branchId ||
@@ -131,6 +155,7 @@ export class AuthService {
         
         if (token) {
           _adminToken = token;
+          persistAdminToken(token);
           this.tokenSubject.next(token);
         }
       })
@@ -141,7 +166,7 @@ export class AuthService {
   verifyStaffPin(pin: string, businessId: string): Observable<AuthResponse> {
     const branchId = localStorage.getItem('branchId');
     return this.http.post<AuthResponse>(
-      `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, business_id: businessId, branch_id: branchId || undefined },
+      `${this.apiUrl}/api/v1/auth/waiter-login`, { pin, businessId, branchId: branchId || undefined },
       { withCredentials: true }
     ).pipe(
       tap((response: any) => {
@@ -152,10 +177,14 @@ export class AuthService {
         const normalizedRole = userRole === 'superadmin' ? 'super_admin' : userRole;
         if (token) {
           _staffToken = token;
+          persistStaffToken(token);
           this.tokenSubject.next(token);
         }
         if (branchId && branchId !== 'default-branch') {
           localStorage.setItem('branchId', branchId);
+        }
+        if (resData.user?.id) {
+          localStorage.setItem('userId', resData.user.id);
         }
         localStorage.setItem('userRole', normalizedRole || 'staff');
       })
@@ -183,8 +212,10 @@ export class AuthService {
         if (token) {
           if (isStaff) {
             _staffToken = token;
+            persistStaffToken(token);
           } else {
             _adminToken = token;
+            persistAdminToken(token);
           }
           this.tokenSubject.next(token);
         }
@@ -226,6 +257,7 @@ export class AuthService {
           localStorage.setItem('originalUserRole', localStorage.getItem('userRole') || '');
 
           _adminToken = token;
+          persistAdminToken(token);
           localStorage.setItem('businessId', businessId);
           const responseBranchId = data.branchId;
           if (responseBranchId) {
@@ -249,6 +281,7 @@ export class AuthService {
 
     if (originalToken) {
       _adminToken = originalToken;
+      persistAdminToken(originalToken);
       this.tokenSubject.next(originalToken);
     }
     if (originalBusinessId) localStorage.setItem('businessId', originalBusinessId);
@@ -270,6 +303,8 @@ export class AuthService {
   logout() {
     _adminToken = null;
     _staffToken = null;
+    persistAdminToken(null);
+    persistStaffToken(null);
     localStorage.removeItem('userRole');
     localStorage.removeItem('businessId');
     localStorage.removeItem('businessName');

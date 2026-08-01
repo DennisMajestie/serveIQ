@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000',
+  apiUrl: '',
   nemotronUrl: 'https://integrate.api.nvidia.com',
-  publicMenuBaseUrl: 'http://localhost:4200',
+  publicMenuBaseUrl: 'http://172.20.10.3:4300',
   waiterBaseUrl: 'http://localhost:4201',
   sentryDsn: '',
 };

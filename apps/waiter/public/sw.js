@@ -1,5 +1,5 @@
-const CACHE_NAME = 'serveiq-cache-v1';
-const API_CACHE = 'serveiq-api-v1';
+const CACHE_NAME = 'serveiq-cache-v2';
+const API_CACHE = 'serveiq-api-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -42,6 +42,17 @@ self.addEventListener('fetch', (event) => {
   // Skip non-HTTP(S) requests (e.g. chrome-extension://)
   if (!url.protocol.startsWith('http')) return;
 
+  // Only handle same-origin requests. Cross-origin fetches are never cached.
+  if (url.origin !== self.location.origin) return;
+
+  // Skip the service worker itself so updates are always fetched fresh.
+  if (url.pathname === '/sw.js') return;
+
+  // Bypass dev-server / tooling virtual modules (Angular HMR, Vite internals).
+  // These only exist during development but would 404/ERR_FAILED if a stale
+  // dev bundle ever ends up behind this worker.
+  if (url.pathname.startsWith('/@') || url.pathname.includes('node_modules/.vite')) return;
+
   // API requests — network-first, cache fallback (GET only)
   if (url.pathname.startsWith('/api/')) {
     if (request.method === 'GET') {
@@ -50,7 +61,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets — cache-first
+  // App navigation — network-first so new deployments are picked up
+  // instead of serving a stale cached index.html forever.
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirstWithCache(request, CACHE_NAME, '/'));
+    return;
+  }
+
+  // Static assets — cache-first (hashed filenames make staleness safe)
   event.respondWith(
     caches.match(request).then((cached) => cached || fetch(request).then((response) => {
       if (request.method !== 'GET') return response;
@@ -61,16 +79,22 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-async function networkFirstWithCache(request, cacheName) {
+async function networkFirstWithCache(request, cacheName, fallbackUrl) {
   try {
     const response = await fetch(request);
-    const clone = response.clone();
-    const cache = await caches.open(cacheName);
-    cache.put(request, clone);
+    if (response.ok) {
+      const clone = response.clone();
+      const cache = await caches.open(cacheName);
+      cache.put(request, clone);
+    }
     return response;
   } catch {
     const cached = await caches.match(request);
     if (cached) return cached;
+    if (fallbackUrl) {
+      const fallback = await caches.match(fallbackUrl);
+      if (fallback) return fallback;
+    }
     return new Response(JSON.stringify({ offline: true, message: 'You are offline. Cached data may be stale.' }), {
       status: 503,
       headers: { 'Content-Type': 'application/json' },

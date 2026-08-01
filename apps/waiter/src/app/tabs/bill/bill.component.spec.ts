@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { BillComponent } from './bill.component';
-import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService, BusinessApiService } from '@serveiq/shared/data-access';
+import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService, BusinessApiService, OfflineCacheService } from '@serveiq/shared/data-access';
 import { CurrencyContextService } from '../../services/currency-context.service';
 
 describe('BillComponent', () => {
@@ -26,6 +26,16 @@ describe('BillComponent', () => {
     const mockMenuService = createMockService(['getAllItems']);
     const mockBusinessApi = createMockService(['getBusiness']);
 
+    const mockCache = {
+      getByIndex: vi.fn().mockReturnValue(of([])),
+      getById: vi.fn().mockReturnValue(of(null)),
+      getCached: vi.fn().mockReturnValue(of([])),
+      getPendingMutations: vi.fn().mockReturnValue(of([])),
+      upsert: vi.fn(),
+      cacheAll: vi.fn(),
+      remove: vi.fn(),
+    };
+
     mockBillService.generate.mockReturnValue(of({
       id: 'bill-1',
       tabId: 'tab-1',
@@ -37,6 +47,20 @@ describe('BillComponent', () => {
         { id: 'order-1', menuItemName: 'Pizza', quantity: 2, unitPriceKobo: 5000, subtotalKobo: 10000 },
         { id: 'order-2', menuItemName: 'Pasta', quantity: 1, unitPriceKobo: 5000, subtotalKobo: 5000 },
       ],
+    }));
+    mockBillService.getReceipt.mockReturnValue(of({
+      bill: {
+        id: 'bill-1',
+        tabId: 'tab-1',
+        subtotalKobo: 15000,
+        serviceChargeKobo: 1500,
+        discountKobo: 0,
+        totalKobo: 17625,
+        orderItems: [
+          { id: 'order-1', menuItemName: 'Pizza', quantity: 2, unitPriceKobo: 5000, subtotalKobo: 10000 },
+          { id: 'order-2', menuItemName: 'Pasta', quantity: 1, unitPriceKobo: 5000, subtotalKobo: 5000 },
+        ],
+      },
     }));
     mockTabService.getTab.mockReturnValue(of({ id: 'tab-1', tableId: 'table-1', waiter: { fullName: 'John' } }));
     mockTableService.getTable.mockReturnValue(of({ id: 'table-1', tableNumber: 5 }));
@@ -57,6 +81,7 @@ describe('BillComponent', () => {
         { provide: OrdersApiService, useValue: mockOrdersService },
         { provide: MenuApiService, useValue: mockMenuService },
         { provide: BusinessApiService, useValue: mockBusinessApi },
+        { provide: OfflineCacheService, useValue: mockCache },
         { provide: ActivatedRoute, useValue: { paramMap: paramMapSubject.asObservable() } },
         { provide: Router, useValue: { navigate: vi.fn() } },
       ],

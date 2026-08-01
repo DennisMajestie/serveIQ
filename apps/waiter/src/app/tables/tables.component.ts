@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService, ShiftsApiService, NotificationsApiService } from '@serveiq/shared/data-access';
+import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService, ShiftsApiService, NotificationsApiService, OfflineCacheService, NetworkService } from '@serveiq/shared/data-access';
 import { Table, Tab, User, Business, Shift, Notification } from '@serveiq/shared/models';
-import { forkJoin, interval, Subscription } from 'rxjs';
-import { firstValueFrom } from 'rxjs';
+import { forkJoin, interval, Subscription, of } from 'rxjs';
+import { firstValueFrom, catchError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { OfflineDataService } from '../services/offline-data.service';
 
 @Component({
   selector: 'app-tables',
@@ -17,6 +18,9 @@ import Swal from 'sweetalert2';
 export class TablesComponent implements OnInit, OnDestroy {
   private tablesApi = inject(TablesApiService);
   private tabsApi = inject(TabsApiService);
+  private offlineData = inject(OfflineDataService);
+  private cache = inject(OfflineCacheService);
+  private network = inject(NetworkService);
   private router = inject(Router);
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
@@ -112,9 +116,23 @@ export class TablesComponent implements OnInit, OnDestroy {
   private seenOrderReadyIds = new Set<string>();
 
   ngOnInit() {
+    this.cache.getCached<Table>('tables').subscribe(tables => {
+      if (tables.length > 0) {
+        this.tables.set(tables);
+        this.isDataReady.set(true);
+        this.isLoading.set(false);
+      }
+    });
+    this.cache.getCached<Tab>('tabs').pipe(
+      catchError(() => of([])),
+    ).subscribe(tabs => {
+      const open = tabs.filter(t => t.status === 'open');
+      if (open.length > 0) this.openTabs.set(open);
+    });
+
     forkJoin({
-      tables: this.tablesApi.getAllTables(),
-      tabs: this.tabsApi.getAllTabs({ status: 'open' }),
+      tables: this.offlineData.getTables(),
+      tabs: this.offlineData.getOpenTabs(),
     }).subscribe({
       next: (result) => {
         this.tables.set(Array.isArray(result.tables) ? result.tables : []);
@@ -134,9 +152,9 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.loadNotifications();
     this.pollSub = interval(30000).subscribe(async () => {
       try {
-        const tabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open' }));
+        const tabs = await firstValueFrom(this.offlineData.getOpenTabs());
         this.openTabs.set(Array.isArray(tabs) ? tabs : []);
-        const tables = await firstValueFrom(this.tablesApi.getAllTables());
+        const tables = await firstValueFrom(this.offlineData.getTables());
         if (Array.isArray(tables)) this.tables.set(tables);
         this.isSynced.set(true);
       } catch {}
@@ -151,7 +169,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   }
 
   loadTables() {
-    this.tablesApi.getAllTables().subscribe({
+    this.offlineData.getTables().subscribe({
       next: (tables) => {
         this.tables.set(tables);
         this.isSynced.set(true);
@@ -162,7 +180,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   loadOpenTabs() {
     this.tabsSub?.unsubscribe();
-    this.tabsSub = this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
+    this.tabsSub = this.offlineData.getOpenTabs().subscribe({
       next: (tabs) => {
         this.openTabs.set(Array.isArray(tabs) ? tabs : []);
       },

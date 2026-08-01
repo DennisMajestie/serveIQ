@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BillsApiService, TabsApiService, TablesApiService, PosApiService } from '@serveiq/shared/data-access';
+import { TabsApiService, TablesApiService, PosApiService, OfflineCacheService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../../services/currency-context.service';
+import { OfflineDataService } from '../../services/offline-data.service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-payment',
@@ -19,12 +21,13 @@ export class PaymentComponent implements OnInit {
   businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private billsApi = inject(BillsApiService);
   private tabService = inject(TabsApiService);
   private tableService = inject(TablesApiService);
   private http = inject(HttpClient);
   private posApi = inject(PosApiService);
   private currency = inject(CurrencyContextService);
+  private offlineData = inject(OfflineDataService);
+  private cache = inject(OfflineCacheService);
 
   tabId = signal('');
   table = signal<Table | null>(null);
@@ -62,11 +65,11 @@ export class PaymentComponent implements OnInit {
   }
 
   loadTableInfo(tabId: string) {
-    this.tabService.getTab(tabId).subscribe({
-      next: (tab: Tab) => {
-        if (tab.tableId) {
-          this.tableService.getTable(tab.tableId).subscribe({
-            next: (table) => this.table.set(table)
+    this.offlineData.getTab(tabId).subscribe({
+      next: (tab: Tab | null) => {
+        if (tab?.tableId) {
+          this.offlineData.getTable(tab.tableId).subscribe({
+            next: (table) => { if (table) this.table.set(table); }
           });
         }
       }
@@ -74,25 +77,42 @@ export class PaymentComponent implements OnInit {
   }
 
   private loadTab(tabId: string) {
-    this.tabService.getTab(tabId).subscribe({
-      next: (tab: Tab) => {
-        this.maxGuests.set(tab.partySize || 1);
-        if (tab.partySize && tab.partySize < this.splitCount()) {
-          this.splitCount.set(Math.max(1, tab.partySize));
+    this.offlineData.getTab(tabId).subscribe({
+      next: (tab: Tab | null) => {
+        if (tab) {
+          this.maxGuests.set(tab.partySize || 1);
+          if (tab.partySize && tab.partySize < this.splitCount()) {
+            this.splitCount.set(Math.max(1, tab.partySize));
+          }
         }
       }
     });
   }
 
   private loadBill(tabId: string) {
-    this.billsApi.getReceipt(tabId).subscribe({
-      next: (receipt: any) => {
-        const b = receipt.bill as Bill;
-        this.bill.set(b);
-        this.currentAmount.set((b.totalKobo / 100).toFixed(2));
+    this.cache.getByIndex<Bill>('bills', 'tab_id', tabId).pipe(
+      map(bills => {
+        const sorted = [...(bills || [])].sort((a, b) =>
+          (new Date((b as any).createdAt ?? 0) as any) - (new Date((a as any).createdAt ?? 0) as any));
+        return sorted.length > 0 ? sorted[0] : null;
+      })
+    ).subscribe(cached => {
+      if (cached) {
+        this.bill.set(cached);
+        this.currentAmount.set((cached.totalKobo / 100).toFixed(2));
         this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false)
+      } else {
+        this.offlineData.getBill(tabId).subscribe({
+          next: (b) => {
+            if (b) {
+              this.bill.set(b);
+              this.currentAmount.set((b.totalKobo / 100).toFixed(2));
+            }
+            this.isLoading.set(false);
+          },
+          error: () => this.isLoading.set(false),
+        });
+      }
     });
   }
 
@@ -288,27 +308,24 @@ export class PaymentComponent implements OnInit {
       const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
       const apiMethod = this.selectedMethod === 'ussd' ? 'transfer' : this.selectedMethod;
 
-      this.billsApi.recordPayment(this.tabId(), {
+      this.offlineData.recordPayment(this.tabId(), {
         amount,
         method: apiMethod,
         terminal_id: this.selectedMethod !== 'cash' ? this.selectedTerminalId() : undefined,
-      }).subscribe({
-        next: () => {
-          this.isProcessing.set(false);
-          this.isSuccess.set(true);
-          const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
-          setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
-            state: {
-              terminalLabel: this.selectedTerminalLabel(),
-              showConfetti: true,
-              splitAllocations: allocations,
-            }
-          }), 1000);
-        },
-        error: () => {
-          this.isProcessing.set(false);
-          Swal.fire({ icon: 'error', title: 'Payment Failed', text: 'Could not process payment. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
-        }
+      }).then(() => {
+        this.isProcessing.set(false);
+        this.isSuccess.set(true);
+        const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
+        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
+          state: {
+            terminalLabel: this.selectedTerminalLabel(),
+            showConfetti: true,
+            splitAllocations: allocations,
+          }
+        }), 1000);
+      }).catch(() => {
+        this.isProcessing.set(false);
+        Swal.fire({ icon: 'error', title: 'Payment Failed', text: 'Could not process payment. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       });
     });
   }

@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, BusinessApiService, ENVIRONMENT_CONFIG, showApiErrorToast, NotificationsApiService } from '@serveiq/shared/data-access';
+import { TabsApiService, OrdersApiService, TablesApiService, BusinessApiService, ENVIRONMENT_CONFIG, showApiErrorToast, NotificationsApiService, OfflineCacheService } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table, MenuItem, resolveImageUrl, OrderGroup, NotificationType } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
-import { interval, Subscription } from 'rxjs';
+import { interval, Subscription, from } from 'rxjs';
 import { CurrencyContextService } from '../../services/currency-context.service';
+import { OfflineDataService } from '../../services/offline-data.service';
 
 @Component({
   selector: 'app-tab-detail',
@@ -21,11 +22,12 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   private tabService = inject(TabsApiService);
   private orderService = inject(OrdersApiService);
   private tableService = inject(TablesApiService);
-  private menuService = inject(MenuApiService);
   private env = inject(ENVIRONMENT_CONFIG);
   private notificationsApi = inject(NotificationsApiService);
   private currency = inject(CurrencyContextService);
   private businessApi = inject(BusinessApiService);
+  private offlineData = inject(OfflineDataService);
+  private cache = inject(OfflineCacheService);
 
   businessSettings = signal<any>(null);
   tabId = signal('');
@@ -168,7 +170,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   }
 
   loadMenuItems() {
-    this.menuService.getAllItems().subscribe({
+    this.offlineData.getMenu().subscribe({
       next: (items) => this.menuItems.set(items || []),
       error: () => {}
     });
@@ -195,15 +197,28 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   }
 
   loadTab(id: string) {
-    this.tabService.getTab(id).subscribe({
-      next: (tab) => {
-        this.tab.set(tab);
-        this.loadOrders(id);
-        this.pollOrderStatus();
-        if (tab.tableId) {
-          this.tableService.getTable(tab.tableId).subscribe({
-            next: (table) => this.table.set(table)
+    this.cache.getById<Tab>('tabs', id).subscribe(cached => {
+      if (cached) {
+        this.tab.set(cached);
+        if (cached.tableId) {
+          this.cache.getById<Table>('tables', cached.tableId).subscribe(t => {
+            if (t) this.table.set(t);
           });
+        }
+        this.loadOrders(id);
+      }
+    });
+    this.offlineData.getTab(id).subscribe({
+      next: (tab) => {
+        if (tab) {
+          this.tab.set(tab);
+          this.loadOrders(id);
+          this.pollOrderStatus();
+          if (tab.tableId) {
+            this.offlineData.getTable(tab.tableId).subscribe({
+              next: (table) => { if (table) this.table.set(table); }
+            });
+          }
         }
       },
       error: (err) => {
@@ -214,32 +229,36 @@ export class TabDetailComponent implements OnInit, OnDestroy {
           setTimeout(() => this.router.navigate(['/tables']), 2500);
         } else {
           this.isLoading.set(false);
-          Swal.fire({ icon: 'error', title: 'Failed to Load Tab', text: 'Could not load tab details.', background: '#1A1A1A', color: '#fff', confirmButtonColor: '#f97316' });
         }
       }
     });
   }
 
   loadOrders(tabId: string) {
-    this.orderService.getByTab(tabId).subscribe({
+    this.cache.getByIndex<any>('orders', 'tab_id', tabId).subscribe(cached => {
+      if (cached.length > 0) this.applyOrders(cached);
+    });
+    this.offlineData.getOrdersByTab(tabId).subscribe({
       next: (items) => {
-        console.debug('loadOrders raw:', items);
-        const raw = Array.isArray(items) ? items : [];
-        const normalized = raw.map((item: any) => ({
-          ...item,
-          menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
-          priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
-          quantity: item.quantity ?? item.qty ?? 1
-        }));
-        console.debug('loadOrders normalized:', normalized);
-        this.items.set(normalized);
+        if (items && items.length > 0) this.applyOrders(items);
         this.isLoading.set(false);
       },
-      error: () => {
-        this.isLoading.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to Load Orders', text: 'Could not load order items.', background: '#1A1A1A', color: '#fff', confirmButtonColor: '#f97316' });
-      }
+      error: () => this.isLoading.set(false),
     });
+  }
+
+  private applyOrders(items: any[]): void {
+    console.debug('loadOrders raw:', items);
+    const raw = Array.isArray(items) ? items : [];
+    const normalized = raw.map((item: any) => ({
+      ...item,
+      menuItemId: item.menuItemId ?? item.menu_item_id ?? '',
+      priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
+      quantity: item.quantity ?? item.qty ?? 1
+    }));
+    console.debug('loadOrders normalized:', normalized);
+    this.items.set(normalized);
+    this.isLoading.set(false);
   }
 
   private pollOrderStatus() {
@@ -254,7 +273,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     };
 
     const checkTabFallback = () => {
-      this.orderService.getByTab(tid).subscribe({
+      this.offlineData.getOrdersByTab(tid).subscribe({
         next: (orders) => {
           if (!orders || orders.length === 0) return;
           const s = ((orders[0] as any).orderStatus || (orders[0] as any).order_status || '') as string;
@@ -410,9 +429,9 @@ export class TabDetailComponent implements OnInit, OnDestroy {
       confirmButtonText: 'Remove'
     }).then(result => {
       if (result.isConfirmed) {
-        this.orderService.deleteItem(item.id).subscribe(() =>
-          this.items.update(is => is.filter(i => i.id !== item.id))
-        );
+        from(this.offlineData.deleteOrderItem(item.id)).subscribe({
+          next: () => this.items.update(is => is.filter(i => i.id !== item.id))
+        });
       }
     });
   }
@@ -426,10 +445,11 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   private addItemsFromMenu(selectedItems: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }>) {
     const orderItems = selectedItems.map(item => ({
       menu_item_id: item.id,
+      name: item.name,
       quantity: item.qty,
       notes: item.portionName ? `Portion: ${item.portionName}` : ''
     }));
-    this.orderService.addItems(this.tabId(), orderItems).subscribe({
+    from(this.offlineData.addOrderItems(this.tabId(), orderItems)).subscribe({
       next: (response) => {
         const normalized = (response || []).map((item: any) => ({
           ...item,
@@ -479,17 +499,9 @@ export class TabDetailComponent implements OnInit, OnDestroy {
       confirmButtonText: 'Close Tab'
     }).then(result => {
       if (result.isConfirmed) {
-        this.tabService.closeTab(this.tabId()).subscribe({
-          next: (_result: any) => {
-            this.router.navigate(['/tabs/bill', this.tabId()]);
-          },
-          error: () => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'Failed to close tab'
-            });
-          }
+        from(this.offlineData.closeTab(this.tabId())).subscribe({
+          next: () => this.router.navigate(['/tabs/bill', this.tabId()]),
+          error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to close tab' })
         });
       }
     });

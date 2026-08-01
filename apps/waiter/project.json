@@ -13,6 +13,7 @@
       "options": {
         "outputPath": "dist/apps/waiter",
         "browser": "apps/waiter/src/main.ts",
+        "polyfills": ["zone.js"],
         "tsConfig": "apps/waiter/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -25,16 +26,16 @@
             "input": "apps/waiter/src/assets"
           }
         ],
-        "styles": ["apps/waiter/src/styles.scss"],
-        "fileReplacements": [
-          {
-            "replace": "apps/waiter/src/environments/environment.ts",
-            "with": "apps/waiter/src/environments/environment.prod.ts"
-          }
-        ]
+        "styles": ["apps/waiter/src/styles.scss"]
       },
       "configurations": {
         "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/waiter/src/environments/environment.ts",
+              "with": "apps/waiter/src/environments/environment.prod.ts"
+            }
+          ],
           "outputHashing": "all"
         },
         "development": {
@@ -49,7 +50,8 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "options": {
-        "port": 4201
+        "port": 4201,
+        "proxyConfig": "apps/waiter/proxy.conf.json"
       },
       "configurations": {
         "production": {
@@ -64,12 +66,13 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
-    "test": {
-      "executor": "@angular/build:unit-test",
-      "options": {
-        "watch": false
-      }
-    },
+      "test": {
+        "executor": "@angular/build:unit-test",
+        "options": {
+          "watch": false,
+          "setupFiles": ["apps/waiter/src/test-setup.ts"]
+        }
+      },
     "serve-static": {
       "continuous": true,
       "executor": "@nx/web:file-server",

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { TablesApiService, TabsApiService, OrdersApiService, BusinessApiService, AuthService, UserApiService, ShiftsApiService, NotificationsApiService } from '@serveiq/shared/data-access';
+import { TablesApiService, TabsApiService, OrdersApiService, BusinessApiService, AuthService, UserApiService, ShiftsApiService, NotificationsApiService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
 import { TablesComponent } from './tables.component';
 import { of } from 'rxjs';
 
@@ -49,6 +49,7 @@ describe('TablesComponent', () => {
         { provide: UserApiService, useValue: mockUserApi },
         { provide: ShiftsApiService, useValue: mockShiftsApi },
         { provide: NotificationsApiService, useValue: mockNotificationsApi },
+        { provide: ENVIRONMENT_CONFIG, useValue: { apiUrl: 'http://test' } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => null } } } },
       ],
     }).compileComponents();

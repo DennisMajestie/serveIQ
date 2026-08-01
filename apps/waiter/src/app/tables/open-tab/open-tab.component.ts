@@ -2,9 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, TablesApiService, showApiErrorToast } from '@serveiq/shared/data-access';
+import { TabsApiService, TablesApiService, showApiErrorToast, OfflineCacheService, OfflineSyncEngine, NetworkService } from '@serveiq/shared/data-access';
 import { OpenTabRequest, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { OfflineDataService } from '../../services/offline-data.service';
 
 @Component({
   selector: 'app-open-tab',
@@ -19,6 +20,8 @@ export class OpenTabComponent implements OnInit {
   private router = inject(Router);
   private tabsApi = inject(TabsApiService);
   private tablesApi = inject(TablesApiService);
+  private offlineData = inject(OfflineDataService);
+  private network = inject(NetworkService);
 
   tableId = '';
   tableName = 'Table —';
@@ -79,27 +82,27 @@ export class OpenTabComponent implements OnInit {
       tab_type: this.tabType,
     };
 
-    this.tabsApi.createTab(request).subscribe({
-      next: (newTab) => {
-        if (newTab?.id) {
-          this.router.navigate(['/tabs/detail', newTab.id]);
+    this.offlineData.openTab(request).then((result) => {
+      if (result?.id) {
+        if (!this.network.isOnline()) {
+          Swal.fire({ icon: 'success', title: 'Tab Saved Offline', text: 'Will sync when connected', timer: 2000, showConfirmButton: false });
         }
-      },
-      error: (err) => {
-        if (err?.statusCode === 400 && err?.details?.message?.includes('already exists')) {
-          this.tabsApi.getAllTabs({ status: 'open' }).subscribe((tabs) => {
-            const existing = (Array.isArray(tabs) ? tabs : []).find(
-              (t: Tab) => t.tableId === this.tableId
-            );
-            if (existing) {
-              this.router.navigate(['/tabs/detail', existing.id], { replaceUrl: true });
-              return;
-            }
-          });
-          return;
-        }
-        showApiErrorToast(err, 'Failed to open tab');
+        this.router.navigate(['/tabs/detail', result.id]);
       }
+    }).catch((err) => {
+      if (err?.statusCode === 400 && err?.details?.message?.includes('already exists')) {
+        this.tabsApi.getAllTabs({ status: 'open' }).subscribe((tabs) => {
+          const existing = (Array.isArray(tabs) ? tabs : []).find(
+            (t: Tab) => t.tableId === this.tableId
+          );
+          if (existing) {
+            this.router.navigate(['/tabs/detail', existing.id], { replaceUrl: true });
+            return;
+          }
+        });
+        return;
+      }
+      showApiErrorToast(err, 'Failed to open tab');
     });
   }
 }

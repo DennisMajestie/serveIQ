@@ -6,7 +6,7 @@ import { permissionGuard } from './core/permission.guard';
 export const appRoutes: Route[] = [
   {
     path: '',
-    loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent)
+    loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
   },
   {
     path: 'app',

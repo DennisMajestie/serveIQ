@@ -1,83 +1,104 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, signal, effect } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { OfflineCacheService, SyncQueueEntry } from './offline-cache.service';
+import { NetworkService } from './network.service';
+import { catchError, firstValueFrom, timeout } from 'rxjs';
 
-const STORAGE_KEY = 'offline_sync_queue';
+const MAX_RETRIES = 3;
+const BASE_DELAY_MS = 2000;
 
-interface SyncMutation {
-  id: string;
-  type: string;
-  payload: any;
-  timestamp: number;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class OfflineSyncEngine {
-  private syncQueue: SyncMutation[] = [];
+  private cache = inject(OfflineCacheService);
+  private network = inject(NetworkService);
+  private http = inject(HttpClient);
+
+  readonly pendingCount = signal(0);
+  readonly lastSyncError = signal<string | null>(null);
   private processing = false;
 
   constructor() {
-    this.loadFromStorage();
-    window.addEventListener('online', () => this.processSync());
+    this.refreshPendingCount();
+    effect(() => {
+      if (this.network.isOnline()) this.processSync();
+    });
   }
 
-  async queueMutation(mutation: { type: string; payload: any }) {
-    const entry: SyncMutation = {
+  async queueMutation(entityType: string, operation: string, payload: any): Promise<void> {
+    const entry: SyncQueueEntry = {
       id: crypto.randomUUID?.() ?? Date.now().toString(36),
-      type: mutation.type,
-      payload: mutation.payload,
+      entityType,
+      operation,
+      payload,
+      clientIdempotencyKey: `${entityType}.${operation}.${payload.id ?? Date.now()}`,
       timestamp: Date.now(),
+      attempts: 0,
     };
-    this.syncQueue.push(entry);
-    this.persistToStorage();
+    this.cache.queueMutation(entry);
+    this.refreshPendingCount();
+
+    if (this.network.isOnline()) {
+      this.processSync();
+    }
   }
 
-  async processSync() {
-    if (this.processing || this.syncQueue.length === 0) return;
+  async processSync(): Promise<void> {
+    if (this.processing || !this.network.isOnline()) return;
     this.processing = true;
 
     try {
-      const batch = [...this.syncQueue];
-      this.syncQueue = [];
-      this.persistToStorage();
+      const queue = await firstValueFrom(this.cache.getPendingMutations());
+      if (queue.length === 0) {
+        this.lastSyncError.set(null);
+        return;
+      }
 
-      for (const mutation of batch) {
+      for (const entry of queue) {
         try {
-          const response = await fetch(mutation.payload.url || '/api/v1/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(mutation.payload),
-          });
-          if (!response.ok) {
-            this.syncQueue.push(mutation);
+          await this.replayMutation(entry);
+          this.cache.removeMutation(entry.id);
+        } catch (err) {
+          entry.attempts++;
+          if (entry.attempts >= MAX_RETRIES) {
+            entry.lastError = err instanceof Error ? err.message : 'Sync failed';
+            this.cache.updateMutation(entry.id, { attempts: entry.attempts, lastError: entry.lastError });
+            this.lastSyncError.set(entry.lastError);
+          } else {
+            const delay = BASE_DELAY_MS * Math.pow(2, entry.attempts - 1);
+            this.cache.updateMutation(entry.id, { attempts: entry.attempts });
+            await new Promise(r => setTimeout(r, delay));
+            return this.processSync();
           }
-        } catch {
-          this.syncQueue.push(mutation);
         }
       }
 
-      this.persistToStorage();
+      this.lastSyncError.set(null);
     } finally {
       this.processing = false;
+      this.refreshPendingCount();
     }
   }
 
-  private loadFromStorage() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        this.syncQueue = JSON.parse(stored);
-      }
-    } catch {
-      this.syncQueue = [];
-    }
+  private async replayMutation(entry: SyncQueueEntry): Promise<void> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = {
+      entity_type: entry.entityType,
+      operation: entry.operation,
+      payload: entry.payload,
+      client_idempotency_key: entry.clientIdempotencyKey,
+    };
+
+    await firstValueFrom(
+      this.http.post('/api/v1/sync/queue', body, { headers }).pipe(
+        timeout(10000),
+        catchError((err) => { throw err; })
+      )
+    );
   }
 
-  private persistToStorage() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.syncQueue));
-    } catch {
-      console.warn('Failed to persist sync queue to localStorage');
-    }
+  private refreshPendingCount(): void {
+    this.cache.getPendingMutations().subscribe(queue => {
+      this.pendingCount.set(queue.length);
+    });
   }
 }
