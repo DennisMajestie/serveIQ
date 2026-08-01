@@ -28,18 +28,59 @@
       <p class="branch-name">{{ menu.branchName }}</p>
     </header>
 
-    <!-- Category Tabs -->
-    <nav class="categories">
-      @for (cat of categories(); track cat) {
+    <!-- Tracking -->
+    <div class="tracking-section">
+      <div class="tracking-input-wrap" [class.has-error]="trackingError()">
+        <span class="tracking-icon">🔍</span>
+        <input
+          type="text"
+          class="tracking-input"
+          placeholder="Track your order — enter code (e.g. A7KM3)"
+          [(ngModel)]="trackingCode"
+          (keydown.enter)="submitTracking()"
+          maxlength="16"
+        />
+        <button class="track-btn" (click)="submitTracking()" [disabled]="!trackingCode.trim()">
+          Track
+        </button>
+      </div>
+      @if (trackingError()) {
+        <p class="tracking-error-msg">{{ trackingError() }}</p>
+      }
+    </div>
+
+    <!-- Search & Categories -->
+    <div class="sticky-bar">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search menu..."
+          [(ngModel)]="searchQuery"
+        />
+        @if (searchQuery()) {
+          <button class="clear-btn" (click)="searchQuery.set('')">✕</button>
+        }
+      </div>
+
+      <nav class="categories">
         <button
           class="category-btn"
-          [class.active]="selectedCategory() === cat"
-          (click)="selectedCategory.set(cat)"
-        >
-          {{ cat }}
-        </button>
-      }
-    </nav>
+          [class.active]="selectedCategory() === ''"
+          (click)="selectedCategory.set('')"
+        >All</button>
+        @for (cat of categories(); track cat) {
+          <button
+            class="category-btn"
+            [class.active]="selectedCategory() === cat"
+            (click)="selectedCategory.set(cat)"
+          >
+            {{ cat }}
+          </button>
+        }
+      </nav>
+    </div>
 
     <!-- Order type -->
     @if (cartService.orderType(); as type) {
@@ -58,32 +99,45 @@
 
     <!-- Items -->
     <main class="items">
-      @for (item of groupItems(selectedCategory()!); track item.id) {
-        <div class="item" [class.sold-out]="item.isSoldOut">
-          @if (item.imageUrl) {
-            <img [src]="item.imageUrl" [alt]="item.name" class="item-image" />
-          }
-          <div class="item-info">
-            <div class="item-header">
-              <h3 class="item-name">{{ item.name }}</h3>
-              <span class="item-price">₦{{ (item.priceKobo / 100).toLocaleString() }}</span>
+      @if (filteredItems().length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">🔍</span>
+          <p>No items found</p>
+        </div>
+      } @else {
+        <div class="items-grid">
+          @for (item of filteredItems(); track item.id) {
+            <div class="item-card" [class.sold-out]="item.isSoldOut">
+              <div class="card-image">
+                @if (item.imageUrl) {
+                  <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+                } @else {
+                  <div class="img-placeholder">🍽️</div>
+                }
+                @if (item.isSoldOut) {
+                  <span class="sold-out-badge">Sold Out</span>
+                }
+              </div>
+              <div class="card-body">
+                <h3 class="item-name">{{ item.name }}</h3>
+                @if (item.description) {
+                  <p class="item-desc">{{ item.description }}</p>
+                }
+                <div class="card-footer">
+                  <span class="item-price">₦{{ (item.priceKobo / 100).toLocaleString() }}</span>
+                  @if (!item.isSoldOut && !readOnly()) {
+                    <button
+                      class="add-btn"
+                      [class.added]="addedItemId() === item.id"
+                      (click)="addToCart(item)"
+                    >
+                      {{ addedItemId() === item.id ? 'Added' : 'Add' }}
+                    </button>
+                  }
+                </div>
+              </div>
             </div>
-            @if (item.description) {
-              <p class="item-desc">{{ item.description }}</p>
-            }
-            @if (item.isSoldOut) {
-              <span class="sold-out-badge">Sold Out</span>
-            }
-            @if (!item.isSoldOut && !readOnly()) {
-              <button
-                class="add-btn"
-                [class.added]="addedItemId() === item.id"
-                (click)="addToCart(item)"
-              >
-                {{ addedItemId() === item.id ? 'Added' : 'Add' }}
-              </button>
-            }
-          </div>
+          }
         </div>
       }
     </main>
