@@ -51,7 +51,8 @@
     }
     @if (readOnly()) {
       <div class="readonly-note">
-        🍽️ Dine-in menu preview — no ordering here. Scan the QR code at your table to order, or switch to Takeaway.
+        <span>🍽️ Dine-in menu preview — no ordering here.</span>
+        <button class="readonly-switch" (click)="openTypeChooser()">Switch to Takeaway</button>
       </div>
     }
 
