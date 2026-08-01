@@ -1,0 +1,17 @@
+{
+  "installCommand": "npm install",
+  "buildCommand": "npx nx build public-menu --configuration=production",
+  "outputDirectory": "../../dist/apps/public-menu/browser",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/api/v1/(.*)",
+      "destination": "https://serveiq-backend.onrender.com/api/v1/$1"
+    },
+    {
+      "source": "/((?!.*\\.).*)",
+      "destination": "/"
+    }
+  ]
+}
