@@ -13,8 +13,13 @@ const STORAGE_KEYS = {
   trackingCode: 'serveiq_tracking_code',
   branchId: 'serveiq_branch_id',
   tableId: 'serveiq_table_id',
+  orderType: 'serveiq_order_type',
   cartItems: 'serveiq_cart_items',
 };
+
+export type OrderType = 'dine_in' | 'takeaway';
+
+const ORDER_TYPES: OrderType[] = ['dine_in', 'takeaway'];
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
@@ -23,6 +28,7 @@ export class CartService {
   readonly trackingCode = signal<string | null>(sessionStorage.getItem(STORAGE_KEYS.trackingCode));
   readonly branchId = signal<string | null>(sessionStorage.getItem(STORAGE_KEYS.branchId));
   readonly tableId = signal<string | null>(sessionStorage.getItem(STORAGE_KEYS.tableId));
+  readonly orderType = signal<OrderType | null>(this.loadOrderType());
 
   readonly itemCount = computed(() => this.items().reduce((sum, i) => sum + i.quantity, 0));
   readonly totalKobo = computed(() => this.items().reduce((sum, i) => sum + i.priceKobo * i.quantity, 0));
@@ -77,6 +83,14 @@ export class CartService {
   setTableId(tableId: string) {
     this.tableId.set(tableId);
     sessionStorage.setItem(STORAGE_KEYS.tableId, tableId);
+    if (!this.orderType()) {
+      this.setOrderType('dine_in');
+    }
+  }
+
+  setOrderType(type: OrderType) {
+    this.orderType.set(type);
+    sessionStorage.setItem(STORAGE_KEYS.orderType, type);
   }
 
   clearSession() {
@@ -84,11 +98,18 @@ export class CartService {
     this.trackingCode.set(null);
     this.branchId.set(null);
     this.tableId.set(null);
+    this.orderType.set(null);
     sessionStorage.removeItem(STORAGE_KEYS.tabId);
     sessionStorage.removeItem(STORAGE_KEYS.trackingCode);
     sessionStorage.removeItem(STORAGE_KEYS.branchId);
     sessionStorage.removeItem(STORAGE_KEYS.tableId);
+    sessionStorage.removeItem(STORAGE_KEYS.orderType);
     this.clearCart();
+  }
+
+  private loadOrderType(): OrderType | null {
+    const raw = sessionStorage.getItem(STORAGE_KEYS.orderType);
+    return ORDER_TYPES.includes(raw as OrderType) ? (raw as OrderType) : null;
   }
 
   private loadCart(): CartItem[] {

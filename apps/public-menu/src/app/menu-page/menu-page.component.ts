@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { PublicMenuApiService, PublicMenuData } from '@serveiq/shared/data-access';
-import { CartService } from '../services/cart.service';
+import { PublicMenuApiService, PublicMenuData, showApiErrorToast } from '@serveiq/shared/data-access';
+import { CartService, OrderType } from '../services/cart.service';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -24,6 +24,7 @@ export class MenuPageComponent implements OnInit {
   categories = signal<string[]>([]);
   selectedCategory = signal<string | null>(null);
   addedItemId = signal<string | null>(null);
+  showTypeChooser = signal(false);
 
   ngOnInit() {
     const branchId = this.route.snapshot.paramMap.get('branchId');
@@ -47,9 +48,31 @@ export class MenuPageComponent implements OnInit {
         const cats = [...new Set(menu.items.map(i => i.category))];
         this.categories.set(cats);
         this.selectedCategory.set(cats[0] ?? null);
+        this.maybeShowTypeChooser();
       },
       error: () => this.error.set(true),
     });
+  }
+
+  private maybeShowTypeChooser() {
+    // Prompt for Dine In / Takeaway on entry unless already chosen or mid-session.
+    this.showTypeChooser.set(!this.cartService.tabId() && this.cartService.orderType() === null);
+  }
+
+  openTypeChooser() {
+    this.showTypeChooser.set(true);
+  }
+
+  chooseType(type: OrderType) {
+    if (type === 'dine_in' && !this.cartService.hasTable()) {
+      showApiErrorToast(
+        { message: 'Please scan the QR code at your table to order dine-in, or choose Takeaway.' },
+        'Table required',
+      );
+      return;
+    }
+    this.cartService.setOrderType(type);
+    this.showTypeChooser.set(false);
   }
 
   private applyBrandColors(menu: PublicMenuData): void {

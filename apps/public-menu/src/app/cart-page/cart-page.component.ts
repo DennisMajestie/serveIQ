@@ -23,7 +23,7 @@ export class CartPageComponent {
   customerName = '';
   partySize = 1;
   showTypeModal = signal(false);
-  selectedType = signal<'dine_in' | 'takeaway'>('dine_in');
+  selectedType = signal<'dine_in' | 'takeaway'>(this.cartService.orderType() ?? 'dine_in');
 
   get totalKobo() {
     return this.cartService.items().reduce((sum, i) => sum + i.priceKobo * i.quantity, 0);
@@ -35,6 +35,7 @@ export class CartPageComponent {
 
   confirmType(type: 'dine_in' | 'takeaway') {
     this.showTypeModal.set(false);
+    this.cartService.setOrderType(type);
     if (type === 'dine_in' && !this.cartService.tableId() && !this.cartService.tabId()) {
       showApiErrorToast({ message: 'No table selected. Please scan the QR code at your table.' }, 'Table not found');
       return;

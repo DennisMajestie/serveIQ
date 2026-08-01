@@ -40,6 +40,15 @@
       }
     </nav>
 
+    <!-- Order type -->
+    @if (cartService.orderType(); as type) {
+      <button class="order-type-pill" (click)="openTypeChooser()">
+        <span class="pill-icon">{{ type === 'takeaway' ? '🥡' : '🍽️' }}</span>
+        {{ type === 'takeaway' ? 'Takeaway' : 'Dine In' }}
+        <span class="pill-change">Change</span>
+      </button>
+    }
+
     <!-- Items -->
     <main class="items">
       @for (item of groupItems(selectedCategory()!); track item.id) {
@@ -81,4 +90,30 @@
     <span class="fab-badge">{{ cartService.itemCount() }}</span>
     <span class="fab-total">₦{{ (cartService.totalKobo() / 100).toLocaleString() }}</span>
   </button>
+}
+
+<!-- Dine In / Takeaway Chooser (on entry) -->
+@if (showTypeChooser()) {
+  <div class="modal-overlay" (click)="showTypeChooser.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <span class="modal-icon">🍽️</span>
+      <h2>How would you like to order?</h2>
+      <div class="type-options">
+        <button class="type-card dine-in" (click)="chooseType('dine_in')">
+          <span class="type-icon">🍽️</span>
+          <span class="type-label">Dine In</span>
+          <span class="type-desc">Eat at the table</span>
+          @if (!cartService.hasTable()) {
+            <span class="type-hint">Scan the QR code at your table</span>
+          }
+        </button>
+        <button class="type-card takeaway" (click)="chooseType('takeaway')">
+          <span class="type-icon">🥡</span>
+          <span class="type-label">Takeaway</span>
+          <span class="type-desc">Pack and go</span>
+        </button>
+      </div>
+      <button class="cancel-btn" (click)="showTypeChooser.set(false)">Continue anyway</button>
+    </div>
+  </div>
 }
