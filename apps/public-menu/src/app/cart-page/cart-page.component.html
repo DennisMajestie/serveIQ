@@ -65,7 +65,7 @@
     <button
       class="place-order-btn"
       [disabled]="placing"
-      (click)="openTypeModal()"
+      (click)="onPlaceOrder()"
     >
       {{ placing ? 'Placing Order...' : 'Place Order' }}
     </button>

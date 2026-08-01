@@ -33,6 +33,14 @@ export class CartPageComponent {
     this.showTypeModal.set(true);
   }
 
+  onPlaceOrder() {
+    if (this.cartService.orderType()) {
+      this.placeOrder();
+    } else {
+      this.showTypeModal.set(true);
+    }
+  }
+
   confirmType(type: 'dine_in' | 'takeaway') {
     this.showTypeModal.set(false);
     this.cartService.setOrderType(type);
@@ -52,7 +60,7 @@ export class CartPageComponent {
       return;
     }
 
-    const effectiveType = tabType || 'dine_in';
+    const effectiveType = tabType || this.cartService.orderType() || 'dine_in';
     this.placing = true;
     const existingTabId = this.cartService.tabId();
     const existingCode = this.cartService.trackingCode();
