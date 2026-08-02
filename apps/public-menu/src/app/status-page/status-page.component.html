@@ -130,30 +130,42 @@
         @if (paymentInfo(); as pay) {
           <div class="payment-details">
             <h3>Pay ₦{{ (pay.amountKobo / 100).toLocaleString() }}</h3>
+            <p class="payment-hint">Choose where you'll pay, or a terminal's bank account to transfer to.</p>
 
-            @for (method of pay.paymentMethods; track method.type) {
-              <div class="payment-method">
-                @if (method.type === 'transfer') {
-                  <div class="method-card transfer">
-                    <h4>📲 Bank Transfer</h4>
-                    <p>Account: <strong>{{ method.accountNumber }}</strong></p>
-                    <p>Amount: <strong>₦{{ (pay.amountKobo / 100).toFixed(2) }}</strong></p>
-                    <p class="note">Transfer to the account above, then notify staff</p>
-                  </div>
-                }
-                @if (method.type === 'pos') {
-                  <div class="method-card pos">
-                    <h4>💳 Pay with Card (POS)</h4>
-                    <p>Pay at the counter with any POS terminal</p>
-                  </div>
-                }
-                @if (method.type === 'cash') {
-                  <div class="method-card cash">
-                    <h4>💵 Cash</h4>
-                    <p>Pay at the counter</p>
-                  </div>
-                }
-              </div>
+            @for (method of pay.paymentMethods; track method.id ?? method.type) {
+              @if (method.type === 'terminal') {
+                <button
+                  class="pay-term"
+                  [class.selected]="selectedTerminalId() === method.id"
+                  type="button"
+                  (click)="selectTerminal(method.id!)"
+                >
+                  <span class="term-label">💳 {{ method.label }}</span>
+                  @if (selectedTerminalId() === method.id) {
+                    <span class="term-detail">
+                      Pay with card at this terminal.
+                      @if (method.hasTransfer) {
+                        or <strong>bank transfer</strong> to account <strong class="acct">{{ method.accountNumber }}</strong>.
+                      }
+                    </span>
+                  } @else {
+                    <span class="term-meta">{{ method.hasTransfer ? 'Card or bank transfer' : 'Pay with card' }}</span>
+                  }
+                </button>
+              }
+              @if (method.type === 'cash') {
+                <button
+                  class="pay-term cash"
+                  [class.selected]="selectedTerminalId() === 'cash'"
+                  type="button"
+                  (click)="selectTerminal('cash')"
+                >
+                  <span class="pay-terminal-label">💵 {{ method.label }}</span>
+                  @if (selectedTerminalId() === 'cash') {
+                    <span class="term-detail">Pay at the counter with cash.</span>
+                  }
+                </button>
+              }
             }
 
             @if (paymentStatus(); as ps) {
@@ -161,7 +173,7 @@
                 @if (ps.paymentStatus === 'paid') {
                   <p>✅ Payment confirmed! Thank you.</p>
                 } @else {
-                  <p>⏳ Waiting for payment confirmation...</p>
+                  <p>💳 {{ selectedTerminalLabel() || 'Choose a payment option' }} — notify counter staff once you've paid.</p>
                 }
               </div>
             }

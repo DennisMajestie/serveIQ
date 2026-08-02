@@ -365,6 +365,64 @@
   }
 }
 
+.payment-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.pay-term {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover {
+    border-color: var(--primary);
+  }
+
+  &.selected,
+  &:focus-visible {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+    outline: none;
+  }
+
+  &.cash.selected {
+    border-color: #f59e0b;
+    background: color-mix(in srgb, #f59e0b 8%, var(--surface));
+  }
+
+  .term-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .term-meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .term-detail {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .acct {
+    color: var(--text);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+}
+
 .payment-method {
   display: flex;
   flex-direction: column;

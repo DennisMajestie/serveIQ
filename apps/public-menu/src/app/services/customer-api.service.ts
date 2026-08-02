@@ -25,9 +25,11 @@ export interface PlaceOrderResponse {
 }
 
 export interface PaymentMethod {
-  type: 'transfer' | 'pos' | 'cash';
+  type: 'terminal' | 'pos' | 'transfer' | 'cash';
+  id?: string;
   label?: string;
   accountNumber?: string;
+  hasTransfer?: boolean;
   terminals?: { id: string; label: string }[];
 }
 

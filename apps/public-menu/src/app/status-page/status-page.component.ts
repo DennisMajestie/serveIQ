@@ -32,6 +32,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   tabData = signal<TabStatusResponse | null>(null);
   paymentInfo = signal<PaymentInitResponse | null>(null);
   paymentStatus = signal<PaymentStatusResponse | null>(null);
+  selectedTerminalId = signal<string | null>(null);
   loading = signal(true);
   error = signal(false);
   polling = signal(false);
@@ -43,6 +44,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   adRotateInterval: ReturnType<typeof setInterval> | null = null;
 
   private pollSub?: Subscription;
+  private paymentSub?: Subscription;
 
   readonly currentAd = computed(() => {
     const list = this.ads();
@@ -79,7 +81,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const tab = this.tabData();
     const payStatus = this.paymentStatus();
     if (!tab) return 'ordering';
-    if (payStatus?.paymentStatus === 'paid') return 'paid';
+    if (payStatus?.paymentStatus === 'paid' || tab.status === 'paid') return 'paid';
     if (tab.status === 'open' || tab.status === 'billed') {
       const anyDelivered = tab.orders.some(o =>
         o.orderStatus?.toLowerCase() === 'delivered'
@@ -185,10 +187,27 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.api.getTabStatus(tabId, trackingCode).subscribe({
       next: (data) => this.tabData.set(data),
     });
+    this.pollPaymentStatus(tabId, trackingCode);
+  }
+
+  private pollPaymentStatus(tabId: string, trackingCode: string) {
+    this.paymentSub?.unsubscribe();
+    this.paymentSub = interval(8000).pipe(
+      switchMap(() => this.api.getPaymentStatus(tabId, trackingCode))
+    ).subscribe({
+      next: (status) => {
+        this.paymentStatus.set(status);
+        if (status.paymentStatus === 'paid') {
+          this.paymentSub?.unsubscribe();
+        }
+      },
+      error: () => {},
+    });
   }
 
   private stopPolling() {
     this.pollSub?.unsubscribe();
+    this.paymentSub?.unsubscribe();
     this.polling.set(false);
   }
 
@@ -225,21 +244,39 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.api.initializePayment(tabId, trackingCode).pipe(finalize(() => this.initializingPayment.set(false))).subscribe({
       next: (res) => {
         this.paymentInfo.set(res);
+        this.selectedTerminalId.set(null);
         this.startPaymentPolling(tabId, trackingCode);
       },
       error: (err) => showApiErrorToast(err, 'Failed to initialize payment'),
     });
   }
 
+  selectTerminal(id: string) {
+    this.selectedTerminalId.set(this.selectedTerminalId() === id ? null : id);
+  }
+
+  readonly selectedTerminal = computed<PaymentMethod | null>(() => {
+    const id = this.selectedTerminalId();
+    if (!id) return null;
+    return this.paymentInfo()?.paymentMethods.find(m => m.id === id) ?? null;
+  });
+
+  selectedTerminalLabel(): string {
+    const id = this.selectedTerminalId();
+    if (!id) return '';
+    if (id === 'cash') return 'Cash';
+    return this.selectedTerminal()?.label || 'POS terminal';
+  }
+
   private startPaymentPolling(tabId: string, trackingCode: string) {
-    this.pollSub?.unsubscribe();
-    this.pollSub = interval(5000).pipe(
+    this.paymentSub?.unsubscribe();
+    this.paymentSub = interval(5000).pipe(
       switchMap(() => this.api.getPaymentStatus(tabId, trackingCode))
     ).subscribe({
       next: (status) => {
         this.paymentStatus.set(status);
         if (status.paymentStatus === 'paid') {
-          this.stopPolling();
+          this.paymentSub?.unsubscribe();
         }
       },
       error: () => {},
