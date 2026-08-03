@@ -18,7 +18,7 @@ AdminShellComponent = __decorate([
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-header">
-          <h1 class="brand-name">RestoAdmin</h1>
+          <h1 class="brand-name">ServeIQ</h1>
           <p class="brand-subtitle">Management Portal</p>
         </div>
         <nav class="sidebar-nav">

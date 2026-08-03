@@ -248,7 +248,8 @@ navItems: { key: Section; label: string; icon: string }[] = [
         if (merged.length > 0) {
           this.paymentProviders.set(merged);
           const active = this.paymentProvider();
-          if (active === 'manual' && merged.some((p) => p.name !== 'manual')) {
+          const activeAvailable = merged.some((p) => p.name === active);
+          if (!activeAvailable) {
             this.paymentProvider.set('manual');
           }
         }

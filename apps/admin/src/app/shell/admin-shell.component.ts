@@ -43,7 +43,7 @@ interface NavItem {
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-header">
-          <h1 class="brand-name">RestoAdmin</h1>
+          <h1 class="brand-name">ServeIQ</h1>
           <p class="brand-subtitle">Management Portal</p>
         </div>
         <nav class="sidebar-nav">
@@ -181,11 +181,11 @@ interface NavItem {
             </li>
             <li class="nav-item" *ngIf="permissionService.hasPermission('assign_roles')">
               <a class="nav-link" routerLink="/app/roles" routerLinkActive="active">
-                <span class="material-symbols-outlined">lock_manager</span>
+                <span class="material-symbols-outlined">admin_panel_settings</span>
                 <span>Roles</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('restaurant_settings')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('restaurant_settings') && profile().role !== 'super_admin'">
               <a class="nav-link" routerLink="/app/settings" routerLinkActive="active">
                 <span class="material-symbols-outlined">settings</span>
                 <span>Settings</span>

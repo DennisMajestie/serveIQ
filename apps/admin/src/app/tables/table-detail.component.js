@@ -171,7 +171,7 @@ TableDetailComponent = __decorate([
           <span>Opened by Sarah J. • 42 Minutes ago</span>
         </div>
         <div class="footer-right">
-          RestoAdmin v2.4.1 • Server Node 04
+          ServeIQ v2.4.1 • Server Node 04
         </div>
       </footer>
     </div>
