@@ -6,6 +6,13 @@ import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 import { Branch, CreateBranchRequest, DashboardStats } from '@serveiq/shared/models';
 
+export interface PlatformPaymentProviderSummary {
+  name: string;
+  label: string;
+  type: 'manual' | 'webhook';
+  verification_method?: 'hmac-sha512' | 'rsa' | 'none';
+}
+
 /** Manages CRUD operations for restaurant branches. */
 @Injectable({ providedIn: 'root' })
 export class BranchesApiService extends BaseApiService {
@@ -44,6 +51,11 @@ export class BranchesApiService extends BaseApiService {
   /** Get dashboard summary stats (tables, open tabs, orders). */
   getStats(): Observable<DashboardStats> {
     return this.get<DashboardStats>(API_CONFIG.endpoints.branches.stats);
+  }
+
+  /** List platform-wide payment providers defined by the super admin. */
+  getPlatformPaymentProviders(): Observable<PlatformPaymentProviderSummary[]> {
+    return this.get<PlatformPaymentProviderSummary[]>(API_CONFIG.endpoints.branches.paymentProviders);
   }
 
   /** Delete a branch. */

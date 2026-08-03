@@ -43,6 +43,7 @@ export const API_CONFIG = {
       delete: '/api/v1/branches/:id',
       stats: '/api/v1/branches/dashboard/stats',
       generateQr: '/api/v1/branches/:id/generate-qr',
+      paymentProviders: '/api/v1/branches/payment-providers',
     },
     // Menu
     menu: {

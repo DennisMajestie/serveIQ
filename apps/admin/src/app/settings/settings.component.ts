@@ -2,7 +2,7 @@ import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
+import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, ENVIRONMENT_CONFIG, EnvironmentConfig, PlatformPaymentProviderSummary } from '@serveiq/shared/data-access';
 import { Branch, User, Business } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -63,12 +63,14 @@ navItems: { key: Section; label: string; icon: string }[] = [
   branchFormLocation = signal('');
   isSavingBranch = signal(false);
   isSavingPayment = signal(false);
-  activeBranchId = signal(localStorage.getItem('activeBranchId') || localStorage.getItem('branchId') || '');
+  activeBranchId = signal(localStorage.getItem('activeBranchId') || '');
   businessSettings = signal<Business | null>(null);
 
   // Payment settings
   paymentProvider = signal<string>('manual');
   paymentProviders = signal<PaymentProviderConfig[]>([]);
+  platformProviders = signal<PlatformPaymentProviderSummary[]>([]);
+  isLoadingPlatform = signal(false);
   monniepointSecret = signal('');
   opayPublicKey = signal('');
   takeawayPolicy = signal<'prepay' | 'pay_on_pickup'>('prepay');
@@ -203,23 +205,56 @@ navItems: { key: Section; label: string; icon: string }[] = [
   }
 
   loadPaymentSettings() {
-    const branchId = this.activeBranchId() || localStorage.getItem('branchId') || '';
+    const branchId = this.activeBranchId();
     if (!branchId) return;
     this.branchesApi.getById(branchId).subscribe({
       next: (branch) => {
         const settings = branch.settings || {};
         this.paymentProvider.set(settings.payment_provider || 'manual');
         const providers = settings.payment_providers;
+        let base: PaymentProviderConfig[] = [];
         if (Array.isArray(providers) && providers.length > 0) {
-          this.paymentProviders.set(providers);
+          base = providers;
         } else {
-          this.paymentProviders.set(this.getDefaultProviders(settings));
+          base = this.getDefaultProviders(settings);
         }
         this.monniepointSecret.set(settings.monniepoint_webhook_secret || '');
         this.opayPublicKey.set(settings.opay_public_key || '');
         this.takeawayPolicy.set(settings.takeaway_payment_policy || 'prepay');
+        this.loadPlatformProviders(base);
       },
       error: () => {},
+    });
+  }
+
+  private loadPlatformProviders(existing: PaymentProviderConfig[]) {
+    this.isLoadingPlatform.set(true);
+    this.branchesApi.getPlatformPaymentProviders().subscribe({
+      next: (platform) => {
+        const list = Array.isArray(platform) ? platform : [];
+        this.platformProviders.set(list);
+        const merged = [...existing];
+        for (const gp of list) {
+          if (!merged.some((p) => p.name === gp.name)) {
+            merged.push({
+              name: gp.name,
+              type: gp.type,
+              label: gp.label,
+              verification_method: gp.verification_method,
+              config: {},
+            });
+          }
+        }
+        if (merged.length > 0) {
+          this.paymentProviders.set(merged);
+          const active = this.paymentProvider();
+          if (active === 'manual' && merged.some((p) => p.name !== 'manual')) {
+            this.paymentProvider.set('manual');
+          }
+        }
+        this.isLoadingPlatform.set(false);
+      },
+      error: () => this.isLoadingPlatform.set(false),
     });
   }
 
@@ -389,13 +424,25 @@ navItems: { key: Section; label: string; icon: string }[] = [
   }
 
   savePaymentSettings() {
-    const branchId = this.activeBranchId() || localStorage.getItem('branchId') || '';
+    const branchId = this.activeBranchId();
     if (!branchId) return;
     this.isSavingPayment.set(true);
+    const syncSecrets = this.paymentProviders().map((p) => {
+      const clone = { ...p, config: { ...p.config } };
+      if (p.name === this.paymentProvider() && p.type === 'webhook') {
+        if (p.verification_method === 'hmac-sha512' && this.monniepointSecret()) {
+          clone.config['webhook_secret'] = this.monniepointSecret();
+        }
+        if (p.verification_method === 'rsa' && this.opayPublicKey()) {
+          clone.config['public_key'] = this.opayPublicKey();
+        }
+      }
+      return clone;
+    });
     this.branchesApi.updateSettings(branchId, {
       settings: {
         payment_provider: this.paymentProvider(),
-        payment_providers: this.paymentProviders(),
+        payment_providers: syncSecrets,
         monniepoint_webhook_secret: this.monniepointSecret(),
         opay_public_key: this.opayPublicKey(),
         takeaway_payment_policy: this.takeawayPolicy(),
