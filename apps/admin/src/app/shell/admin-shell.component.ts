@@ -48,15 +48,26 @@ interface NavItem {
         </div>
         <nav class="sidebar-nav">
           <ul class="nav-list" *ngIf="profile().role === 'super_admin'">
-
             <li class="nav-section-label">System</li>
-<li class="nav-item">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/admin/dashboard" routerLinkActive="active">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Platform Overview</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" routerLink="/app/admin/businesses" routerLinkActive="active">
                 <span class="material-symbols-outlined">business</span>
                 <span>Businesses</span>
               </a>
             </li>
-<li class="nav-item">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/admin/payment-providers" routerLinkActive="active">
+                <span class="material-symbols-outlined">payments</span>
+                <span>Payment Providers</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" routerLink="/app/autopilot" routerLinkActive="active">
                 <span class="material-symbols-outlined">smart_toy</span>
                 <span>Autopilot AI</span>
