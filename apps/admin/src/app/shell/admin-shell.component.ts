@@ -74,6 +74,12 @@ interface NavItem {
                 <span>Ads</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/settings" routerLinkActive="active">
+                <span class="material-symbols-outlined">settings</span>
+                <span>Settings</span>
+              </a>
+            </li>
           </ul>
 
 <ul class="nav-list" *ngIf="permissionService.hasPermission('view_dashboard') && profile().role !== 'super_admin'">
@@ -180,7 +186,7 @@ interface NavItem {
                 <span>Roles</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('restaurant_settings')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('restaurant_settings') || profile().role === 'super_admin'">
               <a class="nav-link" routerLink="/app/settings" routerLinkActive="active">
                 <span class="material-symbols-outlined">settings</span>
                 <span>Settings</span>

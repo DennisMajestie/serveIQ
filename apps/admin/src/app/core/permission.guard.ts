@@ -8,6 +8,14 @@ export const permissionGuard = (requiredPermission: string): CanActivateFn => {
   return (): Observable<boolean | UrlTree> => {
     const permService = inject(PermissionService);
     const router = inject(Router);
+    const role = localStorage.getItem('userRole');
+
+    if (role === 'superadmin' || role === 'super_admin' || role === 'owner') {
+      return new Observable(sub => {
+        sub.next(true);
+        sub.complete();
+      });
+    }
 
     return permService.loadPermissions().pipe(
       map(() => {
