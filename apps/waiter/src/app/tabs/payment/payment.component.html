@@ -232,6 +232,9 @@
         @if (isSuccess()) {
           <span class="material-symbols-outlined">task_alt</span>
           <span>Payment Successful</span>
+          @if (isAutoConfirmed()) {
+            <span class="text-[10px] bg-[#4be277]/20 text-[#4be277] px-2 py-0.5 rounded-full ml-2">Auto-confirmed</span>
+          }
         }
       </button>
     </div>

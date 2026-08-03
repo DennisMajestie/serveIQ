@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../../services/currency-context.service';
 import { OfflineDataService } from '../../services/offline-data.service';
-import { map } from 'rxjs';
+import { map, interval, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-payment',
@@ -17,7 +17,7 @@ import { map } from 'rxjs';
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss']
 })
-export class PaymentComponent implements OnInit {
+export class PaymentComponent implements OnInit, OnDestroy {
   businessName = localStorage.getItem('businessName') || 'ServeIQ';
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -39,6 +39,7 @@ export class PaymentComponent implements OnInit {
   isEditingAmount = false;
   isProcessing = signal(false);
   isSuccess = signal(false);
+  isAutoConfirmed = signal(false);
   terminals = signal<any[]>([]);
   selectedTerminalId = signal('');
   selectedTerminalLabel = computed(() => {
@@ -52,6 +53,8 @@ export class PaymentComponent implements OnInit {
   splitAmounts = signal<number[]>([]);
   maxGuests = signal(0);
 
+  private pollSubscription?: Subscription;
+
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
@@ -62,6 +65,10 @@ export class PaymentComponent implements OnInit {
         this.loadBill(id);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.stopPaymentPolling();
   }
 
   loadTableInfo(tabId: string) {
@@ -101,6 +108,7 @@ export class PaymentComponent implements OnInit {
         this.bill.set(cached);
         this.currentAmount.set((cached.totalKobo / 100).toFixed(2));
         this.isLoading.set(false);
+        this.startPaymentPolling(tabId);
       } else {
         this.offlineData.getBill(tabId).subscribe({
           next: (b) => {
@@ -109,11 +117,34 @@ export class PaymentComponent implements OnInit {
               this.currentAmount.set((b.totalKobo / 100).toFixed(2));
             }
             this.isLoading.set(false);
+            this.startPaymentPolling(tabId);
           },
           error: () => this.isLoading.set(false),
         });
       }
     });
+  }
+
+  private startPaymentPolling(tabId: string) {
+    this.stopPaymentPolling();
+    this.pollSubscription = interval(5000).pipe(
+      switchMap(() => this.offlineData.getBill(tabId)),
+    ).subscribe({
+      next: (b) => {
+        if (b && b.paidAt) {
+          this.bill.set(b);
+          this.isSuccess.set(true);
+          this.isAutoConfirmed.set(true);
+          this.stopPaymentPolling();
+        }
+      },
+      error: () => {},
+    });
+  }
+
+  private stopPaymentPolling() {
+    this.pollSubscription?.unsubscribe();
+    this.pollSubscription = undefined;
   }
 
   get totalDueNaira(): string {
@@ -315,6 +346,7 @@ export class PaymentComponent implements OnInit {
       }).then(() => {
         this.isProcessing.set(false);
         this.isSuccess.set(true);
+        this.startPaymentPolling(this.tabId());
         const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
         setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
           state: {
@@ -332,11 +364,12 @@ export class PaymentComponent implements OnInit {
 
   getButtonText(): string {
     if (this.isProcessing()) return 'Processing...';
-    if (this.isSuccess()) return 'Payment Successful ✓';
+    if (this.isSuccess()) return this.isAutoConfirmed() ? 'Payment Auto-Confirmed' : 'Payment Successful ✓';
     return 'Confirm Payment';
   }
 
   goBack() {
+    this.stopPaymentPolling();
     this.router.navigate(['/tabs/bill', this.tabId()]);
   }
 }
