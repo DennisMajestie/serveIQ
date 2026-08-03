@@ -174,7 +174,7 @@ interface NavItem {
                 <span>Roles</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('restaurant_settings') || profile().role === 'super_admin'">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('restaurant_settings')">
               <a class="nav-link" routerLink="/app/settings" routerLinkActive="active">
                 <span class="material-symbols-outlined">settings</span>
                 <span>Settings</span>
