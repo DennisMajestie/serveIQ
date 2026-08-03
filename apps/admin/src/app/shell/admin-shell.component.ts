@@ -56,13 +56,7 @@ interface NavItem {
                 <span>Businesses</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/app/admin/payment-providers" routerLinkActive="active">
-                <span class="material-symbols-outlined">payments</span>
-                <span>Payment Providers</span>
-              </a>
-            </li>
-            <li class="nav-item">
+<li class="nav-item">
               <a class="nav-link" routerLink="/app/autopilot" routerLinkActive="active">
                 <span class="material-symbols-outlined">smart_toy</span>
                 <span>Autopilot AI</span>
@@ -72,12 +66,6 @@ interface NavItem {
               <a class="nav-link" routerLink="/app/ads" routerLinkActive="active">
                 <span class="material-symbols-outlined">campaign</span>
                 <span>Ads</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/app/settings" routerLinkActive="active">
-                <span class="material-symbols-outlined">settings</span>
-                <span>Settings</span>
               </a>
             </li>
           </ul>
