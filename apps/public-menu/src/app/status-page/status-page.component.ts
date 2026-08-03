@@ -251,6 +251,15 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.selectedTerminalId.set(this.selectedTerminalId() === id ? null : id);
   }
 
+  copiedAccount = signal<string | null>(null);
+
+  copyAccount(accountNumber: string) {
+    navigator.clipboard.writeText(accountNumber).then(() => {
+      this.copiedAccount.set(accountNumber);
+      setTimeout(() => this.copiedAccount.set(null), 2000);
+    });
+  }
+
   readonly selectedTerminal = computed<PaymentMethod | null>(() => {
     const id = this.selectedTerminalId();
     if (!id) return null;

@@ -145,7 +145,14 @@
                     <span class="term-detail">
                       Pay with card at this terminal.
                       @if (method.hasTransfer) {
-                        or <strong>bank transfer</strong> to account <strong class="acct">{{ method.accountNumber }}</strong>.
+                        or <strong>bank transfer</strong> to account <strong class="acct">{{ method.accountNumber }}</strong>
+                        <button type="button" (click)="copyAccount(method.accountNumber!)" class="copy-btn" title="Copy account number">
+                          @if (copiedAccount() === method.accountNumber) {
+                            <span class="material-symbols-outlined text-[14px] text-[#4be277]">check</span>
+                          } @else {
+                            <span class="material-symbols-outlined text-[14px] text-[#adc6ff]">copy</span>
+                          }
+                        </button>
                       }
                     </span>
                   } @else {
