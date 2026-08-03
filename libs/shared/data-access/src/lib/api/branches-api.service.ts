@@ -36,6 +36,11 @@ export class BranchesApiService extends BaseApiService {
     return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }), data);
   }
 
+  /** Update branch settings (payment provider, webhook keys, takeaway policy). */
+  updateSettings(id: string, data: { settings: Record<string, any> }): Observable<Branch> {
+    return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }) + '/settings', data);
+  }
+
   /** Get dashboard summary stats (tables, open tabs, orders). */
   getStats(): Observable<DashboardStats> {
     return this.get<DashboardStats>(API_CONFIG.endpoints.branches.stats);

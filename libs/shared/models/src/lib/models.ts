@@ -45,6 +45,7 @@ export interface Branch {
   address: string;
   phoneNumber: string;
   location?: string;
+  settings?: any;
 }
 
 export interface MenuItem {
@@ -210,6 +211,7 @@ export interface CreateBranchRequest {
   address: string;
   phone_number: string;
   location?: string;
+  settings?: any;
 }
 
 export interface CreateMenuItemRequest {

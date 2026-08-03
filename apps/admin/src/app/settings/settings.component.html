@@ -44,10 +44,10 @@
         <!-- Header -->
         <div class="mb-10">
           <h2 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">
-            {{ activeSection() === 'branch-setup' ? 'Branch Settings' : activeSection() === 'branding' ? 'Branding' : activeSection() === 'staff' ? 'Staff Management' : activeSection() === 'security' ? 'Security' : 'Email Verification' }}
+            {{ activeSection() === 'branch-setup' ? 'Branch Settings' : activeSection() === 'payment' ? 'Payment & Webhooks' : activeSection() === 'branding' ? 'Branding' : activeSection() === 'staff' ? 'Staff Management' : activeSection() === 'security' ? 'Security' : 'Email Verification' }}
           </h2>
           <p class="text-[var(--on-surface-variant)] text-[18px] leading-[1.6] mt-1" style="font-family:'Inter',sans-serif">
-            {{ activeSection() === 'branch-setup' ? 'Configure the digital DNA of your high-tech studio environment.' : activeSection() === 'branding' ? 'Customize your business appearance, logo, and brand colors.' : activeSection() === 'staff' ? 'Manage waiters, reset PINs, and control staff access.' : activeSection() === 'security' ? 'Update your account password.' : 'Verify your email address to enable all features.' }}
+            {{ activeSection() === 'branch-setup' ? 'Configure the digital DNA of your high-tech studio environment.' : activeSection() === 'payment' ? 'Configure payment providers, webhook keys, and takeaway policy.' : activeSection() === 'branding' ? 'Customize your business appearance, logo, and brand colors.' : activeSection() === 'staff' ? 'Manage waiters, reset PINs, and control staff access.' : activeSection() === 'security' ? 'Update your account password.' : 'Verify your email address to enable all features.' }}
           </p>
         </div>
 
@@ -224,6 +224,69 @@
                 {{ isSavingSettings() ? 'Saving...' : 'Synchronize Branch' }}
               </button>
             </div>
+          </div>
+        }
+
+        <!-- Payment & Webhooks Section -->
+        @if (activeSection() === 'payment') {
+          <div class="space-y-6">
+            <div class="glass-card p-6">
+              <h3 class="text-[18px] leading-[1.6] font-medium text-[var(--on-background)] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
+                <span class="material-symbols-outlined text-[var(--primary)]">payment</span>
+                Payment Provider
+              </h3>
+              <p class="text-[var(--on-surface-variant)] text-[14px] leading-[1.4] mb-6" style="font-family:'Inter',sans-serif">Choose how payments are confirmed for this branch. Manual requires staff to confirm on the waiter app. Moniepoint or OPay auto-confirm when the customer completes payment.</p>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-[14px] font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">Payment Provider</label>
+                  <select [ngModel]="paymentProvider()" (ngModelChange)="paymentProvider.set($event)" (change)="onProviderChange()" class="w-full h-12 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif">
+                    <option value="manual">Manual (staff confirms on waiter app)</option>
+                    <option value="monniepoint">Moniepoint (webhook auto-confirm)</option>
+                    <option value="opay">OPay (webhook auto-confirm)</option>
+                  </select>
+                </div>
+                @if (paymentProvider() === 'monniepoint') {
+                  <div>
+                    <label class="block text-[14px] font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">Moniepoint Webhook Secret</label>
+                    <input type="text" [ngModel]="monniepointSecret()" (ngModelChange)="monniepointSecret.set($event)" placeholder="whsec_..." class="w-full h-12 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                    <p class="text-[var(--on-surface-variant)] text-[12px] mt-1" style="font-family:'Inter',sans-serif">HMAC-SHA512 secret from your Moniepoint dashboard. Used to verify webhook signatures.</p>
+                  </div>
+                }
+                @if (paymentProvider() === 'opay') {
+                  <div>
+                    <label class="block text-[14px] font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">OPay Public Key</label>
+                    <input type="text" [ngModel]="opayPublicKey()" (ngModelChange)="opayPublicKey.set($event)" placeholder="-----BEGIN PUBLIC KEY-----" class="w-full h-12 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                    <p class="text-[var(--on-surface-variant)] text-[12px] mt-1" style="font-family:'Inter',sans-serif">RSA public key from your OPay dashboard. Used to verify webhook signatures.</p>
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="glass-card p-6">
+              <h3 class="text-[18px] leading-[1.6] font-medium text-[var(--on-background)] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
+                <span class="material-symbols-outlined text-[var(--primary)]">restaurant</span>
+                Takeaway Policy
+              </h3>
+              <p class="text-[var(--on-surface-variant)] text-[14px] leading-[1.4] mb-6" style="font-family:'Inter',sans-serif">Control whether takeaway orders are held until payment or sent to the kitchen immediately.</p>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-[14px] font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">Takeaway Payment Policy</label>
+                  <select [ngModel]="takeawayPolicy()" (ngModelChange)="takeawayPolicy.set($event)" class="w-full h-12 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif">
+                    <option value="prepay">Prepay — hold order until customer pays</option>
+                    <option value="pay_on_pickup">Pay on Pickup — send to kitchen immediately</option>
+                  </select>
+                </div>
+                <p class="text-[var(--on-surface-variant)] text-[12px]" style="font-family:'Inter',sans-serif">
+                  @if (takeawayPolicy() === 'prepay') {
+                    Customers pay before their order reaches the kitchen. Held orders show "Awaiting payment" until confirmed.
+                  } @else {
+                    Orders go straight to the kitchen as soon as they're placed. Payment is collected at pickup.
+                  }
+                </p>
+              </div>
+            </div>
+            <button (click)="savePaymentSettings()" [disabled]="isSavingPayment()" class="mt-2 px-8 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+              {{ isSavingPayment() ? 'Saving...' : 'Save Payment Settings' }}
+            </button>
           </div>
         }
 

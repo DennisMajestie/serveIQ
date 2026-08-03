@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { toDataURL } from '../../lib/qrcode/index';
 
-type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification';
+type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification' | 'payment';
 
 @Component({
   selector: 'app-settings',
@@ -34,12 +34,13 @@ export class SettingsComponent implements OnInit {
   qrBlobUrl = signal<string | null>(null);
   isDownloadingQr = signal<string | null>(null);
 
-  navItems: { key: Section; label: string; icon: string }[] = [
+navItems: { key: Section; label: string; icon: string }[] = [
     { key: 'branch-setup', label: 'Branch Setup', icon: 'settings' },
+    { key: 'payment', label: 'Payment & Webhooks', icon: 'payment' },
     { key: 'branding', label: 'Branding', icon: 'palette' },
-    { key: 'staff', label: 'Staff', icon: 'group' },
+    { key: 'staff', label: 'Staff Management', icon: 'group' },
     { key: 'security', label: 'Security', icon: 'lock' },
-    { key: 'verification', label: 'Verification', icon: 'verified' }
+    { key: 'verification', label: 'Email Verification', icon: 'verified' },
   ];
   copiedBranchId = signal<string | null>(null);
   isEmailVerified = signal(false);
@@ -53,8 +54,15 @@ export class SettingsComponent implements OnInit {
   branchFormPhone = signal('');
   branchFormLocation = signal('');
   isSavingBranch = signal(false);
+  isSavingPayment = signal(false);
   activeBranchId = signal(localStorage.getItem('activeBranchId') || '');
   businessSettings = signal<Business | null>(null);
+
+  // Payment settings
+  paymentProvider = signal<'manual' | 'monniepoint' | 'opay'>('manual');
+  monniepointSecret = signal('');
+  opayPublicKey = signal('');
+  takeawayPolicy = signal<'prepay' | 'pay_on_pickup'>('prepay');
   businessCode = signal('');
   copiedCode = signal(false);
   taxRate = signal<number | null>(null);
@@ -180,6 +188,34 @@ export class SettingsComponent implements OnInit {
 
   setActiveSection(section: Section) {
     this.activeSection.set(section);
+    if (section === 'payment') {
+      this.loadPaymentSettings();
+    }
+  }
+
+  loadPaymentSettings() {
+    const branchId = this.activeBranchId();
+    if (!branchId) return;
+    this.branchesApi.getById(branchId).subscribe({
+      next: (branch) => {
+        const settings = branch.settings || {};
+        this.paymentProvider.set(settings.payment_provider || 'manual');
+        this.monniepointSecret.set(settings.monniepoint_webhook_secret || '');
+        this.opayPublicKey.set(settings.opay_public_key || '');
+        this.takeawayPolicy.set(settings.takeaway_payment_policy || 'prepay');
+      },
+      error: () => {},
+    });
+  }
+
+  onProviderChange() {
+    // Clear secrets when switching provider
+    if (this.paymentProvider() !== 'monniepoint') {
+      this.monniepointSecret.set('');
+    }
+    if (this.paymentProvider() !== 'opay') {
+      this.opayPublicKey.set('');
+    }
   }
 
   onBrandLogoSelected(event: Event) {
@@ -281,6 +317,29 @@ export class SettingsComponent implements OnInit {
       error: () => {
         this.isSavingBranch.set(false);
         Swal.fire({ icon: 'error', title: 'Failed' });
+      }
+    });
+  }
+
+  savePaymentSettings() {
+    const branchId = this.activeBranchId();
+    if (!branchId) return;
+    this.isSavingPayment.set(true);
+    this.branchesApi.updateSettings(branchId, {
+      settings: {
+        payment_provider: this.paymentProvider(),
+        monniepoint_webhook_secret: this.monniepointSecret(),
+        opay_public_key: this.opayPublicKey(),
+        takeaway_payment_policy: this.takeawayPolicy(),
+      }
+    }).subscribe({
+      next: () => {
+        this.isSavingPayment.set(false);
+        Swal.fire({ icon: 'success', title: 'Payment Settings Saved', timer: 1500, showConfirmButton: false });
+      },
+      error: () => {
+        this.isSavingPayment.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to save payment settings' });
       }
     });
   }
