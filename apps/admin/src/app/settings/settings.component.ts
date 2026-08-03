@@ -63,7 +63,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
   branchFormLocation = signal('');
   isSavingBranch = signal(false);
   isSavingPayment = signal(false);
-  activeBranchId = signal(localStorage.getItem('activeBranchId') || '');
+  activeBranchId = signal(localStorage.getItem('activeBranchId') || localStorage.getItem('branchId') || '');
   businessSettings = signal<Business | null>(null);
 
   // Payment settings
@@ -203,7 +203,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
   }
 
   loadPaymentSettings() {
-    const branchId = this.activeBranchId();
+    const branchId = this.activeBranchId() || localStorage.getItem('branchId') || '';
     if (!branchId) return;
     this.branchesApi.getById(branchId).subscribe({
       next: (branch) => {
@@ -252,13 +252,13 @@ navItems: { key: Section; label: string; icon: string }[] = [
     const provider = this.paymentProviders().find(p => p.name === this.paymentProvider());
     if (!provider) return;
     if (provider.type === 'webhook' && provider.verification_method === 'hmac-sha512') {
-      const secret = provider.config.webhook_secret || provider.config.secret;
+      const secret = provider.config['webhook_secret'] || provider.config['secret'];
       if (!secret) {
         this.monniepointSecret.set('');
       }
     }
     if (provider.type === 'webhook' && provider.verification_method === 'rsa') {
-      const pubKey = provider.config.public_key || provider.config.publicKey;
+      const pubKey = provider.config['public_key'] || provider.config['publicKey'];
       if (!pubKey) {
         this.opayPublicKey.set('');
       }
@@ -389,7 +389,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
   }
 
   savePaymentSettings() {
-    const branchId = this.activeBranchId();
+    const branchId = this.activeBranchId() || localStorage.getItem('branchId') || '';
     if (!branchId) return;
     this.isSavingPayment.set(true);
     this.branchesApi.updateSettings(branchId, {

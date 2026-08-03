@@ -63,6 +63,12 @@ interface NavItem {
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" routerLink="/app/admin/payment-providers" routerLinkActive="active">
+                <span class="material-symbols-outlined">payments</span>
+                <span>Payment Providers</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" routerLink="/app/autopilot" routerLinkActive="active">
                 <span class="material-symbols-outlined">smart_toy</span>
                 <span>Autopilot AI</span>

@@ -33,6 +33,27 @@ export interface AdminBusiness {
 
 export type SubscriptionFilter = 'all' | 'active' | 'expired' | 'trialing' | 'past_due' | 'canceled';
 
+export interface AdminPaymentProvider {
+  id: string;
+  name: string;
+  label: string;
+  type: 'manual' | 'webhook';
+  verification_method?: 'hmac-sha512' | 'rsa' | 'none';
+  config: Record<string, string>;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateAdminPaymentProviderInput {
+  name: string;
+  label: string;
+  type?: 'manual' | 'webhook';
+  verification_method?: 'hmac-sha512' | 'rsa' | 'none';
+  config?: Record<string, string>;
+  is_active?: boolean;
+}
+
 export interface AdminStats {
   // snake_case (from API)
   total_businesses: number;
@@ -95,5 +116,21 @@ export class AdminApiService extends BaseApiService {
 
   extendSubscription(businessId: string, days: number = 30): Observable<any> {
     return this.post<any>(API_CONFIG.endpoints.admin.extend, { business_id: businessId, days });
+  }
+
+  listPaymentProviders(): Observable<AdminPaymentProvider[]> {
+    return this.get<AdminPaymentProvider[]>(API_CONFIG.endpoints.admin.paymentProviders);
+  }
+
+  createPaymentProvider(data: CreateAdminPaymentProviderInput): Observable<AdminPaymentProvider> {
+    return this.post<AdminPaymentProvider>(API_CONFIG.endpoints.admin.paymentProviders, data);
+  }
+
+  updatePaymentProvider(id: string, data: Partial<CreateAdminPaymentProviderInput>): Observable<AdminPaymentProvider> {
+    return this.patch<AdminPaymentProvider>(buildUrl(API_CONFIG.endpoints.admin.paymentProvider, { id }), data);
+  }
+
+  deletePaymentProvider(id: string): Observable<{ id: string }> {
+    return this.delete<{ id: string }>(buildUrl(API_CONFIG.endpoints.admin.paymentProvider, { id }));
   }
 }
