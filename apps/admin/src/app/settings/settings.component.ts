@@ -8,6 +8,14 @@ import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { toDataURL } from '../../lib/qrcode/index';
 
+interface PaymentProviderConfig {
+  name: string;
+  type: 'manual' | 'webhook';
+  label: string;
+  verification_method?: 'hmac-sha512' | 'rsa' | 'none';
+  config: Record<string, string>;
+}
+
 type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification' | 'payment';
 
 @Component({
@@ -59,7 +67,8 @@ navItems: { key: Section; label: string; icon: string }[] = [
   businessSettings = signal<Business | null>(null);
 
   // Payment settings
-  paymentProvider = signal<'manual' | 'monniepoint' | 'opay'>('manual');
+  paymentProvider = signal<string>('manual');
+  paymentProviders = signal<PaymentProviderConfig[]>([]);
   monniepointSecret = signal('');
   opayPublicKey = signal('');
   takeawayPolicy = signal<'prepay' | 'pay_on_pickup'>('prepay');
@@ -200,6 +209,12 @@ navItems: { key: Section; label: string; icon: string }[] = [
       next: (branch) => {
         const settings = branch.settings || {};
         this.paymentProvider.set(settings.payment_provider || 'manual');
+        const providers = settings.payment_providers;
+        if (Array.isArray(providers) && providers.length > 0) {
+          this.paymentProviders.set(providers);
+        } else {
+          this.paymentProviders.set(this.getDefaultProviders(settings));
+        }
         this.monniepointSecret.set(settings.monniepoint_webhook_secret || '');
         this.opayPublicKey.set(settings.opay_public_key || '');
         this.takeawayPolicy.set(settings.takeaway_payment_policy || 'prepay');
@@ -208,14 +223,193 @@ navItems: { key: Section; label: string; icon: string }[] = [
     });
   }
 
+  private getDefaultProviders(settings: any): PaymentProviderConfig[] {
+    const providers: PaymentProviderConfig[] = [
+      { name: 'manual', type: 'manual', label: 'Manual', config: {} },
+    ];
+    if (settings.monniepoint_webhook_secret) {
+      providers.push({
+        name: 'monniepoint',
+        type: 'webhook',
+        label: 'Moniepoint',
+        verification_method: 'hmac-sha512',
+        config: { webhook_secret: settings.monniepoint_webhook_secret },
+      });
+    }
+    if (settings.opay_public_key) {
+      providers.push({
+        name: 'opay',
+        type: 'webhook',
+        label: 'OPay',
+        verification_method: 'rsa',
+        config: { public_key: settings.opay_public_key },
+      });
+    }
+    return providers;
+  }
+
   onProviderChange() {
-    // Clear secrets when switching provider
-    if (this.paymentProvider() !== 'monniepoint') {
-      this.monniepointSecret.set('');
+    const provider = this.paymentProviders().find(p => p.name === this.paymentProvider());
+    if (!provider) return;
+    if (provider.type === 'webhook' && provider.verification_method === 'hmac-sha512') {
+      const secret = provider.config.webhook_secret || provider.config.secret;
+      if (!secret) {
+        this.monniepointSecret.set('');
+      }
     }
-    if (this.paymentProvider() !== 'opay') {
-      this.opayPublicKey.set('');
+    if (provider.type === 'webhook' && provider.verification_method === 'rsa') {
+      const pubKey = provider.config.public_key || provider.config.publicKey;
+      if (!pubKey) {
+        this.opayPublicKey.set('');
+      }
     }
+  }
+
+  addProvider() {
+    Swal.fire({
+      title: 'Add Payment Provider',
+      html: `
+        <div class="text-left space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">Provider Name</label>
+            <input id="providerName" class="swal2-input" placeholder="e.g. stripe, paystack" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">Display Label</label>
+            <input id="providerLabel" class="swal2-input" placeholder="e.g. Stripe" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">Type</label>
+            <select id="providerType" class="swal2-input">
+              <option value="manual">Manual</option>
+              <option value="webhook">Webhook</option>
+            </select>
+          </div>
+          <div id="verificationSection" style="display:none;">
+            <label class="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">Verification Method</label>
+            <select id="verificationMethod" class="swal2-input">
+              <option value="hmac-sha512">HMAC-SHA512</option>
+              <option value="rsa">RSA</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Add Provider',
+      cancelButtonText: 'Cancel',
+      preConfirm: () => {
+        const name = (document.getElementById('providerName') as HTMLInputElement)?.value.trim();
+        const label = (document.getElementById('providerLabel') as HTMLInputElement)?.value.trim();
+        const type = (document.getElementById('providerType') as HTMLSelectElement)?.value;
+        if (!name) { Swal.showValidationMessage('Provider name is required'); return null; }
+        if (!label) { Swal.showValidationMessage('Label is required'); return null; }
+        const verificationMethod = type === 'webhook'
+          ? (document.getElementById('verificationMethod') as HTMLSelectElement)?.value || 'none'
+          : undefined;
+        return { name, label, type, verification_method: verificationMethod, config: {} };
+      },
+    }).then((result) => {
+      if (!result.isConfirmed || !result.value) return;
+      const providers = [...this.paymentProviders()];
+      providers.push(result.value as PaymentProviderConfig);
+      this.paymentProviders.set(providers);
+      Swal.fire({ icon: 'success', title: 'Provider Added', timer: 1500, showConfirmButton: false });
+    });
+  }
+
+  editProvider(index: number) {
+    const provider = this.paymentProviders()[index];
+    if (!provider) return;
+    Swal.fire({
+      title: 'Edit Payment Provider',
+      html: `
+        <div class="text-left space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">Label</label>
+            <input id="providerLabel" class="swal2-input" value="${provider.label}" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">Type</label>
+            <select id="providerType" class="swal2-input">
+              <option value="manual" ${provider.type === 'manual' ? 'selected' : ''}>Manual</option>
+              <option value="webhook" ${provider.type === 'webhook' ? 'selected' : ''}>Webhook</option>
+            </select>
+          </div>
+          <div id="verificationSection" style="display:${provider.type === 'webhook' ? 'block' : 'none'};">
+            <label class="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">Verification Method</label>
+            <select id="verificationMethod" class="swal2-input">
+              <option value="hmac-sha512" ${provider.verification_method === 'hmac-sha512' ? 'selected' : ''}>HMAC-SHA512</option>
+              <option value="rsa" ${provider.verification_method === 'rsa' ? 'selected' : ''}>RSA</option>
+              <option value="none" ${provider.verification_method === 'none' || !provider.verification_method ? 'selected' : ''}>None</option>
+            </select>
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+      preConfirm: () => {
+        const label = (document.getElementById('providerLabel') as HTMLInputElement)?.value.trim();
+        const type = (document.getElementById('providerType') as HTMLSelectElement)?.value;
+        if (!label) { Swal.showValidationMessage('Label is required'); return null; }
+        const verificationMethod = type === 'webhook'
+          ? (document.getElementById('verificationMethod') as HTMLSelectElement)?.value || 'none'
+          : undefined;
+        return { ...provider, label, type, verification_method: verificationMethod };
+      },
+    }).then((result) => {
+      if (!result.isConfirmed || !result.value) return;
+      const providers = [...this.paymentProviders()];
+      providers[index] = result.value as PaymentProviderConfig;
+      this.paymentProviders.set(providers);
+      Swal.fire({ icon: 'success', title: 'Provider Updated', timer: 1500, showConfirmButton: false });
+    });
+  }
+
+  deleteProvider(index: number) {
+    const provider = this.paymentProviders()[index];
+    Swal.fire({
+      title: 'Remove Provider?',
+      text: `Remove "${provider.label}"? This will not delete the provider configuration from other branches.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Remove',
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      const providers = this.paymentProviders().filter((_, i) => i !== index);
+      this.paymentProviders.set(providers);
+      if (this.paymentProvider() === provider.name) {
+        this.paymentProvider.set(providers.length > 0 ? providers[0].name : 'manual');
+      }
+      Swal.fire({ icon: 'success', title: 'Provider Removed', timer: 1500, showConfirmButton: false });
+    });
+  }
+
+  savePaymentSettings() {
+    const branchId = this.activeBranchId();
+    if (!branchId) return;
+    this.isSavingPayment.set(true);
+    this.branchesApi.updateSettings(branchId, {
+      settings: {
+        payment_provider: this.paymentProvider(),
+        payment_providers: this.paymentProviders(),
+        monniepoint_webhook_secret: this.monniepointSecret(),
+        opay_public_key: this.opayPublicKey(),
+        takeaway_payment_policy: this.takeawayPolicy(),
+      }
+    }).subscribe({
+      next: () => {
+        this.isSavingPayment.set(false);
+        Swal.fire({ icon: 'success', title: 'Payment Settings Saved', timer: 1500, showConfirmButton: false });
+      },
+      error: () => {
+        this.isSavingPayment.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to save payment settings' });
+      }
+    });
   }
 
   onBrandLogoSelected(event: Event) {
@@ -317,29 +511,6 @@ navItems: { key: Section; label: string; icon: string }[] = [
       error: () => {
         this.isSavingBranch.set(false);
         Swal.fire({ icon: 'error', title: 'Failed' });
-      }
-    });
-  }
-
-  savePaymentSettings() {
-    const branchId = this.activeBranchId();
-    if (!branchId) return;
-    this.isSavingPayment.set(true);
-    this.branchesApi.updateSettings(branchId, {
-      settings: {
-        payment_provider: this.paymentProvider(),
-        monniepoint_webhook_secret: this.monniepointSecret(),
-        opay_public_key: this.opayPublicKey(),
-        takeaway_payment_policy: this.takeawayPolicy(),
-      }
-    }).subscribe({
-      next: () => {
-        this.isSavingPayment.set(false);
-        Swal.fire({ icon: 'success', title: 'Payment Settings Saved', timer: 1500, showConfirmButton: false });
-      },
-      error: () => {
-        this.isSavingPayment.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to save payment settings' });
       }
     });
   }
