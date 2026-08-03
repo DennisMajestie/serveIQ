@@ -56,13 +56,13 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     if (!tab) return [];
     const o = tab.orders;
     const any = (pred: (s: string) => boolean) => o.some(x => pred((x.orderStatus || '').toLowerCase()));
-    const approved = any(s => ['approved', 'preparing', 'ready_for_pickup', 'delivered'].includes(s));
-    const preparing = any(s => ['preparing', 'ready_for_pickup', 'delivered'].includes(s));
+    const inProgress = (s: string) => ['approved', 'assigned_to_department', 'preparing', 'ready_for_pickup', 'delivered'].includes(s);
+    const preparing = any(inProgress);
     const ready = any(s => ['ready_for_pickup', 'delivered'].includes(s));
     const delivered = any(s => s === 'delivered');
     return [
       { key: 'received', label: 'Received', icon: 'receipt', done: o.length > 0 },
-      { key: 'approved', label: 'Approved', icon: 'thumb_up', done: approved },
+      { key: 'approved', label: 'Approved', icon: 'thumb_up', done: any(inProgress) },
       { key: 'preparing', label: 'Preparing', icon: 'cooking', done: preparing },
       { key: 'ready', label: 'Ready', icon: 'route', done: ready },
       { key: 'delivered', label: 'Delivered', icon: 'check_circle', done: delivered },
@@ -81,30 +81,26 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const tab = this.tabData();
     const payStatus = this.paymentStatus();
     if (!tab) return 'ordering';
-    if (payStatus?.paymentStatus === 'paid' || tab.status === 'paid') return 'paid';
-    if (tab.status === 'open' || tab.status === 'billed') {
-      const anyDelivered = tab.orders.some(o =>
-        o.orderStatus?.toLowerCase() === 'delivered'
-      );
-      const anyDeclined = tab.orders.some(o =>
-        o.orderStatus?.toLowerCase() === 'declined'
-      );
-      if (tab.orders.length > 0 && (anyDelivered || anyDeclined)) return 'payment';
-      const anyReady = tab.orders.some(o =>
-        o.orderStatus?.toLowerCase() === 'ready_for_pickup'
-      );
-      if (anyReady) return 'ready';
-      const anyPreparing = tab.orders.some(o =>
-        o.orderStatus?.toLowerCase() === 'preparing'
-      );
-      if (anyPreparing) return 'preparing';
-      const anyApproved = tab.orders.some(o =>
-        o.orderStatus?.toLowerCase() === 'approved'
-      );
-      if (anyApproved) return 'preparing';
-      return 'pending_approval';
-    }
-    return 'payment';
+    const status = (s: any) => (s || '').toLowerCase();
+    const o = tab.orders;
+    const any = (pred: (s: string) => boolean) => o.some(x => pred(status(x.orderStatus)));
+
+    // Prepaid takeaway is only "paid" once the food has actually been collected
+    // (all orders terminal). Before that, keep showing Prep/Ready so the customer
+    // watches progress even though money already went through.
+    const allCollected =
+      o.length > 0 && o.every(x => ['delivered', 'completed'].includes(status(x.orderStatus)));
+    const moneyTaken = payStatus?.paymentStatus === 'paid' || tab.status === 'paid';
+    if (moneyTaken && allCollected) return 'paid';
+
+    if (any(s => s === 'pending_payment_approval')) return 'payment';
+
+    const anyDelivered = any(s => s === 'delivered');
+    const anyDeclined = any(s => s === 'declined');
+    if (o.length > 0 && (anyDelivered || anyDeclined)) return 'payment';
+    if (any(s => s === 'ready_for_pickup')) return 'ready';
+    if (any(s => ['preparing', 'assigned_to_department', 'approved'].includes(s))) return 'preparing';
+    return 'pending_approval';
   });
 
   readonly progressWidth = computed(() => {
@@ -302,6 +298,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const s = status?.toLowerCase() || '';
     const labels: Record<string, string> = {
       pending_supervisor_approval: 'Pending',
+      pending_payment_approval: 'Awaiting Payment',
       approved: 'Approved',
       preparing: 'Preparing',
       ready_for_pickup: 'Ready',
