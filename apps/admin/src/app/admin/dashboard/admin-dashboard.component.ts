@@ -70,21 +70,11 @@ interface ConsoleLog {
           </div>
         </div>
 
-        <div class="kpi-card">
-          <div class="glow-effect purple"></div>
-          <div class="kpi-icon kpi-purple">
-            <span class="material-symbols-outlined">groups</span>
-          </div>
-          <div class="kpi-body">
-            <span class="kpi-value">{{ stats()?.totalWaiters ?? stats()?.total_waiters ?? '—' }}</span>
-            <span class="kpi-label">Active Waiters</span>
-          </div>
-        </div>
       </section>
 
       <!-- Skeleton stats -->
       <section class="stats-row" *ngIf="loading()">
-        <div class="kpi-card skeleton" *ngFor="let i of [1,2,3,4]">
+        <div class="kpi-card skeleton" *ngFor="let i of [1,2,3]">
           <div class="skel skel-icon"></div>
           <div class="kpi-body">
             <div class="skel skel-val"></div>
