@@ -162,10 +162,11 @@ export class BillingComponent implements OnInit {
     const biz = this.business();
     const allPlans = this.subService.plans();
     if (!allPlans.length) return [];
-    if (!biz) return allPlans; // Show all plans if business load failed (e.g., expired trial)
+    // If business failed to load (e.g., expired trial → 402), default to NGN plans
+    const currency = biz?.currency || 'NGN';
     const seen = new Set<string>();
     return allPlans.filter(p => {
-      if (p.currency !== biz.currency) return false;
+      if (p.currency !== currency) return false;
       const key = p.name.toLowerCase();
       if (seen.has(key)) return false;
       seen.add(key);

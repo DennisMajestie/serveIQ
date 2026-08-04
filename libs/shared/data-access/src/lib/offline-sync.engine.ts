@@ -1,7 +1,8 @@
-import { Injectable, inject, signal, effect } from '@angular/core';
+import { Injectable, inject, signal, effect, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { OfflineCacheService, SyncQueueEntry } from './offline-cache.service';
 import { NetworkService } from './network.service';
+import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './api/environment.token';
 import { catchError, firstValueFrom, timeout } from 'rxjs';
 
 const MAX_RETRIES = 3;
@@ -12,6 +13,7 @@ export class OfflineSyncEngine {
   private cache = inject(OfflineCacheService);
   private network = inject(NetworkService);
   private http = inject(HttpClient);
+  private env = inject(ENVIRONMENT_CONFIG);
 
   readonly pendingCount = signal(0);
   readonly lastSyncError = signal<string | null>(null);
@@ -22,6 +24,10 @@ export class OfflineSyncEngine {
     effect(() => {
       if (this.network.isOnline()) this.processSync();
     });
+  }
+
+  private syncUrl(path: string): string {
+    return `${this.env.apiUrl}/api/v1/sync/${path}`;
   }
 
   async queueMutation(entityType: string, operation: string, payload: any): Promise<void> {
@@ -108,7 +114,7 @@ export class OfflineSyncEngine {
     };
 
     await firstValueFrom(
-      this.http.post('/api/v1/sync/queue', body, { headers }).pipe(
+      this.http.post(this.syncUrl('queue'), body, { headers }).pipe(
         timeout(10000),
         catchError((err) => { throw err; })
       )

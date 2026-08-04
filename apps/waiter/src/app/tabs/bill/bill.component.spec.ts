@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { BillComponent } from './bill.component';
-import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService, BusinessApiService, OfflineCacheService } from '@serveiq/shared/data-access';
+import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService, BusinessApiService, OfflineCacheService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
 import { CurrencyContextService } from '../../services/currency-context.service';
 
 describe('BillComponent', () => {
@@ -82,6 +82,7 @@ describe('BillComponent', () => {
         { provide: MenuApiService, useValue: mockMenuService },
         { provide: BusinessApiService, useValue: mockBusinessApi },
         { provide: OfflineCacheService, useValue: mockCache },
+        { provide: ENVIRONMENT_CONFIG, useValue: { apiUrl: 'http://test', production: false, nemotronUrl: '', publicMenuBaseUrl: '' } },
         { provide: ActivatedRoute, useValue: { paramMap: paramMapSubject.asObservable() } },
         { provide: Router, useValue: { navigate: vi.fn() } },
       ],
