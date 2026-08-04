@@ -239,6 +239,10 @@
               </div>
               <p class="text-[var(--on-surface-variant)] text-[14px] leading-[1.4] mb-6" style="font-family:'Inter',sans-serif">Configure how payments are confirmed for this branch. Manual requires staff to confirm on the waiter app. Webhook providers auto-confirm when the customer completes payment.</p>
 
+              @if (isLoadingPlatform()) {
+                <p class="text-[var(--on-surface-variant)] text-[13px] mb-6" style="font-family:'Inter',sans-serif">Loading available payment providers…</p>
+              }
+
               <!-- Provider List -->
               <div class="space-y-3 mb-6">
                 @for (provider of paymentProviders(); track provider.name) {
@@ -253,6 +257,9 @@
                       </div>
                     </div>
                   </div>
+                }
+                @if (!isLoadingPlatform() && platformProviders().length === 0) {
+                  <p class="text-[var(--on-surface-variant)] text-[13px]" style="font-family:'Inter',sans-serif">No payment providers have been enabled yet by the platform admin. Contact your admin to activate providers.</p>
                 }
               </div>
 

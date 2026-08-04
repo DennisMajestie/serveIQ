@@ -158,7 +158,11 @@ navItems: { key: Section; label: string; icon: string }[] = [
   ngOnInit() {
     this.loadProfile();
     this.branchesApi.list().subscribe({
-      next: (b) => { this.branches.set(Array.isArray(b) ? b : []); this.isLoading.set(false); },
+      next: (b) => {
+        this.branches.set(Array.isArray(b) ? b : []);
+        this.isLoading.set(false);
+        if (this.branches().length) this.loadPaymentSettings();
+      },
       error: () => this.isLoading.set(false)
     });
     this.loadBusinessSettings();
