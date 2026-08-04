@@ -109,6 +109,20 @@ export interface AdminAuditLogResponse {
   };
 }
 
+export interface AdminRevenueSeries {
+  month: string;
+  revenueKobo?: number;
+  count?: number;
+}
+
+export interface AdminRevenue {
+  mrr?: Record<string, number>;
+  arr?: Record<string, number>;
+  recurringSubscribers?: number;
+  monthlyRevenue?: AdminRevenueSeries[];
+  monthlyNewBusinesses?: AdminRevenueSeries[];
+}
+
 export interface AdminSubscriptionBreakdownEntry {
   plan?: string;
   count?: number;
@@ -189,6 +203,13 @@ export class AdminApiService extends BaseApiService {
 
   getSystemHealth(): Observable<AdminSystemHealth> {
     return this.get<AdminSystemHealth>(API_CONFIG.endpoints.admin.systemHealth);
+  }
+
+  getRevenue(months?: number): Observable<AdminRevenue> {
+    const params: Record<string, string> | undefined = months
+      ? { months: String(months) }
+      : undefined;
+    return this.get<AdminRevenue>(API_CONFIG.endpoints.admin.revenue, undefined, params);
   }
 
   getAdminAuditLogs(params?: Record<string, string | number>): Observable<AdminAuditLogResponse> {

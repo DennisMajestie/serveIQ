@@ -1,7 +1,9 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminApiService, AdminStats } from '@serveiq/shared/data-access';
+import { AdminApiService, AdminStats, AdminRevenue, AdminRevenueSeries } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
+
+const MRR_COLORS: Record<string, string> = { NGN: '#00D166', USD: '#0059bb', GBP: '#8b5cf6', EUR: '#F59E0B' };
 
 const CURRENCIES: Record<string, { symbol: string; locale: string }> = {
   NGN: { symbol: '₦', locale: 'en-NG' },
@@ -55,7 +57,26 @@ const CURRENCIES: Record<string, { symbol: string; locale: string }> = {
             <div class="kpi-value">{{ stats()!.newBusinessesThisMonth }}</div>
             <span class="kpi-sub">{{ stats()!.totalBranches }} branches</span>
           </div>
+          <div class="kpi-card" *ngIf="revenue()">
+            <div class="kpi-label">MRR (Active + Trialing)</div>
+            <div class="kpi-value">{{ formatMrr() }}</div>
+            <span class="kpi-sub">{{ revenue()!.recurringSubscribers || 0 }} paying branches</span>
+          </div>
         </div>
+
+        <!-- Revenue trend (last 12 months) -->
+        <section class="section" *ngIf="monthlyRevenueSeries().length">
+          <h2 class="section-title">Monthly Revenue (last 12 months)</h2>
+          <div class="bar-chart">
+            <div class="bar-row" *ngFor="let pt of monthlyRevenueSeries()">
+              <span class="bar-label">{{ pt.month }}</span>
+              <div class="bar-track">
+                <div class="bar-fill" [style.width.%]="(pt.revenueKobo || 0) / maxRevenue() * 100"></div>
+              </div>
+              <span class="bar-count">{{ formatKobo(pt.revenueKobo || 0) }}</span>
+            </div>
+          </div>
+        </section>
 
         <!-- Subscription status breakdown -->
         <section class="section">
@@ -164,10 +185,13 @@ export class RevenueAnalyticsComponent implements OnInit {
   private adminApi = inject(AdminApiService);
 
   stats = signal<AdminStats | null>(null);
+  revenue = signal<AdminRevenue | null>(null);
   isLoading = signal(false);
+  isRevenueLoading = signal(false);
 
   ngOnInit() {
     this.load();
+    this.loadRevenue();
   }
 
   load() {
@@ -178,6 +202,14 @@ export class RevenueAnalyticsComponent implements OnInit {
         this.isLoading.set(false);
         Swal.fire({ icon: 'error', title: 'Load Failed', text: err?.message || undefined });
       },
+    });
+  }
+
+  loadRevenue() {
+    this.isRevenueLoading.set(true);
+    this.adminApi.getRevenue(12).subscribe({
+      next: (r) => { this.revenue.set(r); this.isRevenueLoading.set(false); },
+      error: () => this.isRevenueLoading.set(false),
     });
   }
 
@@ -204,5 +236,32 @@ export class RevenueAnalyticsComponent implements OnInit {
   formatKobo(kobo: number): string {
     const value = kobo / 100;
     return `₦${value.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  mrrByCurrency(): { currency: string; amount: number; color: string }[] {
+    const mrr = this.revenue()?.mrr || {};
+    return Object.keys(mrr).map((c) => ({
+      currency: c,
+      amount: mrr[c],
+      color: MRR_COLORS[c] || '#0059bb',
+    }));
+  }
+
+  formatMrr(): string {
+    const items = this.mrrByCurrency();
+    if (!items.length) return '—';
+    return items
+      .map((i) => `₦${(i.amount / 100).toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ${i.currency}`)
+      .join(' · ');
+  }
+
+  monthlyRevenueSeries(): AdminRevenueSeries[] {
+    return this.revenue()?.monthlyRevenue || [];
+  }
+
+  maxRevenue(): number {
+    const series = this.monthlyRevenueSeries();
+    const max = Math.max(...series.map(s => s.revenueKobo || 0), 0);
+    return max || 1;
   }
 }
