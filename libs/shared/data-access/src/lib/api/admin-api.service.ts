@@ -109,21 +109,31 @@ export interface AdminAuditLogResponse {
   };
 }
 
-export interface AdminStats {
-  // snake_case (from API)
-  total_businesses: number;
-  active_businesses: number;
-  subscription_active?: number;
-  subscription_expired?: number;
-  subscription_past_due?: number;
-  subscription_trialing?: number;
-  subscription_canceled?: number;
-  total_branches: number;
-  total_waiters: number;
+export interface AdminSubscriptionBreakdownEntry {
+  plan?: string;
+  count?: number;
+}
 
-  // camelCase equivalents (optional)
+export interface AdminSubscriptionStatusEntry {
+  status?: string;
+  count?: number;
+}
+
+export interface AdminRecentBusiness {
+  id: string;
+  name: string;
+  slug: string;
+  type: string;
+  email: string;
+  is_active: boolean;
+  subscription_plan: string;
+  created_at: string;
+}
+
+export interface AdminStats {
   totalBusinesses?: number;
   activeBusinesses?: number;
+  inactiveBusinesses?: number;
   subscriptionActive?: number;
   subscriptionExpired?: number;
   subscriptionPastDue?: number;
@@ -131,6 +141,14 @@ export interface AdminStats {
   subscriptionCanceled?: number;
   totalBranches?: number;
   totalWaiters?: number;
+  totalStaff?: number;
+  totalManagers?: number;
+  totalCashiers?: number;
+  totalRevenueKobo?: number;
+  newBusinessesThisMonth?: number;
+  subscriptionBreakdown?: AdminSubscriptionBreakdownEntry[];
+  subscriptionStatusBreakdown?: AdminSubscriptionStatusEntry[];
+  recentBusinesses?: AdminRecentBusiness[];
 }
 
 @Injectable({ providedIn: 'root' })

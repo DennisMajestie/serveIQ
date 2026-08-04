@@ -44,6 +44,11 @@ export const appRoutes: Route[] = [
         canActivate: [superAdminGuard]
       },
       {
+        path: 'admin/revenue',
+        loadComponent: () => import('./admin/revenue/revenue-analytics.component').then(m => m.RevenueAnalyticsComponent),
+        canActivate: [superAdminGuard]
+      },
+      {
         path: 'autopilot',
         loadComponent: () => import('./autopilot/autopilot.component').then(m => m.AutopilotComponent),
         canActivate: [superAdminGuard]
