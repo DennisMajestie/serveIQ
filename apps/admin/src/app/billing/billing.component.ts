@@ -165,13 +165,43 @@ export class BillingComponent implements OnInit {
     // If business failed to load (e.g., expired trial → 402), default to NGN plans
     const currency = biz?.currency || 'NGN';
     const seen = new Set<string>();
-    return allPlans.filter(p => {
+    const filtered = allPlans.filter(p => {
       if (p.currency !== currency) return false;
       const key = p.name.toLowerCase();
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
+    // Fallback: if NGN Pro/Enterprise missing from API (DB seed incomplete), supplement them
+    if (currency === 'NGN') {
+      const hasPro = filtered.some(p => p.name === 'Pro');
+      const hasEnterprise = filtered.some(p => p.name === 'Enterprise');
+      const fallbackPlans: SubscriptionPlan[] = [];
+      if (!hasPro) {
+        fallbackPlans.push({
+          id: 'fallback-pro',
+          name: 'Pro',
+          price: 3500000,
+          currency: 'NGN',
+          billingInterval: 'monthly',
+          features: { maxTables: 20, maxWaiters: 15, reportingEnabled: true },
+          isActive: true,
+        });
+      }
+      if (!hasEnterprise) {
+        fallbackPlans.push({
+          id: 'fallback-enterprise',
+          name: 'Enterprise',
+          price: 10000000,
+          currency: 'NGN',
+          billingInterval: 'monthly',
+          features: { maxTables: 100, maxWaiters: 50, reportingEnabled: true },
+          isActive: true,
+        });
+      }
+      return [...filtered, ...fallbackPlans];
+    }
+    return filtered;
   });
 
   ngOnInit() {
