@@ -205,8 +205,12 @@ navItems: { key: Section; label: string; icon: string }[] = [
   }
 
   loadPaymentSettings() {
-    const branchId = this.activeBranchId();
-    if (!branchId) return;
+    const branchId = this.activeBranchId() || this.branches()[0]?.id || '';
+    if (!branchId) {
+      this.paymentProvider.set('manual');
+      return;
+    }
+    this.activeBranchId.set(branchId);
     this.branchesApi.getById(branchId).subscribe({
       next: (branch) => {
         const settings = branch.settings || {};
