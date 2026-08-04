@@ -11,6 +11,9 @@ export interface PlatformPaymentProviderSummary {
   label: string;
   type: 'manual' | 'webhook';
   verification_method?: 'hmac-sha512' | 'rsa' | 'none';
+
+  // camelCase aliases (after BaseApiService's snake→camel transform)
+  verificationMethod?: 'hmac-sha512' | 'rsa' | 'none';
 }
 
 /** Manages CRUD operations for restaurant branches. */
