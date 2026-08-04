@@ -179,7 +179,7 @@ export class BillingComponent implements OnInit {
       const fallbackPlans: SubscriptionPlan[] = [];
       if (!hasPro) {
         fallbackPlans.push({
-          id: 'fallback-pro',
+          id: 'fallback-pro-NGN',
           name: 'Pro',
           price: 3500000,
           currency: 'NGN',
@@ -190,7 +190,7 @@ export class BillingComponent implements OnInit {
       }
       if (!hasEnterprise) {
         fallbackPlans.push({
-          id: 'fallback-enterprise',
+          id: 'fallback-enterprise-NGN',
           name: 'Enterprise',
           price: 10000000,
           currency: 'NGN',
