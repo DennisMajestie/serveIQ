@@ -53,26 +53,45 @@ export class OfflineSyncEngine {
         return;
       }
 
+      let anyFailed = false;
       for (const entry of queue) {
-        try {
-          await this.replayMutation(entry);
-          this.cache.removeMutation(entry.id);
-        } catch (err) {
-          entry.attempts++;
-          if (entry.attempts >= MAX_RETRIES) {
-            entry.lastError = err instanceof Error ? err.message : 'Sync failed';
-            this.cache.updateMutation(entry.id, { attempts: entry.attempts, lastError: entry.lastError });
-            this.lastSyncError.set(entry.lastError);
-          } else {
-            const delay = BASE_DELAY_MS * Math.pow(2, entry.attempts - 1);
-            this.cache.updateMutation(entry.id, { attempts: entry.attempts });
-            await new Promise(r => setTimeout(r, delay));
-            return this.processSync();
+        // Skip entries that have already hit max retries
+        if (entry.attempts >= MAX_RETRIES) {
+          if (entry.lastError) this.lastSyncError.set(entry.lastError);
+          anyFailed = true;
+          continue;
+        }
+
+        let attempts = entry.attempts;
+        let lastErr: unknown = null;
+
+        for (; attempts < MAX_RETRIES; attempts++) {
+          try {
+            await this.replayMutation(entry);
+            this.cache.removeMutation(entry.id);
+            lastErr = null;
+            break;
+          } catch (err) {
+            lastErr = err;
+            if (attempts + 1 < MAX_RETRIES) {
+              const delay = BASE_DELAY_MS * Math.pow(2, attempts);
+              await new Promise(r => setTimeout(r, delay));
+            }
           }
+        }
+
+        this.cache.updateMutation(entry.id, { attempts });
+        if (lastErr) {
+          const message = lastErr instanceof Error ? lastErr.message : 'Sync failed';
+          this.cache.updateMutation(entry.id, { lastError: message });
+          this.lastSyncError.set(message);
+          anyFailed = true;
         }
       }
 
-      this.lastSyncError.set(null);
+      if (!anyFailed) {
+        this.lastSyncError.set(null);
+      }
     } finally {
       this.processing = false;
       this.refreshPendingCount();
