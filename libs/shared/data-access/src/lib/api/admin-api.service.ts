@@ -43,6 +43,10 @@ export interface AdminPaymentProvider {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+
+  // camelCase aliases (after BaseApiService's snake→camel transform)
+  isActive?: boolean;
+  verificationMethod?: 'hmac-sha512' | 'rsa' | 'none';
 }
 
 export interface CreateAdminPaymentProviderInput {

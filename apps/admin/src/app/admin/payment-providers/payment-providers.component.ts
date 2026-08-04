@@ -51,16 +51,16 @@ import Swal from 'sweetalert2';
                 <td><span class="type-pill">{{ typeLabel(p) }}</span></td>
                 <td><span class="verify-pill">{{ verificationLabel(p) }}</span></td>
                 <td>
-                  <span class="status-badge" [class.active]="p.is_active" [class.inactive]="!p.is_active">
-                    {{ p.is_active ? 'Active' : 'Inactive' }}
+                  <span class="status-badge" [class.active]="p.isActive" [class.inactive]="!p.isActive">
+                    {{ p.isActive ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
                 <td class="cell-actions">
-                  <button class="action-icon-btn" (click)="toggleActive(p)" [title]="p.is_active ? 'Deactivate' : 'Activate'">
+                  <button class="action-icon-btn" (click)="toggleActive(p)" [title]="p.isActive ? 'Deactivate' : 'Activate'">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
                       <circle cx="12" cy="12" r="10"/>
-                      <path *ngIf="p.is_active" d="m4.93 4.93 14.14 14.14"/>
-                      <path *ngIf="!p.is_active" d="M12 2a10 10 0 0 1 0 20"/>
+                      <path *ngIf="p.isActive" d="m4.93 4.93 14.14 14.14"/>
+                      <path *ngIf="!p.isActive" d="M12 2a10 10 0 0 1 0 20"/>
                     </svg>
                   </button>
                   <button class="action-icon-btn" (click)="edit(p)" title="Edit">
@@ -152,8 +152,9 @@ export class PaymentProvidersComponent implements OnInit {
   }
 
   verificationLabel(p: AdminPaymentProvider): string {
-    if (!p.verification_method || p.verification_method === 'none') return '—';
-    return p.verification_method.toUpperCase();
+    const method = p.verificationMethod || p.verification_method;
+    if (!method || method === 'none') return '—';
+    return method.toUpperCase();
   }
 
   private formHtml(values?: AdminPaymentProvider): string {
@@ -177,9 +178,9 @@ export class PaymentProvidersComponent implements OnInit {
         <div>
           <label class="block text-sm font-medium text-[var(--on-surface-variant)] mb-1">Verification Method</label>
           <select id="ppVerify" class="swal2-input">
-            <option value="none" ${!values || !values.verification_method || values.verification_method === 'none' ? 'selected' : ''}>None</option>
-            <option value="hmac-sha512" ${values && values.verification_method === 'hmac-sha512' ? 'selected' : ''}>HMAC-SHA512</option>
-            <option value="rsa" ${values && values.verification_method === 'rsa' ? 'selected' : ''}>RSA</option>
+            <option value="none" ${!values || !values.verificationMethod || values.verificationMethod === 'none' ? 'selected' : ''}>None</option>
+            <option value="hmac-sha512" ${values && values.verificationMethod === 'hmac-sha512' ? 'selected' : ''}>HMAC-SHA512</option>
+            <option value="rsa" ${values && values.verificationMethod === 'rsa' ? 'selected' : ''}>RSA</option>
           </select>
         </div>
       </div>
@@ -259,7 +260,7 @@ export class PaymentProvidersComponent implements OnInit {
   }
 
   toggleActive(p: AdminPaymentProvider) {
-    this.adminApi.updatePaymentProvider(p.id, { is_active: !p.is_active }).subscribe({
+    this.adminApi.updatePaymentProvider(p.id, { is_active: !p.isActive }).subscribe({
       next: () => this.load(),
       error: () => Swal.fire({ icon: 'error', title: 'Update Failed' }),
     });
