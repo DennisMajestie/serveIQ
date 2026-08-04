@@ -29,6 +29,11 @@ export const appRoutes: Route[] = [
         canActivate: [superAdminGuard]
       },
       {
+        path: 'admin/plans',
+        loadComponent: () => import('./admin/plans/plans.component').then(m => m.PlansComponent),
+        canActivate: [superAdminGuard]
+      },
+      {
         path: 'autopilot',
         loadComponent: () => import('./autopilot/autopilot.component').then(m => m.AutopilotComponent),
         canActivate: [superAdminGuard]

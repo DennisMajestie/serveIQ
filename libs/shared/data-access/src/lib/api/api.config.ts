@@ -178,6 +178,14 @@ export const API_CONFIG = {
     plans: {
       list: '/api/v1/subscriptions/plans',
     },
+    // Plans (superadmin management)
+    adminPlans: {
+      list: '/api/v1/subscriptions/admin/plans',
+      create: '/api/v1/subscriptions/admin/plans',
+      update: '/api/v1/subscriptions/admin/plans/:id',
+      toggle: '/api/v1/subscriptions/admin/plans/:id/toggle',
+      delete: '/api/v1/subscriptions/admin/plans/:id',
+    },
     // Departments
     departments: {
       list: '/api/v1/departments',

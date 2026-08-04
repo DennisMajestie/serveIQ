@@ -68,6 +68,12 @@ interface NavItem {
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" routerLink="/app/admin/plans" routerLinkActive="active">
+                <span class="material-symbols-outlined">sell</span>
+                <span>Subscription Plans</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" routerLink="/app/autopilot" routerLinkActive="active">
                 <span class="material-symbols-outlined">smart_toy</span>
                 <span>Autopilot AI</span>
