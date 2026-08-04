@@ -161,7 +161,8 @@ export class BillingComponent implements OnInit {
   filteredPlans = computed(() => {
     const biz = this.business();
     const allPlans = this.subService.plans();
-    if (!biz || !allPlans.length) return [];
+    if (!allPlans.length) return [];
+    if (!biz) return allPlans; // Show all plans if business load failed (e.g., expired trial)
     const seen = new Set<string>();
     return allPlans.filter(p => {
       if (p.currency !== biz.currency) return false;
