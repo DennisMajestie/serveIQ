@@ -58,6 +58,30 @@ export interface CreateAdminPaymentProviderInput {
   is_active?: boolean;
 }
 
+export interface AdminSystemHealth {
+  status: string;
+  timestamp: string;
+  uptimeSeconds?: number;
+  database: {
+    connected?: boolean;
+    latencyMs?: number | null;
+  };
+  environment?: string;
+  nodeVersion?: string;
+  process?: {
+    pid?: number;
+    memoryUsedMb?: number;
+    memoryHeapUsedMb?: number;
+    cpuCores?: number;
+    loadAvg?: number[];
+  };
+  syncQueue?: {
+    total?: number;
+    pending?: number;
+    failed?: number;
+  };
+}
+
 export interface AdminStats {
   // snake_case (from API)
   total_businesses: number;
@@ -116,6 +140,10 @@ export class AdminApiService extends BaseApiService {
 
   getStats(): Observable<AdminStats> {
     return this.get<AdminStats>(API_CONFIG.endpoints.admin.stats);
+  }
+
+  getSystemHealth(): Observable<AdminSystemHealth> {
+    return this.get<AdminSystemHealth>(API_CONFIG.endpoints.admin.systemHealth);
   }
 
   extendSubscription(businessId: string, days: number = 30): Observable<any> {
