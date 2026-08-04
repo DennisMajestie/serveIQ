@@ -82,6 +82,33 @@ export interface AdminSystemHealth {
   };
 }
 
+export interface AdminAuditLog {
+  id: string;
+  branchId: string;
+  branchName?: string;
+  userId?: string;
+  userName?: string;
+  userEmail?: string;
+  userRole?: string;
+  businessName?: string;
+  businessCurrency?: string;
+  action: string;
+  entityId?: string;
+  entityType?: string;
+  payload?: any;
+  createdAt: string;
+}
+
+export interface AdminAuditLogResponse {
+  data: AdminAuditLog[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export interface AdminStats {
   // snake_case (from API)
   total_businesses: number;
@@ -144,6 +171,20 @@ export class AdminApiService extends BaseApiService {
 
   getSystemHealth(): Observable<AdminSystemHealth> {
     return this.get<AdminSystemHealth>(API_CONFIG.endpoints.admin.systemHealth);
+  }
+
+  getAdminAuditLogs(params?: Record<string, string | number>): Observable<AdminAuditLogResponse> {
+    const queryParams: Record<string, string> = {};
+    if (params) {
+      for (const [key, value] of Object.entries(params)) {
+        queryParams[key] = String(value);
+      }
+    }
+    return this.getPaginated<AdminAuditLogResponse>(
+      API_CONFIG.endpoints.admin.auditLogs,
+      undefined,
+      Object.keys(queryParams).length ? queryParams : undefined,
+    );
   }
 
   extendSubscription(businessId: string, days: number = 30): Observable<any> {

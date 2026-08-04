@@ -38,7 +38,7 @@ import Swal from 'sweetalert2';
           <div class="metric-value" [class.ok-text]="health()!.database?.connected" [class.bad-text]="!health()!.database?.connected">
             {{ health()!.database?.connected ? 'Connected' : 'Unreachable' }}
           </div>
-          <div class="metric-sub">{{ health()!.database?.latencyMs != null ? health()!.database!.latencyMs + ' ms' : 'no latency data' }}</div>
+          <div class="metric-sub">{{ dbLatency() }}</div>
         </div>
 
         <div class="metric-card">
@@ -147,5 +147,10 @@ export class SystemHealthComponent implements OnInit, OnDestroy {
     if (d > 0) return `${d}d ${h}h ${m}m`;
     if (h > 0) return `${h}h ${m}m`;
     return `${m}m ${seconds % 60}s`;
+  }
+
+  dbLatency(): string {
+    const ms = this.health()?.database?.latencyMs;
+    return ms != null ? `${ms} ms` : 'no latency data';
   }
 }

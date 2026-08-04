@@ -219,6 +219,7 @@ export const API_CONFIG = {
       toggleBusinessActive: '/api/v1/admin/businesses/:id/toggle-active',
       stats: '/api/v1/admin/stats',
       systemHealth: '/api/v1/admin/system/health',
+      auditLogs: '/api/v1/admin/audit-logs',
       extend: '/api/v1/admin/businesses/extend',
       paymentProviders: '/api/v1/admin/payment-providers',
       paymentProvider: '/api/v1/admin/payment-providers/:id',
