@@ -34,7 +34,7 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
           </div>
           <div class="stat-content">
             <p class="stat-label">Total Businesses</p>
-            <p class="stat-value">{{ stats()?.totalBusinesses ?? stats()?.total_businesses ?? '—' }}</p>
+            <p class="stat-value">{{ stats()?.totalBusinesses ?? '—' }}</p>
           </div>
         </article>
         <article class="stat-card">

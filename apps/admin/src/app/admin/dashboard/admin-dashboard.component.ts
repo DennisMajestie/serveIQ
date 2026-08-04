@@ -43,7 +43,7 @@ interface ConsoleLog {
             <span class="material-symbols-outlined">store</span>
           </div>
           <div class="kpi-body">
-            <span class="kpi-value">{{ stats()?.totalBusinesses ?? stats()?.total_businesses ?? '—' }}</span>
+            <span class="kpi-value">{{ stats()?.totalBusinesses ?? '—' }}</span>
             <span class="kpi-label">Active Tenants</span>
           </div>
         </div>
@@ -54,7 +54,7 @@ interface ConsoleLog {
             <span class="material-symbols-outlined">check_circle</span>
           </div>
           <div class="kpi-body">
-            <span class="kpi-value">{{ stats()?.activeBusinesses ?? stats()?.active_businesses ?? '—' }}</span>
+            <span class="kpi-value">{{ stats()?.activeBusinesses ?? '—' }}</span>
             <span class="kpi-label">Operational</span>
           </div>
         </div>
@@ -65,7 +65,7 @@ interface ConsoleLog {
             <span class="material-symbols-outlined">corporate_fare</span>
           </div>
           <div class="kpi-body">
-            <span class="kpi-value">{{ stats()?.totalBranches ?? stats()?.total_branches ?? '—' }}</span>
+            <span class="kpi-value">{{ stats()?.totalBranches ?? '—' }}</span>
             <span class="kpi-label">Total Outlets</span>
           </div>
         </div>
