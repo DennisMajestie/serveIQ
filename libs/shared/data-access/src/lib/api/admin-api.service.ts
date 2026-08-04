@@ -122,8 +122,12 @@ export class AdminApiService extends BaseApiService {
     return this.post<any>(API_CONFIG.endpoints.admin.extend, { business_id: businessId, days });
   }
 
-  listPaymentProviders(): Observable<AdminPaymentProvider[]> {
-    return this.get<AdminPaymentProvider[]>(API_CONFIG.endpoints.admin.paymentProviders);
+  listPaymentProviders(includeInactive = true): Observable<AdminPaymentProvider[]> {
+    return this.get<AdminPaymentProvider[]>(
+      API_CONFIG.endpoints.admin.paymentProviders,
+      undefined,
+      { include_inactive: String(includeInactive) },
+    );
   }
 
   createPaymentProvider(data: CreateAdminPaymentProviderInput): Observable<AdminPaymentProvider> {
