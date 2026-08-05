@@ -69,7 +69,7 @@ interface NavItem {
             </li>
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/admin/system-health" routerLinkActive="active">
-                <span class="material_symbols-outlined">monitor_heart</span>
+                <span class="material-symbols-outlined">monitor_heart</span>
                 <span>System Health</span>
               </a>
             </li>
