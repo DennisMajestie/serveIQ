@@ -157,6 +157,11 @@ export const appRoutes: Route[] = [
             loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
           },
           {
+            path: 'analytics/branches',
+            canActivate: [permissionGuard('view_daily_sales')],
+            loadComponent: () => import('./analytics/branch-analytics.component').then(m => m.BranchAnalyticsComponent)
+          },
+          {
             path: 'notifications',
             canActivate: [permissionGuard('view_dashboard')],
             loadComponent: () => import('./notifications/notifications.component').then(m => m.NotificationsComponent)

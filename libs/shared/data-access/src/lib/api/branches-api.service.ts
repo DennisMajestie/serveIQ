@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { Branch, CreateBranchRequest, DashboardStats } from '@serveiq/shared/models';
+import { Branch, CreateBranchRequest, DashboardStats, BusinessKPIs, BranchKPI } from '@serveiq/shared/models';
 
 export interface PlatformPaymentProviderSummary {
   name: string;
@@ -54,6 +54,14 @@ export class BranchesApiService extends BaseApiService {
   /** Get dashboard summary stats (tables, open tabs, orders). */
   getStats(): Observable<DashboardStats> {
     return this.get<DashboardStats>(API_CONFIG.endpoints.branches.stats);
+  }
+
+  /** Get aggregated KPIs across all branches for the business. */
+  getBusinessKPIs(dateFrom?: string, dateTo?: string): Observable<BusinessKPIs> {
+    const queryParams: Record<string, string> = {};
+    if (dateFrom) queryParams['dateFrom'] = dateFrom;
+    if (dateTo) queryParams['dateTo'] = dateTo;
+    return this.get<BusinessKPIs>(API_CONFIG.endpoints.branches.businessKpis, undefined, queryParams);
   }
 
   /** List platform-wide payment providers defined by the super admin. */

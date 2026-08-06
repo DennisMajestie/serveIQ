@@ -144,6 +144,12 @@ interface NavItem {
                 <span>Reports</span>
               </a>
             </li>
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_daily_sales')">
+              <a class="nav-link" routerLink="/app/analytics/branches" routerLinkActive="active">
+                <span class="material-symbols-outlined">compare_arrows</span>
+                <span>Branch Analytics</span>
+              </a>
+            </li>
             <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
               <a class="nav-link" routerLink="/app/analytics" routerLinkActive="active">
                 <span class="material-symbols-outlined">analytics</span>

@@ -341,27 +341,82 @@ export interface CreateSupplierRequest {
 }
 
 // ===== Shifts =====
+export type ShiftType = 'morning' | 'evening' | 'night' | 'split' | 'custom';
+
+export interface ShiftTemplate {
+  id: string;
+  branchId: string;
+  name: string;
+  type: ShiftType;
+  scheduledStartTime: string; // HH:mm format (e.g., "07:00")
+  scheduledEndTime: string;   // HH:mm format (e.g., "15:00")
+  daysOfWeek: number[];       // 0=Sun, 1=Mon, ..., 6=Sat
+  color: string;              // Hex color for UI
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateShiftTemplateRequest {
+  name: string;
+  type: ShiftType;
+  scheduledStartTime: string;
+  scheduledEndTime: string;
+  daysOfWeek: number[];
+  color: string;
+}
+
 export interface Shift {
   id: string;
   branchId: string;
+  templateId?: string;           // Reference to shift template
+  template?: ShiftTemplate;      // Populated template info
+  assignedStaffIds: string[];    // Staff assigned to this shift
+  assignedStaff?: { id: string; fullName: string; role: string }[]; // Populated staff info
   openedAt: Date;
   closedAt?: Date;
+  scheduledStartTime: string;    // HH:mm
+  scheduledEndTime: string;      // HH:mm
   startingCashKobo: number;
   expectedCashKobo?: number;
   actualCashKobo?: number;
   varianceKobo?: number;
   note?: string;
-  status: 'open' | 'closed';
+  status: 'scheduled' | 'open' | 'closed' | 'cancelled';
+  shiftType: ShiftType;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface OpenShiftRequest {
+  templateId?: string;
+  scheduledStartTime: string;
+  scheduledEndTime: string;
   starting_cash_kobo: number;
+  assigned_staff_ids?: string[];
   note?: string;
 }
 
 export interface CloseShiftRequest {
   actual_cash_kobo: number;
   note?: string;
+}
+
+export interface ShiftReport {
+  shift: Shift;
+  totalRevenue: number;
+  totalOrders: number;
+  avgTicket: number;
+  paymentBreakdown: Record<string, number>; // method -> amount in kobo
+  staffPerformance: { staffId: string; staffName: string; orders: number; revenue: number }[];
+}
+
+export interface ShiftSummary {
+  date: string;
+  shifts: Shift[];
+  totalRevenue: number;
+  totalOrders: number;
+  totalVariance: number;
 }
 
 // ===== Stock Movement (read-only from API) =====
@@ -493,6 +548,29 @@ export interface TopItemEntry {
   quantitySold: number;
   revenueKobo: number;
   category: string;
+}
+
+// ===== Business KPIs (Multi-branch) =====
+export interface BranchKPI {
+  branchId: string;
+  branchName: string;
+  totalRevenue: number;
+  totalOrders: number;
+  avgTicket: number;
+  activeTables: number;
+  openTabs: number;
+  tableVelocity: number;
+  rank?: number;
+  trend?: 'up' | 'down' | 'neutral';
+  trendValue?: string;
+}
+
+export interface BusinessKPIs {
+  totalRevenue: number;
+  totalOrders: number;
+  avgOrderValue: number;
+  branchComparison: BranchKPI[];
+  trends: { date: string; branches: { branchId: string; revenue: number }[] }[];
 }
 
 // ===== Supervisor Workflow =====

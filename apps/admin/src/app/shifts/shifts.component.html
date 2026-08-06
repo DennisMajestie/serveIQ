@@ -2,17 +2,45 @@
   <div class="page-header">
     <div class="title-group">
       <h1 class="page-title">Shifts</h1>
-      <p class="page-subtitle">Manage open/close shifts and cash handling</p>
+      <p class="page-subtitle">Manage shift templates, scheduling, and cash handling</p>
     </div>
-    <button class="btn-primary" (click)="showOpenModal.set(true)" *ngIf="!currentShift()">
-      Open New Shift
-    </button>
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="showTemplateModal.set(true)">
+        <span class="material-symbols-outlined">settings</span>
+        Shift Templates
+      </button>
+      <button class="btn-primary" (click)="showOpenModal.set(true)" *ngIf="!currentShift()">
+        <span class="material-symbols-outlined">add</span>
+        Open Shift
+      </button>
+    </div>
   </div>
 
-  <!-- Current Shift -->
+  <!-- Shift Templates Bar -->
+  <div class="templates-bar" *ngIf="templates().length > 0">
+    <h3 class="templates-title">Quick Open from Template</h3>
+    <div class="template-chips">
+      <button 
+        class="template-chip" 
+        *ngFor="let t of templates()" 
+        (click)="openShiftFromTemplate(t)"
+        [style.border-color]="t.color"
+        [disabled]="currentShift() || isSaving()"
+      >
+        <span class="chip-color" [style.background]="t.color"></span>
+        <span class="chip-name">{{ t.name }}</span>
+        <span class="chip-time">{{ t.scheduledStartTime }} - {{ t.scheduledEndTime }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Current Shift Card -->
   <div *ngIf="currentShift()" class="current-shift-card">
     <div class="card-header">
-      <h3 class="card-title">Current Shift</h3>
+      <div>
+        <h3 class="card-title">Current Shift</h3>
+        <p class="card-subtitle">{{ currentShift()?.template?.name || 'Custom Shift' }} • {{ currentShift()?.scheduledStartTime }} - {{ currentShift()?.scheduledEndTime }}</p>
+      </div>
       <span class="status-badge status-open">Open</span>
     </div>
     <div class="card-body">
@@ -29,46 +57,110 @@
           <span class="stat-label">Expected Cash</span>
           <span class="stat-value">{{ formatKobo(currentShift()?.expectedCashKobo || 0) }}</span>
         </div>
+        <div class="stat" *ngIf="currentShift()?.assignedStaff?.length">
+          <span class="stat-label">Staff</span>
+          <span class="stat-value">{{ currentShift()!.assignedStaff!.map(s => s.fullName).join(', ') }}</span>
+        </div>
       </div>
     </div>
     <div class="card-footer">
       <button class="btn-primary" (click)="showCloseModal.set(true)">
+        <span class="material-symbols-outlined">lock</span>
         Close Shift
       </button>
     </div>
   </div>
 
-  <!-- Shifts List -->
-  <div class="shifts-list">
-    <h2 class="section-title">Past Shifts</h2>
+  <!-- No Current Shift - Show Scheduled Shifts for Today -->
+  <div *ngIf="!currentShift() && todaysScheduledShifts().length > 0" class="scheduled-shifts-card">
+    <h3 class="card-title">Scheduled for Today</h3>
+    <div class="scheduled-list">
+      <div class="scheduled-item" *ngFor="let s of todaysScheduledShifts()">
+        <div class="scheduled-info">
+          <span class="scheduled-name">{{ s.template?.name || 'Custom' }}</span>
+          <span class="scheduled-time">{{ s.scheduledStartTime }} - {{ s.scheduledEndTime }}</span>
+        </div>
+        <button class="btn-primary btn-sm" (click)="openScheduledShift(s)" [disabled]="isSaving()">
+          Start Shift
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date Filter & Shifts List -->
+  <div class="shifts-section">
+    <div class="section-header">
+      <h2 class="section-title">Shift History</h2>
+      <div class="date-filters">
+        <input type="date" [(ngModel)]="dateFrom" (change)="loadShifts()" class="date-input">
+        <span>to</span>
+        <input type="date" [(ngModel)]="dateTo" (change)="loadShifts()" class="date-input">
+        <select [(ngModel)]="statusFilter" (change)="loadShifts()" class="status-select">
+          <option value="">All Status</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="open">Open</option>
+          <option value="closed">Closed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+
     <div *ngIf="isLoading()" class="loading-state">
       <div class="spinner"></div>
     </div>
     <div *ngIf="!isLoading() && shifts().length === 0" class="empty-state">
-      <p>No past shifts found</p>
+      <span class="material-symbols-outlined">schedule</span>
+      <p>No shifts found for this period</p>
     </div>
     <div *ngIf="!isLoading() && shifts().length > 0" class="shifts-table-container">
       <table class="shifts-table">
         <thead>
           <tr>
             <th>Date</th>
+            <th>Shift</th>
+            <th>Time</th>
+            <th>Staff</th>
             <th>Starting Cash</th>
-            <th>Expected Cash</th>
-            <th>Actual Cash</th>
+            <th>Expected</th>
+            <th>Actual</th>
             <th>Variance</th>
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let shift of shifts()">
             <td>{{ shift.openedAt | date:'mediumDate' }}</td>
+            <td>
+              <span class="shift-type-badge" [style.background]="shift.template?.color || '#64748b'">
+                {{ shift.template?.name || shift.shiftType || 'Custom' }}
+              </span>
+            </td>
+            <td>{{ shift.scheduledStartTime }} - {{ shift.scheduledEndTime }}</td>
+            <td>
+              <div class="staff-avatars" *ngIf="shift.assignedStaff?.length">
+                <span *ngFor="let staff of shift.assignedStaff.slice(0, 3)" class="avatar" title="{{ staff.fullName }}">
+                  {{ staff.fullName.charAt(0) }}
+                </span>
+                <span *ngIf="shift.assignedStaff.length > 3" class="avatar more">+{{ shift.assignedStaff.length - 3 }}</span>
+              </div>
+              <span *ngIf="!shift.assignedStaff?.length" class="text-muted">—</span>
+            </td>
             <td>{{ formatKobo(shift.startingCashKobo || 0) }}</td>
             <td>{{ formatKobo(shift.expectedCashKobo || 0) }}</td>
             <td>{{ formatKobo(shift.actualCashKobo || 0) }}</td>
-            <td [style.color]="(shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0) >= 0 ? '#22c55e' : '#dc2626'" [title]="varianceExplanationFor(shift)">
-              {{ (shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0) >= 0 ? '+' : '' }}{{ formatKobo((shift.actualCashKobo || 0) - (shift.expectedCashKobo || 0)) }}
+            <td [style.color]="getVarianceColor(shift)" [title]="varianceExplanationFor(shift)">
+              {{ getVariancePrefix(shift) }}{{ formatKobo(getVariance(shift)) }}
             </td>
             <td><span class="status-badge" [style.background]="getShiftStatusColor(shift.status)">{{ shift.status }}</span></td>
+            <td class="actions-cell">
+              <button class="icon-btn" (click)="viewShiftReport(shift)" title="View Report">
+                <span class="material-symbols-outlined">analytics</span>
+              </button>
+              <button class="icon-btn" *ngIf="shift.status === 'open'" (click)="showCloseModal.set(true); selectedShiftForClose.set(shift)" title="Close Shift">
+                <span class="material-symbols-outlined">lock</span>
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -87,13 +179,46 @@
     </div>
     <div class="modal-body">
       <div class="form-group">
+        <label class="form-label">Shift Template (Optional)</label>
+        <select class="form-select" [(ngModel)]="openShiftForm.templateId">
+          <option value="">Custom Shift (Manual Times)</option>
+          <option *ngFor="let t of templates()" [value]="t.id">{{ t.name }} ({{ t.scheduledStartTime }} - {{ t.scheduledEndTime }})</option>
+        </select>
+      </div>
+      <div class="form-row" *ngIf="!openShiftForm.templateId">
+        <div class="form-group">
+          <label class="form-label" for="startTime">Start Time</label>
+          <input type="time" id="startTime" class="form-input" [(ngModel)]="openShiftForm.scheduledStartTime">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="endTime">End Time</label>
+          <input type="time" id="endTime" class="form-input" [(ngModel)]="openShiftForm.scheduledEndTime">
+        </div>
+      </div>
+      <div class="form-group">
         <label class="form-label" for="startingCash">Starting Cash (₦)</label>
-        <input type="number" id="startingCash" class="form-input" [value]="startingCash()" (change)="startingCash.set($any($event.target).valueAsNumber)" min="0" step="0.01">
+        <input type="number" id="startingCash" class="form-input" [(ngModel)]="openShiftForm.startingCash" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-group" *ngIf="staff().length > 0">
+        <label class="form-label">Assign Staff</label>
+        <div class="staff-multiselect">
+          <label class="staff-option" *ngFor="let s of staff()">
+            <input type="checkbox" [checked]="openShiftForm.assignedStaffIds?.includes(s.id)" (change)="toggleStaff(s.id, $event)">
+            <span>{{ s.fullName }} <span class="text-muted">({{ s.role }})</span></span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="openNote">Notes (Optional)</label>
+        <textarea id="openNote" class="form-textarea" [(ngModel)]="openShiftForm.note" placeholder="Any notes for this shift..."></textarea>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-secondary" (click)="showOpenModal.set(false)">Cancel</button>
-      <button class="btn-primary" (click)="openShift()">Open Shift</button>
+      <button class="btn-secondary" (click)="showOpenModal.set(false); resetOpenForm()">Cancel</button>
+      <button class="btn-primary" (click)="openShift()" [disabled]="isSaving() || !openShiftForm.startingCash">
+        <span *ngIf="isSaving()" class="spinner-sm"></span>
+        Open Shift
+      </button>
     </div>
   </div>
 </div>
@@ -103,28 +228,190 @@
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h3 class="modal-title">Close Shift</h3>
-      <button class="modal-close" (click)="showCloseModal.set(false)">
+      <button class="modal-close" (click)="showCloseModal.set(false); selectedShiftForClose.set(null)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Expected Cash</label>
-        <p class="form-value">{{ formatKobo(currentShift()?.expectedCashKobo || 0) }}</p>
+      <div class="shift-summary" *ngIf="shiftToClose()">
+        <div class="summary-row">
+          <span>{{ shiftToClose()!.template?.name || 'Custom Shift' }}</span>
+          <span>{{ shiftToClose()!.scheduledStartTime }} - {{ shiftToClose()!.scheduledEndTime }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Starting Cash</span>
+          <strong>{{ formatKobo(shiftToClose()!.startingCashKobo || 0) }}</strong>
+        </div>
+        <div class="summary-row highlight">
+          <span>Expected Cash</span>
+          <strong>{{ formatKobo(shiftToClose()!.expectedCashKobo || 0) }}</strong>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label" for="closeCash">Actual Cash (₦)</label>
-        <input type="number" id="closeCash" class="form-input" [value]="closeCash()" (change)="closeCash.set($any($event.target).valueAsNumber)" min="0" step="0.01">
-        <p class="form-hint" *ngIf="closeCash() > 0 && currentShift()">{{ varianceExplanationFor(currentShift()!, closeCashKobo) }}</p>
+        <input type="number" id="closeCash" class="form-input" [(ngModel)]="closeCash" min="0" step="0.01" placeholder="0.00">
+        <p class="form-hint variance-hint" *ngIf="closeCash > 0 && shiftToClose()" [style.color]="getVarianceColorHint()">
+          {{ varianceExplanationFor(shiftToClose()!, closeCashKobo) }}
+        </p>
       </div>
       <div class="form-group">
         <label class="form-label" for="closeNote">Notes (Optional)</label>
-        <textarea id="closeNote" class="form-textarea" [value]="closeNote()" (change)="closeNote.set($any($event.target).value)"></textarea>
+        <textarea id="closeNote" class="form-textarea" [(ngModel)]="closeNote" placeholder="Variance explanation, issues, etc..."></textarea>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-secondary" (click)="showCloseModal.set(false)">Cancel</button>
-      <button class="btn-primary" (click)="closeShift(currentShift()!)">Close Shift</button>
+      <button class="btn-secondary" (click)="showCloseModal.set(false); resetCloseForm()">Cancel</button>
+      <button class="btn-primary" (click)="closeShift(shiftToClose()!)" [disabled]="isSaving() || closeCash <= 0">
+        <span *ngIf="isSaving()" class="spinner-sm"></span>
+        Close Shift
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Shift Report Modal -->
+<div *ngIf="showReportModal()" class="modal-overlay" (click)="showReportModal.set(false)">
+  <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Shift Report</h3>
+      <button class="modal-close" (click)="showReportModal.set(false)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body report-body" *ngIf="selectedReport()">
+      <div class="report-header">
+        <h4>{{ selectedReport()!.shift.template?.name || 'Custom Shift' }}</h4>
+        <p>{{ selectedReport()!.shift.openedAt | date:'mediumDate' }} • {{ selectedReport()!.shift.scheduledStartTime }} - {{ selectedReport()!.shift.scheduledEndTime }}</p>
+      </div>
+      <div class="report-kpis">
+        <div class="kpi">
+          <span class="kpi-label">Total Revenue</span>
+          <span class="kpi-value">{{ formatKobo(selectedReport()!.totalRevenue) }}</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Total Orders</span>
+          <span class="kpi-value">{{ selectedReport()!.totalOrders }}</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Avg Ticket</span>
+          <span class="kpi-value">{{ formatKobo(selectedReport()!.avgTicket) }}</span>
+        </div>
+      </div>
+      <div class="report-section" *ngIf="Object.keys(selectedReport()!.paymentBreakdown).length">
+        <h5>Payment Breakdown</h5>
+        <div class="payment-list">
+          <div class="payment-item" *ngFor="let item of paymentBreakdownEntries()">
+            <span>{{ item.key }}</span>
+            <strong>{{ formatKobo(item.value) }}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="report-section" *ngIf="selectedReport()!.staffPerformance?.length">
+        <h5>Staff Performance</h5>
+        <table class="mini-table">
+          <thead><tr><th>Staff</th><th>Orders</th><th>Revenue</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let sp of selectedReport()!.staffPerformance">
+              <td>{{ sp.staffName }}</td>
+              <td>{{ sp.orders }}</td>
+              <td>{{ formatKobo(sp.revenue) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="showReportModal.set(false)">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Shift Templates Modal -->
+<div *ngIf="showTemplateModal()" class="modal-overlay" (click)="showTemplateModal.set(false)">
+  <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Shift Templates</h3>
+      <p class="modal-subtitle">Create reusable shift patterns for quick scheduling</p>
+      <button class="modal-close" (click)="showTemplateModal.set(false)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Template List -->
+      <div class="template-list" *ngIf="!editingTemplate()">
+        <div class="template-card" *ngFor="let t of templates()">
+          <div class="template-info">
+            <span class="template-color" [style.background]="t.color"></span>
+            <div>
+              <strong>{{ t.name }}</strong>
+              <span class="text-muted">{{ t.scheduledStartTime }} - {{ t.scheduledEndTime }} • {{ getDaysString(t.daysOfWeek) }}</span>
+            </div>
+          </div>
+          <div class="template-actions">
+            <button class="icon-btn" (click)="editTemplate(t)" title="Edit">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+            <button class="icon-btn danger" (click)="deleteTemplate(t)" title="Delete">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+        <div class="empty-template" *ngIf="templates().length === 0">
+          <span class="material-symbols-outlined">schedule</span>
+          <p>No shift templates yet. Create one to get started.</p>
+        </div>
+      </div>
+
+      <!-- Template Form -->
+      <div class="template-form" *ngIf="editingTemplate()">
+        <h4>{{ editingTemplate()?.id ? 'Edit' : 'Create' }} Shift Template</h4>
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" [(ngModel)]="templateForm.name" placeholder="e.g., Morning Shift">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-select" [(ngModel)]="templateForm.type">
+              <option value="morning">Morning</option>
+              <option value="evening">Evening</option>
+              <option value="night">Night</option>
+              <option value="split">Split</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Color</label>
+            <input type="color" class="form-input color-input" [(ngModel)]="templateForm.color">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Start Time</label>
+            <input type="time" class="form-input" [(ngModel)]="templateForm.scheduledStartTime">
+          </div>
+          <div class="form-group">
+            <label class="form-label">End Time</label>
+            <input type="time" class="form-input" [(ngModel)]="templateForm.scheduledEndTime">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Days of Week</label>
+          <div class="days-selector">
+            <label class="day-chip" *ngFor="let day of daysOfWeek" [class.active]="templateForm.daysOfWeek.includes(day.value)">
+              <input type="checkbox" [checked]="templateForm.daysOfWeek.includes(day.value)" (change)="toggleDay(day.value, $event)">
+              <span>{{ day.label }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="cancelTemplateEdit()">Cancel</button>
+          <button class="btn-primary" (click)="saveTemplate()" [disabled]="isSaving() || !templateForm.name">
+            <span *ngIf="isSaving()" class="spinner-sm"></span>
+            {{ editingTemplate()?.id ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

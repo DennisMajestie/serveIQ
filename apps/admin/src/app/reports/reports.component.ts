@@ -1,8 +1,8 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ReportsApiService } from '@serveiq/shared/data-access';
-import { SalesEntry, TopItemEntry, PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry } from '@serveiq/shared/models';
+import { ReportsApiService, BranchesApiService } from '@serveiq/shared/data-access';
+import { SalesEntry, TopItemEntry, PeakHoursEntry, TableVelocityEntry, PeakEfficiencyEntry, Branch, DashboardStats } from '@serveiq/shared/models';
 import { CurrencyContextService } from '../core/currency-context.service';
 import Swal from 'sweetalert2';
 
@@ -12,13 +12,22 @@ import Swal from 'sweetalert2';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="reports-page">
-      <div class="page-header">
-        <h1>Reports</h1>
+<div class="page-header">
+      <h1>Reports</h1>
+      <div class="filters">
         <div class="date-filter">
           <input type="date" [(ngModel)]="dateFrom" (change)="loadActiveTab()">
           <input type="date" [(ngModel)]="dateTo" (change)="loadActiveTab()">
         </div>
+        <div class="branch-filter" *ngIf="branches().length > 1">
+          <label>Branch:</label>
+          <select [(ngModel)]="selectedBranchId" (change)="onBranchChange()">
+            <option value="all">All Branches (Aggregated)</option>
+            <option *ngFor="let b of branches()" [value]="b.id">{{ b.name }}</option>
+          </select>
+        </div>
       </div>
+    </div>
 
       <div class="tabs">
         <button class="tab" *ngFor="let tab of tabs" [class.active]="activeTab() === tab.key" (click)="switchTab(tab.key)">
@@ -151,10 +160,14 @@ import Swal from 'sweetalert2';
   `,
   styles: [`
     .reports-page { padding: 24px; }
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
     .page-header h1 { margin: 0; font-size: 28px; font-weight: 700; color: var(--on-surface); }
+    .filters { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
     .date-filter { display: flex; gap: 12px; }
     .date-filter input { padding: 8px 12px; border: 1px solid var(--outline-variant); border-radius: 8px; background: var(--surface); color: var(--on-surface); font-family: 'Inter', sans-serif; }
+    .branch-filter { display: flex; align-items: center; gap: 8px; }
+    .branch-filter label { font-size: 14px; font-weight: 500; color: var(--secondary); }
+    .branch-filter select { padding: 8px 12px; border: 1px solid var(--outline-variant); border-radius: 8px; background: var(--surface); color: var(--on-surface); font-family: 'Inter', sans-serif; min-width: 220px; }
 
     .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface-container-low); border-radius: 12px; padding: 4px; }
     .tab { display: flex; align-items: center; gap: 6px; padding: 10px 16px; border: none; background: transparent; color: var(--secondary); font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
@@ -189,13 +202,16 @@ import Swal from 'sweetalert2';
 })
 export class ReportsComponent implements OnInit {
   private reportsApi = inject(ReportsApiService);
+  private branchesApi = inject(BranchesApiService);
   private currency = inject(CurrencyContextService);
 
   dateFrom = signal('');
   dateTo = signal('');
   loading = signal(false);
   activeTab = signal('sales');
+  selectedBranchId = signal('all'); // 'all' = aggregate across all branches
 
+  branches = signal<Branch[]>([]);
   salesData = signal<SalesEntry[]>([]);
   peakHoursData = signal<PeakHoursEntry[]>([]);
   topItemsData = signal<TopItemEntry[]>([]);
@@ -209,14 +225,6 @@ export class ReportsComponent implements OnInit {
 
   currencyCode = computed(() => this.currency.getCode());
   currencySymbol = computed(() => this.currency.getSymbol());
-
-  toNaira(kobo: number): number {
-    return kobo / 100;
-  }
-
-  formatCurrency(kobo: number): string {
-    return this.currency.formatKobo(kobo);
-  }
 
   tabs = [
     { key: 'sales', label: 'Sales', icon: 'payments' },
@@ -232,7 +240,15 @@ export class ReportsComponent implements OnInit {
     start.setDate(start.getDate() - 30);
     this.dateFrom.set(start.toISOString().split('T')[0]);
     this.dateTo.set(end.toISOString().split('T')[0]);
+    this.loadBranches();
     this.loadActiveTab();
+  }
+
+  loadBranches() {
+    this.branchesApi.list().subscribe({
+      next: (branches) => this.branches.set(branches),
+      error: () => this.branches.set([])
+    });
   }
 
   switchTab(tab: string) {
@@ -240,10 +256,15 @@ export class ReportsComponent implements OnInit {
     this.loadActiveTab();
   }
 
+  onBranchChange() {
+    this.loadActiveTab();
+  }
+
   loadActiveTab() {
     const df = this.dateFrom() || undefined;
     const dt = this.dateTo() || undefined;
     const tab = this.activeTab();
+    const branchId = this.selectedBranchId() === 'all' ? undefined : this.selectedBranchId();
     this.loading.set(true);
 
     switch (tab) {
@@ -254,7 +275,7 @@ export class ReportsComponent implements OnInit {
         });
         break;
       case 'peak-hours':
-        this.reportsApi.getPeakHours(undefined, df, dt).subscribe({
+        this.reportsApi.getPeakHours(branchId, df, dt).subscribe({
           next: data => { this.peakHoursData.set(data); this.loading.set(false); },
           error: () => this.loading.set(false)
         });
@@ -266,7 +287,7 @@ export class ReportsComponent implements OnInit {
         });
         break;
       case 'table-velocity':
-        this.reportsApi.getTableVelocity(df, dt).subscribe({
+        this.reportsApi.getTableVelocity(branchId, df, dt).subscribe({
           next: data => { this.velocityData.set(data); this.loading.set(false); },
           error: () => this.loading.set(false)
         });
