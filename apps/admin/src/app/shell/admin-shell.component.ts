@@ -8,6 +8,7 @@ import { AuthService, UserApiService, TablesApiService, TabsApiService, User, Su
 import { SubscriptionService } from '../core/subscription.service';
 import { ThemeService } from '../core/theme.service';
 import { PermissionService } from '../core/permission.service';
+import { FeedbackComponent } from '../core/feedback/feedback.component';
 import { of, forkJoin, interval, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map, catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -29,7 +30,7 @@ interface NavItem {
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, FeedbackComponent],
   template: `
       <div class="admin-shell">
       <!-- Impersonation Loader Overlay -->
@@ -317,6 +318,7 @@ interface NavItem {
         </main>
       </div>
     </div>
+    <app-feedback></app-feedback>
   `,
   styles: [`
     :host {

@@ -198,6 +198,10 @@ export const appRoutes: Route[] = [
         ]
       },
       {
+        path: 'feedback',
+        loadComponent: () => import('./core/feedback/feedback.component').then(m => m.FeedbackComponent)
+      },
+      {
         path: 'ads',
         canActivate: [superAdminGuard],
         loadComponent: () => import('./ads/ads.component').then(m => m.AdsComponent)
