@@ -5,7 +5,7 @@ import { AuthService } from '@serveiq/shared/data-access';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-const SUBSCRIPTION_ROUTES = ['/billing'];
+const SUBSCRIPTION_ROUTES = ['/app/billing'];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
@@ -28,7 +28,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         const currentUrl = window.location.pathname;
         const isSubscriptionRoute = SUBSCRIPTION_ROUTES.some(r => currentUrl.startsWith(r));
         if (!isSubscriptionRoute) {
-          window.location.href = '/billing';
+          window.location.href = '/app/billing';
         }
       }
       return throwError(() => error);

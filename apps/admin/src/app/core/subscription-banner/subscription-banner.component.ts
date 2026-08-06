@@ -12,7 +12,7 @@ import { SubscriptionService } from '../subscription.service';
         <span class="sb-icon">{{ statusIcon(sub.status) }}</span>
         <span class="sb-message">{{ statusMessage(sub) }}</span>
         <a *ngIf="sub.status === 'expired' || sub.status === 'past_due'"
-           href="/billing" class="sb-link">Manage subscription</a>
+           href="/app/billing" class="sb-link">Manage subscription</a>
       </div>
     </ng-container>
     <ng-template #noSub></ng-template>
