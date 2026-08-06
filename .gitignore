@@ -31,8 +31,6 @@ apps/api/src/**/*.js.map
 
 tmp/
 
-.env*
-
 # Runtime PID files
 admin-pid.txt
 serve-pids.txt
