@@ -4,7 +4,6 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, switchMap, tap, filter, take } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
-// Skip interceptor for auth endpoints to avoid recursion during refresh/logout
 const AUTH_ENDPOINTS = [
   '/api/v1/auth/login',
   '/api/v1/auth/register',
@@ -19,6 +18,8 @@ const AUTH_ENDPOINTS = [
   '/api/v1/auth/activate',
 ];
 
+const SUBSCRIPTION_ROUTES = ['/billing'];
+
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
@@ -27,7 +28,6 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // Skip interceptor for auth endpoints
     if (AUTH_ENDPOINTS.some(endpoint => request.url.includes(endpoint))) {
       return next.handle(request);
     }
@@ -45,7 +45,6 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 && token) {
           if (this.isRefreshing) {
-            // Another request is already refreshing, wait for it
             return this.refreshTokenSubject.pipe(
               filter(t => t !== null),
               take(1),
@@ -62,7 +61,6 @@ export class AuthInterceptor implements HttpInterceptor {
             );
           }
 
-          // First 401 — attempt token refresh
           this.isRefreshing = true;
           this.refreshTokenSubject.next(null);
 
@@ -90,6 +88,13 @@ export class AuthInterceptor implements HttpInterceptor {
               return throwError(() => error);
             })
           );
+        }
+        if (error.status === 402) {
+          const currentUrl = window.location.pathname;
+          const isSubscriptionRoute = SUBSCRIPTION_ROUTES.some(r => currentUrl.startsWith(r));
+          if (!isSubscriptionRoute) {
+            window.location.href = '/billing';
+          }
         }
         return throwError(() => error);
       })
