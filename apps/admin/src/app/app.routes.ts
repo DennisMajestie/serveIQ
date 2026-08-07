@@ -168,6 +168,7 @@ export const appRoutes: Route[] = [
           },
           {
             path: 'billing',
+            canActivate: [permissionGuard('view_dashboard')],
             loadComponent: () => import('./billing/billing.component').then(m => m.BillingComponent)
           },
           {
