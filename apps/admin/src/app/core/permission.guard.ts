@@ -22,7 +22,7 @@ export const permissionGuard = (requiredPermission: string): CanActivateFn => {
         if (permService.hasPermission(requiredPermission)) {
           return true;
         }
-        return router.parseUrl('/login');
+        return router.createUrlTree(['/login']);
       })
     );
   };
