@@ -433,6 +433,14 @@ export class ShiftsComponent implements OnInit {
     return days.map(d => this.daysOfWeek.find(w => w.value === d)?.label).join(', ');
   }
 
+  getPaymentKey(index: number): string {
+    return this.paymentBreakdownEntries()[index]?.[0] || '';
+  }
+
+  getPaymentValue(index: number): number {
+    return this.paymentBreakdownEntries()[index]?.[1] || 0;
+  }
+
   // --- Formatting & Helpers ---
   formatKobo(kobo: number): string {
     return this.currency.formatKobo(kobo);

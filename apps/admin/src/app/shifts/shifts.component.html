@@ -137,15 +137,15 @@
               </span>
             </td>
             <td>{{ shift.scheduledStartTime }} - {{ shift.scheduledEndTime }}</td>
-            <td>
-              <div class="staff-avatars" *ngIf="shift.assignedStaff?.length">
-                <span *ngFor="let staff of shift.assignedStaff.slice(0, 3)" class="avatar" title="{{ staff.fullName }}">
-                  {{ staff.fullName.charAt(0) }}
-                </span>
-                <span *ngIf="shift.assignedStaff.length > 3" class="avatar more">+{{ shift.assignedStaff.length - 3 }}</span>
-              </div>
-              <span *ngIf="!shift.assignedStaff?.length" class="text-muted">—</span>
-            </td>
+<td>
+  <div class="staff-avatars" *ngIf="shift.assignedStaff?.length">
+    <span *ngFor="let staff of (shift.assignedStaff || []).slice(0, 3)" class="avatar" title="{{ staff.fullName }}">
+      {{ staff.fullName.charAt(0) }}
+    </span>
+    <span *ngIf="(shift.assignedStaff || []).length > 3" class="avatar more">+{{ (shift.assignedStaff || []).length - 3 }}</span>
+  </div>
+  <span *ngIf="!(shift.assignedStaff?.length)" class="text-muted">—</span>
+</td>
             <td>{{ formatKobo(shift.startingCashKobo || 0) }}</td>
             <td>{{ formatKobo(shift.expectedCashKobo || 0) }}</td>
             <td>{{ formatKobo(shift.actualCashKobo || 0) }}</td>
@@ -180,42 +180,42 @@
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">Shift Template (Optional)</label>
-        <select class="form-select" [(ngModel)]="openShiftForm.templateId">
+        <select class="form-select" [(ngModel)]="openShiftForm().templateId">
           <option value="">Custom Shift (Manual Times)</option>
           <option *ngFor="let t of templates()" [value]="t.id">{{ t.name }} ({{ t.scheduledStartTime }} - {{ t.scheduledEndTime }})</option>
         </select>
       </div>
-      <div class="form-row" *ngIf="!openShiftForm.templateId">
+      <div class="form-row" *ngIf="!openShiftForm().templateId">
         <div class="form-group">
           <label class="form-label" for="startTime">Start Time</label>
-          <input type="time" id="startTime" class="form-input" [(ngModel)]="openShiftForm.scheduledStartTime">
+          <input type="time" id="startTime" class="form-input" [(ngModel)]="openShiftForm().scheduledStartTime">
         </div>
         <div class="form-group">
           <label class="form-label" for="endTime">End Time</label>
-          <input type="time" id="endTime" class="form-input" [(ngModel)]="openShiftForm.scheduledEndTime">
+          <input type="time" id="endTime" class="form-input" [(ngModel)]="openShiftForm().scheduledEndTime">
         </div>
       </div>
       <div class="form-group">
         <label class="form-label" for="startingCash">Starting Cash (₦)</label>
-        <input type="number" id="startingCash" class="form-input" [(ngModel)]="openShiftForm.startingCash" min="0" step="0.01" placeholder="0.00">
+        <input type="number" id="startingCash" class="form-input" [(ngModel)]="openShiftForm().startingCash" min="0" step="0.01" placeholder="0.00">
       </div>
       <div class="form-group" *ngIf="staff().length > 0">
         <label class="form-label">Assign Staff</label>
         <div class="staff-multiselect">
           <label class="staff-option" *ngFor="let s of staff()">
-            <input type="checkbox" [checked]="openShiftForm.assignedStaffIds?.includes(s.id)" (change)="toggleStaff(s.id, $event)">
+            <input type="checkbox" [checked]="openShiftForm().assignedStaffIds?.includes(s.id)" (change)="toggleStaff(s.id, $event)">
             <span>{{ s.fullName }} <span class="text-muted">({{ s.role }})</span></span>
           </label>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label" for="openNote">Notes (Optional)</label>
-        <textarea id="openNote" class="form-textarea" [(ngModel)]="openShiftForm.note" placeholder="Any notes for this shift..."></textarea>
+        <textarea id="openNote" class="form-textarea" [(ngModel)]="openShiftForm().note" placeholder="Any notes for this shift..."></textarea>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" (click)="showOpenModal.set(false); resetOpenForm()">Cancel</button>
-      <button class="btn-primary" (click)="openShift()" [disabled]="isSaving() || !openShiftForm.startingCash">
+      <button class="btn-primary" (click)="openShift()" [disabled]="isSaving() || !openShiftForm().startingCash">
         <span *ngIf="isSaving()" class="spinner-sm"></span>
         Open Shift
       </button>
@@ -250,9 +250,9 @@
       <div class="form-group">
         <label class="form-label" for="closeCash">Actual Cash (₦)</label>
         <input type="number" id="closeCash" class="form-input" [(ngModel)]="closeCash" min="0" step="0.01" placeholder="0.00">
-        <p class="form-hint variance-hint" *ngIf="closeCash > 0 && shiftToClose()" [style.color]="getVarianceColorHint()">
-          {{ varianceExplanationFor(shiftToClose()!, closeCashKobo) }}
-        </p>
+<p class="form-hint variance-hint" *ngIf="closeCash() > 0 && shiftToClose()" [style.color]="getVarianceColorHint()">
+  {{ varianceExplanationFor(shiftToClose()!, closeCashKobo()) }}
+</p>
       </div>
       <div class="form-group">
         <label class="form-label" for="closeNote">Notes (Optional)</label>
@@ -261,7 +261,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" (click)="showCloseModal.set(false); resetCloseForm()">Cancel</button>
-      <button class="btn-primary" (click)="closeShift(shiftToClose()!)" [disabled]="isSaving() || closeCash <= 0">
+      <button class="btn-primary" (click)="closeShift(shiftToClose()!)" [disabled]="isSaving() || closeCash() <= 0">
         <span *ngIf="isSaving()" class="spinner-sm"></span>
         Close Shift
       </button>
@@ -297,15 +297,15 @@
           <span class="kpi-value">{{ formatKobo(selectedReport()!.avgTicket) }}</span>
         </div>
       </div>
-      <div class="report-section" *ngIf="Object.keys(selectedReport()!.paymentBreakdown).length">
-        <h5>Payment Breakdown</h5>
-        <div class="payment-list">
-          <div class="payment-item" *ngFor="let item of paymentBreakdownEntries()">
-            <span>{{ item.key }}</span>
-            <strong>{{ formatKobo(item.value) }}</strong>
-          </div>
-        </div>
-      </div>
+<div class="report-section" *ngIf="paymentBreakdownEntries().length">
+  <h5>Payment Breakdown</h5>
+  <div class="payment-list">
+    <div class="payment-item" *ngFor="let entry of paymentBreakdownEntries(); let i = index">
+      <span>{{ getPaymentKey(i) }}</span>
+      <strong>{{ formatKobo(getPaymentValue(i)) }}</strong>
+    </div>
+  </div>
+</div>
       <div class="report-section" *ngIf="selectedReport()!.staffPerformance?.length">
         <h5>Staff Performance</h5>
         <table class="mini-table">
@@ -372,7 +372,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Type</label>
-            <select class="form-select" [(ngModel)]="templateForm.type">
+            <select class="form-select" [(ngModel)]="templateForm().type">
               <option value="morning">Morning</option>
               <option value="evening">Evening</option>
               <option value="night">Night</option>
@@ -382,24 +382,24 @@
           </div>
           <div class="form-group">
             <label class="form-label">Color</label>
-            <input type="color" class="form-input color-input" [(ngModel)]="templateForm.color">
+            <input type="color" class="form-input color-input" [(ngModel)]="templateForm().color">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Start Time</label>
-            <input type="time" class="form-input" [(ngModel)]="templateForm.scheduledStartTime">
+            <input type="time" class="form-input" [(ngModel)]="templateForm().scheduledStartTime">
           </div>
           <div class="form-group">
             <label class="form-label">End Time</label>
-            <input type="time" class="form-input" [(ngModel)]="templateForm.scheduledEndTime">
+            <input type="time" class="form-input" [(ngModel)]="templateForm().scheduledEndTime">
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Days of Week</label>
           <div class="days-selector">
-            <label class="day-chip" *ngFor="let day of daysOfWeek" [class.active]="templateForm.daysOfWeek.includes(day.value)">
-              <input type="checkbox" [checked]="templateForm.daysOfWeek.includes(day.value)" (change)="toggleDay(day.value, $event)">
+            <label class="day-chip" *ngFor="let day of daysOfWeek" [class.active]="templateForm().daysOfWeek.includes(day.value)">
+              <input type="checkbox" [checked]="templateForm().daysOfWeek.includes(day.value)" (change)="toggleDay(day.value, $event)">
               <span>{{ day.label }}</span>
             </label>
           </div>

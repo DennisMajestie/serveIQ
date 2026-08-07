@@ -6,7 +6,7 @@
     </div>
     <div class="header-actions">
       <div class="date-range-picker">
-        <select [(ngModel)]="selectedRange" (change)="setRange($event.target.value)">
+        <select [(ngModel)]="selectedRange" (change)="onRangeChange($event)">
           <option *ngFor="let r of ranges" [value]="r.key">{{ r.label }}</option>
         </select>
         <input type="date" [(ngModel)]="dateFrom" (change)="onDateChange()">
@@ -29,10 +29,10 @@
           <span class="label">Total Revenue (All Branches)</span>
           <span class="value">{{ formatKobo(totalRevenueAll()) }}</span>
         </div>
-        <div class="card-trend" [class]="getTrendClass(revenueTrend())">
-          <span class="material-symbols-outlined">{{ getTrendIcon(revenueTrend()) }}</span>
-          <span>{{ revenueTrendValue() }}</span>
-        </div>
+<div class="card-trend" [class]="getTrendClass(revenueTrend() || 'neutral')">
+  <span class="material-symbols-outlined">{{ getTrendIcon(revenueTrend() || 'neutral') }}</span>
+  <span>{{ revenueTrendValue() }}</span>
+</div>
       </div>
 
       <div class="summary-card total-orders">
@@ -80,9 +80,9 @@
           </thead>
           <tbody>
             <tr *ngFor="let kpi of branchKPIs(); let i = index" [class.top-rank]="i < 3">
-              <td>
-                <span class="rank-badge" [class]="getRankClass(kpi.rank)">{{ kpi.rank }}</span>
-              </td>
+<td>
+  <span class="rank-badge" [class]="getRankClass(kpi.rank!)">{{ kpi.rank }}</span>
+</td>
               <td class="branch-name">{{ kpi.branchName }}</td>
               <td class="currency">{{ formatKobo(kpi.totalRevenue) }}</td>
               <td>{{ kpi.totalOrders | number }}</td>
@@ -90,12 +90,12 @@
               <td>{{ kpi.tableVelocity }} min</td>
               <td>{{ kpi.activeTables }}</td>
               <td>{{ kpi.openTabs }}</td>
-              <td>
-                <span class="trend-badge" [class]="getTrendClass(kpi.trend)">
-                  <span class="material-symbols-outlined">{{ getTrendIcon(kpi.trend) }}</span>
-                  {{ kpi.trendValue }}
-                </span>
-              </td>
+<td>
+  <span class="trend-badge" [class]="getTrendClass(kpi.trend!)">
+    <span class="material-symbols-outlined">{{ getTrendIcon(kpi.trend!) }}</span>
+    {{ kpi.trendValue }}
+  </span>
+</td>
             </tr>
             <tr *ngIf="branchKPIs().length === 0">
               <td colspan="9" class="empty-state">No branch data available for this period</td>
@@ -132,13 +132,13 @@
       <h2 class="section-title">Revenue Trend (Last 30 Days)</h2>
       <div class="trend-chart">
         <svg [attr.viewBox]="'0 0 ' + chartWidth + ' ' + chartHeight" class="trend-svg">
-          <!-- Grid lines -->
-          <g class="grid-lines">
-            <line *ngFor="let y of gridLines" 
-                  x1="0" [attr.y1]="y" 
-                  [attr.x2]="chartWidth" [attr.y2]="y"
-                  stroke="var(--outline-variant)" stroke-width="0.5"></line>
-          </g>
+<!-- Grid lines -->
+<g class="grid-lines">
+  <line *ngFor="let y of gridLines()" 
+        x1="0" [attr.y1]="y" 
+        [attr.x2]="chartWidth" [attr.y2]="y"
+        stroke="var(--outline-variant)" stroke-width="0.5"></line>
+</g>
           
           <!-- Branch lines -->
           <g *ngFor="let branch of branchKPIs(); let i = index" class="trend-line-group">
@@ -172,13 +172,13 @@
             <p>Revenue: {{ formatKobo(topBranch()!.totalRevenue) }} ({{ topBranch()!.totalOrders }} orders)</p>
           </div>
         </div>
-        <div class="insight-card attention" *ngIf="bottomBranch() && branchKPIs().length > 1">
-          <span class="material-symbols-outlined">flag</span>
-          <div>
-            <strong>Needs Attention:</strong> {{ bottomBranch()!.branchName }}
-            <p>Revenue: {{ formatKobo(bottomBranch()!.totalRevenue) }} — {{ Math.round((1 - bottomBranch()!.totalRevenue / topBranch()!.totalRevenue) * 100) }}% below leader</p>
-          </div>
-        </div>
+<div class="insight-card attention" *ngIf="bottomBranch() && branchKPIs().length > 1">
+  <span class="material-symbols-outlined">flag</span>
+  <div>
+    <strong>Needs Attention:</strong> {{ bottomBranch()!.branchName }}
+    <p>Revenue: {{ formatKobo(bottomBranch()!.totalRevenue) }} — {{ gapPercentage() }}% below leader</p>
+  </div>
+</div>
         <div class="insight-card info">
           <span class="material-symbols-outlined">speed</span>
           <div>

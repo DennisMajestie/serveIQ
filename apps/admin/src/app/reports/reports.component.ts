@@ -42,7 +42,7 @@ import Swal from 'sweetalert2';
           <div class="summary-cards">
             <div class="summary-card">
               <span class="label">Total Revenue</span>
-              <span class="value">{{ formatCurrency(totalRevenueKobo()) }}</span>
+              <span class="value">{{ formatKobo(totalRevenueKobo()) }}</span>
             </div>
             <div class="summary-card">
               <span class="label">Total Orders</span>
@@ -62,7 +62,7 @@ import Swal from 'sweetalert2';
 <tbody>
                 <tr *ngFor="let entry of salesData()">
                   <td>{{ entry.date | date:'mediumDate' }}</td>
-                  <td>{{ formatCurrency(entry.revenueKobo) }}</td>
+                  <td>{{ formatKobo(entry.revenueKobo) }}</td>
                   <td>{{ entry.orderCount }}</td>
                   <td>{{ entry.paymentMethod }}</td>
         </tr>
@@ -108,7 +108,7 @@ import Swal from 'sweetalert2';
           <td>{{ item.name }}</td>
           <td>{{ item.category }}</td>
           <td>{{ item.quantitySold }}</td>
-          <td>{{ formatCurrency(item.revenueKobo) }}</td>
+          <td>{{ formatKobo(item.revenueKobo) }}</td>
         </tr>
         <tr *ngIf="topItemsData().length === 0">
           <td colspan="5" class="empty-state">No items sold in this period</td>
@@ -225,6 +225,10 @@ export class ReportsComponent implements OnInit {
 
   currencyCode = computed(() => this.currency.getCode());
   currencySymbol = computed(() => this.currency.getSymbol());
+
+  formatKobo(kobo: number): string {
+    return this.currency.formatKobo(kobo);
+  }
 
   tabs = [
     { key: 'sales', label: 'Sales', icon: 'payments' },

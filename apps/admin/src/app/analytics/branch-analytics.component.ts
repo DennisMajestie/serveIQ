@@ -285,6 +285,13 @@ export class BranchAnalyticsComponent implements OnInit {
     return kpis[0] || null;
   });
 
+  gapPercentage = computed(() => {
+    const top = this.topBranch();
+    const bottom = this.bottomBranch();
+    if (!top || !bottom || top.totalRevenue === 0) return 0;
+    return Math.round((1 - bottom.totalRevenue / top.totalRevenue) * 100);
+  });
+
   // Grid lines for chart
   gridLines = computed(() => {
     const lines = [];
@@ -392,5 +399,10 @@ export class BranchAnalyticsComponent implements OnInit {
     a.download = `branch-comparison-${this.dateFrom()}_to_${this.dateTo()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  onRangeChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.setRange(value);
   }
 }
