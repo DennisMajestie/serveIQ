@@ -18,7 +18,7 @@ const AUTH_ENDPOINTS = [
   '/api/v1/auth/activate',
 ];
 
-const SUBSCRIPTION_ROUTES = ['/billing'];
+const SUBSCRIPTION_ROUTES = ['/app/billing'];
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -93,7 +93,7 @@ export class AuthInterceptor implements HttpInterceptor {
           const currentUrl = window.location.pathname;
           const isSubscriptionRoute = SUBSCRIPTION_ROUTES.some(r => currentUrl.startsWith(r));
           if (!isSubscriptionRoute) {
-            window.location.href = '/billing';
+            window.location.href = '/app/billing';
           }
         }
         return throwError(() => error);
