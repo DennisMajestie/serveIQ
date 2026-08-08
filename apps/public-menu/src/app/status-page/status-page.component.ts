@@ -8,6 +8,8 @@ import { interval, Subscription, switchMap, finalize } from 'rxjs';
 
 type StatusStep = 'ordering' | 'pending_approval' | 'preparing' | 'ready' | 'payment' | 'paid';
 
+const TEST_MODE_KEY = 'serveiq_test_mode';
+
 interface Stage {
   key: string;
   label: string;
@@ -254,13 +256,21 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     return 'pending_approval';
   });
 
-  /** TEST MODE: enabled only when the status page URL has `?test=1`.
-   *  Used during pre-launch to fire the dummy OPay webhook so a payment can
-   *  be verified end-to-end without a real terminal. Remove for go-live. */
-  readonly testMode = computed(() => this.testModeEnabled());
+  /** TEST MODE: shows the "Simulate Payment Received" button. Enabled by
+   *  `?test=1` in the URL *or* once that param has been seen in this tab
+   *  (persisted to sessionStorage, so the button also appears on the
+   *  no-param /public/status route and after browsing the menu).
+   *  Reads the query params reactively, so typing `?test=1` in the address
+   *  bar takes effect without a reload. Used pre-launch only — remove for go-live. */
+  readonly testMode = signal(false);
+  private testModeSub?: Subscription;
 
-  testModeEnabled() {
-    return !!this.route.snapshot.queryParamMap.get('test');
+  private setupTestMode() {
+    this.testModeSub = this.route.queryParamMap.subscribe((params) => {
+      const inUrl = params.get('test') === '1';
+      if (inUrl) sessionStorage.setItem(TEST_MODE_KEY, '1');
+      this.testMode.set(inUrl || sessionStorage.getItem(TEST_MODE_KEY) === '1');
+    });
   }
 
   readonly progressWidth = computed(() => {
@@ -270,6 +280,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
+    this.setupTestMode();
     const codeParam = this.route.snapshot.paramMap.get('code');
     const tabId = this.cartService.tabId();
     const trackingCode = this.cartService.trackingCode();
@@ -305,6 +316,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopPolling();
+    this.testModeSub?.unsubscribe();
     this.pickupWatcherEffect.destroy();
     this.stopPickupAlarm();
     if (this.anim !== undefined) cancelAnimationFrame(this.anim);
