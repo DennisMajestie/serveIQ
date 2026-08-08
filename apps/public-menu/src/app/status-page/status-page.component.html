@@ -81,6 +81,28 @@
       <span class="total-amount">₦{{ (tab.totalKobo / 100).toLocaleString() }}</span>
     </div>
 
+    <!-- Pickup ready -->
+    @if (step() === 'ready') {
+      <section class="pickup-section">
+        @if (pickupReady()) {
+          <div class="pickup-card">
+            <span class="big-icon">🔔</span>
+            <h2>Your order is ready!</h2>
+            <p>Please collect your order at the counter.</p>
+            <button type="button" class="pickup-btn" (click)="confirmPickup()">
+              ✓ Confirm received
+            </button>
+          </div>
+        } @else {
+          <div class="pickup-card confirmed">
+            <span class="big-icon">🎉</span>
+            <h2>Enjoy your meal!</h2>
+            <p>Thanks for confirming your pickup.</p>
+          </div>
+        }
+      </section>
+    }
+
     <!-- Ads -->
     @if (ads().length > 0) {
       <section class="ads-section">

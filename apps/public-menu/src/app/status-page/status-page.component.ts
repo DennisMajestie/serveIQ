@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
@@ -45,6 +45,157 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   private pollSub?: Subscription;
   private paymentSub?: Subscription;
+
+  // ── Pickup alert (client-side only) ───────────────────────────────────────
+  readonly pickupConfirmed = signal(false);
+  readonly pickupReady = computed(() => this.step() === 'ready' && !this.pickupConfirmed());
+
+  private pickupTimer?: ReturnType<typeof setInterval>;
+  private audioCtx?: AudioContext | null;
+  private canvas?: HTMLCanvasElement | null;
+  private anim?: number;
+
+  private pickupWatcherEffect = effect(() => {
+    if (this.pickupReady()) {
+      this.startPickupAlarm();
+    } else if (!this.pickupConfirmed()) {
+      this.stopPickupAlarm();
+    }
+  });
+
+  private startPickupAlarm() {
+    this.stopPickupAlarm();
+    // Beep every ~1.5s while waiting, plus vibration pulse on mobile.
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate?.(300);
+    }
+    this.playPickupBeep();
+    this.pickupTimer = setInterval(() => {
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate?.([80, 60, 80]);
+      }
+      this.playPickupBeep();
+    }, 1500);
+  }
+
+  private stopPickupAlarm() {
+    if (this.pickupTimer) {
+      clearInterval(this.pickupTimer);
+      this.pickupTimer = undefined;
+    }
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate?.(0);
+    }
+  }
+
+  private audio(): AudioContext | null {
+    if (this.audioCtx) {
+      if (this.audioCtx.state === 'suspended') void this.audioCtx.resume();
+      return this.audioCtx;
+    }
+    try {
+      const Ctor = window.AudioContext || (window as any).webkitAudioContext;
+      if (!Ctor) return null;
+      this.audioCtx = new Ctor();
+      return this.audioCtx;
+    } catch {
+      return null;
+    }
+  }
+
+  private playPickupBeep() {
+    const ctx = this.audio();
+    if (!ctx) return;
+    [0, 0.22].forEach((offset) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.value = 880;
+      o.connect(g);
+      g.connect(ctx.destination);
+      const t0 = ctx.currentTime + offset;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.16, t0 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.14);
+      o.start(t0);
+      o.stop(t0 + 0.16);
+    });
+  }
+
+  private playSuccessChime() {
+    const ctx = this.audio();
+    if (!ctx) return;
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+      const t0 = ctx.currentTime + i * 0.16;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.value = freq;
+      g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.2, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.4);
+      o.start(t0);
+      o.stop(t0 + 0.45);
+    });
+  }
+
+  confirmPickup() {
+    this.pickupConfirmed.set(true);
+    this.stopPickupAlarm();
+    this.playSuccessChime();
+    this.launchConfetti();
+  }
+
+  private launchConfetti() {
+    const host = document.querySelector('.status-page') as HTMLElement | null;
+    if (!host) return;
+    const w = window.innerWidth || host.clientWidth;
+    const h = window.innerHeight || host.clientHeight;
+    this.canvas = document.createElement('canvas');
+    this.canvas.className = 'confetti-canvas';
+    this.canvas.width = w;
+    this.canvas.height = h;
+    document.body.appendChild(this.canvas);
+    const ctx = this.canvas.getContext('2d');
+    if (!ctx || !this.canvas) { this.canvas?.remove(); return; }
+
+    const colors = ['#4be277', '#f59e0b', '#ef4444', '#3b82f6', '#a78bfa', '#fbbf24'];
+    const parts = Array.from({ length: 140 }, () => ({
+      x: Math.random() * this.canvas!.width,
+      y: -20 - Math.random() * 200,
+      w: 6 + Math.random() * 6,
+      h: 10 + Math.random() * 8,
+      vy: 2 + Math.random() * 3.5,
+      vx: (Math.random() - 0.5) * 2,
+      rot: Math.random() * Math.PI * 2,
+      vr: (Math.random() - 0.5) * 0.2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
+    const start = performance.now();
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      ctx.clearRect(0, 0, this.canvas!.width, this.canvas!.height);
+      for (const p of parts) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+      if (elapsed < 5500) {
+        this.anim = requestAnimationFrame(tick);
+      } else {
+        this.canvas?.remove();
+        this.canvas = null;
+      }
+    };
+    this.anim = requestAnimationFrame(tick);
+  }
 
   readonly currentAd = computed(() => {
     const list = this.ads();
@@ -154,6 +305,15 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopPolling();
+    this.pickupWatcherEffect.destroy();
+    this.stopPickupAlarm();
+    if (this.anim !== undefined) cancelAnimationFrame(this.anim);
+    if (this.canvas) {
+      this.canvas.remove();
+      this.canvas = null;
+    }
+    if (this.audioCtx && this.audioCtx.state !== 'closed') void this.audioCtx.close();
+    this.audioCtx = null;
     if (this.adRotateInterval) {
       clearInterval(this.adRotateInterval);
       this.adRotateInterval = null;
