@@ -8,8 +8,6 @@ import { interval, Subscription, switchMap, finalize } from 'rxjs';
 
 type StatusStep = 'ordering' | 'pending_approval' | 'preparing' | 'ready' | 'payment' | 'paid';
 
-const TEST_MODE_KEY = 'serveiq_test_mode';
-
 interface Stage {
   key: string;
   label: string;
@@ -256,20 +254,19 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     return 'pending_approval';
   });
 
-  /** TEST MODE: shows the "Simulate Payment Received" button. Enabled by
-   *  `?test=1` in the URL *or* once that param has been seen in this tab
-   *  (persisted to sessionStorage, so the button also appears on the
-   *  no-param /public/status route and after browsing the menu).
-   *  Reads the query params reactively, so typing `?test=1` in the address
-   *  bar takes effect without a reload. Used pre-launch only — remove for go-live. */
-  readonly testMode = signal(false);
+  /** TEST MODE: always shows the "Simulate Payment Received" button on the
+   *  tracking page during pre-launch (no `?test=1` requirement) so payments
+   *  can be verified end-to-end without a real terminal. Remove for go-live. */
+  readonly testMode = signal(true);
   private testModeSub?: Subscription;
 
   private setupTestMode() {
     this.testModeSub = this.route.queryParamMap.subscribe((params) => {
-      const inUrl = params.get('test') === '1';
-      if (inUrl) sessionStorage.setItem(TEST_MODE_KEY, '1');
-      this.testMode.set(inUrl || sessionStorage.getItem(TEST_MODE_KEY) === '1');
+      if (params.get('test') === '0') {
+        this.testMode.set(false);
+      } else if (params.get('test') === '1') {
+        this.testMode.set(true);
+      }
     });
   }
 
