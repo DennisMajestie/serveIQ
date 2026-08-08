@@ -88,6 +88,15 @@ export class CartService {
     }
   }
 
+  /** Drop the session's tab (e.g. it was closed/paid) but keep the cart,
+   *  branch and surface selections so a fresh tab can be opened. */
+  clearTabSession() {
+    this.tabId.set(null);
+    this.trackingCode.set(null);
+    sessionStorage.removeItem(STORAGE_KEYS.tabId);
+    sessionStorage.removeItem(STORAGE_KEYS.trackingCode);
+  }
+
   setOrderType(type: OrderType) {
     this.orderType.set(type);
     sessionStorage.setItem(STORAGE_KEYS.orderType, type);

@@ -92,24 +92,48 @@ export class CartPageComponent {
     };
 
     if (existingTabId && existingCode) {
-      doPlaceOrders(existingTabId, existingCode);
-    } else {
-      const tableId = effectiveType === 'dine_in' ? (this.cartService.tableId() || undefined) : undefined;
-      this.api.openTab(branchId, tableId, this.customerName || undefined, this.partySize, effectiveType).subscribe({
+      // Verify the stored tab is still open before reusing it. sessionStorage
+      // keeps the tab across page visits, so a paid/closed tab from an earlier
+      // order would otherwise be reused and fail with "Tab is not open".
+      this.api.getTabStatus(existingTabId, existingCode).subscribe({
         next: (tab) => {
-          this.cartService.setSession(tab.id, tab.trackingCode, branchId);
-          doPlaceOrders(tab.id, tab.trackingCode);
-        },
-        error: (err) => {
-          const msg = err?.serverMessage || err?.message || '';
-          if (msg.toLowerCase().includes('no counter') || msg.toLowerCase().includes('no virtual') || msg.toLowerCase().includes('takeaway')) {
-            showApiErrorToast(err, 'This branch has no counter set up for takeaway. Please ask staff for help.');
+          if (tab?.status === 'open') {
+            doPlaceOrders(existingTabId, existingCode);
           } else {
-            showApiErrorToast(err, 'Failed to open tab');
+            this.cartService.clearTabSession();
+            this.openFreshTab(effectiveType, branchId, doPlaceOrders);
           }
-          this.placing = false;
+        },
+        error: () => {
+          this.cartService.clearTabSession();
+          this.openFreshTab(effectiveType, branchId, doPlaceOrders);
         },
       });
+    } else {
+      this.openFreshTab(effectiveType, branchId, doPlaceOrders);
     }
+  }
+
+  private openFreshTab(
+    effectiveType: 'dine_in' | 'takeaway',
+    branchId: string,
+    doPlaceOrders: (tabId: string, trackingCode: string) => void,
+  ) {
+    const tableId = effectiveType === 'dine_in' ? (this.cartService.tableId() || undefined) : undefined;
+    this.api.openTab(branchId, tableId, this.customerName || undefined, this.partySize, effectiveType).subscribe({
+      next: (tab) => {
+        this.cartService.setSession(tab.id, tab.trackingCode, branchId);
+        doPlaceOrders(tab.id, tab.trackingCode);
+      },
+      error: (err) => {
+        const msg = err?.serverMessage || err?.message || '';
+        if (msg.toLowerCase().includes('no counter') || msg.toLowerCase().includes('no virtual') || msg.toLowerCase().includes('takeaway')) {
+          showApiErrorToast(err, 'This branch has no counter set up for takeaway. Please ask staff for help.');
+        } else {
+          showApiErrorToast(err, 'Failed to open tab');
+        }
+        this.placing = false;
+      },
+    });
   }
 }
