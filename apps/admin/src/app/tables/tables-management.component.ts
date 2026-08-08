@@ -74,7 +74,7 @@ export class TablesManagementComponent implements OnInit {
       tabs: this.tabsApi.getAllTabs({ status: 'open' }).pipe(catchError(() => of([]))),
       waiters: this.userApi.listWaiters().pipe(catchError(() => of([]))),
     }).subscribe(({ tables, tabs, waiters }) => {
-      this.tables.set(Array.isArray(tables) ? tables : []);
+      this.tables.set((Array.isArray(tables) ? tables : []).filter(t => !t.isVirtual));
 
       const wm: Record<string, string> = {};
       (waiters as User[]).forEach(w => { wm[w.id] = w.fullName; });

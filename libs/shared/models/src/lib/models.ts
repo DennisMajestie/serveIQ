@@ -78,6 +78,7 @@ export interface Table {
   label?: string;
   status: TableStatus;
   isVip?: boolean;
+  isVirtual?: boolean;
 }
 
 export type TabStatus = 'open' | 'billed' | 'paid' | 'voided';
