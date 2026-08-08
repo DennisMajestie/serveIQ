@@ -254,9 +254,13 @@ export class BillingComponent implements OnInit {
       return;
     }
     this.isProcessing.set(true);
-    this.subService.initializePlan(plan.id).subscribe({
+    const callbackUrl = `${window.location.origin}/payment-success`;
+    this.subService.initializePlan(plan.id, callbackUrl).subscribe({
       next: (res) => {
         this.isProcessing.set(false);
+        if (res.reference) {
+          sessionStorage.setItem('serveiq_subscription_ref', res.reference);
+        }
         if (res.authorizationUrl) {
           window.location.href = res.authorizationUrl;
         }

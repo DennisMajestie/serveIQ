@@ -182,6 +182,7 @@ export const API_CONFIG = {
     subscriptions: {
       current: '/api/v1/subscriptions/current',
       initialize: '/api/v1/subscriptions/initialize',
+      verify: '/api/v1/subscriptions/verify',
       cancel: '/api/v1/subscriptions/cancel',
       adminGrant: '/api/v1/subscriptions/admin/grant',
     },

@@ -48,8 +48,15 @@ export class SubscriptionsApiService extends BaseApiService {
     return this.get<SubscriptionPlan[]>(API_CONFIG.endpoints.plans.list);
   }
 
-  initialize(planId: string): Observable<InitializeSubscriptionResponse> {
-    return this.post<InitializeSubscriptionResponse>(API_CONFIG.endpoints.subscriptions.initialize, { plan_id: planId });
+  initialize(planId: string, callbackUrl?: string): Observable<InitializeSubscriptionResponse> {
+    return this.post<InitializeSubscriptionResponse>(API_CONFIG.endpoints.subscriptions.initialize, {
+      plan_id: planId,
+      callback_url: callbackUrl,
+    });
+  }
+
+  verify(reference: string): Observable<Subscription> {
+    return this.post<Subscription>(API_CONFIG.endpoints.subscriptions.verify, { reference });
   }
 
   cancel(): Observable<Subscription> {

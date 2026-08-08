@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { SubscriptionService } from '../core/subscription.service';
 
 @Component({
   selector: 'app-payment-success',
@@ -46,10 +47,20 @@ import { RouterModule, Router } from '@angular/router';
 })
 export class PaymentSuccessComponent implements OnInit, OnDestroy {
   private router = inject(Router);
+  private subscriptionService = inject(SubscriptionService);
   countdown = signal(10);
   private timer?: ReturnType<typeof setInterval>;
 
   ngOnInit() {
+    const reference = sessionStorage.getItem('serveiq_subscription_ref');
+    if (reference) {
+      this.subscriptionService.verify(reference).subscribe({
+        next: () => {
+          this.subscriptionService.load();
+        },
+        error: () => {},
+      });
+    }
     this.timer = setInterval(() => {
       this.countdown.update(c => c - 1);
       if (this.countdown() <= 0) {

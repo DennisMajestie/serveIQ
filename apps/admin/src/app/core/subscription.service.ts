@@ -57,8 +57,12 @@ export class SubscriptionService {
     });
   }
 
-  initializePlan(planId: string) {
-    return this.subscriptionsApi.initialize(planId);
+  initializePlan(planId: string, callbackUrl?: string) {
+    return this.subscriptionsApi.initialize(planId, callbackUrl);
+  }
+
+  verify(reference: string) {
+    return this.subscriptionsApi.verify(reference);
   }
 
   cancel() {
