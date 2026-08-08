@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { SubscriptionService } from '../core/subscription.service';
 
 @Component({
@@ -20,6 +20,9 @@ import { SubscriptionService } from '../core/subscription.service';
         </div>
         <h1 class="title">Payment Successful!</h1>
         <p class="subtitle">Your subscription has been activated. You now have access to all the features of your chosen plan.</p>
+        <div class="verify-error" *ngIf="verifyError()">
+          <p>{{ verifyError() }}</p>
+        </div>
         <div class="redirect-message">
           <p>Redirecting to dashboard in <strong>{{ countdown() }}</strong> seconds...</p>
         </div>
@@ -40,6 +43,7 @@ import { SubscriptionService } from '../core/subscription.service';
     .title { font-size: 28px; font-weight: 700; color: var(--on-background); margin: 0 0 12px; }
     .subtitle { font-size: 16px; color: var(--secondary); margin: 0 0 32px; line-height: 1.5; }
     .redirect-message { font-size: 14px; color: var(--secondary); margin-bottom: 24px; }
+    .verify-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; font-size: 14px; }
     .btn { padding: 12px 32px; border: none; border-radius: 8px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; font-size: 15px; transition: opacity 0.2s; }
     .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { opacity: 0.9; }
@@ -47,20 +51,30 @@ import { SubscriptionService } from '../core/subscription.service';
 })
 export class PaymentSuccessComponent implements OnInit, OnDestroy {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private subscriptionService = inject(SubscriptionService);
   countdown = signal(10);
+  verifyError = signal<string | null>(null);
   private timer?: ReturnType<typeof setInterval>;
 
   ngOnInit() {
-    const reference = sessionStorage.getItem('serveiq_subscription_ref');
+    const reference =
+      this.route.snapshot.queryParamMap.get('reference') ||
+      this.route.snapshot.queryParamMap.get('trxref') ||
+      sessionStorage.getItem('serveiq_subscription_ref');
+
     if (reference) {
       this.subscriptionService.verify(reference).subscribe({
         next: () => {
+          sessionStorage.removeItem('serveiq_subscription_ref');
           this.subscriptionService.load();
         },
-        error: () => {},
+        error: (err) => {
+          this.verifyError.set(err?.error?.message || 'Could not confirm your payment.');
+        },
       });
     }
+
     this.timer = setInterval(() => {
       this.countdown.update(c => c - 1);
       if (this.countdown() <= 0) {
