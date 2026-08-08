@@ -145,7 +145,21 @@ export class BillComponent implements OnInit {
           (new Date((b as any).createdAt ?? 0) as any) - (new Date((a as any).createdAt ?? 0) as any));
         return sorted.length > 0 ? sorted[0] : null;
       }),
-      switchMap(cached => cached ? of(cached) : this.offlineData.getBill(tabId)),
+      switchMap(cached =>
+        cached
+          ? of(cached)
+          : this.offlineData.getBill(tabId).pipe(
+              switchMap(bill =>
+                bill
+                  ? of(bill)
+                  : from(this.offlineData.generateBill(tabId, { serviceChargePercent: 5 })).pipe(
+                      map(gen => ((gen as any)?.offline || !(gen as any)?.id) ? null : gen),
+                      catchError(() => of(null))
+                    )
+              ),
+              catchError(() => of(null))
+            )
+      ),
       switchMap(bill => {
         if (!bill) {
           return this.offlineData.getOrdersByTab(tabId).pipe(
@@ -265,26 +279,41 @@ export class BillComponent implements OnInit {
   private applyDiscountToBill(discountKobo: number) {
     this.isLoading.set(true);
     this.error.set('');
-    from(this.offlineData.generateBill(this.tabId(), { serviceChargePercent: 5, discountKobo })).pipe(
+    this.billService.applyDiscount(this.tabId(), { discountKobo }).pipe(
       switchMap((bill) =>
         this.offlineData.getOrdersByTab(this.tabId()).pipe(
           map((items) => {
             const orderItems = this.mapOrderItems(items);
-            const computed = this.buildBillFromOrders(this.tabId(), discountKobo, orderItems);
-            this.currentDiscountKobo = discountKobo;
-            return { ...computed, ...bill, id: (this.bill() as any)?.id || (bill as any).id, orderItems };
+            bill.orderItems = orderItems;
+            this.currentDiscountKobo = bill.discountKobo;
+            return { ...bill, ...this.buildBillFromOrders(this.tabId(), bill.discountKobo ?? discountKobo, orderItems), orderItems };
           }),
           catchError(() => of(bill))
         )
       ),
       catchError(() =>
-        this.offlineData.getOrdersByTab(this.tabId()).pipe(
-          map((items) => {
-            const orderItems = this.mapOrderItems(items);
-            this.currentDiscountKobo = discountKobo;
-            return this.buildBillFromOrders(this.tabId(), discountKobo, orderItems);
-          }),
-          catchError(() => of(null))
+        from(this.offlineData.generateBill(this.tabId(), { serviceChargePercent: 5, discountKobo })).pipe(
+          switchMap((bill) =>
+            this.offlineData.getOrdersByTab(this.tabId()).pipe(
+              map((items) => {
+                const orderItems = this.mapOrderItems(items);
+                const computed = this.buildBillFromOrders(this.tabId(), discountKobo, orderItems);
+                this.currentDiscountKobo = discountKobo;
+                return { ...computed, ...bill, orderItems };
+              }),
+              catchError(() => of(bill))
+            )
+          ),
+          catchError(() =>
+            this.offlineData.getOrdersByTab(this.tabId()).pipe(
+              map((items) => {
+                const orderItems = this.mapOrderItems(items);
+                this.currentDiscountKobo = discountKobo;
+                return this.buildBillFromOrders(this.tabId(), discountKobo, orderItems);
+              }),
+              catchError(() => of(null))
+            )
+          )
         )
       )
     ).subscribe((bill: Bill | null) => {
