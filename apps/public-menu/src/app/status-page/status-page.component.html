@@ -114,6 +114,24 @@
       </section>
     }
 
+    <!-- TEST MODE: visible only with ?test=1 in the URL. Fires a dummy OPay
+         webhook so a payment can be verified end-to-end before going live. -->
+    @if (testMode()) {
+      <section class="test-section">
+        <button
+          type="button"
+          class="test-btn"
+          [disabled]="initializingPayment()"
+          (click)="simulateTestPayment()"
+        >
+          {{ initializingPayment() ? 'Simulating…' : '🧪 TEST MODE — Simulate Payment Received' }}
+        </button>
+        @if (paymentStatus()?.paymentStatus === 'paid') {
+          <p class="test-note">Payment confirmed as paid. Success screen shows once the order is marked collected.</p>
+        }
+      </section>
+    }
+
     <!-- Payment section -->
     @if (step() === 'payment') {
       <section class="payment-section">

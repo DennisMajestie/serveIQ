@@ -38,6 +38,7 @@ export interface PaymentInitResponse {
   tabId: string;
   amountKobo: number;
   amountFormatted: string;
+  paymentReference?: string;
   paymentMethods: PaymentMethod[];
 }
 
@@ -164,6 +165,26 @@ export class CustomerApiService {
         let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
         while (data && typeof data === 'object' && 'data' in data) data = data.data;
         return snakeToCamel<PaymentStatusResponse>(data);
+      })
+    );
+  }
+
+  /** TEST MODE: fire a dummy OPay "transfer received" webhook for the tab's bill.
+   *  Only reachable behind the `test=1` query flag on the status page. */
+  simulateOpayWebhook(reference: string, amountKobo: number): Observable<any> {
+    const url = `${this.apiUrl}/api/v1/public/payments/webhooks/opay`;
+    return this.http.post<any>(url, {
+      data: {
+        reference,
+        amount: amountKobo,
+        status: 'SUCCESS',
+        transactionType: 'TRANSFER',
+      },
+    }).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return data;
       })
     );
   }

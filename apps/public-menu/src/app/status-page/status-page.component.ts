@@ -103,6 +103,15 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     return 'pending_approval';
   });
 
+  /** TEST MODE: enabled only when the status page URL has `?test=1`.
+   *  Used during pre-launch to fire the dummy OPay webhook so a payment can
+   *  be verified end-to-end without a real terminal. Remove for go-live. */
+  readonly testMode = computed(() => this.testModeEnabled());
+
+  testModeEnabled() {
+    return !!this.route.snapshot.queryParamMap.get('test');
+  }
+
   readonly progressWidth = computed(() => {
     const steps: StatusStep[] = ['pending_approval', 'preparing', 'ready', 'payment', 'paid'];
     const idx = steps.indexOf(this.step());
@@ -242,6 +251,37 @@ export class StatusPageComponent implements OnInit, OnDestroy {
         this.paymentInfo.set(res);
         this.selectedTerminalId.set(null);
         this.startPaymentPolling(tabId, trackingCode);
+      },
+      error: (err) => showApiErrorToast(err, 'Failed to initialize payment'),
+    });
+  }
+
+  /** TEST MODE: initialize the bill then fire a dummy OPay "transfer received"
+   *  webhook, so the payment can be verified end-to-end before going live.
+   *  Only reachable when the status page URL includes `?test=1`. */
+  simulateTestPayment() {
+    const tabId = this.cartService.tabId();
+    const trackingCode = this.cartService.trackingCode();
+    if (!tabId || !trackingCode) return;
+
+    this.initializingPayment.set(true);
+    this.api.initializePayment(tabId, trackingCode).pipe(
+      finalize(() => this.initializingPayment.set(false)),
+    ).subscribe({
+      next: (res) => {
+        const reference = res.paymentReference;
+        if (!reference) {
+          showApiErrorToast({ serverMessage: 'No payment_reference returned — bill may already be paid.' }, 'Test payment failed');
+          return;
+        }
+        this.api.simulateOpayWebhook(reference, res.amountKobo).subscribe({
+          next: () => {
+            this.paymentInfo.set(res);
+            this.selectedTerminalId.set(null);
+            this.startPaymentPolling(tabId, trackingCode);
+          },
+          error: (err) => showApiErrorToast(err, 'Test webhook failed'),
+        });
       },
       error: (err) => showApiErrorToast(err, 'Failed to initialize payment'),
     });
