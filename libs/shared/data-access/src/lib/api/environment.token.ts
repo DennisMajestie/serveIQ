@@ -4,6 +4,7 @@ export interface EnvironmentConfig {
   apiUrl: string;
   nemotronUrl: string;
   publicMenuBaseUrl: string;
+  adminBaseUrl?: string;
   production: boolean;
 }
 

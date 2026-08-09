@@ -64,7 +64,7 @@ export class LoginComponent {
         } else if (role === 'chef') {
           this.router.navigate(['/chef']);
         } else if (role === 'manager') {
-          const adminUrl = this.env.publicMenuBaseUrl.replace(/\/+$/, '');
+          const adminUrl = (this.env.adminBaseUrl || this.env.publicMenuBaseUrl).replace(/\/+$/, '');
           const staffToken = localStorage.getItem('staffToken');
           window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
         } else {
