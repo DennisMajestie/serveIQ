@@ -1,6 +1,6 @@
 import Swal from 'sweetalert2';
 
-export function showApiErrorToast(err: any, fallbackMessage: string): void {
+export function showApiErrorToast(err: any, fallbackMessage: string): string {
   let message = fallbackMessage;
 
   if (err) {
@@ -49,4 +49,6 @@ export function showApiErrorToast(err: any, fallbackMessage: string): void {
     title: 'Error',
     text: message,
   });
+
+  return message;
 }

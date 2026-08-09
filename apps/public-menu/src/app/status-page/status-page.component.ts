@@ -474,7 +474,15 @@ export class StatusPageComponent implements OnInit, OnDestroy {
           error: (err) => showApiErrorToast(err, 'Test webhook failed'),
         });
       },
-      error: (err) => showApiErrorToast(err, 'Failed to initialize payment'),
+      error: (err) => {
+        const msg = showApiErrorToast(err, 'Failed to initialize payment');
+        const notPayable = /not payable|not open|already.paid|no_bill/i.test(msg);
+        if (notPayable) {
+          this.cartService.clearTabSession();
+          this.paymentInfo.set(null);
+          this.stopPolling();
+        }
+      },
     });
   }
 
