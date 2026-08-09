@@ -264,7 +264,7 @@
                           class="h-5 w-5 accent-[var(--primary)] cursor-pointer"
                           [checked]="enabled"
                           [disabled]="provider.type === 'manual'"
-                          (change)="toggleProvider(provider.name, ($event.target as HTMLInputElement).checked)"
+                          (change)="toggleProvider(provider.name, $event.target.checked)"
                         />
                         <span class="text-[var(--on-surface-variant)] text-xs" style="font-family:'Inter',sans-serif">{{ provider.type === 'manual' ? 'Always on' : 'Enabled' }}</span>
                       </label>
