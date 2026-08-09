@@ -8,6 +8,9 @@ export function showApiErrorToast(err: any, fallbackMessage: string): void {
 
     if (body.serverMessage) {
       message = body.serverMessage;
+    } else if (body.meta?.message) {
+      const metaMsg = body.meta.message;
+      message = Array.isArray(metaMsg) ? metaMsg[0] : metaMsg;
     } else if (body.message) {
       message = body.message;
     } else if (body.detail) {
