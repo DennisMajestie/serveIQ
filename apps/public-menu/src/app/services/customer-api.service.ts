@@ -185,8 +185,14 @@ export class CustomerApiService {
   }
 
   /** TEST MODE: fire a dummy OPay "transfer received" webhook for the tab's bill.
-   *  Only reachable behind the `test=1` query flag on the status page. */
+   *  Dev-only — the status page only exposes this behind the `test=1` query
+   *  flag AND the environment's `production` flag must be false. */
   simulateOpayWebhook(reference: string, amountKobo: number): Observable<any> {
+    if (this.env.production) {
+      return new Observable((sub) =>
+        sub.error({ serverMessage: 'Test mode is disabled in production.' }),
+      );
+    }
     const url = `${this.apiUrl}/api/v1/public/payments/webhooks/opay`;
     return this.http.post<any>(url, {
       data: {

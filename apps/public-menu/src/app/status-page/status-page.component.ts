@@ -5,6 +5,7 @@ import { CartService } from '../services/cart.service';
 import { CustomerApiService, PaymentMethod, PaymentInitResponse, PaymentStatusResponse, TabStatusResponse } from '../services/customer-api.service';
 import { PublicAdsApiService, Ad, showApiErrorToast } from '@serveiq/shared/data-access';
 import { interval, Subscription, switchMap, finalize } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 type StatusStep = 'ordering' | 'pending_approval' | 'preparing' | 'ready' | 'payment' | 'paid';
 
@@ -275,14 +276,18 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     return 'pending_approval';
   });
 
-  /** TEST MODE: always shows the "Simulate Payment Received" button on the
-   *  tracking page during pre-launch (no `?test=1` requirement) so payments
-   *  can be verified end-to-end without a real terminal. Remove for go-live. */
-  readonly testMode = signal(true);
+  /** TEST MODE: shows the "Simulate Payment Received" button on the tracking
+   *  page during pre-launch so payments can be verified end-to-end without a
+   *  real terminal. Dev-only: disabled by default when running in production. */
+  readonly testMode = signal(!environment.production);
   private testModeSub?: Subscription;
 
   private setupTestMode() {
     this.testModeSub = this.route.queryParamMap.subscribe((params) => {
+      if (environment.production) {
+        this.testMode.set(false);
+        return;
+      }
       if (params.get('test') === '0') {
         this.testMode.set(false);
       } else if (params.get('test') === '1') {
