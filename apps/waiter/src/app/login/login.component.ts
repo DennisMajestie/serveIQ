@@ -61,10 +61,16 @@ export class LoginComponent {
         const role = (localStorage.getItem('userRole') || '').toLowerCase();
         if (role === 'waiter') {
           this.router.navigate(['/tables']);
-        } else if (role === 'manager') {
-          const adminUrl = (this.env.adminBaseUrl || this.env.publicMenuBaseUrl).replace(/\/+$/, '');
-          const staffToken = this.authService.getToken();
-          window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
+        } else if (role === 'supervisor' || role === 'manager') {
+          // Supervisor/manager PINs resolve to the orders dashboard in the
+          // waiter app. Managers additionally get full admin on the admin app.
+          if (role === 'manager') {
+            const adminUrl = (this.env.adminBaseUrl || this.env.publicMenuBaseUrl).replace(/\/+$/, '');
+            const staffToken = this.authService.getToken();
+            window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
+            return;
+          }
+          this.router.navigate(['/supervisor/orders']);
         } else {
           this.pinError.set(true);
           Swal.fire({
