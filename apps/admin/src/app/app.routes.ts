@@ -147,6 +147,11 @@ export const appRoutes: Route[] = [
             loadComponent: () => import('./bills/bills.component').then(m => m.BillsComponent)
           },
           {
+            path: 'order-queue',
+            canActivate: [permissionGuard('approve_orders')],
+            loadComponent: () => import('./order-queue/order-queue.component').then(m => m.OrderQueueComponent)
+          },
+          {
             path: 'pos',
             canActivate: [permissionGuard('view_dashboard')],
             loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)

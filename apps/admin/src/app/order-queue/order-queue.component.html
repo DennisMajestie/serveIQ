@@ -1,0 +1,388 @@
+<div class="supervisor-wrapper" [class.theme-dark]="isDarkMode()" [class.theme-light]="!isDarkMode()">
+  <div class="sv-content">
+
+    <!-- Header -->
+    <div class="sv-header">
+      <div>
+        <h1 class="sv-title">Order Queue</h1>
+        <p class="sv-subtitle">Approve, track, and fulfill orders</p>
+      </div>
+      <div class="header-actions">
+        <button class="glass-btn icon-btn" (click)="goBack()">
+          <span class="material-symbols-outlined">arrow_back</span>
+          <span class="btn-label">Dashboard</span>
+        </button>
+        <button class="glass-btn icon-btn" (click)="refreshAll()" [disabled]="isRefreshing()">
+          <span class="material-symbols-outlined">{{ isRefreshing() ? 'sync' : 'refresh' }}</span>
+          <span class="btn-label">Refresh</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="sv-stats">
+      <div class="glass-stat pending-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">hourglass_empty</span></div>
+        <div class="stat-value">{{ pendingOrders().length }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="glass-stat preparing-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">cooking</span></div>
+        <div class="stat-value">{{ preparingOrders().length }}</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="glass-stat ready-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">checklist</span></div>
+        <div class="stat-value">{{ readyOrders().length }}</div>
+        <div class="stat-label">Ready</div>
+      </div>
+      <div class="glass-stat time-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">speed</span></div>
+        <div class="stat-value">{{ avgApprovalTime() }}</div>
+        <div class="stat-label">Avg Approval</div>
+      </div>
+    </div>
+
+    <!-- Widgets Row -->
+    <div class="sv-widgets">
+      <!-- Table Floor Map -->
+      <div class="glass-card sv-table-map">
+        <div class="widget-head">
+          <h2><span class="material-symbols-outlined">table_restaurant</span> Table Floor Map</h2>
+          <span class="widget-head-sub">{{ tables().length }} tables</span>
+        </div>
+        <div class="table-grid">
+          @for (table of tables(); track table.id) {
+            <div class="table-cell" [class]="getTableStatusClass(table)" [title]="getTableTooltip(table)">
+              <span class="table-num">{{ table.tableNumber }}</span>
+              <span class="table-cap">{{ table.capacity }}p</span>
+              @if (getTableOrderStatus(table)) {
+                <span class="table-dot" [class]="'dot-' + getTableOrderStatus(table)"></span>
+              }
+            </div>
+          } @empty {
+            <div class="empty-cell">No tables loaded</div>
+          }
+        </div>
+      </div>
+
+      <!-- Shift Snapshot -->
+      <div class="glass-card sv-shift">
+        <div class="widget-head">
+          <h2><span class="material-symbols-outlined">schedule</span> Shift Snapshot</h2>
+          <span class="widget-head-sub" *ngIf="currentShift() as shift">{{ shift.status | titlecase }}</span>
+        </div>
+        <ng-container *ngIf="currentShift() as shift; else noShift">
+          <div class="shift-details">
+            <div class="shift-row">
+              <span class="shift-lbl">Opened</span>
+              <span class="shift-val">{{ shift.openedAt | date:'short' }}</span>
+            </div>
+            <div class="shift-row">
+              <span class="shift-lbl">Duration</span>
+              <span class="shift-val">{{ getShiftDuration(shift) }}</span>
+            </div>
+            <div class="shift-row">
+              <span class="shift-lbl">Starting Cash</span>
+              <span class="shift-val">{{ formatKobo(shift.startingCashKobo) }}</span>
+            </div>
+            <div class="shift-divider"></div>
+            <div class="shift-row">
+              <span class="shift-lbl">Waiters On Duty</span>
+              <span class="shift-val shift-highlight">{{ waitersOnDuty().length }}</span>
+            </div>
+            <div class="waiter-avatars">
+              @for (w of waitersOnDuty().slice(0, 8); track w.id) {
+                <div class="waiter-avatar" [title]="w.fullName">
+                  <img [src]="w.avatarUrl || 'https://ui-avatars.com/api/?name=' + encodeURI(w.fullName) + '&background=4be277&color=fff&size=32'" alt="">
+                </div>
+              }
+              @if (waitersOnDuty().length > 8) {
+                <div class="waiter-avatar more">+{{ waitersOnDuty().length - 8 }}</div>
+              }
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noShift>
+          <div class="shift-empty">
+            <span class="material-symbols-outlined">sleep</span>
+            <p>No active shift</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Queue Section -->
+    <div class="glass-card sv-queue">
+      <div class="sv-tabs">
+        <button class="sv-tab" [class.active]="activeTab() === 'pending'" (click)="switchTab('pending')">
+          <span class="material-symbols-outlined">hourglass_empty</span>
+          Pending
+          @if (pendingOrders().length > 0) {
+            <span class="tab-badge">{{ pendingOrders().length }}</span>
+          }
+        </button>
+        <button class="sv-tab" [class.active]="activeTab() === 'preparing'" (click)="switchTab('preparing')">
+          <span class="material-symbols-outlined">cooking</span>
+          In Progress
+          @if (preparingOrders().length > 0) {
+            <span class="tab-badge">{{ preparingOrders().length }}</span>
+          }
+        </button>
+        <button class="sv-tab" [class.active]="activeTab() === 'ready'" (click)="switchTab('ready')">
+          <span class="material-symbols-outlined">checklist</span>
+          Ready
+          @if (readyOrders().length > 0) {
+            <span class="tab-badge">{{ readyOrders().length }}</span>
+          }
+        </button>
+      </div>
+
+      <!-- Pending Queue -->
+      @if (activeTab() === 'pending') {
+        @if (isLoadingPending()) {
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        } @else if (pendingOrders().length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">check_circle</span>
+            <h3>No Pending Orders</h3>
+            <p>All orders have been reviewed.</p>
+          </div>
+        } @else {
+          <div class="order-list">
+            @for (group of pendingOrders(); track group.tabId + group.createdAt) {
+              <div class="order-card pending-card" [class.processing]="isProcessingGroup(group)" [class.partial-failure]="getGroupProgress(group)?.failed">
+                <div class="order-head">
+                  <div class="order-table-label">
+                    <span class="material-symbols-outlined">table_restaurant</span>
+                    <span>Table {{ getTableLabel(group) }}</span>
+                    @if (group.tabType === 'takeaway') {
+                      <span class="type-badge takeaway">Takeaway</span>
+                    } @else {
+                      <span class="type-badge dine-in">Dine In</span>
+                    }
+                  </div>
+                  <span class="order-time">{{ formatTime(group.createdAt) }}</span>
+                  <span class="items-total">{{ formatKobo(group.totalKobo) }}</span>
+                </div>
+                <div class="order-body">
+                  <div class="order-waiter">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>{{ getWaiterLabel(group) }}</span>
+                  </div>
+                  <div class="order-items">
+                    <span class="items-label">{{ group.items.length }} item(s)</span>
+                    <div class="items-tags">
+                      @for (item of group.items.slice(0, 4); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName }} <span class="item-qty">x{{ item.quantity }}</span></span>
+                      }
+                      @if (group.items.length > 4) {
+                        <span class="item-tag more">+{{ group.items.length - 4 }} more</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                @if (getGroupProgress(group); as progress) {
+                  <div class="group-progress" [class.error]="progress.failed">
+                    @if (progress.failed) {
+                      <span class="progress-text">Failed at {{ progress.completed + 1 }} of {{ progress.total }} — {{ progress.errorMessage }}</span>
+                      <button class="btn-retry" (click)="retryGroup(group)">Retry Remaining</button>
+                    } @else {
+                      <span class="progress-text">Processing {{ progress.completed + 1 }} of {{ progress.total }}...</span>
+                    }
+                  </div>
+                }
+                <div class="order-actions">
+                  <button class="btn-approve" [disabled]="isProcessingAction() || isProcessingGroup(group)" (click)="openApproveModal(group)">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    {{ isProcessingGroup(group) ? 'Approving...' : 'Approve' }}
+                  </button>
+                  <button class="btn-decline" [disabled]="isProcessingAction() || isProcessingGroup(group)" (click)="openDeclineModal(group)">
+                    <span class="material-symbols-outlined">cancel</span>
+                    {{ isProcessingGroup(group) ? 'Processing...' : 'Decline' }}
+                  </button>
+                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
+                    <span class="material-symbols-outlined">history</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- Preparing Queue -->
+      @if (activeTab() === 'preparing') {
+        @if (isLoadingPreparing()) {
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        } @else if (preparingOrders().length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">timer_off</span>
+            <h3>No Orders In Progress</h3>
+            <p>Approved orders will appear here with live countdowns.</p>
+          </div>
+        } @else {
+          <div class="order-list">
+            @for (group of preparingOrders(); track group.tabId + group.createdAt) {
+              <div class="order-card preparing-card" [class.processing]="isProcessingGroup(group)">
+                <div class="order-head">
+                  <div class="order-table-label">
+                    <span class="material-symbols-outlined">table_restaurant</span>
+                    <span>Table {{ getTableLabel(group) }}</span>
+                    @if (group.tabType === 'takeaway') {
+                      <span class="type-badge takeaway">Takeaway</span>
+                    } @else {
+                      <span class="type-badge dine-in">Dine In</span>
+                    }
+                  </div>
+                  <div class="countdown" [class.urgent]="getRemainingSeconds(group) <= 60">
+                    <span class="material-symbols-outlined">timer</span>
+                    <span>{{ formatCountdown(group) }}</span>
+                  </div>
+                </div>
+                <div class="order-body">
+                  <div class="order-waiter">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>{{ getWaiterLabel(group) }}</span>
+                  </div>
+                  @if (group.departmentName) {
+                    <div class="dept-badge">{{ group.departmentName }}</div>
+                  }
+                  <div class="order-items">
+                    <span class="items-label">{{ group.items.length }} item(s)</span>
+                    <div class="items-tags">
+                      @for (item of group.items.slice(0, 3); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName }} <span class="item-qty">x{{ item.quantity }}</span></span>
+                      }
+                      @if (group.items.length > 3) {
+                        <span class="item-tag more">+{{ group.items.length - 3 }} more</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="order-actions">
+                  <button class="btn-timeline-icon" title="View activity timeline" (click)="viewOrderTimeline(group)">
+                    <span class="material-symbols-outlined">history</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- Ready Queue -->
+      @if (activeTab() === 'ready') {
+        @if (isLoadingReady()) {
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        } @else if (readyOrders().length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <h3>No Orders Ready</h3>
+            <p>Orders whose timer has expired will appear here.</p>
+          </div>
+        } @else {
+          <div class="order-list">
+            @for (group of readyOrders(); track group.tabId + group.createdAt) {
+              <div class="order-card ready-card" [class.processing]="isProcessingGroup(group)" [class.partial-failure]="getGroupProgress(group)?.failed">
+                <div class="order-head">
+                  <div class="order-table-label">
+                    <span class="material-symbols-outlined">table_restaurant</span>
+                    <span>Table {{ getTableLabel(group) }}</span>
+                    @if (group.tabType === 'takeaway') {
+                      <span class="type-badge takeaway">Takeaway</span>
+                    } @else {
+                      <span class="type-badge dine-in">Dine In</span>
+                    }
+                  </div>
+                  <span class="ready-pill">Ready</span>
+                </div>
+                <div class="order-body">
+                  <div class="order-waiter">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>{{ getWaiterLabel(group) }}</span>
+                  </div>
+                  <div class="order-items">
+                    <span class="items-label">{{ group.items.length }} item(s)</span>
+                    <div class="items-tags">
+                      @for (item of group.items.slice(0, 3); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName }} <span class="item-qty">x{{ item.quantity }}</span></span>
+                      }
+                      @if (group.items.length > 3) {
+                        <span class="item-tag more">+{{ group.items.length - 3 }} more</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                @if (getGroupProgress(group); as progress) {
+                  <div class="group-progress" [class.error]="progress.failed">
+                    @if (progress.failed) {
+                      <span class="progress-text">Failed at {{ progress.completed + 1 }} of {{ progress.total }} — {{ progress.errorMessage }}</span>
+                      <button class="btn-retry" (click)="retryGroup(group)">Retry Remaining</button>
+                    } @else {
+                      <span class="progress-text">Processing {{ progress.completed + 1 }} of {{ progress.total }}...</span>
+                    }
+                  </div>
+                }
+                <div class="order-actions">
+                  @if (isSelfService(group)) {
+                    <span class="self-service-badge">
+                      <span class="material-symbols-outlined">qr_code</span>
+                      Self-service
+                    </span>
+                  } @else {
+                    <button class="btn-approve" [disabled]="isProcessingAction()" (click)="confirmPickup(group)">
+                      <span class="material-symbols-outlined">handshake</span>
+                      Confirm Pickup
+                    </button>
+                  }
+                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
+                    <span class="material-symbols-outlined">history</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="glass-card sv-activity">
+      <div class="widget-head">
+        <h2><span class="material-symbols-outlined">history</span> Your Recent Activity</h2>
+      </div>
+      @if (isActivityLoading()) {
+        <div class="activity-skeleton">
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
+        </div>
+      } @else if (activityLogs().length === 0) {
+        <div class="activity-empty">
+          <span class="material-symbols-outlined">radio_button_unchecked</span>
+          <p>No recent activity logged.</p>
+        </div>
+      } @else {
+        <div class="activity-list">
+          @for (log of activityLogs(); track log.id) {
+            <div class="activity-entry" [class]="'activity-' + getActivityIcon(log).type">
+              <div class="activity-icon">
+                <span class="material-symbols-outlined">{{ getActivityIcon(log).icon }}</span>
+              </div>
+              <div class="activity-body">
+                <p class="activity-text">{{ formatActivityAction(log) }}</p>
+                <span class="activity-time">{{ formatActivityTime(log.createdAt) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  </div>
+</div>

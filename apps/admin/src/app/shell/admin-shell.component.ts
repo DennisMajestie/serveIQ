@@ -224,7 +224,7 @@ interface NavItem {
             </li>
             <li class="nav-section-label" *ngIf="permissionService.hasPermission('approve_orders')">Supervisor</li>
             <li class="nav-item" *ngIf="permissionService.hasPermission('approve_orders')">
-              <a class="nav-link" (click)="openSupervisorPage()">
+              <a class="nav-link" routerLink="/app/order-queue" routerLinkActive="active">
                 <span class="material-symbols-outlined">fact_check</span>
                 <span>Orders Queue</span>
               </a>
@@ -862,11 +862,6 @@ export class AdminShellComponent implements OnInit, OnDestroy {
 
   openNotifications() {
     this.router.navigate(['/app/notifications']);
-  }
-
-  openSupervisorPage() {
-    const waiterUrl = (this.env as any).waiterBaseUrl || 'http://localhost:4201';
-    window.open(`${waiterUrl}/supervisor/orders`, '_blank');
   }
 
   stopImpersonating() {
