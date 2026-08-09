@@ -30,6 +30,8 @@ export interface PaymentMethod {
   label?: string;
   accountNumber?: string;
   hasTransfer?: boolean;
+  autoConfirm?: boolean;
+  provider?: string;
   terminals?: { id: string; label: string }[];
 }
 

@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -67,15 +67,70 @@ navItems: { key: Section; label: string; icon: string }[] = [
   businessSettings = signal<Business | null>(null);
 
   // Payment settings
-  paymentProvider = signal<string>('manual');
-  paymentProviders = signal<PaymentProviderConfig[]>([]);
   platformProviders = signal<PlatformPaymentProviderSummary[]>([]);
   isLoadingPlatform = signal(false);
-  monniepointSecret = signal('');
-  opayPublicKey = signal('');
   takeawayPolicy = signal<'prepay' | 'pay_on_pickup'>('prepay');
   businessCode = signal('');
   copiedCode = signal(false);
+
+  /** Providers the owner has selected (multi). 'manual' is always on and
+   *  represents "no webhook provider" — the fallback that staff confirm. */
+  enabledProviders = signal<string[]>(['manual']);
+  paymentProviders = signal<PaymentProviderConfig[]>([]);
+
+  /** Webhook providers currently enabled and saved with their secrets. */
+  readonly enabledWebhookProviders = computed(() =>
+    this.paymentProviders().filter(
+      (p) => p.type === 'webhook' && this.enabledProviders().includes(p.name),
+    ),
+  );
+
+  /** Whether every enabled webhook provider has its secret/key stored. */
+  readonly autoConfirmReady = computed(() =>
+    this.enabledWebhookProviders().every((p) => this.isProvConfigured(p)),
+  );
+
+  readonly enabledTransferAccounts = computed(() =>
+    this.enabledWebhookProviders()
+      .map((p) => ({ label: p.label, account: this.provAccount(p) }))
+      .filter((e) => !!e.account),
+  );
+
+  isProvConfigured(provider?: PaymentProviderConfig | null): boolean {
+    if (!provider) return false;
+    const config = provider.config || {};
+    if (provider.type === 'webhook') {
+      if (provider.verification_method === 'rsa') {
+        return !!(config['public_key'] || config['publicKey']);
+      }
+      return !!(config['webhook_secret'] || config['secret']);
+    }
+    return true;
+  }
+
+  provAccount(provider?: PaymentProviderConfig | null): string | null {
+    if (!provider) return null;
+    const config = provider.config || {};
+    return config['account_number'] || null;
+  }
+
+  toggleProvider(name: string, checked: boolean) {
+    const current = this.enabledProviders();
+    if (checked && !current.includes(name)) {
+      this.enabledProviders.set([...current, name]);
+    } else if (!checked) {
+      this.enabledProviders.set(current.filter((n) => n !== name));
+    }
+  }
+
+  providerConfigValue(provider: PaymentProviderConfig, key: string): string {
+    return provider.config[key] || '';
+  }
+
+  setProviderConfig(provider: PaymentProviderConfig, key: string, value: string) {
+    provider.config[key] = value;
+    this.paymentProviders.set([...this.paymentProviders()]);
+  }
   taxRate = signal<number | null>(null);
   currency = signal('NGN');
   timezone = signal('Africa/Lagos');
@@ -211,21 +266,55 @@ navItems: { key: Section; label: string; icon: string }[] = [
   loadPaymentSettings() {
     const branchId = this.activeBranchId() || this.branches()[0]?.id || '';
     if (!branchId) {
-      this.paymentProvider.set('manual');
+      this.enabledProviders.set(['manual']);
       return;
     }
     this.activeBranchId.set(branchId);
     this.branchesApi.getById(branchId).subscribe({
       next: (branch) => {
         const settings = branch.settings || {};
-        this.paymentProvider.set(settings.payment_provider || 'manual');
-        this.monniepointSecret.set(settings.monniepoint_webhook_secret || '');
-        this.opayPublicKey.set(settings.opay_public_key || '');
         this.takeawayPolicy.set(settings.takeaway_payment_policy || 'prepay');
-        this.loadPlatformProviders([{ name: 'manual', type: 'manual', label: 'Manual', config: {} }]);
+        const storedProviders: PaymentProviderConfig[] = Array.isArray(settings.payment_providers) ? settings.payment_providers : [];
+        const migrated = this.migrateLegacyEnabled(settings, storedProviders);
+        this.loadPlatformProviders(migrated);
       },
       error: () => {},
     });
+  }
+
+  /** Builds the stored provider list, honoring the legacy single-select
+   *  `payment_provider` / `monniepoint_webhook_secret` fields if the new
+   *  `enabled_providers` array is not present yet. */
+  private migrateLegacyEnabled(
+    settings: any,
+    storedProviders: PaymentProviderConfig[],
+  ): PaymentProviderConfig[] {
+    const manual: PaymentProviderConfig = { name: 'manual', type: 'manual', label: 'Manual', config: {} };
+    const providers = storedProviders.length ? storedProviders : [manual];
+
+    // Legacy secrets stored flat (global signals) — fold them into config if present.
+    if (settings.monniepoint_webhook_secret) {
+      const mp = providers.find((p) => p.name === 'monniepoint');
+      if (mp) {
+        if (!mp.config) mp.config = {};
+        mp.config['webhook_secret'] = settings.monniepoint_webhook_secret;
+      }
+    }
+    if (settings.opay_public_key) {
+      const op = providers.find((p) => p.name === 'opay');
+      if (op) {
+        if (!op.config) op.config = {};
+        op.config['public_key'] = settings.opay_public_key;
+      }
+    }
+
+    const enabledFromLegacy: string[] = Array.isArray(settings.enabled_providers)
+      ? settings.enabled_providers
+      : settings.payment_provider && settings.payment_provider !== 'manual'
+        ? [settings.payment_provider]
+        : [];
+    this.enabledProviders.set(['manual', ...enabledFromLegacy]);
+    return providers;
   }
 
   private loadPlatformProviders(existing: PaymentProviderConfig[]) {
@@ -233,7 +322,6 @@ navItems: { key: Section; label: string; icon: string }[] = [
     this.branchesApi.getPlatformPaymentProviders().subscribe({
       next: (platform) => {
         const list = Array.isArray(platform) ? platform : [];
-        this.platformProviders.set(list);
         const merged = [...existing];
         for (const gp of list) {
           if (!merged.some((p) => p.name === gp.name)) {
@@ -246,59 +334,29 @@ navItems: { key: Section; label: string; icon: string }[] = [
             });
           }
         }
-        if (merged.length > 0) {
-          this.paymentProviders.set(merged);
-          const active = this.paymentProvider();
-          const activeAvailable = merged.some((p) => p.name === active);
-          if (!activeAvailable) {
-            this.paymentProvider.set('manual');
-          }
-        }
+        this.paymentProviders.set(merged);
+        const existingNames = new Set(merged.map((p) => p.name));
+        this.enabledProviders.set(this.enabledProviders().filter((n) => existingNames.has(n)));
         this.isLoadingPlatform.set(false);
       },
       error: () => this.isLoadingPlatform.set(false),
     });
   }
 
-  onProviderChange() {
-    const provider = this.paymentProviders().find(p => p.name === this.paymentProvider());
-    if (!provider) return;
-    if (provider.type === 'webhook' && provider.verification_method === 'hmac-sha512') {
-      const secret = provider.config['webhook_secret'] || provider.config['secret'];
-      if (!secret) {
-        this.monniepointSecret.set('');
-      }
-    }
-    if (provider.type === 'webhook' && provider.verification_method === 'rsa') {
-      const pubKey = provider.config['public_key'] || provider.config['publicKey'];
-      if (!pubKey) {
-        this.opayPublicKey.set('');
-      }
-    }
-  }
-
   savePaymentSettings() {
     const branchId = this.activeBranchId();
     if (!branchId) return;
     this.isSavingPayment.set(true);
-    const syncSecrets = this.paymentProviders().map((p) => {
-      const clone = { ...p, config: { ...p.config } };
-      if (p.name === this.paymentProvider() && p.type === 'webhook') {
-        if (p.verification_method === 'hmac-sha512' && this.monniepointSecret()) {
-          clone.config['webhook_secret'] = this.monniepointSecret();
-        }
-        if (p.verification_method === 'rsa' && this.opayPublicKey()) {
-          clone.config['public_key'] = this.opayPublicKey();
-        }
-      }
-      return clone;
-    });
+    const enabled = this.enabledProviders();
+    const persisted = this.paymentProviders().map((p) => ({
+      ...p,
+      config: { ...(p.config || {}) },
+    }));
     this.branchesApi.updateSettings(branchId, {
       settings: {
-        payment_provider: this.paymentProvider(),
-        payment_providers: syncSecrets,
-        monniepoint_webhook_secret: this.monniepointSecret(),
-        opay_public_key: this.opayPublicKey(),
+        payment_provider: enabled.find((n) => n !== 'manual') || 'manual',
+        enabled_providers: enabled,
+        payment_providers: persisted,
         takeaway_payment_policy: this.takeawayPolicy(),
       }
     }).subscribe({

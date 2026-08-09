@@ -246,16 +246,56 @@
               <!-- Provider List -->
               <div class="space-y-3 mb-6">
                 @for (provider of paymentProviders(); track provider.name) {
-                  <div class="flex items-center justify-between p-4 rounded-xl border border-white/5" [class.bg-primary-5]="paymentProvider() === provider.name" [class.bg-white/5]="paymentProvider() !== provider.name">
-                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl flex items-center justify-center text-[var(--primary)]" [style.background]="paymentProvider() === provider.name ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : 'color-mix(in srgb, var(--on-surface-variant) 10%, transparent)'">
-                        <span class="material-symbols-outlined text-sm">{{ provider.type === 'webhook' ? 'sync' : 'manual' }}</span>
+                  @let enabled = enabledProviders().includes(provider.name);
+                  <div class="rounded-xl border border-white/5" [class.bg-primary-5]="enabled" [class.bg-white/5]="!enabled">
+                    <div class="flex items-center justify-between p-4">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-[var(--primary)]" [style.background]="enabled ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : 'color-mix(in srgb, var(--on-surface-variant) 10%, transparent)'">
+                          <span class="material-symbols-outlined text-sm">{{ provider.type === 'webhook' ? 'sync' : 'manual' }}</span>
+                        </div>
+                        <div>
+                          <p class="text-[var(--on-background)] font-semibold text-sm" style="font-family:'Inter',sans-serif">{{ provider.label }}</p>
+                          <p class="text-[var(--on-surface-variant)] text-xs" style="font-family:'Inter',sans-serif">{{ provider.type === 'webhook' ? 'Webhook auto-confirm' : 'Manual confirmation' }} @if (provider.verification_method && provider.verification_method !== 'none') { · {{ provider.verification_method }} }</p>
+                        </div>
                       </div>
-                      <div>
-                        <p class="text-[var(--on-background)] font-semibold text-sm" style="font-family:'Inter',sans-serif">{{ provider.label }}</p>
-                        <p class="text-[var(--on-surface-variant)] text-xs" style="font-family:'Inter',sans-serif">{{ provider.type === 'webhook' ? 'Webhook auto-confirm' : 'Manual confirmation' }} @if (provider.verification_method && provider.verification_method !== 'none') { · {{ provider.verification_method }} }</p>
-                      </div>
+                      <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          class="h-5 w-5 accent-[var(--primary)] cursor-pointer"
+                          [checked]="enabled"
+                          [disabled]="provider.type === 'manual'"
+                          (change)="toggleProvider(provider.name, ($event.target as HTMLInputElement).checked)"
+                        />
+                        <span class="text-[var(--on-surface-variant)] text-xs" style="font-family:'Inter',sans-serif">{{ provider.type === 'manual' ? 'Always on' : 'Enabled' }}</span>
+                      </label>
                     </div>
+
+                    @if (provider.type === 'webhook' && enabled) {
+                      <div class="px-4 pb-4 space-y-3">
+                        @if (provider.verification_method === 'hmac-sha512') {
+                          <div>
+                            <label class="block text-[12px] font-medium text-[var(--on-surface-variant)] mb-1" style="font-family:'Inter',sans-serif">Webhook Secret</label>
+                            <input type="text" [ngModel]="providerConfigValue(provider, 'webhook_secret')" (ngModelChange)="setProviderConfig(provider, 'webhook_secret', $event)" placeholder="whsec_..." class="w-full h-11 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                            <p class="text-[var(--on-surface-variant)] text-[12px] mt-1" style="font-family:'Inter',sans-serif">HMAC-SHA512 secret from your {{ provider.label }} dashboard. Used to verify webhook signatures.</p>
+                          </div>
+                        }
+                        @if (provider.verification_method === 'rsa') {
+                          <div>
+                            <label class="block text-[12px] font-medium text-[var(--on-surface-variant)] mb-1" style="font-family:'Inter',sans-serif">Public Key</label>
+                            <input type="text" [ngModel]="providerConfigValue(provider, 'public_key')" (ngModelChange)="setProviderConfig(provider, 'public_key', $event)" placeholder="-----BEGIN PUBLIC KEY-----" class="w-full h-10 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                            <p class="text-[var(--on-surface-variant)] text-[12px] mt-1" style="font-family:'Inter',sans-serif">RSA public key from your {{ provider.label }} dashboard. Used to verify webhook signatures.</p>
+                          </div>
+                        }
+                        <div>
+                          <label class="block text-[12px] font-medium text-[var(--on-surface-variant)] mb-1" style="font-family:'Inter',sans-serif">Transfer Account Number</label>
+                          <input type="text" [ngModel]="providerConfigValue(provider, 'account_number')" (ngModelChange)="setProviderConfig(provider, 'account_number', $event)" placeholder="e.g. 0123456789" class="w-full h-10 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                          <p class="text-[var(--on-surface-variant)] text-[12px] mt-1" style="font-family:'Inter',sans-serif">Account to show customers for bank transfers via {{ provider.label }}.</p>
+                        </div>
+                        @if (provider.verification_method === 'none' || !provider.verification_method) {
+                          <p class="text-[var(--on-surface-variant)] text-[12px]" style="font-family:'Inter',sans-serif">No signature verification configured for this provider.</p>
+                        }
+                      </div>
+                    }
                   </div>
                 }
                 @if (!isLoadingPlatform() && platformProviders().length === 0) {
@@ -263,40 +303,27 @@
                 }
               </div>
 
-              <!-- Active Provider Selection -->
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-[14px] font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">Active Provider</label>
-                  <select [ngModel]="paymentProvider()" (ngModelChange)="paymentProvider.set($event)" (change)="onProviderChange()" class="w-full h-12 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif">
-                    @for (provider of paymentProviders(); track provider.name) {
-                      <option [value]="provider.name">{{ provider.label }}</option>
-                    }
-                  </select>
-                </div>
-
-                <!-- Dynamic Config Fields -->
-                @if (paymentProvider() !== 'manual') {
-                  @let provider = paymentProviders().find(p => p.name === paymentProvider());
-                  @if (provider && provider.type === 'webhook') {
-                    @if (provider.verification_method === 'hmac-sha512') {
-                      <div>
-                        <label class="block text-[14px] font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">Webhook Secret</label>
-                        <input type="text" [ngModel]="monniepointSecret()" (ngModelChange)="monniepointSecret.set($event)" placeholder="whsec_..." class="w-full h-12 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
-                        <p class="text-[var(--on-surface-variant)] text-[12px] mt-1" style="font-family:'Inter',sans-serif">HMAC-SHA512 secret from your {{ provider.label }} dashboard. Used to verify webhook signatures.</p>
-                      </div>
-                    }
-                    @if (provider.verification_method === 'rsa') {
-                      <div>
-                        <label class="block text-[14px] font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">Public Key</label>
-                        <input type="text" [ngModel]="opayPublicKey()" (ngModelChange)="opayPublicKey.set($event)" placeholder="-----BEGIN PUBLIC KEY-----" class="w-full h-12 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
-                        <p class="text-[var(--on-surface-variant)] text-[12px] mt-1" style="font-family:'Inter',sans-serif">RSA public key from your {{ provider.label }} dashboard. Used to verify webhook signatures.</p>
-                      </div>
-                    }
-                    @if (provider.verification_method === 'none' || !provider.verification_method) {
-                      <p class="text-[var(--on-surface-variant)] text-[12px]" style="font-family:'Inter',sans-serif">No signature verification configured for this provider.</p>
-                    }
+              <!-- Readiness -->
+              <div class="p-4 rounded-xl border text-sm" [class.border-[#4be277]]="autoConfirmReady()" [class.border-white/5]="!autoConfirmReady()" [style.background]="autoConfirmReady() ? 'color-mix(in srgb, #4be277 12%, transparent)' : 'transparent'">
+                <p class="font-semibold text-[var(--on-background)]" style="font-family:'Inter',sans-serif">
+                  @if (enabledWebhookProviders().length === 0) {
+                    <span class="material-symbols-outlined align-middle text-[16px] mr-1">handle</span> Manual confirmation
+                  } @else if (autoConfirmReady()) {
+                    <span class="material-symbols-outlined align-middle text-[16px] mr-1">verified</span> {{ enabledWebhookProviders().length }} provider(s) configured — payments auto-confirm
+                  } @else {
+                    <span class="material-symbols-outlined align-middle text-[16px] mr-1">warning</span> Enabled provider(s) not fully configured
                   }
-                }
+                </p>
+                <p class="text-[var(--on-surface-variant)] text-[13px] mt-1" style="font-family:'Inter',sans-serif">
+                  @if (enabledWebhookProviders().length === 0) {
+                    Staff confirm payments on the waiter side.
+                  } @else if (autoConfirmReady()) {
+                    Incoming transactions for each enabled provider are verified and confirmed by its own webhook.
+                    @for (e of enabledTransferAccounts(); track e.label) { Transfer account — {{ e.label }}: <strong>{{ e.account }}</strong>. }
+                  } @else {
+                    Add the webhook secret {{ '(' }}or public key{{ ')' }} for every enabled provider below to enable auto-confirmation.
+                  }
+                </p>
               </div>
             </div>
             <div class="glass-card p-6">

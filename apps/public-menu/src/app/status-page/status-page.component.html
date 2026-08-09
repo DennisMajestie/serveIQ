@@ -170,7 +170,7 @@
         @if (paymentInfo(); as pay) {
           <div class="payment-details">
             <h3>Pay ₦{{ (pay.amountKobo / 100).toLocaleString() }}</h3>
-            <p class="payment-hint">Choose where you'll pay, or a terminal's bank account to transfer to.</p>
+            <p class="payment-hint">Choose where you'll pay, or use a bank transfer.</p>
 
             @for (method of pay.paymentMethods; track method.id ?? method.type) {
               @if (method.type === 'terminal') {
@@ -200,6 +200,33 @@
                   }
                 </button>
               }
+              @if (method.type === 'transfer') {
+                <button
+                  class="pay-term transfer"
+                  [class.selected]="selectedTerminalId() === method.id"
+                  type="button"
+                  (click)="selectTerminal(method.id!)"
+                >
+                  <span class="term-label">🏦 {{ method.label }}</span>
+                  @if (selectedTerminalId() === method.id) {
+                    <span class="term-detail">
+                      Transfer to account <strong class="acct">{{ method.accountNumber }}</strong>
+                      <button type="button" (click)="copyAccount(method.accountNumber!)" class="copy-btn" title="Copy account number">
+                        @if (copiedAccount() === method.accountNumber) {
+                          <span class="material-symbols-outlined text-[14px] text-[#4be277]">check</span>
+                        } @else {
+                          <span class="material-symbols-outlined text-[14px] text-[#adc6ff]">copy</span>
+                        }
+                      </button>
+                      @if (method.autoConfirm) {
+                        <span class="auto-confirm">{{ method.provider }} — auto-confirms on transfer.</span>
+                      }
+                    </span>
+                  } @else {
+                    <span class="term-meta">{{ method.autoConfirm ? 'Bank transfer · auto-confirm' : 'Bank transfer' }}</span>
+                  }
+                </button>
+              }
               @if (method.type === 'cash') {
                 <button
                   class="pay-term cash"
@@ -220,7 +247,7 @@
                 @if (ps.paymentStatus === 'paid') {
                   <p>✅ Payment confirmed! Thank you.</p>
                 } @else {
-                  <p>💳 {{ selectedTerminalLabel() || 'Choose a payment option' }} — notify counter staff once you've paid.</p>
+                  <p>💳 {{ selectedTerminalLabel() || 'Choose a payment option' }} — @if (selectedTerminal()?.autoConfirm) { auto-confirms once your transfer arrives. } @else { notify counter staff once you've paid. }</p>
                 }
               </div>
             }
