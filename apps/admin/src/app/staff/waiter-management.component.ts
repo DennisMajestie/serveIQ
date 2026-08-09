@@ -2,7 +2,10 @@ import { Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { inject } from '@angular/core';
-import { UserApiService, UploadApiService, User, Waiter } from '@serveiq/shared/data-access';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { UserApiService, UploadApiService, User, Waiter, BranchesApiService } from '@serveiq/shared/data-access';
+import { WaiterPerformance } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 
@@ -17,9 +20,11 @@ import Swal from 'sweetalert2';
 export class WaiterManagementComponent implements OnInit {
   private staffService = inject(UserApiService);
   private uploadService = inject(UploadApiService);
+  private branchesApi = inject(BranchesApiService);
   searchQuery = signal('');
 
   waiters = signal<Waiter[]>([]);
+  waiterPerformance = signal<WaiterPerformance[]>([]);
   isLoading = signal(true);
 
   // Add Waiter Modal state
@@ -58,6 +63,21 @@ export class WaiterManagementComponent implements OnInit {
     }) : data;
   });
 
+  topPerformers = computed(() => {
+    const perf = this.waiterPerformance();
+    const totalKobo = perf.reduce((s, p) => s + (p.revenueKobo || 0), 0);
+    const scored = this.filteredWaiters().map(w => {
+      const p = perf.find(entry => entry.waiter?.id === w.id);
+      const revenueKobo = p?.revenueKobo || 0;
+      return {
+        waiter: w,
+        share: totalKobo > 0 ? Math.round((revenueKobo / totalKobo) * 100) : 0,
+        hasData: totalKobo > 0 && revenueKobo > 0
+      };
+    });
+    return scored.sort((a, b) => b.share - a.share).slice(0, 4);
+  });
+
   summaryStats = computed(() => {
     const data = this.waiters();
     const count = Array.isArray(data) ? data.length : 0;
@@ -81,6 +101,12 @@ export class WaiterManagementComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
+    });
+
+    this.branchesApi.getStats().pipe(catchError(() => of(null))).subscribe(stats => {
+      if (stats?.waiterPerformance) {
+        this.waiterPerformance.set(stats.waiterPerformance);
+      }
     });
   }
 

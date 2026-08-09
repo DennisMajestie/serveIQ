@@ -19,25 +19,25 @@
           <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Top Performers</h3>
         </div>
         <ng-container *ngIf="filteredWaiters().length > 0; else noStaff">
-          <div *ngFor="let waiter of filteredWaiters().slice(0, 4); let i = index" class="glass-card p-6 rounded-[32px] flex items-center gap-6">
+          <div *ngFor="let tp of topPerformers(); let i = index" class="glass-card p-6 rounded-[32px] flex items-center gap-6">
             <div class="relative">
               <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl">
-                <img *ngIf="waiter.avatarUrl" [src]="waiter.avatarUrl" alt="{{ waiter.fullName }}" class="w-full h-full object-cover" />
-                <div *ngIf="!waiter.avatarUrl" class="w-full h-full bg-[var(--surface-variant)] flex items-center justify-center text-[var(--on-background)] font-bold text-xl">{{ getInitials(waiter.fullName) }}</div>
+                <img *ngIf="tp.waiter.avatarUrl" [src]="tp.waiter.avatarUrl" alt="{{ tp.waiter.fullName }}" class="w-full h-full object-cover" />
+                <div *ngIf="!tp.waiter.avatarUrl" class="w-full h-full bg-[var(--surface-variant)] flex items-center justify-center text-[var(--on-background)] font-bold text-xl">{{ getInitials(tp.waiter.fullName) }}</div>
               </div>
               <div class="absolute -bottom-2 -right-2 bg-[var(--primary)] text-[var(--on-primary)] w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">{{ i + 1 }}</div>
             </div>
             <div>
-              <h4 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ waiter.fullName }}</h4>
-              <p class="text-[12px] leading-none font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">{{ getRoleLabel(waiter.role) }}</p>
+              <h4 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ tp.waiter.fullName }}</h4>
+              <p class="text-[12px] leading-none font-medium text-[var(--on-surface-variant)] mb-2" style="font-family:'Inter',sans-serif">{{ getRoleLabel(tp.waiter.role) }}</p>
               <div class="flex flex-col">
-                <span class="text-[18px] leading-none font-semibold tracking-wider text-[var(--primary)]" style="font-family:'Space Grotesk',sans-serif">{{ 85 + (i * 4) }}%</span>
-                <span class="text-[10px] text-on-surface-variant-60 uppercase tracking-tighter" style="font-family:'Inter',sans-serif">Efficiency Rank</span>
+                <span class="text-[18px] leading-none font-semibold tracking-wider text-[var(--primary)]" style="font-family:'Space Grotesk',sans-serif">{{ tp.hasData ? tp.share + '%' : '—' }}</span>
+                <span class="text-[10px] text-on-surface-variant-60 uppercase tracking-tighter" style="font-family:'Inter',sans-serif">Revenue Share</span>
               </div>
               <div class="flex gap-2 mt-3">
-                <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors text-xs" (click)="openEditWaiter(waiter)">✎ Edit</button>
-                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="resetPin(waiter.id)">🔑 PIN</button>
-                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="deleteWaiter(waiter.id)">✕ Remove</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors text-xs" (click)="openEditWaiter(tp.waiter)">✎ Edit</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="resetPin(tp.waiter.id)">🔑 PIN</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="deleteWaiter(tp.waiter.id)">✕ Remove</button>
               </div>
             </div>
           </div>
