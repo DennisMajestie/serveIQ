@@ -147,6 +147,19 @@ export class CustomerApiService {
     );
   }
 
+  /** Self-service: customer confirms they received the order -> backend marks
+   *  it DELIVERED. No supervisor handshake needed for self-service orders. */
+  confirmReceived(tabId: string, trackingCode: string): Observable<TabStatusResponse> {
+    const url = `${this.apiUrl}/api/v1/public/tabs/${tabId}/confirm-received`;
+    return this.http.post<any>(url, {}, { headers: { 'x-tracking-code': trackingCode, 'Content-Type': 'application/json' } }).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return snakeToCamel<TabStatusResponse>(data);
+      })
+    );
+  }
+
   initializePayment(tabId: string, trackingCode: string): Observable<PaymentInitResponse> {
     const url = `${this.apiUrl}/api/v1/public/payments/initialize`;
     return this.http.post<any>(url, { tab_id: tabId, tracking_code: trackingCode }).pipe(

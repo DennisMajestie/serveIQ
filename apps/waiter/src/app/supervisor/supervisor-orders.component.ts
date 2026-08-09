@@ -247,7 +247,15 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
   }
 
   getWaiterLabel(group: OrderGroup): string {
+    if (this.isSelfService(group)) return 'Self-service';
     return group.waiterName || 'Unknown Waiter';
+  }
+
+  /** A self-service group has no waiter — the tab was opened by the customer
+   *  via QR (waiter_id is null). Those orders are closed by the customer
+   *  confirming pickup themselves; the supervisor doesn't need to act. */
+  isSelfService(group: OrderGroup): boolean {
+    return !group.waiterId;
   }
 
   getTableTooltip(table: Table): string {

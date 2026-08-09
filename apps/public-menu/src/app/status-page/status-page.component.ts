@@ -141,10 +141,31 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   confirmPickup() {
-    this.pickupConfirmed.set(true);
-    this.stopPickupAlarm();
-    this.playSuccessChime();
-    this.launchConfetti();
+    const tabId = this.cartService.tabId();
+    const trackingCode = this.cartService.trackingCode();
+    if (!tabId || !trackingCode) return;
+
+    this.api.confirmReceived(tabId, trackingCode).subscribe({
+      next: (updated) => {
+        this.pickupConfirmed.set(true);
+        this.stopPickupAlarm();
+        this.playSuccessChime();
+        this.launchConfetti();
+        if (updated) this.tabData.set(updated);
+      },
+      error: (err) => {
+        const msg =
+          err?.serverMessage ||
+          err?.error?.message ||
+          err?.message ||
+          'Could not confirm receipt';
+        showApiErrorToast(err, 'Confirm received failed');
+        if (msg.toLowerCase().includes('not open')) {
+          this.error.set(true);
+          this.errorMessage.set(msg);
+        }
+      },
+    });
   }
 
   private launchConfetti() {
