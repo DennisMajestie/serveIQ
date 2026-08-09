@@ -196,6 +196,8 @@ export class CustomerApiService {
         status: 'SUCCESS',
         transactionType: 'TRANSFER',
       },
+    }, {
+      headers: { 'x-simulate': '1' },
     }).pipe(
       map(res => {
         let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
