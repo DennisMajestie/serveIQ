@@ -25,45 +25,45 @@ import { LegacyProfileComponent } from './legacy/profile/profile.component';
 import { LegacyOpenTabComponent } from './legacy/open-tab/open-tab.component';
 
 import { authGuard } from './core/auth.guard';
-import { supervisorGuard } from './core/role.guards';
+import { waiterGuard } from './core/role.guards';
 import { prefersCurrentTheme, prefersLegacyTheme } from './core/theme.guards';
 
 export const appRoutes: Route[] = [
   { path: 'login', component: LoginComponent },
 
   // ===== Current theme (Luminous Edition) =====
-  { path: 'tables', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: TablesComponent },
-  { path: 'tabs/detail/:id', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: TabDetailComponent },
-  { path: 'tabs/bill/:id', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: BillComponent },
-  { path: 'tabs/payment/:id', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: PaymentComponent },
-  { path: 'tabs/receipt/:id', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: ReceiptComponent },
-  { path: 'tabs/history', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: TabHistoryComponent },
-  { path: 'menu', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: MenuComponent },
-  { path: 'tabs/create/:tableId', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: OpenTabComponent },
-  { path: 'profile', canActivate: [authGuard], canMatch: [prefersCurrentTheme], component: ProfileComponent },
+  { path: 'tables', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: TablesComponent },
+  { path: 'tabs/detail/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: TabDetailComponent },
+  { path: 'tabs/bill/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: BillComponent },
+  { path: 'tabs/payment/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: PaymentComponent },
+  { path: 'tabs/receipt/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: ReceiptComponent },
+  { path: 'tabs/history', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: TabHistoryComponent },
+  { path: 'menu', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: MenuComponent },
+  { path: 'tabs/create/:tableId', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: OpenTabComponent },
+  { path: 'profile', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: ProfileComponent },
 
   // ===== Legacy theme (pre-Luminous) =====
-  { path: 'tables', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyTablesComponent },
-  { path: 'tabs/detail/:id', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyTabDetailComponent },
-  { path: 'tabs/bill/:id', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyBillComponent },
-  { path: 'tabs/payment/:id', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyPaymentComponent },
-  { path: 'tabs/receipt/:id', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyReceiptComponent },
-  { path: 'tabs/history', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyTabHistoryComponent },
-  { path: 'menu', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyMenuComponent },
-  { path: 'tabs/create/:tableId', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyOpenTabComponent },
-  { path: 'profile', canActivate: [authGuard], canMatch: [prefersLegacyTheme], component: LegacyProfileComponent },
+  { path: 'tables', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyTablesComponent },
+  { path: 'tabs/detail/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyTabDetailComponent },
+  { path: 'tabs/bill/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyBillComponent },
+  { path: 'tabs/payment/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyPaymentComponent },
+  { path: 'tabs/receipt/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyReceiptComponent },
+  { path: 'tabs/history', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyTabHistoryComponent },
+  { path: 'menu', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyMenuComponent },
+  { path: 'tabs/create/:tableId', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyOpenTabComponent },
+  { path: 'profile', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyProfileComponent },
 
   // ===== Supervisor (no theme guards) =====
-  { path: 'supervisor/orders', canActivate: [authGuard, supervisorGuard], component: SupervisorOrdersComponent },
+  { path: 'supervisor/orders', canActivate: [authGuard, waiterGuard], component: SupervisorOrdersComponent },
 
   // ===== Chef Kitchen Display =====
-  { path: 'chef', canActivate: [authGuard], component: ChefComponent },
+  { path: 'chef', canActivate: [authGuard, waiterGuard], component: ChefComponent },
 
   // ===== Activity History =====
-  { path: 'activity', canActivate: [authGuard], component: ActivityHistoryComponent },
+  { path: 'activity', canActivate: [authGuard, waiterGuard], component: ActivityHistoryComponent },
 
   // ===== Notifications =====
-  { path: 'notifications', canActivate: [authGuard], component: WaiterNotificationsComponent },
+  { path: 'notifications', canActivate: [authGuard, waiterGuard], component: WaiterNotificationsComponent },
 
   { path: '', redirectTo: 'tables', pathMatch: 'full' }
 ];

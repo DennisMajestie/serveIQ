@@ -59,16 +59,20 @@ export class LoginComponent {
     this.authService.verifyStaffPin(this.pin(), businessId).subscribe({
       next: () => {
         const role = (localStorage.getItem('userRole') || '').toLowerCase();
-        if (role === 'supervisor') {
-          this.router.navigate(['/supervisor/orders']);
-        } else if (role === 'chef') {
-          this.router.navigate(['/chef']);
+        if (role === 'waiter') {
+          this.router.navigate(['/tables']);
         } else if (role === 'manager') {
           const adminUrl = (this.env.adminBaseUrl || this.env.publicMenuBaseUrl).replace(/\/+$/, '');
           const staffToken = localStorage.getItem('staffToken');
           window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
         } else {
-          this.router.navigate(['/tables']);
+          this.pinError.set(true);
+          Swal.fire({
+            toast: true, position: 'top-end', icon: 'error', title: 'Access Restricted',
+            text: 'Only staff with the waiter role can access this terminal.',
+            showConfirmButton: false, timer: 2500, background: '#1e293b', color: '#ef4444'
+          });
+          setTimeout(() => { this.pin.set(''); this.pinError.set(false); }, 800);
         }
       },
       error: () => {
