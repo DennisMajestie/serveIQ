@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
   password = signal('');
   showPassword = signal(false);
   isLoading = signal(false);
+  isBooting = signal(false);
 
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -28,12 +29,16 @@ export class LoginComponent implements OnInit {
     const token = this.route.snapshot.queryParamMap.get('token');
     const userRole = this.route.snapshot.queryParamMap.get('role') || localStorage.getItem('userRole');
     if (token) {
+      this.isBooting.set(true);
       this.authService.setToken(token);
       if (userRole) {
         localStorage.setItem('userRole', userRole);
       }
       const target = userRole === 'super_admin' ? '/app/admin/dashboard' : '/app/dashboard';
-      window.location.href = target;
+      this.permissionService.loadPermissions().subscribe({
+        next: () => this.router.navigate([target], { replaceUrl: true }),
+        error: () => this.router.navigate([target], { replaceUrl: true })
+      });
     }
   }
 

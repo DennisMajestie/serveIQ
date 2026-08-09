@@ -3,7 +3,16 @@
   <div class="atmosphere-blob blob-2"></div>
 </div>
 
-<main class="login-main">
+@if (isRedirecting()) {
+  <div class="redirect-overlay">
+    <div class="redirect-card glass-card">
+      <div class="redirect-spinner"></div>
+      <p class="redirect-text">Opening dashboard...</p>
+    </div>
+  </div>
+}
+
+<main class="login-main" [class.blurred]="isRedirecting()">
   <div class="login-header">
     <h1 class="login-title">{{ isResolved() ? businessName() : 'ServeIQ' }}</h1>
     <p class="login-subtitle">{{ isResolved() ? 'Staff Authentication' : 'Enter Business Code' }}</p>

@@ -1,5 +1,12 @@
 <main class="min-h-screen flex items-center justify-center p-4 md:p-0">
   <div class="w-full max-w-[440px]">
+    <!-- Boot Loader (redirected from waiter PIN login) -->
+    @if (isBooting()) {
+      <div class="boot-loader">
+        <div class="boot-spinner"></div>
+        <p class="boot-text">Opening dashboard...</p>
+      </div>
+    } @else {
     <!-- Login Card -->
     <div class="login-card rounded-xl p-8 border flex flex-col items-center" style="background: var(--surface-container); border-color: color-mix(in srgb, var(--outline-variant) 30%, transparent);">
       <!-- Logo -->
@@ -138,5 +145,6 @@
       </div>
       <span class="text-[12px] leading-[16px]" style="font-family:'JetBrains Mono',monospace;color:var(--on-surface-variant);">v2.4.0-ADMIN</span>
     </div>
+    }
   </div>
 </main>

@@ -20,6 +20,7 @@ export class LoginComponent {
   isResolved = signal(!!localStorage.getItem('businessId'));
   businessCode = '';
   isResolving = signal(false);
+  isRedirecting = signal(false);
 
   private authService = inject(AuthService);
   private userService = inject(UserApiService);
@@ -67,6 +68,7 @@ export class LoginComponent {
           if (role === 'manager') {
             const adminUrl = (this.env.adminBaseUrl || this.env.publicMenuBaseUrl).replace(/\/+$/, '');
             const staffToken = this.authService.getToken();
+            this.isRedirecting.set(true);
             window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
             return;
           }
