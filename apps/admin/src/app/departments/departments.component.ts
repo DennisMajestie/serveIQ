@@ -114,46 +114,49 @@ import Swal from 'sweetalert2';
     .page-container { padding: 24px; margin: 0 auto; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .page-header h1 { margin: 0; font-size: 24px; }
-    .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 10px; background: var(--primary); color: var(--on-primary); font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 25%, transparent); }
+    .btn-primary:hover:not(:disabled) { opacity: 0.9; }
     .btn-primary:disabled { opacity: 0.5; cursor: default; }
-    .btn-secondary { padding: 10px 20px; border: 1px solid #333; border-radius: 10px; background: transparent; color: #ccc; font-size: 14px; cursor: pointer; }
-    .btn-icon { background: none; border: none; color: #888; cursor: pointer; padding: 4px; border-radius: 6px; }
-    .btn-icon:hover { background: rgba(255,255,255,0.05); color: #fff; }
-    .btn-danger-icon:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .btn-secondary { padding: 10px 20px; border: 1.5px solid color-mix(in srgb, var(--on-background) 12%, transparent); border-radius: 10px; background: transparent; color: var(--on-surface-variant); font-size: 14px; cursor: pointer; }
+    .btn-secondary:hover { background: color-mix(in srgb, var(--on-background) 6%, transparent); }
+    .btn-icon { background: none; border: none; color: var(--on-surface-variant); cursor: pointer; padding: 4px; border-radius: 6px; }
+    .btn-icon:hover { background: color-mix(in srgb, var(--on-background) 6%, transparent); color: var(--on-background); }
+    .btn-danger-icon:hover { background: color-mix(in srgb, var(--error) 10%, transparent); color: var(--error); }
     .loading-shimmer { display: flex; flex-direction: column; gap: 12px; }
-    .shimmer-row { height: 48px; border-radius: 8px; background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .shimmer-row { height: 48px; border-radius: 8px; background: linear-gradient(90deg, var(--surface-container-high) 25%, var(--surface-variant) 50%, var(--surface-container-high) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .empty-state { text-align: center; padding: 60px 16px; color: #666; }
+    .empty-state { text-align: center; padding: 60px 16px; color: var(--on-surface-variant); }
     .empty-state .material-symbols-outlined { font-size: 48px; margin-bottom: 12px; }
-    .empty-state h3 { margin: 0 0 8px; color: #999; }
+    .empty-state h3 { margin: 0 0 8px; color: var(--on-background); }
     .empty-state p { margin: 0; font-size: 14px; }
-    .table-wrap { border: 1px solid #2a2a2a; border-radius: 12px; overflow: hidden; }
+    .table-wrap { border: 1px solid color-mix(in srgb, var(--on-background) 12%, transparent); border-radius: 12px; overflow: hidden; background: var(--surface-container-low); }
     .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th { text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; background: #1a1a1a; border-bottom: 1px solid #2a2a2a; }
-    .data-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #222; }
+    .data-table th { text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.5px; background: color-mix(in srgb, var(--on-background) 5%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--on-background) 10%, transparent); }
+    .data-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent); }
     .data-table tr:last-child td { border-bottom: none; }
-    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .cell-name { font-weight: 500; color: #e0e0e0; }
-    .cell-date { color: #888; font-size: 13px; }
+    .data-table tr:hover td { background: color-mix(in srgb, var(--on-background) 3%, transparent); }
+    .cell-name { font-weight: 500; color: var(--on-background); }
+    .cell-date { color: var(--on-surface-variant); font-size: 13px; }
     .cell-actions { display: flex; gap: 4px; }
     .status-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
-    .status-badge.active { background: rgba(76,175,80,0.15); color: #81c784; }
-    .status-badge.inactive { background: rgba(158,158,158,0.15); color: #bdbdbd; }
+    .status-badge.active { background: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary); }
+    .status-badge.inactive { background: color-mix(in srgb, var(--on-surface-variant) 15%, transparent); color: var(--on-surface-variant); }
 
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-    .modal-card { background: #1a1a1a; border-radius: 16px; width: 420px; max-width: 90vw; border: 1px solid #2a2a2a; }
+    .modal-card { background: var(--surface-container); border-radius: 16px; width: 420px; max-width: 90vw; border: 1px solid color-mix(in srgb, var(--outline-variant) 30%, transparent); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px 0; }
-    .modal-header h2 { margin: 0; font-size: 18px; }
-    .btn-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; }
+    .modal-header h2 { margin: 0; font-size: 18px; color: var(--on-background); }
+    .btn-close { background: none; border: none; color: var(--on-surface-variant); font-size: 24px; cursor: pointer; }
     .modal-body { padding: 20px 24px; }
     .modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 0 24px 20px; }
     .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #888; margin-bottom: 6px; }
-    .form-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #333; background: #111; color: #e0e0e0; font-size: 14px; box-sizing: border-box; }
-    .form-input:focus { outline: none; border-color: #f97316; }
-    .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #e0e0e0; cursor: pointer; }
-    .checkbox-label input { width: 16px; height: 16px; }
-    .form-error { background: rgba(239,68,68,0.1); color: #ef4444; padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--on-surface-variant); margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1.5px solid color-mix(in srgb, var(--on-background) 12%, transparent); background: var(--surface-container-high); color: var(--on-background); font-size: 14px; box-sizing: border-box; }
+    .form-input::placeholder { color: color-mix(in srgb, var(--on-surface-variant) 50%, transparent); }
+    .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent); }
+    .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--on-background); cursor: pointer; }
+    .checkbox-label input { width: 16px; height: 16px; accent-color: var(--primary); }
+    .form-error { background: color-mix(in srgb, var(--error) 10%, transparent); color: var(--error); padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
   `]
 })
 export class DepartmentsComponent implements OnInit {
