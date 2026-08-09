@@ -22,7 +22,7 @@ interface StaffPerformance {
   name: string;
   role: string;
   sales: number;
-  efficiency: number;
+  revenueShare: number;
   avatar: string;
 }
 
@@ -179,11 +179,17 @@ export class AnalyticsComponent implements OnInit {
   }
 
   updateStaffData(waiterPerformance: any[]) {
+    const totalRevenue = waiterPerformance.reduce(
+      (sum, w) => sum + (w.revenueKobo || 0),
+      0,
+    );
     this.staffData.set(waiterPerformance.map(w => ({
       name: w.waiter?.fullName || 'Unknown Waiter',
       role: 'Staff',
       sales: w.tabsCount || 0,
-      efficiency: Math.min(Math.round((w.revenueKobo / (w.tabsCount * 500000)) * 100), 100) || 0,
+      revenueShare: totalRevenue > 0
+        ? Math.round(((w.revenueKobo || 0) / totalRevenue) * 100)
+        : 0,
       avatar: w.waiter?.avatarUrl || '#9d4300'
     })));
   }
@@ -221,9 +227,9 @@ export class AnalyticsComponent implements OnInit {
     ]);
 
     this.staffData.set([
-      { name: 'Sarah Miller', role: 'Main Section', sales: 452, efficiency: 94, avatar: '#00D166' },
-      { name: 'Marcus Chen', role: 'Patio', sales: 398, efficiency: 88, avatar: '#0059bb' },
-      { name: 'Elena Rodriguez', role: 'Bar', sales: 312, efficiency: 91, avatar: '#8b5cf6' }
+      { name: 'Sarah Miller', role: 'Main Section', sales: 452, revenueShare: 42, avatar: '#00D166' },
+      { name: 'Marcus Chen', role: 'Patio', sales: 398, revenueShare: 34, avatar: '#0059bb' },
+      { name: 'Elena Rodriguez', role: 'Bar', sales: 312, revenueShare: 24, avatar: '#8b5cf6' }
     ]);
   }
 
