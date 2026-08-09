@@ -63,7 +63,7 @@ export class LoginComponent {
           this.router.navigate(['/tables']);
         } else if (role === 'manager') {
           const adminUrl = (this.env.adminBaseUrl || this.env.publicMenuBaseUrl).replace(/\/+$/, '');
-          const staffToken = localStorage.getItem('staffToken');
+          const staffToken = this.authService.getToken();
           window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
         } else {
           this.pinError.set(true);
