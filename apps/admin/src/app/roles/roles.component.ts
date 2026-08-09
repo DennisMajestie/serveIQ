@@ -82,7 +82,7 @@ export class RolesComponent implements OnInit {
 
   togglePermission(permissionId: string) {
     const role = this.selectedRole();
-    if (!role || role.is_system) return;
+    if (!role || this.isOwnerRole) return;
 
     const has = this.hasPermission(permissionId);
     if (has) {
@@ -95,7 +95,7 @@ export class RolesComponent implements OnInit {
 
   saveRole() {
     const role = this.selectedRole();
-    if (!role || role.is_system) return;
+    if (!role || this.isOwnerRole) return;
 
     this.isSaving.set(true);
     this.rolesApi.updateRolePermissions(role.id, role.permissions.map(p => p.id)).subscribe({
