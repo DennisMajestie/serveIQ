@@ -129,7 +129,16 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   private readyOrderRef = signal<OrderGroup | null>(null);
   /** Set when the order leaves the ready list (supervisor confirmed pickup) */
   private confirmedPickup = signal(false);
-  canDeliver = computed(() => this.confirmedPickup());
+
+  isTakeawayTab = computed(() => this.tab()?.tabType === 'takeaway');
+
+  /** Dine-in is status-driven: "on its way" shows as soon as the order is
+   *  OUT_FOR_DELIVERY (supervisor confirmed pickup). Takeaway keeps the
+   *  ready-list heuristic flow. */
+  canDeliver = computed(() => {
+    if (this.isTakeawayTab()) return this.confirmedPickup();
+    return this.orderStatus() === 'OUT_FOR_DELIVERY';
+  });
 
   copiedId = signal<string | null>(null);
 
@@ -376,8 +385,12 @@ export class TabDetailComponent implements OnInit, OnDestroy {
         return;
       }
       if (this.readyOrderRef()) {
-        this.confirmedPickup.set(true);
-        this.activeOrder.set(this.readyOrderRef());
+        if (this.isTakeawayTab()) {
+          this.confirmedPickup.set(true);
+          this.activeOrder.set(this.readyOrderRef());
+        } else {
+          checkTabFallback();
+        }
         return;
       }
       checkTabFallback();
