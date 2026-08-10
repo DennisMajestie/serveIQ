@@ -277,9 +277,8 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   /** TEST MODE: shows the "Simulate Payment Received" button on the tracking
    *  page so payments can be verified end-to-end without a real terminal.
-   *  Temporarily enabled in all environments (incl. production) for
-   *  pre-launch verification. */
-  readonly testMode = signal(true);
+   *  Off by default (beta/production); enable explicitly with `?test=1`. */
+  readonly testMode = signal(false);
   private testModeSub?: Subscription;
 
   private setupTestMode() {
