@@ -48,6 +48,15 @@ export class BillComponent implements OnInit {
 
   items = computed(() => this.bill()?.orderItems ?? []);
 
+  pendingItems = computed(() => this.items().filter(i => {
+    const s = ((i as any).orderStatus ?? (i as any).order_status ?? '').toString().toLowerCase();
+    const billable = s !== 'declined' && s !== 'cancelled';
+    const fulfilled = s === 'delivered' || s === 'completed';
+    return billable && !fulfilled && s !== 'pending_payment_approval';
+  }));
+
+  pendingCount = computed(() => this.pendingItems().length);
+
   currencySymbol = computed(() => this.currency.getSymbol());
   currencyCode = computed(() => this.currency.getCode());
 
@@ -89,6 +98,38 @@ export class BillComponent implements OnInit {
     if (!menuItemId) return 'Unknown Item';
     const menuItem = this.menuItems().find(m => m.id === menuItemId);
     return menuItem?.name || 'Unknown Item';
+  }
+
+  private orderStatusOf(item: any): string {
+    return (item?.orderStatus ?? item?.order_status ?? '').toString().toLowerCase();
+  }
+
+  isFulfilled(item: any): boolean {
+    const s = this.orderStatusOf(item);
+    return s === 'delivered' || s === 'completed';
+  }
+
+  isPending(item: any): boolean {
+    const s = this.orderStatusOf(item);
+    const billable = s !== 'declined' && s !== 'cancelled';
+    return billable && !this.isFulfilled(item) && s !== 'pending_payment_approval';
+  }
+
+  statusLabel(item: any): string {
+    const labels: Record<string, string> = {
+      pending_payment_approval: 'Awaiting Payment',
+      pending_supervisor_approval: 'Pending Approval',
+      approved: 'Approved',
+      assigned_to_department: 'In Kitchen',
+      preparing: 'Preparing',
+      ready_for_pickup: 'Ready for Pickup',
+      out_for_delivery: 'Out for Delivery',
+      delivered: 'Delivered',
+      completed: 'Completed',
+      declined: 'Declined',
+      cancelled: 'Cancelled',
+    };
+    return labels[this.orderStatusOf(item)] ?? 'Pending';
   }
 
   loadTabAndGenerateBill(tabId: string) {

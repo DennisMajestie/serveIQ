@@ -119,8 +119,11 @@
             </div>
             <p class="text-[16px] leading-[1.5] text-[#bccbb9]/70 mt-2" style="font-family:'Inter',sans-serif">Including {{ vatRate() }}% VAT & Service Charge</p>
           </div>
-          <div class="mt-6 flex gap-2">
-            <span class="px-3 py-1 rounded-full bg-[#0566d9]/20 text-[#adc6ff] text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif">{{ items().length }} Items</span>
+          <div class="mt-6 flex gap-2 flex-wrap">
+            <span class="px-3 py-1 rounded-full bg-[#0566d9]/20 text-[#adc6ff] text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif">{{ billableItems().length }} Items</span>
+            @if (pendingCount() > 0) {
+              <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[12px] leading-none font-medium" style="font-family:'Inter',sans-serif">{{ pendingCount() }} Pending</span>
+            }
           </div>
         </section>
 
@@ -131,27 +134,41 @@
             <span class="material-symbols-outlined text-[#bccbb9]">receipt_long</span>
           </div>
           <div class="order-list overflow-y-auto flex-1 p-2">
-            @for (item of items(); track item.id) {
-              <div class="pulse-left-glow p-4 rounded-xl flex justify-between items-center transition-all duration-300 mt-1 cursor-pointer" (click)="viewItemDetail(item)">
-                <div class="flex items-center gap-4">
-                  <div class="relative w-12 h-12 rounded-lg overflow-hidden bg-[#2e3447]/50 flex-shrink-0">
-                    @if (getItemImage(item)) {
-                      <img [src]="getItemImage(item)" [alt]="getItemName(item)" class="w-full h-full object-cover" />
-                    }
-                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center text-[14px] leading-none font-bold tracking-wider text-white" style="font-family:'Space Grotesk',sans-serif">{{ item.quantity }}x</div>
-                  </div>
-                  <div class="min-w-0">
-                    <h4 class="text-[18px] leading-[1.6] text-[#dce1fb] truncate" style="font-family:'Inter',sans-serif">{{ getItemName(item) || 'Unknown Item' }}</h4>
-                    @if (item.notes) {
-                      <p class="text-[12px] leading-none font-medium text-[#bccbb9] truncate" style="font-family:'Inter',sans-serif">{{ item.notes }}</p>
-                    }
-                  </div>
-                </div>
-                <div class="text-right flex-shrink-0 ml-2">
-                  <div class="text-[18px] leading-none font-semibold tracking-wider text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ formatKobo(item.priceKobo * item.quantity) }}</div>
-                  <button class="text-[#ffb4ab] hover:text-[#ff8892] transition-colors text-xs mt-1" (click)="$event.stopPropagation(); removeItem(item)">Remove</button>
-                </div>
+            @for (round of orderRounds(); track round.round) {
+              <div class="px-4 pt-4 pb-1 flex items-center justify-between">
+                <span class="text-[12px] leading-none font-semibold text-[#bccbb9] uppercase tracking-widest" style="font-family:'Inter',sans-serif">Order #{{ round.round.toString().padStart(3, '0') }}</span>
+                @if (round.items.every(i => isStatusFulfilled(i))) {
+                  <span class="material-symbols-outlined text-[#4be277] text-[16px]">check_circle</span>
+                }
               </div>
+              @for (item of round.items; track item.id) {
+                <div class="pulse-left-glow p-4 rounded-xl flex justify-between items-center transition-all duration-300 mt-1 cursor-pointer" (click)="viewItemDetail(item)">
+                  <div class="flex items-center gap-4">
+                    <div class="relative w-12 h-12 rounded-lg overflow-hidden bg-[#2e3447]/50 flex-shrink-0">
+                      @if (getItemImage(item)) {
+                        <img [src]="getItemImage(item)" [alt]="getItemName(item)" class="w-full h-full object-cover" />
+                      }
+                      <div class="absolute inset-0 bg-black/30 flex items-center justify-center text-[14px] leading-none font-bold tracking-wider text-white" style="font-family:'Space Grotesk',sans-serif">{{ item.quantity }}x</div>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="text-[18px] leading-[1.6] text-[#dce1fb] truncate" style="font-family:'Inter',sans-serif">{{ getItemName(item) || 'Unknown Item' }}</h4>
+                      @if (item.notes) {
+                        <p class="text-[12px] leading-none font-medium text-[#bccbb9] truncate" style="font-family:'Inter',sans-serif">{{ item.notes }}</p>
+                      }
+                      <div class="flex items-center gap-2 mt-1.5">
+                        <span class="status-badge {{ getStatusClass(item) }}">{{ getStatusLabel(item) }}</span>
+                        @if (isStatusFulfilled(item) && getDeliveredAt(item)) {
+                          <span class="text-[11px] leading-none text-[#bccbb9]/60" style="font-family:'JetBrains Mono',monospace">{{ getDeliveredAt(item) }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right flex-shrink-0 ml-2">
+                    <div class="text-[18px] leading-none font-semibold tracking-wider text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ formatKobo(item.priceKobo * item.quantity) }}</div>
+                    <button class="text-[#ffb4ab] hover:text-[#ff8892] transition-colors text-xs mt-1" (click)="$event.stopPropagation(); removeItem(item)">Remove</button>
+                  </div>
+                </div>
+              }
             }
             @if (items().length === 0) {
               <div class="flex flex-col items-center justify-center py-12 text-[#bccbb9]">

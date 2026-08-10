@@ -56,3 +56,41 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+}
+.status-delivered {
+  background: rgba(75, 226, 119, 0.15);
+  color: #4be277;
+  border: 1px solid rgba(75, 226, 119, 0.25);
+}
+.status-declined {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ffb4ab;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.status-pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+.status-preparing {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+}
+.status-ready {
+  background: rgba(129, 140, 248, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(129, 140, 248, 0.25);
+}

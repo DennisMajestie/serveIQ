@@ -33,6 +33,14 @@ export class PaymentComponent implements OnInit, OnDestroy {
   table = signal<Table | null>(null);
   bill = signal<Bill | null>(null);
   items = computed(() => this.bill()?.orderItems ?? []);
+
+  pendingCount = computed(() => this.items().filter(i => {
+    const raw = i as any;
+    const s = (raw.orderStatus ?? raw.order_status ?? '').toString().toLowerCase();
+    const billable = s !== 'declined' && s !== 'cancelled';
+    const fulfilled = s === 'delivered' || s === 'completed';
+    return billable && !fulfilled && s !== 'pending_payment_approval';
+  }).length);
   isLoading = signal(true);
   selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' = 'cash';
   currentAmount = signal('0');
@@ -301,6 +309,20 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   confirmPayment() {
+    if (this.pendingCount() > 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Items Still Pending',
+        text: `${this.pendingCount()} item${this.pendingCount() === 1 ? ' is' : 's are'} still pending fulfillment. Deliver all ordered items before settling this tab.`,
+        background: '#1e293b',
+        color: '#fff',
+        confirmButtonColor: '#f97316',
+        confirmButtonText: 'Back to Order',
+      }).then(() => {
+        this.router.navigate(['/tabs/detail', this.tabId()]);
+      });
+      return;
+    }
     if (this.isSplit() && !this.isSplitValid) {
       Swal.fire({ icon: 'warning', title: 'Incomplete Allocation', text: 'Allocate the full bill amount across guests before completing payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       return;

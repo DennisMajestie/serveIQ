@@ -47,10 +47,84 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   declineReason = computed(() => this.activeOrder()?.items[0]?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
   trackingCode = computed(() => this.activeOrder()?.items[0]?.trackingCode ?? null);
-  canViewBill = computed(() => {
-    const status = this.orderStatus();
-    return !!status && status !== 'PENDING_SUPERVISOR_APPROVAL';
+  canViewBill = computed(() => this.billableItems().length > 0);
+
+  getOrderStatus(item: any): string {
+    const s = item?.orderStatus ?? item?.order_status ?? '';
+    return (s as string).toUpperCase() || 'PENDING';
+  }
+
+  isStatusBillable(item: any): boolean {
+    const s = (this.getOrderStatus(item)).toLowerCase();
+    return s !== 'declined' && s !== 'cancelled';
+  }
+
+  isStatusFulfilled(item: any): boolean {
+    const s = this.getOrderStatus(item).toLowerCase();
+    return s === 'delivered' || s === 'completed';
+  }
+
+  billableItems = computed(() => this.items().filter(i => this.isStatusBillable(i)));
+
+  pendingItems = computed(() =>
+    this.items().filter(i => {
+      const s = this.getOrderStatus(i).toLowerCase();
+      return (
+        this.isStatusBillable(i) &&
+        !this.isStatusFulfilled(i) &&
+        s !== 'pending_payment_approval'
+      );
+    })
+  );
+
+  pendingCount = computed(() => this.pendingItems().length);
+
+  orderRounds = computed(() => {
+    const map = new Map<number, { round: number; items: any[] }>();
+    for (const item of this.items() as any[]) {
+      const raw = (item as any).roundNumber ?? (item as any).round_number ?? 1;
+      const round = typeof raw === 'number' ? raw : parseInt(raw, 10) || 1;
+      const entry = map.get(round) ?? { round, items: [] };
+      entry.items.push(item);
+      map.set(round, entry);
+    }
+    return [...map.values()].sort((a, b) => a.round - b.round);
   });
+
+  getStatusLabel(item: any): string {
+    const labels: Record<string, string> = {
+      PENDING_PAYMENT_APPROVAL: 'Awaiting Payment',
+      PENDING_SUPERVISOR_APPROVAL: 'Pending Approval',
+      APPROVED: 'Approved',
+      ASSIGNED_TO_DEPARTMENT: 'In Kitchen',
+      PREPARING: 'Preparing',
+      READY_FOR_PICKUP: 'Ready for Pickup',
+      OUT_FOR_DELIVERY: 'Out for Delivery',
+      DELIVERED: 'Delivered',
+      COMPLETED: 'Completed',
+      DECLINED: 'Declined',
+      CANCELLED: 'Cancelled',
+    };
+    return labels[this.getOrderStatus(item)] ?? 'Pending';
+  }
+
+  getStatusClass(item: any): string {
+    const s = this.getOrderStatus(item);
+    if (s === 'DELIVERED' || s === 'COMPLETED') return 'status-delivered';
+    if (s === 'DECLINED' || s === 'CANCELLED') return 'status-declined';
+    if (s === 'PENDING_SUPERVISOR_APPROVAL') return 'status-pending';
+    if (s === 'READY_FOR_PICKUP' || s === 'OUT_FOR_DELIVERY') return 'status-ready';
+    if (s === 'PREPARING' || s === 'ASSIGNED_TO_DEPARTMENT') return 'status-preparing';
+    return 'status-pending';
+  }
+
+  getDeliveredAt(item: any): string {
+    const raw = item?.deliveredAt ?? item?.delivered_at ?? null;
+    if (!raw) return '';
+    const d = new Date(raw);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
   /** Tracks whether the order was seen in the ready-for-pickup list */
   private readyOrderRef = signal<OrderGroup | null>(null);
   /** Set when the order leaves the ready list (supervisor confirmed pickup) */
@@ -120,7 +194,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
 
   currencySymbol = computed(() => this.currency.getSymbol());
   subtotal = computed(() => {
-    const items = this.items();
+    const items = this.billableItems();
     return Array.isArray(items) ? items.reduce((sum, i) => sum + (i.priceKobo * i.quantity), 0) : 0;
   });
   vatRate = computed(() => this.businessSettings()?.taxRate ?? 7.5);

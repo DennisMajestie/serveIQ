@@ -39,6 +39,9 @@
               <div class="flex-1">
                 <p class="text-[16px] leading-[1.5] font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">{{ getItemName(item) }}</p>
                 <p class="text-[14px] leading-[1.4] text-[#bccbb9]" style="font-family:'JetBrains Mono',monospace">{{ item.quantity }}x @ {{ currencySymbol() }}{{ formatAmount(item.priceKobo / 100) }}</p>
+                @if (item.orderStatus || item.order_status) {
+                  <p class="text-[11px] leading-none font-semibold uppercase tracking-wider mt-1" [class.text-[#4be277]]="isFulfilled(item)" [class.text-amber-400]="!isFulfilled(item) && isPending(item)" [class.text-[#ffb4ab]]="!isFulfilled(item) && !isPending(item)" style="font-family:'Inter',sans-serif">{{ statusLabel(item) }}</p>
+                }
               </div>
               <p class="text-[14px] leading-[1.4] font-bold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ currencySymbol() }}{{ formatAmount((item.priceKobo / 100) * item.quantity) }}</p>
             </div>
@@ -95,14 +98,34 @@
         <span class="material-symbols-outlined text-[#adc6ff] text-sm">info</span>
         <p class="text-[14px] leading-[1.4] text-[#bccbb9]" style="font-family:'Inter',sans-serif">Split billing is available on the payment screen.</p>
       </div>
+
+      @if (pendingCount() > 0) {
+        <div class="flex items-center gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+          <span class="material-symbols-outlined text-amber-400">hourglass_top</span>
+          <div class="flex-1">
+            <p class="text-[14px] leading-[1.4] font-semibold text-amber-300" style="font-family:'Inter',sans-serif">{{ pendingCount() }} item{{ pendingCount() === 1 ? '' : 's' }} still pending fulfillment</p>
+            <p class="text-[12px] leading-[1.4] text-amber-200/70" style="font-family:'Inter',sans-serif">This tab can't be settled until all ordered items are delivered. You can keep adding items or return to the order.</p>
+          </div>
+          <button (click)="goBack()" class="px-4 py-2 rounded-full bg-amber-400/20 text-amber-300 text-[12px] leading-none font-semibold active:scale-95 transition-transform flex items-center gap-1.5" style="font-family:'Inter',sans-serif">
+            <span class="material-symbols-outlined text-[14px]">add</span>
+            Add Order
+          </button>
+        </div>
+      }
     }
   </main>
 
   <!-- Footer Action -->
   <footer class="fixed bottom-0 left-0 w-full p-4 glass-card bg-[#0c1324]/80 backdrop-blur-3xl border-t border-white/5">
-    <button (click)="proceedToPayment()" class="w-full py-5 rounded-2xl bg-[#4be277] text-[#003915] text-[24px] leading-[1.3] font-bold uppercase tracking-widest shadow-[0_0_25px_rgba(75,226,119,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-3" style="font-family:'Space Grotesk',sans-serif">
-      <span>Proceed to Payment</span>
-      <span class="material-symbols-outlined font-bold">arrow_forward</span>
-    </button>
+    @if (pendingCount() > 0) {
+      <button (click)="goBack()" class="w-full py-5 rounded-2xl bg-amber-400 text-[#3d2c00] text-[24px] leading-[1.3] font-bold uppercase tracking-widest shadow-[0_0_25px_rgba(251,191,36,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-3" style="font-family:'Space Grotesk',sans-serif">
+        <span>{{ pendingCount() }} Pending — Return to Order</span>
+      </button>
+    } @else {
+      <button (click)="proceedToPayment()" class="w-full py-5 rounded-2xl bg-[#4be277] text-[#003915] text-[24px] leading-[1.3] font-bold uppercase tracking-widest shadow-[0_0_25px_rgba(75,226,119,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-3" style="font-family:'Space Grotesk',sans-serif">
+        <span>Proceed to Payment</span>
+        <span class="material-symbols-outlined font-bold">arrow_forward</span>
+      </button>
+    }
   </footer>
 </div>
