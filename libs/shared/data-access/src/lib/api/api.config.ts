@@ -72,6 +72,7 @@ export const API_CONFIG = {
       close: '/api/v1/tabs/:id/close',
       void: '/api/v1/tabs/:id/void',
       transfer: '/api/v1/tabs/:id/transfer',
+      merge: '/api/v1/tabs/:id/merge',
       delete: '/api/v1/tabs/:id',
       waiterList: '/api/v1/tabs/waiter-list',
     },

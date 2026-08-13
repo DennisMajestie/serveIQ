@@ -29,6 +29,7 @@ export class TabDetailComponent implements OnInit {
   tab = signal<Tab | null>(null);
   orders = signal<OrderItem[]>([]);
   availableTables = signal<Table[]>([]);
+  openTabs = signal<any[]>([]);
   isLoading = signal(true);
   isAddingItems = signal(false);
   showAddItemsModal = signal(false);
@@ -54,6 +55,7 @@ export class TabDetailComponent implements OnInit {
     this.loadTab();
     this.loadOrders();
     this.loadAvailableTables();
+    this.loadOpenTabs();
   }
 
   loadTab() {
@@ -76,6 +78,13 @@ export class TabDetailComponent implements OnInit {
         this.availableTables.set(tables.filter(t => t.status === 'available'));
       },
       error: () => this.availableTables.set([])
+    });
+  }
+
+  loadOpenTabs() {
+    this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
+      next: (tabs) => this.openTabs.set(tabs.filter(t => t.id !== this.tabId && t.status === 'open')),
+      error: () => this.openTabs.set([])
     });
   }
 
@@ -188,6 +197,50 @@ export class TabDetailComponent implements OnInit {
     }).then(result => {
       if (result.isConfirmed && result.value) {
         doTransfer(result.value);
+      }
+    });
+  }
+
+  mergeTab() {
+    const tabs = this.openTabs();
+    if (tabs.length === 0) {
+      Swal.fire({ icon: 'info', title: 'No other open tabs to merge into' });
+      return;
+    }
+
+    const inputOptions = tabs.reduce((acc, t) => {
+      const tableLabel = t.table?.tableNumber || t.table?.table_number || t.tableId || 'Unknown table';
+      const waiterLabel = t.waiter?.fullName || t.waiter?.full_name || '';
+      const label = `Table ${tableLabel}${waiterLabel ? ' — ' + waiterLabel : ''}`;
+      return { ...acc, [t.id]: label };
+    }, {} as Record<string, string>);
+
+    Swal.fire({
+      title: 'Merge Into Tab',
+      text: 'All orders from this tab will move onto the selected tab, and this table will be released.',
+      icon: 'warning',
+      input: 'select',
+      inputOptions,
+      inputPlaceholder: 'Select a target tab',
+      showCancelButton: true,
+      confirmButtonText: 'Merge',
+    }).then(result => {
+      if (result.isConfirmed && result.value) {
+        this.tabsApi.mergeTab(this.tabId, result.value).subscribe({
+          next: (mergedTab) => {
+            const target: any = mergedTab;
+            const targetLabel = target?.table?.tableNumber || target?.table?.table_number || 'target';
+            Swal.fire({
+              icon: 'success',
+              title: 'Tabs Merged',
+              html: `Orders moved to <strong>Table ${targetLabel}</strong>. This table was released.`,
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            this.router.navigate(['/app/tabs']);
+          },
+          error: (err) => showApiErrorToast(err, 'Merge Failed')
+        });
       }
     });
   }

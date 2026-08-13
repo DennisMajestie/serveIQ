@@ -109,6 +109,11 @@ export class TabsApiService extends BaseApiService {
     return this.post<Tab>(buildUrl(API_CONFIG.endpoints.tabs.transfer, { id }), { targetTableId });
   }
 
+  // Merge this tab into another open tab (orders move onto the target)
+  mergeTab(id: string, targetTabId: string): Observable<Tab> {
+    return this.post<Tab>(buildUrl(API_CONFIG.endpoints.tabs.merge, { id }), { target_tab_id: targetTabId });
+  }
+
   // Get list of users who have tabs in the branch (for waiter filter)
   getWaiterList(): Observable<{ id: string; fullName: string; role: string }[]> {
     return this.get<any[]>(API_CONFIG.endpoints.tabs.waiterList).pipe(
