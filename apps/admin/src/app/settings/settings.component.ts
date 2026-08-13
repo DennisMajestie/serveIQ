@@ -230,8 +230,8 @@ navItems: { key: Section; label: string; icon: string }[] = [
       next: (b) => {
         this.businessSettings.set(b);
         this.businessCode.set(b.businessCode || '');
-        this.taxRate.set(b.taxRate ?? null);
-        this.vipSurchargePercent.set(b.vipSurchargePercent ?? null);
+        this.taxRate.set(b.taxRate == null ? null : Number(b.taxRate));
+        this.vipSurchargePercent.set(b.vipSurchargePercent == null ? null : Number(b.vipSurchargePercent));
         this.currency.set(b.currency || 'NGN');
         this.timezone.set(b.timezone || 'Africa/Lagos');
         this.brandPrimaryColor.set(b.brandPrimaryColor || '#F97316');
