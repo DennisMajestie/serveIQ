@@ -100,4 +100,53 @@
       <span class="nav-label">Profile</span>
     </a>
   </nav>
+
+  <!-- Review Order Modal -->
+  @if (showReview()) {
+    <div class="review-overlay" (click)="showReview.set(false)">
+      <div class="review-modal" (click)="$event.stopPropagation()">
+        <div class="review-header">
+          <div class="review-header-left">
+            <span class="material-symbols-outlined review-icon">fact_check</span>
+            <div>
+              <h3 class="review-title">Review Order</h3>
+              <p class="review-subtitle">Check every item before sending to the kitchen</p>
+            </div>
+          </div>
+          <button class="review-close" (click)="showReview.set(false)">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="review-list">
+          @for (item of selectedItems; track item.id + (item.selectedPortionId ?? '')) {
+            <div class="review-row">
+              <div class="review-item-info">
+                <p class="review-item-name">{{ item.name }}</p>
+                <div class="review-item-meta">
+                  @if (item.portionName) {
+                    <span class="review-tag">{{ item.portionName }}</span>
+                  }
+                  <span class="review-qty">{{ item.qty }}x</span>
+                </div>
+              </div>
+              <span class="review-line-total">₦{{ getLineTotal(item).toLocaleString() }}</span>
+            </div>
+          }
+          <div class="review-total-row">
+            <span class="review-total-label">Total</span>
+            <span class="review-total">₦{{ selectionTotal.toLocaleString() }}</span>
+          </div>
+        </div>
+
+        <div class="review-actions">
+          <button class="review-back" (click)="showReview.set(false)">Back to Menu</button>
+          <button class="review-send" (click)="sendOrder()">
+            <span class="material-symbols-outlined">local_fire_department</span>
+            Send to Kitchen
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

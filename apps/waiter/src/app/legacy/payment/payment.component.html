@@ -173,10 +173,15 @@
         Allocate ₦{{ remainingNaira }} remaining across guests to continue
       </div>
     }
+    @if (pendingCount() > 0) {
+      <div class="split-warning">
+        {{ pendingCount() }} item{{ pendingCount() === 1 ? ' is' : 's are' }} still pending fulfillment. Settling is blocked until all items are delivered.
+      </div>
+    }
     <button
       class="confirm-btn"
       (click)="confirmPayment()"
-      [disabled]="isProcessing() || (selectedMethod !== 'cash' && !selectedTerminalId()) || (isSplit() && !isSplitValid)"
+      [disabled]="isProcessing() || pendingCount() > 0 || (selectedMethod !== 'cash' && !selectedTerminalId()) || (isSplit() && !isSplitValid)"
       [class.processing]="isProcessing()"
       [class.success]="isSuccess()"
     >

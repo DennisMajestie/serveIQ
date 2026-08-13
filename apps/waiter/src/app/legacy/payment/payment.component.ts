@@ -42,6 +42,14 @@ export class LegacyPaymentComponent implements OnInit {
   splitCount = signal(2);
   splitAmounts = signal<number[]>([]);
   maxGuests = signal(0);
+  orders = signal<any[]>([]);
+
+  pendingCount = computed(() => this.orders().filter(o => {
+    const s = (o.order_status ?? o.orderStatus ?? '').toString().toLowerCase();
+    const billable = s !== 'declined' && s !== 'cancelled';
+    const fulfilled = s === 'delivered' || s === 'completed';
+    return billable && !fulfilled && s !== 'pending_payment_approval';
+  }).length);
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -91,6 +99,7 @@ export class LegacyPaymentComponent implements OnInit {
       next: (receipt: any) => {
         const b = receipt.bill as Bill;
         this.bill.set(b);
+        this.orders.set(receipt.orders || []);
         this.currentAmount.set((b.totalKobo / 100).toFixed(2));
         this.isLoading.set(false);
       },
@@ -225,6 +234,10 @@ export class LegacyPaymentComponent implements OnInit {
   }
 
   confirmPayment() {
+    if (this.pendingCount() > 0) {
+      Swal.fire({ icon: 'warning', title: 'Items Pending Fulfillment', text: `${this.pendingCount()} item${this.pendingCount() === 1 ? ' is' : 's are'} still pending fulfillment. Mark all items as delivered before completing payment.`, background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      return;
+    }
     if (this.isSplit() && !this.isSplitValid) {
       Swal.fire({ icon: 'warning', title: 'Incomplete Allocation', text: 'Allocate the full bill amount across guests before completing payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       return;
