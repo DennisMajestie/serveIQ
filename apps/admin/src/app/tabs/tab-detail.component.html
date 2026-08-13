@@ -104,7 +104,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12H5"/></svg>
         Transfer
       </button>
-      <button class="btn-secondary" (click)="mergeTab()" [disabled]="openTabs().length === 0">
+      <button class="btn-secondary" *ngIf="canMerge()" (click)="mergeTab()" [disabled]="openTabs().length === 0">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
         Merge
       </button>

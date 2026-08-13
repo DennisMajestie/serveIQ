@@ -6,6 +6,7 @@ import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, Tabl
 import { Tab, OrderItem, Table, MenuItem, ApplyDiscountRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../core/currency-context.service';
+import { PermissionService } from '../core/permission.service';
 
 @Component({
   selector: 'app-tab-detail',
@@ -24,6 +25,7 @@ export class TabDetailComponent implements OnInit {
   private router = inject(Router);
   private location = inject(Location);
   private currency = inject(CurrencyContextService);
+  private permService = inject(PermissionService);
 
   tabId = '';
   tab = signal<Tab | null>(null);
@@ -49,6 +51,8 @@ export class TabDetailComponent implements OnInit {
   discountKobo = signal(0);
   discountReason = signal('');
   showDiscountInput = signal(false);
+
+  canMerge = computed(() => this.permService.hasPermission('merge_tables'));
 
   ngOnInit() {
     this.tabId = this.route.snapshot.paramMap.get('id') || '';
