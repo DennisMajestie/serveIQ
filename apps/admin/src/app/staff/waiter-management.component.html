@@ -5,7 +5,7 @@
       <h2 class="text-[32px] leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Staff Management</h2>
       <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Manage your staff roster and performance</p>
     </div>
-    <button class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 shadow-lg" (click)="openAddStaffModal()">
+    <button class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 shadow-lg" (click)="openAddStaffModal()" *appPermission="'create_staff'">
       <span class="material-symbols-outlined">person_add</span>
       Add Staff
     </button>
@@ -35,9 +35,9 @@
                 <span class="text-[10px] text-on-surface-variant-60 uppercase tracking-tighter" style="font-family:'Inter',sans-serif">Revenue Share</span>
               </div>
               <div class="flex gap-2 mt-3">
-                <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors text-xs" (click)="openEditWaiter(tp.waiter)">✎ Edit</button>
-                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="resetPin(tp.waiter.id)">🔑 PIN</button>
-                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="deleteWaiter(tp.waiter.id)">✕ Remove</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors text-xs" (click)="openEditWaiter(tp.waiter)" title="Edit" *appPermission="'edit_staff'">✎ Edit</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="resetPin(tp.waiter.id)" title="Reset PIN" *appPermission="'reset_password'">🔑 PIN</button>
+                <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors text-xs" (click)="deleteWaiter(tp.waiter.id)" title="Delete" *appPermission="'delete_staff'">✕ Remove</button>
               </div>
             </div>
           </div>
@@ -67,7 +67,7 @@
             <p class="text-[10px] text-on-surface-variant-40" style="font-family:'Inter',sans-serif">{{ getRoleLabel(waiter.role) }}</p>
           </div>
         </div>
-        <button class="mt-auto w-full py-3 rounded-2xl bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold hover:bg-[var(--surface-variant)] transition-colors" (click)="openAddStaffModal()">
+        <button class="mt-auto w-full py-3 rounded-2xl bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] text-[14px] leading-none font-semibold hover:bg-[var(--surface-variant)] transition-colors" (click)="openAddStaffModal()" *appPermission="'create_staff'">
           View All Statuses
         </button>
       </aside>
@@ -126,16 +126,16 @@
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex items-center gap-2">
-                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors p-1" (click)="openEditWaiter(waiter)" title="Edit">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors p-1" (click)="openEditWaiter(waiter)" title="Edit" *appPermission="'edit_staff'">
                       <span class="material-symbols-outlined text-[16px]">edit</span>
                     </button>
-                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="resetPin(waiter.id)" title="Reset PIN">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="resetPin(waiter.id)" title="Reset PIN" *appPermission="'reset_password'">
                       <span class="material-symbols-outlined text-[16px]">key</span>
                     </button>
-                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="toggleStatus(waiter)" [title]="waiter.isActive !== false ? 'Deactivate (auto-logout + invalidate PIN)' : 'Reactivate (generate new PIN)'">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="toggleStatus(waiter)" [title]="waiter.isActive !== false ? 'Deactivate (auto-logout + invalidate PIN)' : 'Reactivate (generate new PIN)'" *appPermission="'edit_staff'">
                       <span class="material-symbols-outlined text-[16px]">{{ waiter.isActive !== false ? 'block' : 'check_circle' }}</span>
                     </button>
-                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="deleteWaiter(waiter.id)" title="Delete">
+                    <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="deleteWaiter(waiter.id)" title="Delete" *appPermission="'delete_staff'">
                       <span class="material-symbols-outlined text-[16px]">delete</span>
                     </button>
                   </div>

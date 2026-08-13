@@ -7,13 +7,14 @@ import { of } from 'rxjs';
 import { UserApiService, UploadApiService, User, Waiter, BranchesApiService } from '@serveiq/shared/data-access';
 import { WaiterPerformance } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
+import { PermissionDirective } from '../core/permission.directive';
 
 
 
 @Component({
   selector: 'app-waiter-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PermissionDirective],
   templateUrl: './waiter-management.component.html',
   styleUrls: ['./waiter-management.component.scss']
 })
