@@ -160,7 +160,8 @@ export class BillComponent implements OnInit {
 
   private buildBillFromOrders(tabId: string, discountKobo: number, orderItems: any[]): Bill {
     const subtotalKobo = orderItems.reduce((s, o) => s + (o.priceKobo || 0) * (o.quantity || 1), 0);
-    const serviceChargeKobo = Math.round(subtotalKobo * 0.05);
+    const serviceChargePercent = Number(this.businessSettings()?.serviceChargePercent ?? 10);
+    const serviceChargeKobo = Math.round(subtotalKobo * (serviceChargePercent / 100));
     const vatKobo = Math.round(subtotalKobo * 0.075);
     const totalKobo = subtotalKobo + serviceChargeKobo + vatKobo - discountKobo;
     return {
@@ -169,7 +170,7 @@ export class BillComponent implements OnInit {
       branchId: '',
       subtotalKobo,
       serviceChargeKobo,
-      serviceChargePercent: 5,
+      serviceChargePercent,
       discountKobo,
       totalKobo,
       createdAt: new Date(),
@@ -193,7 +194,7 @@ export class BillComponent implements OnInit {
               switchMap(bill =>
                 bill
                   ? of(bill)
-                  : from(this.offlineData.generateBill(tabId, { serviceChargePercent: 5 })).pipe(
+                  : from(this.offlineData.generateBill(tabId)).pipe(
                       map(gen => ((gen as any)?.offline || !(gen as any)?.id) ? null : gen),
                       catchError(() => of(null))
                     )
@@ -333,7 +334,7 @@ export class BillComponent implements OnInit {
         )
       ),
       catchError(() =>
-        from(this.offlineData.generateBill(this.tabId(), { serviceChargePercent: 5, discountKobo })).pipe(
+        from(this.offlineData.generateBill(this.tabId(), { discountKobo })).pipe(
           switchMap((bill) =>
             this.offlineData.getOrdersByTab(this.tabId()).pipe(
               map((items) => {

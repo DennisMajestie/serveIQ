@@ -96,7 +96,7 @@ export class LegacyBillComponent implements OnInit {
 
   private buildBillFromOrders(tabId: string, discountKobo: number, orderItems: any[]): Bill {
     const subtotalKobo = orderItems.reduce((s, o) => s + (o.priceKobo || 0) * (o.quantity || 1), 0);
-    const serviceChargeKobo = Math.round(subtotalKobo * 0.05);
+    const serviceChargeKobo = Math.round(subtotalKobo * 0.10);
     const vatKobo = Math.round(subtotalKobo * 0.075);
     const totalKobo = subtotalKobo + serviceChargeKobo + vatKobo - discountKobo;
     return {
@@ -105,7 +105,7 @@ export class LegacyBillComponent implements OnInit {
       branchId: '',
       subtotalKobo,
       serviceChargeKobo,
-      serviceChargePercent: 5,
+      serviceChargePercent: 10,
       discountKobo,
       totalKobo,
       createdAt: new Date(),
@@ -116,7 +116,7 @@ export class LegacyBillComponent implements OnInit {
   private loadBill(tabId: string) {
     this.isLoading.set(true);
     this.error.set('');
-    this.billService.generate(tabId, { serviceChargePercent: 5 }).pipe(
+    this.billService.generate(tabId).pipe(
       switchMap((bill) =>
         this.ordersService.getByTab(tabId).pipe(
           map((items) => {
@@ -248,7 +248,7 @@ export class LegacyBillComponent implements OnInit {
         )
       ),
       catchError(() =>
-        this.billService.generate(this.tabId(), { serviceChargePercent: 5, discountKobo }).pipe(
+        this.billService.generate(this.tabId(), { discountKobo }).pipe(
           switchMap((bill) =>
             this.ordersService.getByTab(this.tabId()).pipe(
               map((items) => {
