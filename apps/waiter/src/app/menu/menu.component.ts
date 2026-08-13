@@ -64,6 +64,7 @@ export class MenuComponent implements OnInit {
   menuItems: LocalMenuItem[] = [];
   selectedItems: CartItem[] = [];
   selectedPortions: Map<string, string> = new Map();
+  showReview = signal(false);
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -184,12 +185,26 @@ export class MenuComponent implements OnInit {
   }
 
   confirmSelection() {
+    if (this.selectedItems.length === 0) {
+      this.goToTables();
+      return;
+    }
+    this.showReview.set(true);
+  }
+
+  sendOrder() {
+    this.showReview.set(false);
     const targetId = this.tabId || this.tableId;
     if (targetId) {
       this.router.navigate(['/tabs/detail', targetId], { state: { selectedItems: this.selectedItems } });
     } else {
       this.router.navigate(['/tables']);
     }
+  }
+
+  getLineTotal(item: CartItem): number {
+    const price = this.vipMultiplier() * (item.portionPrice ?? item.price);
+    return price * item.qty;
   }
 
   goToTables() { this.router.navigate(['/tables']); }
