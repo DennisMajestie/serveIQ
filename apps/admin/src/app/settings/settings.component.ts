@@ -132,6 +132,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
     this.paymentProviders.set([...this.paymentProviders()]);
   }
   taxRate = signal<number | null>(null);
+  vipSurchargePercent = signal<number | null>(null);
   currency = signal('NGN');
   timezone = signal('Africa/Lagos');
   timezones = [
@@ -230,6 +231,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
         this.businessSettings.set(b);
         this.businessCode.set(b.businessCode || '');
         this.taxRate.set(b.taxRate ?? null);
+        this.vipSurchargePercent.set(b.vipSurchargePercent ?? null);
         this.currency.set(b.currency || 'NGN');
         this.timezone.set(b.timezone || 'Africa/Lagos');
         this.brandPrimaryColor.set(b.brandPrimaryColor || '#F97316');
@@ -242,6 +244,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
     this.isSavingSettings.set(true);
     this.businessApi.updateBusiness({
       taxRate: this.taxRate(),
+      vipSurchargePercent: this.vipSurchargePercent(),
       currency: this.currency(),
       timezone: this.timezone(),
     } as any).subscribe({

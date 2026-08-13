@@ -27,9 +27,11 @@ export class CurrencyContextService {
   
   private _currency = signal<CurrencyInfo>(DEFAULT_CURRENCY);
   private _loaded = signal(false);
+  private _vipSurchargePercent = signal(0);
 
   readonly currency = computed(() => this._currency());
   readonly loaded = computed(() => this._loaded());
+  readonly vipSurchargePercent = computed(() => this._vipSurchargePercent());
 
   constructor() {
     this.loadCurrency();
@@ -40,6 +42,9 @@ export class CurrencyContextService {
       const business = await this.businessApi.getBusiness().toPromise();
       if (business?.currency) {
         this.setCurrency(business.currency);
+      }
+      if (business?.vipSurchargePercent != null) {
+        this._vipSurchargePercent.set(Number(business.vipSurchargePercent));
       }
     } catch {
       // Keep default

@@ -51,6 +51,18 @@
         </div>
       </section>
 
+      @if (isVipTable()) {
+        <section class="mb-8">
+          <div class="glass-card px-5 py-4 rounded-2xl flex items-center gap-4 border border-[#f59e0b]/30 bg-[#f59e0b]/10">
+            <span class="material-symbols-outlined text-[#f59e0b] text-[28px]">workspace_premium</span>
+            <div class="flex-1">
+              <p class="text-[16px] leading-[1.5] font-semibold text-[#f59e0b]" style="font-family:'Space Grotesk',sans-serif">VIP Table{{ tableNumber ? ' ' + tableNumber : '' }}</p>
+              <p class="text-[12px] leading-[1.5] text-[#bccbb9]" style="font-family:'Inter',sans-serif">Prices on this table are raised by {{ vipMultiplier() > 1 ? (vipMultiplier() - 1) * 100 : 0 }}%.</p>
+            </div>
+          </div>
+        </section>
+      }
+
       <!-- Menu Items -->
       <section>
         <div class="flex justify-between items-end mb-4">

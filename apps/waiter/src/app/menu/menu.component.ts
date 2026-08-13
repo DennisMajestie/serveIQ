@@ -53,7 +53,13 @@ export class MenuComponent implements OnInit {
   tableId: string | null = null;
   tabId: string | null = null;
   tableNumber: string | null = null;
+  isVipTable = signal(false);
   isLoading = signal(true);
+
+  /** VIP price multiplier = 1 + vipSurchargePercent/100, applied only on VIP tables. */
+  vipMultiplier = computed(() =>
+    this.isVipTable() ? 1 + (this.currency.vipSurchargePercent() || 0) / 100 : 1,
+  );
 
   menuItems: LocalMenuItem[] = [];
   selectedItems: CartItem[] = [];
@@ -108,6 +114,7 @@ export class MenuComponent implements OnInit {
           this.tablesApi.getTable(tab.tableId).subscribe({
             next: (table: Table) => {
               this.tableNumber = table.tableNumber;
+              this.isVipTable.set(!!table.isVip);
             }
           });
         }
@@ -124,7 +131,7 @@ export class MenuComponent implements OnInit {
   get selectionTotal(): number {
     if (!Array.isArray(this.selectedItems)) return 0;
     return this.selectedItems.reduce((sum, item) => {
-      const price = item.portionPrice ?? item.price;
+      const price = this.vipMultiplier() * (item.portionPrice ?? item.price);
       return sum + (price * item.qty);
     }, 0);
   }
@@ -147,7 +154,8 @@ export class MenuComponent implements OnInit {
 
   getDisplayPrice(item: LocalMenuItem): number {
     const pid = this.getSelectedPortion(item.id);
-    return pid ? this.getPortionPrice(item, pid) : item.price;
+    const base = pid ? this.getPortionPrice(item, pid) : item.price;
+    return base * this.vipMultiplier();
   }
 
   addToSelection(item: LocalMenuItem) {

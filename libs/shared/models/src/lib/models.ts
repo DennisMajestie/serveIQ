@@ -28,6 +28,7 @@ export interface Business {
   address?: string;
   currency: string;
   taxRate?: number;
+  vipSurchargePercent?: number;
   timezone?: string;
   subscriptionPlan?: string;
   logoUrl?: string;
