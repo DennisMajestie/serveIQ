@@ -70,7 +70,7 @@ export interface MenuItem {
   supplier?: Supplier;
 }
 
-export type TableStatus = 'available' | 'occupied' | 'reserved';
+export type TableStatus = 'available' | 'occupied' | 'reserved' | 'inactive';
 
 export interface Table {
   id: string;

@@ -104,6 +104,8 @@
             <button class="w-full aspect-square glass-card rounded-full flex flex-col items-center justify-center p-4 active:scale-90 transition-all duration-300 group relative"
                     [class.active-glow]="table.status === 'occupied'"
                     [class.azure-pulse]="table.status === 'occupied' && isTabLockedByOther(table)"
+                    [class.opacity-40]="table.status === 'inactive'"
+                    [class.cursor-not-allowed]="table.status === 'inactive'"
                     (click)="onTableClick(table)">
               @if (table.isVip) {
                 <div class="absolute top-2 right-2">
@@ -123,6 +125,8 @@
                 <span class="text-[12px] leading-none font-medium text-[#4be277]/80" style="font-family:'Inter',sans-serif">{{ getTabForTable(table.id) ? 'Active' : 'Seated' }}</span>
               } @else if (table.status === 'available') {
                 <span class="text-[12px] leading-none font-medium text-[#bccbb9]/20" style="font-family:'Inter',sans-serif">Free</span>
+              } @else if (table.status === 'inactive') {
+                <span class="text-[12px] leading-none font-medium text-[#8d99ae]/60" style="font-family:'Inter',sans-serif">Out of Service</span>
               } @else {
                 <span class="text-[12px] leading-none font-medium text-[#ffb3b7]/60" style="font-family:'Inter',sans-serif">{{ table.status }}</span>
               }

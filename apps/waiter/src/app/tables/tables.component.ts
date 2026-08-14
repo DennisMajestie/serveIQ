@@ -273,6 +273,10 @@ export class TablesComponent implements OnInit, OnDestroy {
       Swal.fire({ icon: 'info', title: 'Loading', text: 'Please wait…', timer: 1000, showConfirmButton: false });
       return;
     }
+    if (table.status === 'inactive') {
+      Swal.fire({ icon: 'info', title: 'Out of Service', text: 'This table was merged into another table.', timer: 1800, showConfirmButton: false });
+      return;
+    }
     let tab = this.getTabForTable(table.id);
 
     if (!tab && table.status === 'occupied') {

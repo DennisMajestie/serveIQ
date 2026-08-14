@@ -38,6 +38,7 @@ export class TablesManagementComponent implements OnInit {
         { label: 'Available', value: '0 Tables', icon: 'check_circle', color: 'green' },
         { label: 'Occupied', value: '0 Tables', icon: 'person', color: 'pink' },
         { label: 'Reserved', value: '0 Tables', icon: 'event', color: 'yellow' },
+        { label: 'Out of Service', value: '0 Tables', icon: 'do_not_disturb_on', color: 'grey' },
         { label: 'VIP', value: '0 Tables', icon: 'workspace_premium', color: 'amber' },
         { label: 'Total Capacity', value: '0 Seats', icon: 'group', color: 'brown' }
       ];
@@ -45,12 +46,14 @@ export class TablesManagementComponent implements OnInit {
     const occupied = t.filter(x => x.status === 'occupied').length;
     const available = t.filter(x => x.status === 'available').length;
     const reserved = t.filter(x => x.status === 'reserved').length;
+    const inactive = t.filter(x => x.status === 'inactive').length;
     const vip = t.filter(x => x.isVip).length;
     const totalSeats = t.reduce((acc, curr) => acc + (curr.capacity || 0), 0);
     return [
       { label: 'Available', value: available + ' Tables', icon: 'check_circle', color: 'green' },
       { label: 'Occupied', value: occupied + ' Tables', icon: 'person', color: 'pink' },
       { label: 'Reserved', value: reserved + ' Tables', icon: 'event', color: 'yellow' },
+      { label: 'Out of Service', value: inactive + ' Tables', icon: 'do_not_disturb_on', color: 'grey' },
       { label: 'VIP', value: vip + ' Tables', icon: 'workspace_premium', color: 'amber' },
       { label: 'Total Capacity', value: totalSeats + ' Seats', icon: 'group', color: 'brown' }
     ];
@@ -214,6 +217,7 @@ export class TablesManagementComponent implements OnInit {
       case 'available': return 'bg-[#4be277]/10 text-[#4be277]';
       case 'occupied': return 'bg-[#adc6ff]/10 text-[#adc6ff]';
       case 'reserved': return 'bg-[#ffb4ab]/10 text-[#ffb4ab]';
+      case 'inactive': return 'bg-[#8d99ae]/10 text-[#8d99ae]';
       default: return 'bg-[#adc6ff]/10 text-[#adc6ff]';
     }
   }
