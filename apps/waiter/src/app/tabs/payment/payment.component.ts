@@ -144,6 +144,14 @@ export class PaymentComponent implements OnInit, OnDestroy {
           this.isSuccess.set(true);
           this.isAutoConfirmed.set(true);
           this.stopPaymentPolling();
+          const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
+          setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
+            state: {
+              terminalLabel: this.selectedTerminalLabel(),
+              showConfetti: true,
+              splitAllocations: allocations,
+            }
+          }), 1000);
         }
       },
       error: () => {},
