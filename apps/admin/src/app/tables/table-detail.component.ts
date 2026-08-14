@@ -742,7 +742,7 @@ export class TableDetailComponent implements OnInit {
               showCancelButton: true,
               cancelButtonText: 'Close'
             }).then(result => {
-              if (result.isConfirmed) this.router.navigate(['/bills']);
+              if (result.isConfirmed) this.router.navigate(['/app/bills']);
               else this.loadData();
             });
           },
