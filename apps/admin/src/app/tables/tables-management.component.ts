@@ -1,7 +1,7 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TablesApiService, TabsApiService, UserApiService } from '@serveiq/shared/data-access';
 import { Table, Tab, User } from '@serveiq/shared/models';
 import { forkJoin, of } from 'rxjs';
@@ -21,6 +21,7 @@ export class TablesManagementComponent implements OnInit {
   private tableService = inject(TablesApiService);
   private tabsApi = inject(TabsApiService);
   private userApi = inject(UserApiService);
+  private router = inject(Router);
   isFloorPlan = signal(false);
   isLoading = signal(true);
 
@@ -92,6 +93,14 @@ export class TablesManagementComponent implements OnInit {
 
   toggleView() { this.isFloorPlan.update(v => !v); }
   getStatusLabel(status: string) { return status.toUpperCase(); }
+
+  openTable(table: Table) {
+    if (table.status === 'occupied') {
+      this.router.navigate(['/app/tables', table.id]);
+      return;
+    }
+    this.editTable(table);
+  }
 
   addNewTable() {
     Swal.fire({

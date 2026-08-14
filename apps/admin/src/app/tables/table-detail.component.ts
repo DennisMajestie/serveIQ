@@ -599,11 +599,11 @@ export class TableDetailComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/tables']);
+    this.router.navigate(['/app/tables']);
   }
 
   viewHistory() {
-    this.router.navigate(['/tabs']);
+    this.router.navigate(['/app/tabs']);
   }
 
   editTable() {
@@ -754,7 +754,7 @@ export class TableDetailComponent implements OnInit {
   }
 
   printBill() {
-    this.router.navigate(['/bills']);
+    this.router.navigate(['/app/bills']);
   }
 
   voidTab() {
@@ -780,7 +780,7 @@ export class TableDetailComponent implements OnInit {
               ? `Tab Voided — stock restored for ${orderCount} item${orderCount > 1 ? 's' : ''}`
               : 'Tab Voided';
             Swal.fire({ icon: 'success', title: successText, timer: 2000, showConfirmButton: false });
-            this.router.navigate(['/tables']);
+            this.router.navigate(['/app/tables']);
           },
           error: () => Swal.fire({ icon: 'error', title: 'Void Failed' })
         });
@@ -829,7 +829,7 @@ export class TableDetailComponent implements OnInit {
               timer: 2000,
               showConfirmButton: false,
             });
-            this.router.navigate(['/tables']);
+            this.router.navigate(['/app/tables']);
           },
           error: (err) => showApiErrorToast(err, 'Merge Failed')
         });

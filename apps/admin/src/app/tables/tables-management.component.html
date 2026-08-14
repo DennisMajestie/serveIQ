@@ -67,7 +67,7 @@
         <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)] mb-6" style="font-family:'Space Grotesk',sans-serif">Real-time Activity</h3>
         <div class="flex-1 space-y-4">
           <ng-container *ngIf="tables().length > 0; else emptyActivity">
-            <div *ngFor="let table of recentActivity()" class="p-4 rounded-xl bg-[var(--surface)] border-l-4 pulse-left relative cursor-pointer" [style.border-left-color]="table.status === 'available' ? 'color-mix(in srgb, var(--primary) 40%, transparent)' : table.status === 'occupied' ? 'color-mix(in srgb, var(--secondary) 40%, transparent)' : 'color-mix(in srgb, var(--error) 40%, transparent)'" (click)="editTable(table)">
+            <div *ngFor="let table of recentActivity()" class="p-4 rounded-xl bg-[var(--surface)] border-l-4 pulse-left relative cursor-pointer" [style.border-left-color]="table.status === 'available' ? 'color-mix(in srgb, var(--primary) 40%, transparent)' : table.status === 'occupied' ? 'color-mix(in srgb, var(--secondary) 40%, transparent)' : 'color-mix(in srgb, var(--error) 40%, transparent)'" (click)="openTable(table)"> 
               <p class="text-[14px] leading-none font-semibold text-[var(--on-background)] flex items-center gap-1.5" style="font-family:'Inter',sans-serif"><span class="material-symbols-outlined text-[16px] text-[var(--on-background)]">table_restaurant</span> {{ table.tableNumber.toString().padStart(2, '0') }} — {{ table.status | titlecase }}</p>
               <p class="text-[12px] leading-none font-medium text-[var(--secondary)] flex items-center gap-1" style="font-family:'Inter',sans-serif"><span class="material-symbols-outlined text-[12px]">group</span> {{ table.capacity }} seats <ng-container *ngIf="getWaiterForTable(table.id)">· <span class="material-symbols-outlined text-[12px]">person</span>{{ getWaiterForTable(table.id) }}</ng-container></p>
             </div>
@@ -81,7 +81,7 @@
       </div>
 
       <!-- Table Cards -->
-      <div *ngFor="let table of filteredTables()" class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 transition-all hover:scale-[1.02] cursor-pointer" [class.luminous-glow-primary]="table.status === 'available'" (click)="editTable(table)">
+      <div *ngFor="let table of filteredTables()" class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 transition-all hover:scale-[1.02] cursor-pointer" [class.luminous-glow-primary]="table.status === 'available'" (click)="openTable(table)">
         <div class="flex justify-between items-start mb-8">
           <span class="flex items-center gap-3" [class.opacity-60]="table.status !== 'available'"><span class="material-symbols-outlined text-[40px] text-[var(--on-background)]">table_restaurant</span><span class="text-[48px] leading-[1.1] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">{{ table.tableNumber.toString().padStart(2, '0') }}</span></span>
           <div class="flex items-center gap-2">
