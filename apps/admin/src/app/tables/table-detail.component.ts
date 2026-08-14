@@ -133,7 +133,7 @@ import { PermissionService } from '../core/permission.service';
               <span class="material-symbols-outlined">cancel</span>
               Void Order
             </button>
-            <button class="void-btn" *ngIf="canMerge() && tab()" (click)="mergeTab()" [disabled]="openTabs().length === 0">
+            <button class="merge-btn" *ngIf="canMerge() && tab()" (click)="mergeTab()" [disabled]="openTabs().length === 0">
               <span class="material-symbols-outlined">call_merge</span>
               Merge Tables
             </button>
@@ -407,6 +407,14 @@ import { PermissionService } from '../core/permission.service';
     }
     .void-btn:hover { background: rgba(186,26,26,0.1); }
     .void-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .merge-btn {
+      width: 100%; display: flex; align-items: center; justify-content: center;
+      gap: 8px; background: transparent; color: var(--primary); border: none;
+      padding: 12px; font-size: 14px; line-height: 20px; font-weight: 600;
+      font-family: 'Inter', sans-serif; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;
+    }
+    .merge-btn:hover { background: rgba(157,67,0,0.1); }
+    .merge-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .page-footer {
       padding: 24px; margin-top: 32px; border-top: 1px solid var(--outline-variant);
       display: flex; justify-content: space-between; align-items: center; color: var(--secondary);
