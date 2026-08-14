@@ -80,6 +80,10 @@
         <span>VAT (7.5%)</span>
         <span>{{ formatKobo(getVat()) }}</span>
       </div>
+      <div class="summary-row">
+        <span>Service Charge ({{ serviceChargePercent() }}%)</span>
+        <span>{{ formatKobo(getServiceCharge()) }}</span>
+      </div>
       <div class="summary-row discount-row" *ngIf="discountKobo() > 0">
         <span>Discount</span>
         <span class="discount-amount">-{{ formatKobo(discountKobo()) }}</span>

@@ -208,7 +208,9 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   });
   vatRate = computed(() => this.businessSettings()?.taxRate ?? 7.5);
   vat = computed(() => Math.round(this.subtotal() * this.vatRate() / 100));
-  total = computed(() => this.subtotal() + this.vat());
+  serviceChargeRate = computed(() => this.businessSettings()?.serviceChargePercent ?? 10);
+  serviceCharge = computed(() => Math.round(this.subtotal() * this.serviceChargeRate() / 100));
+  total = computed(() => this.subtotal() + this.vat() + this.serviceCharge());
 
   ngOnInit() {
     this.businessApi.getBusiness().subscribe({

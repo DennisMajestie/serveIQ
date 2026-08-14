@@ -190,6 +190,10 @@
               <span class="text-[16px] leading-[1.5]" style="font-family:'Inter',sans-serif">VAT ({{ vatRate() }}%)</span>
               <span class="text-[14px] leading-none font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ formatKobo(vat()) }}</span>
             </div>
+            <div class="flex justify-between text-[#bccbb9]">
+              <span class="text-[16px] leading-[1.5]" style="font-family:'Inter',sans-serif">Service Charge ({{ serviceChargeRate() }}%)</span>
+              <span class="text-[14px] leading-none font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ formatKobo(serviceCharge()) }}</span>
+            </div>
             <div class="pt-3 border-t border-white/5 flex justify-between">
               <span class="text-[18px] leading-[1.6] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">Total</span>
               <span class="text-[18px] leading-none font-bold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 10px rgba(75,226,119,0.3)">{{ formatKobo(total()) }}</span>

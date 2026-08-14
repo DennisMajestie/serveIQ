@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, showApiErrorToast } from '@serveiq/shared/data-access';
+import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, BusinessApiService, showApiErrorToast } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../core/currency-context.service';
@@ -116,7 +116,7 @@ import { PermissionService } from '../core/permission.service';
                   <span class="value">{{ formatKobo(getVat()) }}</span>
                 </div>
                 <div class="summary-row">
-                  <span class="label">Service Charge</span>
+                  <span class="label">Service Charge ({{ serviceChargePercent() }}%)</span>
                   <span class="value">{{ formatKobo(getServiceCharge()) }}</span>
                 </div>
                 <div class="summary-row total">
@@ -502,6 +502,7 @@ export class TableDetailComponent implements OnInit {
   private router = inject(Router);
   private currency = inject(CurrencyContextService);
   private permService = inject(PermissionService);
+  private businessApi = inject(BusinessApiService);
 
   tableId = signal('');
   table = signal<Table | null>(null);
@@ -514,7 +515,8 @@ export class TableDetailComponent implements OnInit {
 
   subtotal = computed(() => this.getSubtotal());
   vat = computed(() => this.getVat());
-  serviceCharge = signal(0);
+  serviceCharge = computed(() => this.getServiceCharge());
+  serviceChargePercent = signal(10);
   totalAmount = computed(() => this.getTotal());
 
   showAddItemsModal = signal(false);
@@ -536,12 +538,24 @@ export class TableDetailComponent implements OnInit {
   });
 
   ngOnInit() {
+    this.loadBusinessSettings();
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
         this.tableId.set(id);
         this.loadData();
       }
+    });
+  }
+
+  loadBusinessSettings() {
+    this.businessApi.getBusiness().subscribe({
+      next: (business) => {
+        if (business?.serviceChargePercent != null) {
+          this.serviceChargePercent.set(business.serviceChargePercent);
+        }
+      },
+      error: () => {}
     });
   }
 
@@ -849,7 +863,7 @@ export class TableDetailComponent implements OnInit {
   }
 
   getServiceCharge(): number {
-    return 0;
+    return Math.round(this.getSubtotal() * (this.serviceChargePercent() / 100));
   }
 
   getTotal(): number {

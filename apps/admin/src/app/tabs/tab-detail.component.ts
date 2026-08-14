@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, showApiErrorToast } from '@serveiq/shared/data-access';
+import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, BusinessApiService, showApiErrorToast } from '@serveiq/shared/data-access';
 import { Tab, OrderItem, Table, MenuItem, ApplyDiscountRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../core/currency-context.service';
@@ -26,6 +26,7 @@ export class TabDetailComponent implements OnInit {
   private location = inject(Location);
   private currency = inject(CurrencyContextService);
   private permService = inject(PermissionService);
+  private businessApi = inject(BusinessApiService);
 
   tabId = '';
   tab = signal<Tab | null>(null);
@@ -51,15 +52,28 @@ export class TabDetailComponent implements OnInit {
   discountKobo = signal(0);
   discountReason = signal('');
   showDiscountInput = signal(false);
+  serviceChargePercent = signal(10);
 
   canMerge = computed(() => this.permService.hasPermission('merge_tables'));
 
   ngOnInit() {
     this.tabId = this.route.snapshot.paramMap.get('id') || '';
+    this.loadBusinessSettings();
     this.loadTab();
     this.loadOrders();
     this.loadAvailableTables();
     this.loadOpenTabs();
+  }
+
+  loadBusinessSettings() {
+    this.businessApi.getBusiness().subscribe({
+      next: (business) => {
+        if (business?.serviceChargePercent != null) {
+          this.serviceChargePercent.set(business.serviceChargePercent);
+        }
+      },
+      error: () => {}
+    });
   }
 
   loadTab() {
@@ -334,6 +348,7 @@ export class TabDetailComponent implements OnInit {
         <div style="text-align:left;font-size:0.9rem">
           <p><strong>Subtotal:</strong> ${this.formatKobo(this.getSubtotal())}</p>
           <p><strong>VAT (7.5%):</strong> ${this.formatKobo(this.getVat())}</p>
+          <p><strong>Service Charge (${this.serviceChargePercent()}%):</strong> ${this.formatKobo(this.getServiceCharge())}</p>
           <p><strong>Total:</strong> ${this.formatKobo(this.getGrandTotal())}</p>
         </div>
       `,
@@ -379,7 +394,7 @@ export class TabDetailComponent implements OnInit {
 
   getSubtotal(): number {
     return this.orders().reduce((sum, item) => {
-      const price = item.priceKobo || item.price_kobo || item.unit_price_kobo || 0;
+      const price = item.priceKobo || item.price_kobo || item.unitPriceKobo || item.unit_price_kobo || 0;
       return sum + (price * (item.quantity || item.qty || 1));
     }, 0);
   }
@@ -388,8 +403,12 @@ export class TabDetailComponent implements OnInit {
     return this.getSubtotal() * 0.075;
   }
 
+  getServiceCharge(): number {
+    return Math.round(this.getSubtotal() * (this.serviceChargePercent() / 100));
+  }
+
   getTotal(): number {
-    return this.getSubtotal() + this.getVat();
+    return this.getSubtotal() + this.getVat() + this.getServiceCharge();
   }
 
   getGrandTotal(): number {
