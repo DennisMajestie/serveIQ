@@ -87,8 +87,8 @@ import { PermissionService } from '../core/permission.service';
                         </div>
                       </td>
                       <td class="text-center">{{ item.quantity || item.qty }}</td>
-                      <td class="text-right">{{ formatKobo(item.priceKobo || item.price_kobo || item.unit_price_kobo || 0) }}</td>
-                      <td class="text-right total">{{ formatKobo((item.priceKobo || item.price_kobo || item.unit_price_kobo || 0) * (item.quantity || item.qty || 1)) }}</td>
+                      <td class="text-right">{{ formatKobo(item.priceKobo || item.price_kobo || item.unitPriceKobo || item.unit_price_kobo || 0) }}</td>
+                      <td class="text-right total">{{ formatKobo((item.priceKobo || item.price_kobo || item.unitPriceKobo || item.unit_price_kobo || 0) * (item.quantity || item.qty || 1)) }}</td>
                       <td class="text-center">
                         <button class="delete-btn" (click)="removeOrderItem(item)" title="Remove item">
                           <span class="material-symbols-outlined">delete</span>
@@ -839,7 +839,7 @@ export class TableDetailComponent implements OnInit {
 
   getSubtotal(): number {
     return this.orders().reduce((sum, item) => {
-      const price = item.priceKobo || item.price_kobo || item.unit_price_kobo || 0;
+      const price = item.priceKobo || item.price_kobo || item.unitPriceKobo || item.unit_price_kobo || 0;
       return sum + (price * (item.quantity || item.qty || 1));
     }, 0);
   }
