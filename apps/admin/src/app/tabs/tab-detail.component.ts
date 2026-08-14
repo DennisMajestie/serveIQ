@@ -87,7 +87,7 @@ export class TabDetailComponent implements OnInit {
 
   loadOpenTabs() {
     this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
-      next: (tabs) => this.openTabs.set(tabs.filter(t => t.id !== this.tabId && t.status === 'open')),
+      next: (tabs) => this.openTabs.set(tabs.filter(t => t.id !== this.tabId && t.status === 'open' && t.tabType !== 'takeaway')),
       error: () => this.openTabs.set([])
     });
   }

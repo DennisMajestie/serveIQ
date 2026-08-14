@@ -564,7 +564,7 @@ export class TableDetailComponent implements OnInit {
 
   loadOpenTabs() {
     this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
-      next: (tabs) => this.openTabs.set(tabs.filter(t => t.id !== this.tab()?.id && t.status === 'open')),
+      next: (tabs) => this.openTabs.set(tabs.filter(t => t.id !== this.tab()?.id && t.status === 'open' && t.tabType !== 'takeaway')),
       error: () => this.openTabs.set([])
     });
   }
@@ -576,7 +576,7 @@ export class TableDetailComponent implements OnInit {
         if (openTab) {
           this.tab.set(openTab);
           this.loadOrders(openTab.id);
-          this.openTabs.set(tabs.filter(t => t.id !== openTab.id && t.status === 'open'));
+          this.openTabs.set(tabs.filter(t => t.id !== openTab.id && t.status === 'open' && t.tabType !== 'takeaway'));
         } else {
           this.isLoading.set(false);
         }
