@@ -5,6 +5,7 @@ import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, Tabl
 import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../core/currency-context.service';
+import { PermissionService } from '../core/permission.service';
 
 @Component({
   selector: 'app-table-detail',
@@ -131,6 +132,10 @@ import { CurrencyContextService } from '../core/currency-context.service';
             <button class="void-btn" (click)="voidTab()">
               <span class="material-symbols-outlined">cancel</span>
               Void Order
+            </button>
+            <button class="void-btn" *ngIf="canMerge() && tab()" (click)="mergeTab()" [disabled]="openTabs().length === 0">
+              <span class="material-symbols-outlined">call_merge</span>
+              Merge Tables
             </button>
           </div>
         </div>
@@ -401,6 +406,7 @@ import { CurrencyContextService } from '../core/currency-context.service';
       font-family: 'Inter', sans-serif; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;
     }
     .void-btn:hover { background: rgba(186,26,26,0.1); }
+    .void-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .page-footer {
       padding: 24px; margin-top: 32px; border-top: 1px solid var(--outline-variant);
       display: flex; justify-content: space-between; align-items: center; color: var(--secondary);
@@ -487,12 +493,16 @@ export class TableDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private currency = inject(CurrencyContextService);
+  private permService = inject(PermissionService);
 
   tableId = signal('');
   table = signal<Table | null>(null);
   tab = signal<Tab | null>(null);
   orders = signal<OrderItem[]>([]);
+  openTabs = signal<any[]>([]);
   isLoading = signal(true);
+
+  canMerge = computed(() => this.permService.hasPermission('merge_tables'));
 
   subtotal = computed(() => this.getSubtotal());
   vat = computed(() => this.getVat());
@@ -541,6 +551,14 @@ export class TableDetailComponent implements OnInit {
         this.isLoading.set(false);
       }
     });
+    this.loadOpenTabs();
+  }
+
+  loadOpenTabs() {
+    this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
+      next: (tabs) => this.openTabs.set(tabs.filter(t => t.id !== this.tab()?.id && t.status === 'open')),
+      error: () => this.openTabs.set([])
+    });
   }
 
   loadTabForTable(tableId: string) {
@@ -550,6 +568,7 @@ export class TableDetailComponent implements OnInit {
         if (openTab) {
           this.tab.set(openTab);
           this.loadOrders(openTab.id);
+          this.openTabs.set(tabs.filter(t => t.id !== openTab.id && t.status === 'open'));
         } else {
           this.isLoading.set(false);
         }
@@ -756,6 +775,55 @@ export class TableDetailComponent implements OnInit {
             this.router.navigate(['/tables']);
           },
           error: () => Swal.fire({ icon: 'error', title: 'Void Failed' })
+        });
+      }
+    });
+  }
+
+  mergeTab() {
+    const currentId = this.tab()?.id;
+    if (!currentId) {
+      Swal.fire({ icon: 'info', title: 'No open tab on this table' });
+      return;
+    }
+    const candidates = this.openTabs().filter(t => t.id !== currentId);
+    if (candidates.length === 0) {
+      Swal.fire({ icon: 'info', title: 'No other open tabs to merge into' });
+      return;
+    }
+
+    const inputOptions = candidates.reduce((acc, t) => {
+      const tableLabel = t.table?.tableNumber || t.table?.table_number || t.tableId || 'Unknown table';
+      const waiterLabel = t.waiter?.fullName || t.waiter?.full_name || '';
+      const label = `Table ${tableLabel}${waiterLabel ? ' — ' + waiterLabel : ''}`;
+      return { ...acc, [t.id]: label };
+    }, {} as Record<string, string>);
+
+    Swal.fire({
+      title: 'Merge Into Tab',
+      text: 'All orders from this tab will move onto the selected tab, and this table will be released.',
+      icon: 'warning',
+      input: 'select',
+      inputOptions,
+      inputPlaceholder: 'Select a target tab',
+      showCancelButton: true,
+      confirmButtonText: 'Merge',
+    }).then(result => {
+      if (result.isConfirmed && result.value) {
+        this.tabsApi.mergeTab(currentId, result.value).subscribe({
+          next: (mergedTab) => {
+            const target: any = mergedTab;
+            const targetLabel = target?.table?.tableNumber || target?.table?.table_number || 'target';
+            Swal.fire({
+              icon: 'success',
+              title: 'Tabs Merged',
+              html: `Orders moved to <strong>Table ${targetLabel}</strong>. This table was released.`,
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            this.router.navigate(['/tables']);
+          },
+          error: (err) => showApiErrorToast(err, 'Merge Failed')
         });
       }
     });
