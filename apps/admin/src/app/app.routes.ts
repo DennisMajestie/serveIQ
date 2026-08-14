@@ -63,7 +63,7 @@ export const appRoutes: Route[] = [
           },
           {
             path: 'analytics',
-            canActivate: [permissionGuard('view_dashboard')],
+            canActivate: [permissionGuard('view_analytics')],
             loadComponent: () => import('./analytics/analytics.component').then(m => m.AnalyticsComponent)
           },
           {
@@ -96,19 +96,19 @@ export const appRoutes: Route[] = [
             children: [
               {
                 path: '',
-                canActivate: [permissionGuard('open_table')],
+                canActivate: [permissionGuard('view_tabs')],
                 loadComponent: () => import('./tabs/tabs-management.component').then(m => m.TabsManagementComponent)
               },
               {
                 path: 'detail/:id',
-                canActivate: [permissionGuard('open_table')],
+                canActivate: [permissionGuard('view_tabs')],
                 loadComponent: () => import('./tabs/tab-detail.component').then(m => m.TabDetailComponent)
               }
             ]
           },
           {
             path: 'departments',
-            canActivate: [permissionGuard('view_staff')],
+            canActivate: [permissionGuard('view_departments')],
             loadComponent: () => import('./departments/departments.component').then(m => m.DepartmentsComponent)
           },
           {
@@ -118,7 +118,7 @@ export const appRoutes: Route[] = [
           },
           {
             path: 'shifts',
-            canActivate: [permissionGuard('view_dashboard')],
+            canActivate: [permissionGuard('view_shifts')],
             loadComponent: () => import('./shifts/shifts.component').then(m => m.ShiftsComponent)
           },
           {
@@ -128,17 +128,17 @@ export const appRoutes: Route[] = [
           },
           {
             path: 'inventory/audit',
-            canActivate: [permissionGuard('view_inventory')],
+            canActivate: [permissionGuard('view_inventory_audit')],
             loadComponent: () => import('./inventory/audit/audit.component').then(m => m.AuditComponent)
           },
           {
             path: 'inventory/reconcile',
-            canActivate: [permissionGuard('adjust_stock')],
+            canActivate: [permissionGuard('reconcile_inventory')],
             loadComponent: () => import('./inventory/reconcile/reconcile.component').then(m => m.ReconcileComponent)
           },
           {
             path: 'inventory/daily-tally',
-            canActivate: [permissionGuard('view_inventory')],
+            canActivate: [permissionGuard('view_inventory_tally')],
             loadComponent: () => import('./inventory/daily-tally/daily-tally.component').then(m => m.DailyTallyComponent)
           },
           {
@@ -153,27 +153,27 @@ export const appRoutes: Route[] = [
           },
           {
             path: 'pos',
-            canActivate: [permissionGuard('view_dashboard')],
+            canActivate: [permissionGuard('view_pos')],
             loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)
           },
           {
             path: 'reports',
-            canActivate: [permissionGuard('view_daily_sales')],
+            canActivate: [permissionGuard('view_reports')],
             loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)
           },
           {
             path: 'analytics/branches',
-            canActivate: [permissionGuard('view_daily_sales')],
+            canActivate: [permissionGuard('view_branch_analytics')],
             loadComponent: () => import('./analytics/branch-analytics.component').then(m => m.BranchAnalyticsComponent)
           },
           {
             path: 'notifications',
-            canActivate: [permissionGuard('view_dashboard')],
+            canActivate: [permissionGuard('view_notifications')],
             loadComponent: () => import('./notifications/notifications.component').then(m => m.NotificationsComponent)
           },
           {
             path: 'billing',
-            canActivate: [permissionGuard('view_dashboard')],
+            canActivate: [permissionGuard('view_billing')],
             loadComponent: () => import('./billing/billing.component').then(m => m.BillingComponent)
           },
           {
@@ -188,17 +188,17 @@ export const appRoutes: Route[] = [
           },
           {
             path: 'pulse',
-            canActivate: [permissionGuard('view_dashboard')],
+            canActivate: [permissionGuard('view_pulse')],
             loadComponent: () => import('./pulse/pulse.component').then(m => m.PulseComponent)
           },
           {
             path: 'premium-dashboard',
-            canActivate: [permissionGuard('view_dashboard')],
+            canActivate: [permissionGuard('view_premium_dashboard')],
             loadComponent: () => import('./premium-dashboard/premium-dashboard.component').then(m => m.PremiumDashboardComponent)
           },
           {
             path: 'setup',
-            canActivate: [permissionGuard('restaurant_settings')],
+            canActivate: [permissionGuard('view_business_setup')],
             loadComponent: () => import('./business-setup/business-setup.component').then(m => m.BusinessSetupComponent)
           },
           {
@@ -210,6 +210,7 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'feedback',
+        canActivate: [permissionGuard('view_feedback')],
         loadComponent: () => import('./core/feedback/feedback.component').then(m => m.FeedbackComponent)
       },
       {

@@ -138,25 +138,25 @@ interface NavItem {
                 <span>Bills</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_daily_sales')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_reports')">
               <a class="nav-link" routerLink="/app/reports" routerLinkActive="active">
                 <span class="material-symbols-outlined">bar_chart</span>
                 <span>Reports</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_daily_sales')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_branch_analytics')">
               <a class="nav-link" routerLink="/app/analytics/branches" routerLinkActive="active">
                 <span class="material-symbols-outlined">compare_arrows</span>
                 <span>Branch Analytics</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_analytics')">
               <a class="nav-link" routerLink="/app/analytics" routerLinkActive="active">
                 <span class="material-symbols-outlined">analytics</span>
                 <span>Analytics</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_staff')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_departments')">
               <a class="nav-link" routerLink="/app/departments" routerLinkActive="active">
                 <span class="material-symbols-outlined">category</span>
                 <span>Departments</span>
@@ -168,7 +168,7 @@ interface NavItem {
                 <span>Suppliers</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_shifts')">
               <a class="nav-link" routerLink="/app/shifts" routerLinkActive="active">
                 <span class="material-symbols-outlined">schedule</span>
                 <span>Shifts</span>
@@ -180,31 +180,31 @@ interface NavItem {
                 <span>Inventory</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_inventory')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_inventory_audit')">
               <a class="nav-link" routerLink="/app/inventory/audit" routerLinkActive="active">
                 <span class="material-symbols-outlined">fact_check</span>
                 <span>Audit</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('adjust_stock')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('reconcile_inventory')">
               <a class="nav-link" routerLink="/app/inventory/reconcile" routerLinkActive="active">
                 <span class="material-symbols-outlined">balance</span>
                 <span>Reconcile</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_inventory')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_inventory_tally')">
               <a class="nav-link" routerLink="/app/inventory/daily-tally" routerLinkActive="active">
                 <span class="material-symbols-outlined">summarize</span>
                 <span>Daily Tally</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('view_dashboard')">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_pos')">
               <a class="nav-link" routerLink="/app/pos" routerLinkActive="active">
                 <span class="material-symbols-outlined">point_of_sale</span>
                 <span>POS</span>
               </a>
             </li>
-            <li class="nav-item" *ngIf="permissionService.hasPermission('manage_subscription') && profile().role !== 'super_admin'">
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_billing') && profile().role !== 'super_admin'">
               <a class="nav-link" routerLink="/app/billing" routerLinkActive="active">
                 <span class="material-symbols-outlined">credit_card</span>
                 <span>Billing</span>
@@ -267,7 +267,7 @@ interface NavItem {
               <button class="icon-btn" (click)="themeService.toggleTheme()" [attr.aria-label]="(themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode')">
                 <span class="material-symbols-outlined">{{ themeService.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
               </button>
-              <button class="icon-btn" (click)="openNotifications()">
+              <button class="icon-btn" (click)="openNotifications()" *ngIf="permissionService.hasPermission('view_notifications')">
                 <span class="material-symbols-outlined">notifications</span>
                 <span class="notif-dots" *ngIf="notifLoading()">...</span>
                 <span class="notification-dot" *ngIf="!notifLoading() && hasNotifications()"></span>
