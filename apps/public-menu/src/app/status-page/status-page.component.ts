@@ -272,17 +272,21 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const tab = this.tabData();
     if (!tab) return [];
     const o = tab.orders;
+    const isTakeaway = tab.tabType === 'takeaway';
     const any = (pred: (s: string) => boolean) => o.some(x => pred((x.orderStatus || '').toLowerCase()));
     const inProgress = (s: string) => ['approved', 'assigned_to_department', 'preparing', 'ready_for_pickup', 'delivered'].includes(s);
     const preparing = any(inProgress);
     const ready = any(s => ['ready_for_pickup', 'delivered'].includes(s));
     const delivered = any(s => s === 'delivered');
     return [
-      { key: 'received', label: 'Received', icon: 'receipt', done: o.length > 0 },
+      { key: 'received', label: 'Received', icon: 'receipt_long', done: o.length > 0 },
       { key: 'approved', label: 'Approved', icon: 'thumb_up', done: any(inProgress) },
       { key: 'preparing', label: 'Preparing', icon: 'cooking', done: preparing },
       { key: 'ready', label: 'Ready', icon: 'route', done: ready },
-      { key: 'delivered', label: 'Delivered', icon: 'check_circle', done: delivered },
+      // Dine-in ends on a served meal; takeaway ends on the boxed order.
+      isTakeaway
+        ? { key: 'delivered', label: 'Boxed', icon: 'takeout_dining', done: delivered }
+        : { key: 'delivered', label: 'Delivered', icon: 'restaurant', done: delivered },
     ];
   });
 
@@ -459,7 +463,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       status: data.tabStatus,
       customerName: '',
       partySize: 1,
-      tabType: '',
+      tabType: data.tabType || '',
       trackingCode: '',
       trackingGeneratedAt: data.trackingGeneratedAt,
       openedAt: '',

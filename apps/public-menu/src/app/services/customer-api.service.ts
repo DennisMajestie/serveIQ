@@ -82,6 +82,7 @@ export interface TrackingData {
   paymentAccountNumber?: string;
   tabStatus: string;
   tabId: string;
+  tabType?: string;
   trackingGeneratedAt: string;
   overallStatus?: string;
   orders: {

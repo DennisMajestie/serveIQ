@@ -56,11 +56,11 @@
         @for (stage of stages(); track stage.key; let i = $index; let last = $last) {
           <div class="step" [class.done]="stage.done" [class.active]="stage.key === currentStageKey()">
             <div class="step-indicator">
-              <div class="step-dot">
-                @if (stage.done) {
-                  <span class="step-check">✓</span>
-                }
-              </div>
+<div class="step-dot">
+              @if (stage.done) {
+                <span class="step-check material-symbols-outlined">{{ stage.icon }}</span>
+              }
+            </div>
               @if (!last) {
                 <div class="step-line" [class.filled]="stage.done"></div>
               }
