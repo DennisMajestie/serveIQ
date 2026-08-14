@@ -266,4 +266,52 @@
       </div>
     }
   }
+
+  @if (showReviewModal()) {
+    <div class="review-overlay" (click)="closeReviewModal()">
+      <div class="review-modal" (click)="$event.stopPropagation()">
+        @if (!reviewSubmitted()) {
+          <button type="button" class="review-close" (click)="closeReviewModal()" aria-label="Close">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+          <span class="big-icon">⭐</span>
+          <h3>How was your experience?</h3>
+          <p class="review-sub">Tap a star to rate your order</p>
+          <div class="star-row">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <button
+                type="button"
+                class="star"
+                [class.active]="star <= reviewRating()"
+                (click)="setRating(star)"
+                [attr.aria-label]="'Rate ' + star + ' star' + (star > 1 ? 's' : '')"
+              >
+                <span class="material-symbols-outlined">star</span>
+              </button>
+            }
+          </div>
+          <textarea
+            class="review-comment"
+            [(ngModel)]="reviewComment"
+            placeholder="Tell us more (optional)"
+            rows="3"
+            maxlength="2000"
+          ></textarea>
+          <button
+            type="button"
+            class="review-submit"
+            [disabled]="reviewRating() < 1 || reviewSubmitting()"
+            (click)="submitReview()"
+          >
+            {{ reviewSubmitting() ? 'Submitting…' : 'Submit Review' }}
+          </button>
+        } @else {
+          <span class="big-icon">❤️</span>
+          <h3>Thank you!</h3>
+          <p class="review-sub">Your feedback helps us improve.</p>
+          <button type="button" class="review-submit" (click)="closeReviewModal()">Done</button>
+        }
+      </div>
+    </div>
+  }
 </div>

@@ -531,6 +531,10 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  openNotifications() {
+    this.router.navigate(['/notifications']);
+  }
+
   private addItemsFromMenu(selectedItems: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }>) {
     const orderItems = selectedItems.map(item => ({
       menu_item_id: item.id,

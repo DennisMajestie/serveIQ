@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
 import { CustomerApiService, PaymentMethod, PaymentInitResponse, PaymentStatusResponse, TabStatusResponse } from '../services/customer-api.service';
@@ -18,7 +19,7 @@ interface Stage {
 @Component({
   selector: 'app-status-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './status-page.component.html',
   styleUrls: ['./status-page.component.scss'],
 })
@@ -38,6 +39,14 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   polling = signal(false);
   initializingPayment = signal(false);
   errorMessage = signal('');
+
+  // ── Review modal (shown after payment success) ─────────────────────────────
+  showReviewModal = signal(false);
+  reviewRating = signal(0);
+  reviewComment = signal('');
+  reviewSubmitting = signal(false);
+  reviewSubmitted = signal(false);
+  private celebratedPayment = false;
 
   ads = signal<Ad[]>([]);
   currentAdIndex = signal(0);
@@ -218,6 +227,42 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.anim = requestAnimationFrame(tick);
   }
 
+  private onPaymentPaid() {
+    if (this.celebratedPayment) return;
+    this.celebratedPayment = true;
+    this.playSuccessChime();
+    this.launchConfetti();
+    this.showReviewModal.set(true);
+  }
+
+  setRating(rating: number) {
+    this.reviewRating.set(rating);
+  }
+
+  closeReviewModal() {
+    this.showReviewModal.set(false);
+    this.reviewSubmitted.set(false);
+  }
+
+  submitReview() {
+    const tabId = this.cartService.tabId();
+    const trackingCode = this.cartService.trackingCode();
+    const rating = this.reviewRating();
+    if (!tabId || !trackingCode || rating < 1) return;
+
+    this.reviewSubmitting.set(true);
+    this.api.submitReview(tabId, trackingCode, { rating, comment: this.reviewComment() }).subscribe({
+      next: () => {
+        this.reviewSubmitting.set(false);
+        this.reviewSubmitted.set(true);
+      },
+      error: (err) => {
+        this.reviewSubmitting.set(false);
+        showApiErrorToast(err, 'Failed to submit review');
+      },
+    });
+  }
+
   readonly currentAd = computed(() => {
     const list = this.ads();
     return list.length > 0 ? list[this.currentAdIndex() % list.length] : null;
@@ -394,6 +439,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
         this.paymentStatus.set(status);
         if (status.paymentStatus === 'paid') {
           this.paymentSub?.unsubscribe();
+          this.onPaymentPaid();
         }
       },
       error: () => {},
@@ -520,6 +566,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
         this.paymentStatus.set(status);
         if (status.paymentStatus === 'paid') {
           this.paymentSub?.unsubscribe();
+          this.onPaymentPaid();
         }
       },
       error: () => {},

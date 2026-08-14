@@ -207,6 +207,18 @@ export class CustomerApiService {
     );
   }
 
+  /** Self-service: submit a star rating + optional comment after payment. */
+  submitReview(tabId: string, trackingCode: string, body: { rating: number; comment?: string }): Observable<any> {
+    const url = `${this.apiUrl}/api/v1/public/tabs/${tabId}/review`;
+    return this.http.post<any>(url, body, { headers: { 'x-tracking-code': trackingCode, 'Content-Type': 'application/json' } }).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return data;
+      })
+    );
+  }
+
   getTrackingByCode(code: string): Observable<TrackingData> {
     const url = `${this.apiUrl}/api/v1/tracking/${code}`;
     return this.http.get<any>(url).pipe(
