@@ -165,4 +165,8 @@ export class TabHistoryComponent implements OnInit {
   goBack() {
     this.router.navigate(['/tables']);
   }
+
+  openNotifications() {
+    this.router.navigate(['/notifications']);
+  }
 }

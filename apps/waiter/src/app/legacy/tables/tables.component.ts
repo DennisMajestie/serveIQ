@@ -189,6 +189,10 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
     return tab.status === 'open' && !!tab.waiterId && tab.waiterId !== this.currentUserId;
   }
 
+  openNotifications() {
+    this.router.navigate(['/notifications']);
+  }
+
   showToast(message: string): void {
     this.toastMessage.set(message);
     setTimeout(() => this.toastMessage.set(null), 5000);

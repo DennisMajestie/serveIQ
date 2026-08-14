@@ -244,6 +244,12 @@ export class BillComponent implements OnInit {
     this.router.navigate(['/tabs/detail', this.tabId()]);
   }
 
+  addItems() {
+    this.router.navigate(['/menu'], {
+      queryParams: { tabId: this.tabId() }
+    });
+  }
+
   get hasDiscount(): boolean {
     return (this.bill()?.discountKobo ?? 0) > 0;
   }

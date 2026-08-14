@@ -146,6 +146,10 @@ export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() { this.stopConfetti(); }
 
   goToTables() { this.router.navigate(['/tables']); }
+
+  openNotifications() {
+    this.router.navigate(['/notifications']);
+  }
   printReceipt() { window.print(); }
   whatsAppReceipt() {
     const lines: string[] = [

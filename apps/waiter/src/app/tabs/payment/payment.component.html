@@ -217,7 +217,11 @@
       @if (pendingCount() > 0) {
         <div class="flex items-center gap-3 mb-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
           <span class="material-symbols-outlined text-amber-400 text-[18px]">hourglass_top</span>
-          <span class="text-[13px] leading-[1.4] text-amber-300" style="font-family:'Inter',sans-serif">{{ pendingCount() }} item{{ pendingCount() === 1 ? ' is' : 's are' }} still pending fulfillment. Settling is blocked until all items are delivered.</span>
+          <span class="text-[13px] leading-[1.4] text-amber-300 flex-1" style="font-family:'Inter',sans-serif">{{ pendingCount() }} item{{ pendingCount() === 1 ? ' is' : 's are' }} still pending fulfillment. Settling is blocked until all items are delivered.</span>
+          <button (click)="addItems()" class="px-3 py-2 rounded-lg bg-amber-400/20 text-amber-300 text-[12px] leading-none font-semibold active:scale-95 transition-transform flex items-center gap-1" style="font-family:'Inter',sans-serif">
+            <span class="material-symbols-outlined text-[14px]">add</span>
+            Add Items
+          </button>
         </div>
       }
       <button (click)="confirmPayment()" [disabled]="isProcessing() || pendingCount() > 0 || (selectedMethod !== 'cash' && !selectedTerminalId()) || (isSplit() && !isSplitValid)"

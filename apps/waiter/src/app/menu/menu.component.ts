@@ -210,4 +210,7 @@ export class MenuComponent implements OnInit {
   goToTables() { this.router.navigate(['/tables']); }
   goToHistory() { this.router.navigate(['/tabs/history']); }
   goToProfile() { this.router.navigate(['/profile']); }
+  openNotifications() {
+    this.router.navigate(['/notifications']);
+  }
 }

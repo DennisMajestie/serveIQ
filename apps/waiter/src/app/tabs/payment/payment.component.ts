@@ -394,4 +394,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.stopPaymentPolling();
     this.router.navigate(['/tabs/bill', this.tabId()]);
   }
+
+  addItems() {
+    this.stopPaymentPolling();
+    this.router.navigate(['/menu'], {
+      queryParams: { tabId: this.tabId() }
+    });
+  }
 }

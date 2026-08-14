@@ -29,6 +29,10 @@ interface ShiftGroup {
 })
 export class LegacyTabHistoryComponent implements OnInit {
   private router = inject(Router);
+
+  openNotifications() {
+    this.router.navigate(['/notifications']);
+  }
   private tabsApi = inject(TabsApiService);
   private shiftsApi = inject(ShiftsApiService);
 

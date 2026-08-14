@@ -11,10 +11,10 @@
       </button>
       <h1 class="text-[24px] leading-[1.3] font-bold tracking-widest text-[#4be277]" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 8px rgba(75,226,119,0.5)">{{ businessName }}</h1>
     </div>
-    <div class="active:scale-95 duration-200 transition-opacity hover:opacity-80 relative">
+    <button (click)="openNotifications()" class="active:scale-95 duration-200 transition-opacity hover:opacity-80 relative">
       <span class="material-symbols-outlined text-[#bccbb9] text-2xl">notifications</span>
       <span class="absolute top-0 right-0 w-2 h-2 bg-[#4be277] rounded-full"></span>
-    </div>
+    </button>
   </header>
 
   <main class="pt-28 pb-32 px-4 max-w-lg mx-auto">
