@@ -121,6 +121,13 @@ export class OfflineDataService {
         const unitPriceKobo = menuItem?.priceKobo ?? menuItem?.price_kobo ?? 0;
         const modifierTotal = (item.modifiers || []).reduce((s: number, m: any) => s + (m.price_kobo * m.qty), 0);
         const orderId = crypto.randomUUID();
+        // Instant (ready-to-serve) items — e.g. drinks — sync straight into
+        // "ready_for_pickup" so they can be served immediately; everything else
+        // keeps the legacy APPROVED semantics used by the offline path.
+        const orderStatus =
+          (menuItem?.prepType ?? menuItem?.prep_type) === 'instant'
+            ? 'READY_FOR_PICKUP'
+            : 'APPROVED';
         const payload = {
           id: orderId,
           tab_id: tabId,
@@ -133,7 +140,7 @@ export class OfflineDataService {
           created_by: waiterId,
           notes: item.notes,
           modifiers: item.modifiers || null,
-          order_status: 'APPROVED',
+          order_status: orderStatus,
         };
         await this.syncEngine.queueMutation('order', 'create', payload);
         this.cache.upsert('orders', payload as any);
@@ -145,7 +152,7 @@ export class OfflineDataService {
           quantity: item.quantity,
           unit_price_kobo: unitPriceKobo,
           subtotal_kobo: (item.quantity * unitPriceKobo) + modifierTotal,
-          order_status: 'APPROVED',
+          order_status: orderStatus,
         });
       }
       return results;

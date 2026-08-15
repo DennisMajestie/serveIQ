@@ -52,6 +52,7 @@ export class MenuManagementComponent implements OnInit {
   formPrice = signal<number | null>(null);
   formUnit = signal('');
   formIsAvailable = signal(true);
+  formPrepType = signal<'instant' | 'cook'>('cook');
 
   menuItems = computed(() => {
     const cat = this.selectedCategory();
@@ -282,6 +283,7 @@ export class MenuManagementComponent implements OnInit {
       category: this.formCategory(),
       priceKobo: Math.round(this.formPrice()! * 100),
       unit: this.formUnit(),
+      prepType: this.formPrepType(),
     };
     if (imageUrl) payload.image_url = imageUrl;
     this.menuService.createItem(payload).subscribe({
@@ -304,6 +306,7 @@ export class MenuManagementComponent implements OnInit {
     this.formPrice.set(null);
     this.formUnit.set('');
     this.formIsAvailable.set(true);
+    this.formPrepType.set('cook');
     this.imagePreview.set(null);
     this.selectedFile.set(null);
   }

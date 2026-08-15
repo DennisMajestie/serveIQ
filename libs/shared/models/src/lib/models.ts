@@ -68,6 +68,8 @@ export interface MenuItem {
   trackStock: boolean;
   supplierId?: string;
   supplier?: Supplier;
+  prepType?: 'instant' | 'cook';
+  prep_type?: 'instant' | 'cook';
 }
 
 export type TableStatus = 'available' | 'occupied' | 'reserved' | 'inactive';
@@ -231,6 +233,7 @@ export interface CreateMenuItemRequest {
   trackStock?: boolean;
   supplierId?: string;
   barcode?: string;
+  prepType?: 'instant' | 'cook';
 }
 
 export interface CreateTableRequest {

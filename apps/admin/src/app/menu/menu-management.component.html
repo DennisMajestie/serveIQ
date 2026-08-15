@@ -66,6 +66,7 @@
               <th class="px-6 py-4 text-[12px] leading-none font-medium text-on-surface-variant-60 uppercase tracking-widest" style="font-family:'Inter',sans-serif">ITEM</th>
               <th class="px-6 py-4 text-[12px] leading-none font-medium text-on-surface-variant-60 uppercase tracking-widest" style="font-family:'Inter',sans-serif">PRICE</th>
               <th class="px-6 py-4 text-[12px] leading-none font-medium text-on-surface-variant-60 uppercase tracking-widest" style="font-family:'Inter',sans-serif">UNIT</th>
+              <th class="px-6 py-4 text-[12px] leading-none font-medium text-on-surface-variant-60 uppercase tracking-widest" style="font-family:'Inter',sans-serif">SERVE</th>
               <th class="px-6 py-4 text-[12px] leading-none font-medium text-on-surface-variant-60 uppercase tracking-widest" style="font-family:'Inter',sans-serif">AVAILABLE</th>
               <th class="px-6 py-4 text-[12px] leading-none font-medium text-on-surface-variant-60 uppercase tracking-widest" style="font-family:'Inter',sans-serif">ACTIONS</th>
             </tr>
@@ -90,6 +91,11 @@
                 <span class="font-semibold text-[var(--on-background)]">₦{{ (item.priceKobo / 100).toLocaleString() }}</span>
               </td>
               <td class="px-6 py-5 text-[var(--on-surface-variant)]">{{ item.unit | titlecase }}</td>
+              <td class="px-6 py-5">
+                <span class="text-[11px] font-bold uppercase tracking-wide rounded-full px-2.5 py-1" [style.background]="(item.prepType ?? item.prep_type) === 'instant' ? 'color-mix(in srgb, var(--tertiary) 20%, transparent)' : 'color-mix(in srgb, var(--surface-variant) 40%, transparent)'" [class.text-[var(--tertiary)]]="(item.prepType ?? item.prep_type) === 'instant'" [class.text-[var(--on-surface-variant)]]="(item.prepType ?? item.prep_type) !== 'instant'">
+                  {{ (item.prepType ?? item.prep_type) === 'instant' ? 'Instant' : 'To cook' }}
+                </span>
+              </td>
               <td class="px-6 py-5">
                 <button class="px-3 py-1 rounded-full text-xs font-bold transition-colors" [style.background]="item.isAvailable ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : 'color-mix(in srgb, var(--error) 20%, transparent)'" [class.text-[var(--primary)]]="item.isAvailable" [class.text-[var(--error)]]="!item.isAvailable" (click)="toggleAvailability(item)">
                   {{ item.isAvailable ? 'Available' : 'Unavailable' }}
@@ -187,6 +193,20 @@
           <option *ngFor="let opt of unitOptions()" [value]="opt">{{ opt | titlecase }}</option>
           <option value="__add_unit__">＋ Add new unit…</option>
         </select>
+      </div>
+      <div class="form-field full-width">
+        <label class="field-label">Serve immediately?</label>
+        <div class="prep-toggle-group">
+          <button type="button" class="prep-toggle-option" [class.prep-toggle-active]="formPrepType() === 'cook'" (click)="formPrepType.set('cook')">
+            <span class="material-symbols-outlined text-[18px]">restaurant</span>
+            Cook
+          </button>
+          <button type="button" class="prep-toggle-option" [class.prep-toggle-active]="formPrepType() === 'instant'" (click)="formPrepType.set('instant')">
+            <span class="material-symbols-outlined text-[18px]">local_bar</span>
+            Instant / Ready to serve
+          </button>
+        </div>
+        <p class="field-hint">Instant items (e.g. drinks, water, snacks) skip the kitchen queue and go straight to &quot;Ready to serve&quot;.</p>
       </div>
     </div>
   </div>

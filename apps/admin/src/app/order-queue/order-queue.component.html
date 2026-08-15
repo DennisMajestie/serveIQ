@@ -34,7 +34,7 @@
       <div class="glass-stat ready-stat">
         <div class="stat-icon-bg"><span class="material-symbols-outlined">checklist</span></div>
         <div class="stat-value">{{ readyOrders().length }}</div>
-        <div class="stat-label">Ready</div>
+        <div class="stat-label">Ready to serve</div>
       </div>
       <div class="glass-stat time-stat">
         <div class="stat-icon-bg"><span class="material-symbols-outlined">speed</span></div>
@@ -131,7 +131,7 @@
         </button>
         <button class="sv-tab" [class.active]="activeTab() === 'ready'" (click)="switchTab('ready')">
           <span class="material-symbols-outlined">checklist</span>
-          Ready
+          Ready to serve
           @if (readyOrders().length > 0) {
             <span class="tab-badge">{{ readyOrders().length }}</span>
           }
@@ -282,8 +282,8 @@
         } @else if (readyOrders().length === 0) {
           <div class="empty-state">
             <span class="material-symbols-outlined">inventory_2</span>
-            <h3>No Orders Ready</h3>
-            <p>Orders whose timer has expired will appear here.</p>
+            <h3>No Orders Ready to Serve</h3>
+            <p>Instant items and orders whose timer has expired will appear here.</p>
           </div>
         } @else {
           <div class="order-list">

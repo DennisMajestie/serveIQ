@@ -117,6 +117,26 @@
   padding-right: 36px;
 }
 
+.prep-toggle-group {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.prep-toggle-option {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  height: 48px; border-radius: 12px;
+  border: 1.5px solid color-mix(in srgb, var(--on-background) 10%, transparent);
+  background: color-mix(in srgb, var(--on-background) 3%, transparent);
+  color: var(--on-surface-variant); font-weight: 600; font-size: 0.875rem;
+  cursor: pointer; transition: all 0.2s;
+  &.prep-toggle-active {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    color: var(--primary);
+  }
+}
+.field-hint {
+  margin: 0; font-size: 0.75rem; line-height: 1.45; color: var(--on-surface-variant);
+}
+
 .btn-cancel {
   padding: 12px 24px; background: color-mix(in srgb, var(--on-background) 6%, transparent);
   border: 1.5px solid color-mix(in srgb, var(--on-background) 8%, transparent); border-radius: 10px;
