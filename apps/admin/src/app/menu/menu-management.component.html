@@ -170,9 +170,10 @@
       </div>
       <div class="form-field">
         <label class="field-label">Category <span class="required">*</span></label>
-        <select class="field-input field-select" [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)">
+        <select class="field-input field-select" [ngModel]="formCategory()" (ngModelChange)="onCategoryChange($event)">
           <option value="" disabled>Select category</option>
-          <option *ngFor="let opt of categoryOptions" [value]="opt.value">{{ opt.label }}</option>
+          <option *ngFor="let opt of categoryOptions()" [value]="opt">{{ opt | titlecase }}</option>
+          <option value="__add_category__">＋ Add new category…</option>
         </select>
       </div>
       <div class="form-field">
@@ -181,9 +182,10 @@
       </div>
       <div class="form-field">
         <label class="field-label">Unit <span class="required">*</span></label>
-        <select class="field-input field-select" [ngModel]="formUnit()" (ngModelChange)="formUnit.set($event)">
+        <select class="field-input field-select" [ngModel]="formUnit()" (ngModelChange)="onUnitChange($event)">
           <option value="" disabled>Select unit</option>
-          <option *ngFor="let opt of unitOptions" [value]="opt.value">{{ opt.label }}</option>
+          <option *ngFor="let opt of unitOptions()" [value]="opt">{{ opt | titlecase }}</option>
+          <option value="__add_unit__">＋ Add new unit…</option>
         </select>
       </div>
     </div>

@@ -54,6 +54,16 @@ export const API_CONFIG = {
       update: '/api/v1/menu/:id',
       delete: '/api/v1/menu/:id',
     },
+    // Menu categories
+    menuCategories: {
+      list: '/api/v1/menu-categories',
+      create: '/api/v1/menu-categories',
+    },
+    // Units
+    units: {
+      list: '/api/v1/units',
+      create: '/api/v1/units',
+    },
     // Tables
     tables: {
       list: '/api/v1/tables',
@@ -237,6 +247,9 @@ export const API_CONFIG = {
       extend: '/api/v1/admin/businesses/extend',
       paymentProviders: '/api/v1/admin/payment-providers',
       paymentProvider: '/api/v1/admin/payment-providers/:id',
+    },
+    reviews: {
+      list: '/api/v1/admin/reviews',
     },
   } as const,
 };

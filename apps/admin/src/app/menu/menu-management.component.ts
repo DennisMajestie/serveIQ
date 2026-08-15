@@ -25,33 +25,22 @@ export class MenuManagementComponent implements OnInit {
   isLoading = signal(true);
   items = signal<MenuItem[]>([]);
 
-  // Category dropdown options
-  categoryOptions = [
-    { label: 'Starter', value: 'starter' },
-    { label: 'Main Course', value: 'main-course' },
-    { label: 'Fruit Juice', value: 'fruit-juice' },
-    { label: 'Beer', value: 'beer' },
-    { label: 'Wine', value: 'wine' },
-    { label: 'Tea & Coffee', value: 'tea-coffee' },
-    { label: 'Dessert', value: 'dessert' },
-    { label: 'Sides', value: 'sides' },
-    { label: 'Water & Soft Drinks', value: 'water-soft-drinks' },
+  // Default category dropdown options (fallback + seed values)
+  readonly DEFAULT_CATEGORIES = [
+    'Starter', 'Main Course', 'Fruit Juice', 'Beer', 'Wine', 'Tea & Coffee',
+    'Dessert', 'Sides', 'Water & Soft Drinks',
   ];
 
-  // Unit dropdown options
-  unitOptions = [
-    { label: 'Plate', value: 'plate' },
-    { label: 'Bowl', value: 'bowl' },
-    { label: 'Cup', value: 'cup' },
-    { label: 'Glass', value: 'glass' },
-    { label: 'Bottle', value: 'bottle' },
-    { label: 'Can', value: 'can' },
-    { label: 'Piece', value: 'piece' },
-    { label: 'Portion', value: 'portion' },
-    { label: 'Serving', value: 'serving' },
-    { label: 'Half Portion', value: 'half-portion' },
-    { label: 'Full Portion', value: 'full-portion' },
+  // Default unit dropdown options (fallback + seed values)
+  readonly DEFAULT_UNITS = [
+    'Plate', 'Bowl', 'Cup', 'Glass', 'Bottle', 'Can', 'Piece', 'Portion',
+    'Serving', 'Half Portion', 'Full Portion',
   ];
+
+  apiCategories = signal<string[]>([]);
+  apiUnits = signal<string[]>([]);
+  categoryOptions = computed(() => [...new Set([...this.apiCategories(), ...this.DEFAULT_CATEGORIES])]);
+  unitOptions = computed(() => [...new Set([...this.apiUnits(), ...this.DEFAULT_UNITS])]);
 
   // Add Item Modal state
   showAddModal = signal(false);
@@ -100,6 +89,76 @@ export class MenuManagementComponent implements OnInit {
 
   ngOnInit() {
     this.loadMenu();
+    this.loadCategoriesAndUnits();
+  }
+
+  loadCategoriesAndUnits() {
+    this.menuService.getCategories().subscribe({
+      next: (cats: any) => this.apiCategories.set((cats || []).map((c: any) => c.name)),
+      error: () => {},
+    });
+    this.menuService.getUnits().subscribe({
+      next: (units: any) => this.apiUnits.set((units || []).map((u: any) => u.name)),
+      error: () => {},
+    });
+  }
+
+  onCategoryChange(value: string) {
+    if (value === '__add_category__') {
+      this.formCategory.set('');
+      Swal.fire({
+        title: 'New Category',
+        input: 'text',
+        inputPlaceholder: 'e.g. Seafood',
+        showCancelButton: true,
+        confirmButtonText: 'Create',
+        cancelButtonText: 'Cancel',
+        inputValidator: (v) => (!v || !v.trim() ? 'Please enter a category name' : ''),
+      }).then((result) => {
+        if (result.isConfirmed && result.value?.trim()) {
+          const name = result.value.trim();
+          this.menuService.createCategory(name).subscribe({
+            next: (cat: any) => {
+              this.apiCategories.update(list => [...new Set([...list, cat?.name || name])]);
+              this.formCategory.set(cat?.name || name);
+              Swal.fire({ icon: 'success', title: 'Category Created', timer: 1200, showConfirmButton: false });
+            },
+            error: (err) => showApiErrorToast(err, 'Failed to create category'),
+          });
+        }
+      });
+      return;
+    }
+    this.formCategory.set(value);
+  }
+
+  onUnitChange(value: string) {
+    if (value === '__add_unit__') {
+      this.formUnit.set('');
+      Swal.fire({
+        title: 'New Unit',
+        input: 'text',
+        inputPlaceholder: 'e.g. Rack',
+        showCancelButton: true,
+        confirmButtonText: 'Create',
+        cancelButtonText: 'Cancel',
+        inputValidator: (v) => (!v || !v.trim() ? 'Please enter a unit name' : ''),
+      }).then((result) => {
+        if (result.isConfirmed && result.value?.trim()) {
+          const name = result.value.trim();
+          this.menuService.createUnit(name).subscribe({
+            next: (unit: any) => {
+              this.apiUnits.update(list => [...new Set([...list, unit?.name || name])]);
+              this.formUnit.set(unit?.name || name);
+              Swal.fire({ icon: 'success', title: 'Unit Created', timer: 1200, showConfirmButton: false });
+            },
+            error: (err) => showApiErrorToast(err, 'Failed to create unit'),
+          });
+        }
+      });
+      return;
+    }
+    this.formUnit.set(value);
   }
 
   loadMenu() {

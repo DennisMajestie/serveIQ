@@ -145,7 +145,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
           this.isAutoConfirmed.set(true);
           this.stopPaymentPolling();
           const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
-          setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
+          setTimeout(() => this.router.navigate(['/tabs/payment-success', this.tabId()], {
             state: {
               terminalLabel: this.selectedTerminalLabel(),
               showConfetti: true,
@@ -378,7 +378,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.isSuccess.set(true);
         this.startPaymentPolling(this.tabId());
         const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
-        setTimeout(() => this.router.navigate(['/tabs/receipt', this.tabId()], {
+        setTimeout(() => this.router.navigate(['/tabs/payment-success', this.tabId()], {
           state: {
             terminalLabel: this.selectedTerminalLabel(),
             showConfetti: true,

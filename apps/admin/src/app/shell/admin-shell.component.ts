@@ -210,6 +210,12 @@ interface NavItem {
                 <span>Billing</span>
               </a>
             </li>
+            <li class="nav-item" *ngIf="permissionService.hasPermission('view_feedback') && profile().role !== 'super_admin'">
+              <a class="nav-link" routerLink="/app/reviews" routerLinkActive="active">
+                <span class="material-symbols-outlined">star</span>
+                <span>Reviews</span>
+              </a>
+            </li>
             <li class="nav-item" *ngIf="permissionService.hasPermission('assign_roles')">
               <a class="nav-link" routerLink="/app/roles" routerLinkActive="active">
                 <span class="material-symbols-outlined">admin_panel_settings</span>

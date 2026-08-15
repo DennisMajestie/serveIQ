@@ -208,11 +208,16 @@ export const appRoutes: Route[] = [
           }
         ]
       },
-      {
-        path: 'feedback',
-        canActivate: [permissionGuard('view_feedback')],
-        loadComponent: () => import('./core/feedback/feedback.component').then(m => m.FeedbackComponent)
-      },
+          {
+            path: 'feedback',
+            canActivate: [permissionGuard('view_feedback')],
+            loadComponent: () => import('./core/feedback/feedback.component').then(m => m.FeedbackComponent)
+          },
+          {
+            path: 'reviews',
+            canActivate: [permissionGuard('view_feedback')],
+            loadComponent: () => import('./reviews/reviews.component').then(m => m.ReviewsComponent)
+          },
       {
         path: 'ads',
         canActivate: [superAdminGuard],

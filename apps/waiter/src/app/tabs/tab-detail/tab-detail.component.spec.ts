@@ -97,13 +97,16 @@ describe('TabDetailComponent', () => {
     expect(component.currencySymbol()).toBe('₦');
   });
 
-  it('should compute canViewBill for approved orders', () => {
-    component.orderStatus = vi.fn(() => 'READY_FOR_PICKUP') as any;
+  it('should compute canViewBill when tab has billable items', () => {
+    component.items.set([{ orderStatus: 'READY_FOR_PICKUP' } as any]);
     expect(component.canViewBill()).toBe(true);
   });
 
-  it('should not show bill for pending approval', () => {
-    component.orderStatus = vi.fn(() => 'PENDING_SUPERVISOR_APPROVAL') as any;
+  it('should not show bill when all items are declined or cancelled', () => {
+    component.items.set([
+      { orderStatus: 'DECLINED' } as any,
+      { orderStatus: 'CANCELLED' } as any,
+    ]);
     expect(component.canViewBill()).toBe(false);
   });
 

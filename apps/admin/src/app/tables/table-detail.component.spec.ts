@@ -126,7 +126,8 @@ describe('TableDetailComponent', () => {
 
     expect(component.getSubtotal()).toBe(13000);
     expect(component.getVat()).toBe(975);
-    expect(component.getTotal()).toBe(13975);
+    expect(component.getServiceCharge()).toBe(1300);
+    expect(component.getTotal()).toBe(15275);
   });
 
   it('should format kobo correctly', () => {

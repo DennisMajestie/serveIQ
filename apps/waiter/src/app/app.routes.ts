@@ -9,6 +9,7 @@ import { MenuComponent } from './menu/menu.component';
 import { BillComponent } from './tabs/bill/bill.component';
 import { PaymentComponent } from './tabs/payment/payment.component';
 import { ReceiptComponent } from './tabs/receipt/receipt.component';
+import { PaymentSuccessComponent } from './tabs/payment-success/payment-success.component';
 import { TabHistoryComponent } from './tabs/tab-history/tab-history.component';
 import { ProfileComponent } from './profile/profile.component';
 import { OpenTabComponent } from './tables/open-tab/open-tab.component';
@@ -36,6 +37,7 @@ export const appRoutes: Route[] = [
   { path: 'tabs/detail/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: TabDetailComponent },
   { path: 'tabs/bill/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: BillComponent },
   { path: 'tabs/payment/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: PaymentComponent },
+  { path: 'tabs/payment-success/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: PaymentSuccessComponent },
   { path: 'tabs/receipt/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: ReceiptComponent },
   { path: 'tabs/history', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: TabHistoryComponent },
   { path: 'menu', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: MenuComponent },
@@ -47,6 +49,7 @@ export const appRoutes: Route[] = [
   { path: 'tabs/detail/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyTabDetailComponent },
   { path: 'tabs/bill/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyBillComponent },
   { path: 'tabs/payment/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyPaymentComponent },
+  { path: 'tabs/payment-success/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: PaymentSuccessComponent },
   { path: 'tabs/receipt/:id', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyReceiptComponent },
   { path: 'tabs/history', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyTabHistoryComponent },
   { path: 'menu', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyMenuComponent },

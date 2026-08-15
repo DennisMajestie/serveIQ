@@ -6,6 +6,22 @@ import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 import { MenuItem, CreateMenuItemRequest } from '@serveiq/shared/models';
 
+export interface MenuCategory {
+  id: string;
+  branch_id: string;
+  name: string;
+  sort_order: number;
+  is_active: boolean;
+}
+
+export interface Unit {
+  id: string;
+  branch_id: string;
+  name: string;
+  sort_order: number;
+  is_active: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MenuApiService extends BaseApiService {
   constructor(
@@ -52,5 +68,25 @@ export class MenuApiService extends BaseApiService {
   /** Toggle menu item availability without deleting. */
   toggleAvailability(id: string): Observable<any> {
     return this.patch<any>(buildUrl(API_CONFIG.endpoints.menuToggle, { id }), {});
+  }
+
+  /** List menu categories for the branch. */
+  getCategories(): Observable<MenuCategory[]> {
+    return this.get<MenuCategory[]>(API_CONFIG.endpoints.menuCategories.list);
+  }
+
+  /** Create a new menu category. */
+  createCategory(name: string): Observable<MenuCategory> {
+    return this.post<MenuCategory>(API_CONFIG.endpoints.menuCategories.create, { name });
+  }
+
+  /** List units for the branch. */
+  getUnits(): Observable<Unit[]> {
+    return this.get<Unit[]>(API_CONFIG.endpoints.units.list);
+  }
+
+  /** Create a new unit. */
+  createUnit(name: string): Observable<Unit> {
+    return this.post<Unit>(API_CONFIG.endpoints.units.create, { name });
   }
 }
