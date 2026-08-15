@@ -134,18 +134,18 @@
   <!-- Floating Order Summary -->
   @if (selectedItems.length > 0) {
     <div class="fixed bottom-24 left-4 right-4 z-40">
-      <div class="glass-card rounded-2xl p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="relative w-12 h-12 rounded-xl bg-[#4be277]/20 flex items-center justify-center text-[#4be277]">
+      <div class="glass-card rounded-2xl p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="relative w-12 h-12 rounded-xl bg-[#4be277]/20 flex items-center justify-center text-[#4be277] shrink-0">
             <span class="material-symbols-outlined">shopping_basket</span>
             <span class="absolute -top-1 -right-1 w-5 h-5 bg-[#4be277] text-[#003915] text-[10px] rounded-full flex items-center justify-center font-bold">{{ selectedItems.length }}</span>
           </div>
-          <div>
-            <span class="block text-[12px] leading-none font-medium text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">@if (tableNumber) { Table {{ tableNumber }} } @else { Menu Items }</span>
-            <span class="block text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Space Grotesk',sans-serif">{{ formatAmount(selectionTotal) }} Total</span>
+          <div class="min-w-0">
+            <span class="block text-[12px] leading-none font-medium text-[#bccbb9]/60 truncate" style="font-family:'Inter',sans-serif">@if (tableNumber) { Table {{ tableNumber }} } @else { Menu Items }</span>
+            <span class="block text-[16px] leading-[1.5] font-semibold text-[#dce1fb] truncate" style="font-family:'Space Grotesk',sans-serif">{{ formatAmount(selectionTotal) }} Total</span>
           </div>
         </div>
-        <button (click)="confirmSelection()" class="action-btn bg-[#4be277] text-[#003915] px-6 py-3 rounded-xl text-[14px] leading-none font-semibold font-bold active:scale-95 transition-transform shadow-[0_0_15px_rgba(75,226,119,0.4)]" style="font-family:'Inter',sans-serif">
+        <button (click)="confirmSelection()" class="action-btn bg-[#4be277] text-[#003915] px-4 sm:px-6 py-3 rounded-xl text-[14px] leading-none font-semibold font-bold active:scale-95 transition-transform shadow-[0_0_15px_rgba(75,226,119,0.4)] shrink-0 whitespace-nowrap" style="font-family:'Inter',sans-serif">
           SEND TO KITCHEN
         </button>
       </div>
