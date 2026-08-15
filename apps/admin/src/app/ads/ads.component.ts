@@ -9,14 +9,19 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="page-container">
-      <div class="page-header">
-        <h1>Advertisements</h1>
-        <button class="btn-primary" (click)="openCreateModal()">
-          <span class="material-symbols-outlined">add</span>
-          New Ad
-        </button>
-      </div>
+    <div class="admin-page">
+      <header class="page-header">
+        <div class="header-content">
+          <div class="title-group">
+            <h1 class="page-title">Advertisements</h1>
+            <p class="page-subtitle">Promote offers and announcements on customer tracking pages.</p>
+          </div>
+          <button class="btn-primary" (click)="openCreateModal()">
+            <span class="material-symbols-outlined">add</span>
+            New Ad
+          </button>
+        </div>
+      </header>
 
       @if (isLoading()) {
         <div class="loading-shimmer">
@@ -31,51 +36,56 @@ import Swal from 'sweetalert2';
           <p>Create ads to promote offers and announcements on customer tracking pages.</p>
         </div>
       } @else {
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Title</th>
-                <th>Scope</th>
-                <th>Status</th>
-                <th>Sort Order</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (ad of ads(); track ad.id) {
+        <section class="table-card">
+          <div class="table-header">
+            <h2>All Advertisements</h2>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
                 <tr>
-                  <td>
-                    @if (ad.imageUrl) {
-                      <img [src]="ad.imageUrl" [alt]="ad.title" class="thumb" />
-                    } @else {
-                      <div class="thumb-placeholder">
-                        <span class="material-symbols-outlined">image</span>
-                      </div>
-                    }
-                  </td>
-                  <td class="cell-name">{{ ad.title }}</td>
-                  <td class="cell-branch">{{ ad.branchId ? 'Branch' : 'All Branches' }}</td>
-                  <td>
-                    <span class="status-badge" [class.active]="ad.isActive !== false" [class.inactive]="ad.isActive === false">
-                      {{ ad.isActive === false ? 'Inactive' : 'Active' }}
-                    </span>
-                  </td>
-                  <td class="cell-order">{{ ad.sortOrder }}</td>
-                  <td class="cell-actions">
-                    <button class="btn-icon" (click)="openEditModal(ad)" title="Edit">
-                      <span class="material-symbols-outlined">edit</span>
-                    </button>
-                    <button class="btn-icon btn-danger-icon" (click)="deleteAd(ad)" title="Delete">
-                      <span class="material-symbols-outlined">delete</span>
-                    </button>
-                  </td>
+                  <th>Image</th>
+                  <th>Title</th>
+                  <th>Scope</th>
+                  <th>Status</th>
+                  <th>Sort Order</th>
+                  <th>Actions</th>
                 </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                @for (ad of ads(); track ad.id) {
+                  <tr class="data-row">
+                    <td>
+                      @if (ad.imageUrl) {
+                        <img [src]="ad.imageUrl" [alt]="ad.title" class="thumb" />
+                      } @else {
+                        <div class="thumb-placeholder">
+                          <span class="material-symbols-outlined">image</span>
+                        </div>
+                      }
+                    </td>
+                    <td class="cell-name">{{ ad.title }}</td>
+                    <td class="cell-branch">{{ ad.branchId ? 'Branch' : 'All Branches' }}</td>
+                    <td>
+                      <span class="status-badge" [class.active]="ad.isActive !== false" [class.inactive]="ad.isActive === false">
+                        {{ ad.isActive === false ? 'Inactive' : 'Active' }}
+                      </span>
+                    </td>
+                    <td class="cell-order">{{ ad.sortOrder }}</td>
+                    <td class="cell-actions">
+                      <button class="action-icon-btn" (click)="openEditModal(ad)" title="Edit">
+                        <span class="material-symbols-outlined">edit</span>
+                      </button>
+                      <button class="action-icon-btn action-icon-btn--danger" (click)="deleteAd(ad)" title="Delete">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
       }
     </div>
 
@@ -107,7 +117,7 @@ import Swal from 'sweetalert2';
             </div>
             <div class="form-group">
               <label>Sort Order</label>
-              <input type="number" [(ngModel)]="formSortOrder" class="form-input" style="width:100px" />
+              <input type="number" [(ngModel)]="formSortOrder" class="form-input form-input--sm" />
             </div>
             @if (editingAd()) {
               <div class="form-group">
@@ -129,54 +139,64 @@ import Swal from 'sweetalert2';
     }
   `,
   styles: [`
-    .page-container { padding: 24px; margin: 0 auto; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 24px; }
-    .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+    :host { display: block; padding: 32px; }
+    .admin-page { }
+    .page-header { margin-bottom: 28px; }
+    .header-content { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .page-title { font-size: 20px; font-weight: 700; color: var(--on-surface); margin: 0 0 4px; }
+    .page-subtitle { font-size: 14px; color: var(--secondary); margin: 0; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 10px; background: var(--primary); color: var(--on-primary); font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 25%, transparent); }
     .btn-primary:disabled { opacity: 0.5; cursor: default; }
-    .btn-secondary { padding: 10px 20px; border: 1px solid #333; border-radius: 10px; background: transparent; color: #ccc; font-size: 14px; cursor: pointer; }
-    .btn-icon { background: none; border: none; color: #888; cursor: pointer; padding: 4px; border-radius: 6px; }
-    .btn-icon:hover { background: rgba(255,255,255,0.05); color: #fff; }
-    .btn-danger-icon:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .btn-secondary { padding: 10px 20px; border: 1px solid var(--outline-variant); border-radius: 10px; background: transparent; color: var(--secondary); font-size: 14px; cursor: pointer; }
+    .btn-secondary:hover { background: var(--surface-container-high); }
     .loading-shimmer { display: flex; flex-direction: column; gap: 12px; }
-    .shimmer-row { height: 48px; border-radius: 8px; background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .shimmer-row { height: 48px; border-radius: 8px; background: linear-gradient(90deg, var(--surface-container-high) 25%, var(--surface-container-highest) 50%, var(--surface-container-high) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .empty-state { text-align: center; padding: 60px 16px; color: #666; }
-    .empty-state .material-symbols-outlined { font-size: 48px; margin-bottom: 12px; }
-    .empty-state h3 { margin: 0 0 8px; color: #999; }
+    .empty-state { text-align: center; padding: 60px 16px; color: var(--secondary); }
+    .empty-state .material-symbols-outlined { font-size: 48px; margin-bottom: 12px; color: var(--primary); }
+    .empty-state h3 { margin: 0 0 8px; color: var(--on-surface); }
     .empty-state p { margin: 0; font-size: 14px; }
-    .table-wrap { border: 1px solid #2a2a2a; border-radius: 12px; overflow: hidden; }
+    .table-card { background: var(--surface-container-lowest); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+    .table-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--outline-variant); }
+    .table-header h2 { font-size: 16px; font-weight: 700; color: var(--on-surface); margin: 0; }
+    .table-wrapper { overflow-x: auto; }
     .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th { text-align: left; padding: 12px 16px; font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; background: #1a1a1a; border-bottom: 1px solid #2a2a2a; }
-    .data-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #222; }
+    .data-table th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; background: var(--surface-container-low); border-bottom: 1px solid var(--outline-variant); }
+    .data-table td { padding: 14px 16px; font-size: 14px; color: var(--secondary); border-bottom: 1px solid var(--outline-variant); }
     .data-table tr:last-child td { border-bottom: none; }
-    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .cell-name { font-weight: 500; color: #e0e0e0; }
-    .cell-order { color: #888; font-size: 13px; }
-    .cell-branch { color: #aaa; font-size: 13px; }
+    .data-row:hover { background: var(--surface-container-low); }
+    .cell-name { font-weight: 500; color: var(--on-surface); }
+    .cell-order { color: var(--secondary); font-size: 13px; }
+    .cell-branch { color: var(--secondary); font-size: 13px; }
     .cell-actions { display: flex; gap: 4px; }
-    .status-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
-    .status-badge.active { background: rgba(76,175,80,0.15); color: #81c784; }
-    .status-badge.inactive { background: rgba(158,158,158,0.15); color: #bdbdbd; }
+    .action-icon-btn { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 8px; color: var(--secondary); transition: all 0.15s; }
+    .action-icon-btn:hover { background: var(--surface-container-low); color: var(--primary); }
+    .action-icon-btn .material-symbols-outlined { font-size: 20px; }
+    .action-icon-btn--danger:hover { background: var(--error-container); color: var(--error); }
+    .status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .status-badge.active { background: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary); }
+    .status-badge.inactive { background: var(--error-container); color: var(--on-error-container); }
     .thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
-    .thumb-placeholder { width: 48px; height: 48px; border-radius: 8px; background: #2a2a2a; display: flex; align-items: center; justify-content: center; }
-    .thumb-placeholder .material-symbols-outlined { font-size: 20px; color: #555; }
+    .thumb-placeholder { width: 48px; height: 48px; border-radius: 8px; background: var(--surface-container-high); display: flex; align-items: center; justify-content: center; }
+    .thumb-placeholder .material-symbols-outlined { font-size: 20px; color: var(--secondary); }
     .preview-img { margin-top: 8px; max-width: 200px; max-height: 120px; border-radius: 8px; object-fit: cover; }
 
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-    .modal-card { background: #1a1a1a; border-radius: 16px; width: 480px; max-width: 90vw; border: 1px solid #2a2a2a; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
+    .modal-card { background: var(--surface-container-lowest); border-radius: 16px; width: 480px; max-width: 90vw; border: 1px solid var(--outline-variant); box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px 0; }
-    .modal-header h2 { margin: 0; font-size: 18px; }
-    .btn-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; }
+    .modal-header h2 { margin: 0; font-size: 18px; color: var(--on-surface); }
+    .btn-close { background: none; border: none; color: var(--secondary); font-size: 24px; cursor: pointer; }
+    .btn-close:hover { color: var(--on-surface); }
     .modal-body { padding: 20px 24px; max-height: 60vh; overflow-y: auto; }
     .modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 0 24px 20px; }
     .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #888; margin-bottom: 6px; }
-    .form-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #333; background: #111; color: #e0e0e0; font-size: 14px; box-sizing: border-box; }
-    .form-input:focus { outline: none; border-color: #f97316; }
-    .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #e0e0e0; cursor: pointer; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--secondary); margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--outline); background: var(--surface-container-low); color: var(--on-surface); font-size: 14px; box-sizing: border-box; }
+    .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent); }
+    .form-input--sm { width: 100px; }
+    .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--on-surface); cursor: pointer; }
     .checkbox-label input { width: 16px; height: 16px; }
-    .form-error { background: rgba(239,68,68,0.1); color: #ef4444; padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+    .form-error { background: var(--error-container); color: var(--on-error-container); padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
   `]
 })
 export class AdsComponent implements OnInit {
