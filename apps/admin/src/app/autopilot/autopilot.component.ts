@@ -148,7 +148,7 @@ interface ChatMessage {
     .stats-cpu { background: color-mix(in srgb, var(--tertiary) 15%, transparent); color: var(--tertiary); }
     .stats-check { background: color-mix(in srgb, #22c55e 15%, transparent); color: #22c55e; }
     .stat-body { display: flex; flex-direction: column; gap: 2px; }
-    .stat-value { font-size: 24px; font-weight: 700; color: var(--on-surface); line-height: 1; }
+    .stat-value { font-size: clamp(20px, 1vw + 16px, 24px); font-weight: 700; color: var(--on-surface); line-height: 1; word-break: break-word; }
     .stat-label { font-size: 13px; color: var(--secondary); font-weight: 500; }
 
     /* Bento Grid */

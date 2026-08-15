@@ -251,7 +251,7 @@ interface ConsoleLog {
     .kpi-purple { background: color-mix(in srgb, #8b5cf6 12%, transparent); color: #8b5cf6; }
     
     .kpi-body { display: flex; flex-direction: column; gap: 4px; }
-    .kpi-value { font-size: 28px; font-weight: 800; color: var(--on-surface); line-height: 1; letter-spacing: -0.5px; }
+    .kpi-value { font-size: clamp(22px, 1.5vw + 18px, 28px); font-weight: 800; color: var(--on-surface); line-height: 1; letter-spacing: -0.5px; word-break: break-word; }
     .kpi-label { font-size: 11.5px; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.8px; }
 
     /* Core grid structure */

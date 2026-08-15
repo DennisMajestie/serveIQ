@@ -61,7 +61,7 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
           </div>
           <div class="stat-content">
             <p class="stat-label">Plan Breakdown</p>
-            <p class="stat-value">{{ planBreakdown() }}</p>
+            <p class="stat-value stat-value--long">{{ planBreakdown() }}</p>
           </div>
         </article>
       </section>
@@ -159,7 +159,7 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
     .title-group { }
     .page-title { font-size: 20px; font-weight: 700; color: var(--on-surface); margin: 0 0 4px; }
     .page-subtitle { font-size: 14px; color: var(--secondary); margin: 0; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px; }
     .stat-card { background: var(--surface-container-lowest); border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .stat-icon svg { width: 24px; height: 24px; }
@@ -170,7 +170,8 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
     .stat-icon--red { background: color-mix(in srgb, #ef4444 12%, transparent); color: #ef4444; }
     .stat-content { }
     .stat-label { font-size: 12px; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 4px; }
-    .stat-value { font-size: 28px; font-weight: 700; color: var(--on-surface); margin: 0; }
+    .stat-value { font-size: clamp(24px, 1.5vw + 20px, 28px); font-weight: 700; color: var(--on-surface); margin: 0; min-width: 0; word-break: break-word; }
+    .stat-value--long { font-size: clamp(13px, 0.8vw + 11px, 15px); font-weight: 600; color: var(--secondary); line-height: 1.4; word-break: break-word; }
     .table-card { background: var(--surface-container-lowest); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
     .table-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--outline-variant); }
     .table-header h2 { font-size: 16px; font-weight: 700; color: var(--on-surface); margin: 0; }

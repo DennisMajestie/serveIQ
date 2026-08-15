@@ -239,7 +239,7 @@
 }
 .stat-value {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 34px;
+  font-size: clamp(24px, 2vw + 18px, 34px);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.02em;

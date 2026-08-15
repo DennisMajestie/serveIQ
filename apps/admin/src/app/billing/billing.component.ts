@@ -137,7 +137,7 @@ import Swal from 'sweetalert2';
     .plan-card.current-plan { opacity: 0.7; }
     .plan-name { font-size: 20px; font-weight: 700; color: var(--on-background); }
     .plan-price { display: flex; align-items: baseline; gap: 4px; }
-    .plan-price .amount { font-size: 28px; font-weight: 800; color: var(--on-background); }
+    .plan-price .amount { font-size: clamp(24px, 1.5vw + 20px, 28px); font-weight: 800; color: var(--on-background); word-break: break-word; }
     .plan-price .interval { font-size: 14px; color: var(--secondary); }
     .plan-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
     .plan-features li { font-size: 14px; color: var(--on-surface); padding-left: 20px; position: relative; }
