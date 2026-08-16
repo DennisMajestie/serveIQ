@@ -46,7 +46,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   });
   declineReason = computed(() => this.activeOrder()?.items[0]?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
-  trackingCode = computed(() => this.activeOrder()?.items[0]?.trackingCode ?? null);
+  trackingCode = computed(() => (this.tab() as any)?.trackingCode ?? this.activeOrder()?.items[0]?.trackingCode ?? null);
   canViewBill = computed(() => this.billableItems().length > 0);
 
   getOrderStatus(item: any): string {

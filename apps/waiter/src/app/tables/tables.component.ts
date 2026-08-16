@@ -112,6 +112,34 @@ export class TablesComponent implements OnInit, OnDestroy {
     return ((tab as any).waiter?.fullName) || null;
   }
 
+  private static readonly ACTIVE_ORDER_STATUSES = new Set([
+    'APPROVED',
+    'ASSIGNED_TO_DEPARTMENT',
+    'PREPARING',
+    'READY_FOR_PICKUP',
+    'OUT_FOR_DELIVERY',
+  ]);
+
+  /**
+   * Tracking code is only surfaced to the waiter who opened the tab, from the
+   * moment an order is approved until it is delivered.
+   */
+  trackingCodeFor(table: Table): string | null {
+    const tab = this.getTabForTable(table.id);
+    if (!tab) return null;
+    if (!tab.waiterId || tab.waiterId !== this.currentUserId) return null;
+    if (tab.status !== 'open' || table.status !== 'occupied') return null;
+    const code = (tab as any).trackingCode;
+    if (!code) return null;
+    const orders: any[] = Array.isArray((tab as any).orders) ? (tab as any).orders : [];
+    const inFlight = orders.some((o: any) => {
+      if (o.deliveredAt) return false;
+      const status = o.orderStatus ?? o.status;
+      return TablesComponent.ACTIVE_ORDER_STATUSES.has(status);
+    });
+    return inFlight ? code : null;
+  }
+
   private pollSub?: Subscription;
   private tabsSub?: Subscription;
   private seenOrderReadyIds = new Set<string>();

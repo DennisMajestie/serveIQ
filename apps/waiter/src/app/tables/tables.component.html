@@ -131,6 +131,9 @@
                 <span class="text-[12px] leading-none font-medium text-[#ffb3b7]/60" style="font-family:'Inter',sans-serif">{{ table.status }}</span>
               }
               <span class="text-[10px] leading-none font-medium text-[#bccbb9]/40 mt-0.5" style="font-family:'Inter',sans-serif">Seats {{ table.capacity || '?' }}</span>
+              @if (trackingCodeFor(table); as code) {
+                <span class="mt-1 px-2 py-0.5 rounded-full bg-[#adc6ff]/15 border border-[#adc6ff]/30 text-[10px] leading-none font-mono font-bold text-[#adc6ff]" style="font-family:'Space Grotesk',sans-serif">Track: {{ code }}</span>
+              }
               @if (isTabLockedByOther(table)) {
                 <div class="text-[10px] text-[#ffb4ab] font-medium mt-1">{{ getWaiterName(table.id) }}</div>
               }
