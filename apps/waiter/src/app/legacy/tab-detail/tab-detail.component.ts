@@ -116,7 +116,14 @@ export class LegacyTabDetailComponent implements OnInit {
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
-        this.items.set(normalized);
+        // Merge instead of replace: items added from the menu must not be
+        // wiped when a racing order-fetch returns the pre-add list.
+        const merged = [...normalized];
+        const mergedIds = new Set(merged.map(i => i.id).filter(Boolean));
+        for (const item of this.items()) {
+          if (!mergedIds.has(item.id)) merged.push(item);
+        }
+        this.items.set(merged);
         this.isLoading.set(false);
       },
       error: (err) => {

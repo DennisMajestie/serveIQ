@@ -342,7 +342,15 @@ export class TabDetailComponent implements OnInit, OnDestroy {
       quantity: item.quantity ?? item.qty ?? 1
     }));
     console.debug('loadOrders normalized:', normalized);
-    this.items.set(normalized);
+    // Merge instead of replace: when items were just added from the menu, a
+    // racing order-fetch (cache or network) can still return the pre-add list
+    // and must not wipe the freshly added lines.
+    const merged = [...normalized];
+    const mergedIds = new Set(merged.map(i => i.id).filter(Boolean));
+    for (const item of this.items()) {
+      if (!mergedIds.has(item.id)) merged.push(item);
+    }
+    this.items.set(merged);
     this.isLoading.set(false);
   }
 
