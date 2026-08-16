@@ -11,12 +11,26 @@ export interface ApiError {
 }
 
 // Error Handler Function
+export const NETWORK_ERROR_MESSAGE = 'Network error. Please check your connection and try again.';
+
+export function isNetworkError(error: HttpErrorResponse): boolean {
+  return (
+    error.status === 0 &&
+    !(error.error instanceof ErrorEvent) &&
+    !error.error?.message &&
+    !error.error?.details
+  );
+}
+
 export function handleApiError(error: HttpErrorResponse): Observable<never> {
   let errorMessage = 'An unknown error occurred';
   let serverMessage: string | undefined;
 
   if (error.error instanceof ErrorEvent) {
     errorMessage = `Client Error: ${error.error.message}`;
+  } else if (isNetworkError(error)) {
+    errorMessage = NETWORK_ERROR_MESSAGE;
+    serverMessage = NETWORK_ERROR_MESSAGE;
   } else {
     errorMessage = `Server Error ${error.status}: ${error.message || error.statusText}`;
     const body = error.error;
@@ -43,7 +57,7 @@ export function handleApiError(error: HttpErrorResponse): Observable<never> {
           if (strVal) serverMessage = strVal;
         }
       }
-      if (!serverMessage) {
+      if (!serverMessage && !(error?.error instanceof ProgressEvent)) {
         console.error('Raw server error body:', JSON.stringify(error.error));
       }
   }

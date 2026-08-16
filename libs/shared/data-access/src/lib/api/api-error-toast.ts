@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import { NETWORK_ERROR_MESSAGE } from './api-error';
 
 export function showApiErrorToast(err: any, fallbackMessage: string): string {
   let message = fallbackMessage;
@@ -8,6 +9,8 @@ export function showApiErrorToast(err: any, fallbackMessage: string): string {
 
     if (body.serverMessage) {
       message = body.serverMessage;
+    } else if (body.statusCode === 0 && body.message === NETWORK_ERROR_MESSAGE) {
+      message = NETWORK_ERROR_MESSAGE;
     } else if (body.meta?.message) {
       const metaMsg = body.meta.message;
       message = Array.isArray(metaMsg) ? metaMsg[0] : metaMsg;
