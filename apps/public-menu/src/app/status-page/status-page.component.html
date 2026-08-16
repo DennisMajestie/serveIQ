@@ -50,8 +50,23 @@
       </section>
     }
 
-    <!-- Progress tracker -->
-    @if (stages().length > 0) {
+    <!-- Progress tracker / served celebration -->
+    @if (isServed()) {
+      <section class="served-section">
+        <div class="served-visual">
+          <span class="served-meal">{{ orderTypeLabel === 'Takeaway' ? '🥡' : '🍽️' }}</span>
+          <span class="served-tick material-symbols-outlined">check_circle</span>
+        </div>
+        <h2>Enjoy Your Meal!</h2>
+        <p class="served-message">
+          @if (orderTypeLabel === 'Takeaway') {
+            Your order is ready and with you — thank you for choosing us! We hope every bite is worth it. 🎉
+          } @else {
+            Your meal has been served to your table. Bon appétit — we hope it's as wonderful as you are! If you need anything else, your server is just a wave away. 🎉
+          }
+        </p>
+      </section>
+    } @else if (stages().length > 0) {
       <div class="stepper">
         @for (stage of stages(); track stage.key; let i = $index; let last = $last) {
           <div class="step" [class.done]="stage.done" [class.active]="stage.key === currentStageKey()">
@@ -100,7 +115,7 @@
     </div>
 
     <!-- Pickup ready -->
-    @if (step() === 'ready') {
+    @if (step() === 'ready' && orderTypeLabel === 'Takeaway') {
       <section class="pickup-section">
         @if (pickupReady()) {
           <div class="pickup-card">
@@ -118,6 +133,16 @@
             <p>Thanks for confirming your pickup.</p>
           </div>
         }
+      </section>
+    }
+
+    @if (step() === 'ready' && orderTypeLabel !== 'Takeaway') {
+      <section class="pickup-section">
+        <div class="pickup-card confirmed">
+          <span class="big-icon">🍽️</span>
+          <h2>Almost there!</h2>
+          <p>Your food is ready — a server is on their way to your table.</p>
+        </div>
       </section>
     }
 

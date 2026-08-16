@@ -7,7 +7,7 @@ import { CustomerApiService, PaymentMethod, PaymentInitResponse, PaymentStatusRe
 import { PublicAdsApiService, Ad, showApiErrorToast } from '@serveiq/shared/data-access';
 import { interval, Subscription, switchMap, finalize } from 'rxjs';
 
-type StatusStep = 'ordering' | 'pending_approval' | 'preparing' | 'ready' | 'payment' | 'paid';
+type StatusStep = 'ordering' | 'pending_approval' | 'preparing' | 'ready' | 'on_the_way' | 'payment' | 'paid';
 
 interface Stage {
   key: string;
@@ -58,6 +58,23 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   // ── Pickup alert (client-side only) ───────────────────────────────────────
   readonly pickupConfirmed = signal(false);
   readonly pickupReady = computed(() => this.step() === 'ready' && !this.pickupConfirmed());
+
+  /** True once any order has been delivered (dine-in meal served / takeaway boxed).
+   *  Replaces the progress stepper with the served celebration. */
+  readonly isServed = computed(() => {
+    const tab = this.tabData();
+    if (!tab || tab.orders.length === 0) return false;
+    return tab.orders.some(x => (x.orderStatus || '').toLowerCase() === 'delivered');
+  });
+
+  private servedCelebrated = false;
+  private servedWatcher = effect(() => {
+    if (this.isServed() && !this.servedCelebrated) {
+      this.servedCelebrated = true;
+      this.playSuccessChime();
+      this.launchConfetti();
+    }
+  });
 
   private pickupTimer?: ReturnType<typeof setInterval>;
   private audioCtx?: AudioContext | null;
@@ -274,19 +291,23 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const o = tab.orders;
     const isTakeaway = tab.tabType === 'takeaway';
     const any = (pred: (s: string) => boolean) => o.some(x => pred((x.orderStatus || '').toLowerCase()));
-    const inProgress = (s: string) => ['approved', 'assigned_to_department', 'preparing', 'ready_for_pickup', 'delivered'].includes(s);
+    const inProgress = (s: string) => ['approved', 'assigned_to_department', 'preparing', 'ready_for_pickup', 'out_for_delivery', 'delivered'].includes(s);
     const preparing = any(inProgress);
-    const ready = any(s => ['ready_for_pickup', 'delivered'].includes(s));
+    const ready = any(s => ['ready_for_pickup', 'out_for_delivery', 'delivered'].includes(s));
+    const onTheWay = any(s => ['out_for_delivery', 'delivered'].includes(s));
     const delivered = any(s => s === 'delivered');
     return [
       { key: 'received', label: 'Received', icon: 'receipt_long', done: o.length > 0 },
       { key: 'approved', label: 'Approved', icon: 'thumb_up', done: any(inProgress) },
       { key: 'preparing', label: 'Preparing', icon: 'cooking', done: preparing },
       { key: 'ready', label: 'Ready', icon: 'route', done: ready },
-      // Dine-in ends on a served meal; takeaway ends on the boxed order.
-      isTakeaway
-        ? { key: 'delivered', label: 'Boxed', icon: 'takeout_dining', done: delivered }
-        : { key: 'delivered', label: 'Delivered', icon: 'restaurant', done: delivered },
+      // Dine-in adds an "On Its Way" leg before the served meal; takeaway ends on the boxed order.
+      ...(isTakeaway
+        ? [{ key: 'delivered', label: 'Boxed', icon: 'takeout_dining', done: delivered }]
+        : [
+            { key: 'on_the_way', label: 'On Its Way', icon: 'delivery_dining', done: onTheWay },
+            { key: 'delivered', label: 'Delivered', icon: 'restaurant', done: delivered },
+          ]),
     ];
   });
 
@@ -319,6 +340,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const anyDelivered = any(s => s === 'delivered');
     const anyDeclined = any(s => s === 'declined');
     if (o.length > 0 && (anyDelivered || anyDeclined)) return 'payment';
+    if (any(s => s === 'out_for_delivery')) return 'on_the_way';
     if (any(s => s === 'ready_for_pickup')) return 'ready';
     if (any(s => ['preparing', 'assigned_to_department', 'approved'].includes(s))) return 'preparing';
     return 'pending_approval';
@@ -341,7 +363,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   readonly progressWidth = computed(() => {
-    const steps: StatusStep[] = ['pending_approval', 'preparing', 'ready', 'payment', 'paid'];
+    const steps: StatusStep[] = ['pending_approval', 'preparing', 'ready', 'on_the_way', 'payment', 'paid'];
     const idx = steps.indexOf(this.step());
     return idx >= 0 ? ((idx + 1) / steps.length) * 100 : 10;
   });
@@ -385,6 +407,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.stopPolling();
     this.testModeSub?.unsubscribe();
     this.pickupWatcherEffect.destroy();
+    this.servedWatcher.destroy();
     this.stopPickupAlarm();
     if (this.anim !== undefined) cancelAnimationFrame(this.anim);
     if (this.canvas) {
@@ -586,7 +609,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     if (s.includes('pending')) return 'status-pending';
     if (s === 'approved') return 'status-approved';
     if (s === 'preparing') return 'status-preparing';
-    if (s === 'ready_for_pickup') return 'status-ready';
+    if (s === 'ready_for_pickup' || s === 'out_for_delivery') return 'status-ready';
     if (s === 'delivered') return 'status-delivered';
     if (s.includes('declined')) return 'status-declined';
     return '';
@@ -600,6 +623,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       approved: 'Approved',
       preparing: 'Preparing',
       ready_for_pickup: 'Ready',
+      out_for_delivery: 'On Its Way',
       delivered: 'Delivered',
       declined: 'Declined',
     };
@@ -607,12 +631,14 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   get orderStatusLabel(): string {
+    if (this.isServed()) return 'Delivered';
     const s = this.step();
     const labels: Record<string, string> = {
       ordering: 'Ordering',
       pending_approval: 'Pending Approval',
       preparing: 'Being Prepared',
       ready: 'Ready for Pickup',
+      on_the_way: 'On Its Way',
       payment: 'Awaiting Payment',
       paid: 'Paid',
     };
@@ -624,12 +650,14 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   get orderStatusIcon(): string {
+    if (this.isServed()) return '🎉';
     const s = this.step();
     const icons: Record<string, string> = {
       ordering: '📋',
       pending_approval: '⏳',
       preparing: '👨‍🍳',
       ready: '✅',
+      on_the_way: '🛵',
       payment: '💳',
       paid: '🎉',
     };
