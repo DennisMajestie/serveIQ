@@ -4,7 +4,8 @@ import { RouterModule, Router } from '@angular/router';
 import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService, ShiftsApiService, NotificationsApiService, OfflineCacheService, NetworkService } from '@serveiq/shared/data-access';
 import { Table, Tab, User, Business, Shift, Notification } from '@serveiq/shared/models';
 import { forkJoin, interval, Subscription, of } from 'rxjs';
-import { firstValueFrom, catchError } from 'rxjs';
+import { firstValueFrom, catchError, delay, retryWhen, take, tap } from 'rxjs';
+import { isNetworkError } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 import { OfflineDataService } from '../services/offline-data.service';
 
@@ -210,9 +211,24 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   loadCurrentShift(): void {
     const branchId = localStorage.getItem('branchId') || undefined;
-    this.shiftsApi.getCurrent(branchId).subscribe({
+    this.shiftsApi.getCurrent(branchId).pipe(
+      // Retry only on network errors (e.g. Render cold-start), so the open
+      // shift shows as soon as the backend is reachable instead of waiting
+      // for the next 30s poll.
+      retryWhen((errors) =>
+        errors.pipe(
+          tap((err) => { if (!isNetworkError(err)) throw err; }),
+          delay(5000),
+          take(12),
+        ),
+      ),
+    ).subscribe({
       next: (shift) => this.currentShift.set(shift),
       error: (err) => {
+        if (isNetworkError(err)) {
+          this.currentShift.set(null);
+          return;
+        }
         console.error('getCurrent shift failed', err);
         this.shiftsApi.list().subscribe({
           next: (shifts) => {

@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { TablesApiService, TabsApiService, AuthService, ShiftsApiService } from '@serveiq/shared/data-access';
+import { TablesApiService, TabsApiService, AuthService, ShiftsApiService, isNetworkError } from '@serveiq/shared/data-access';
 import { Table, Tab, Shift } from '@serveiq/shared/models';
-import { interval, Subscription, firstValueFrom } from 'rxjs';
+import { interval, Subscription, firstValueFrom, delay, retryWhen, take, tap } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
@@ -200,9 +200,21 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
 
   loadCurrentShift(): void {
     const branchId = localStorage.getItem('branchId') || undefined;
-    this.shiftsApi.getCurrent(branchId).subscribe({
+    this.shiftsApi.getCurrent(branchId).pipe(
+      retryWhen((errors) =>
+        errors.pipe(
+          tap((err) => { if (!isNetworkError(err)) throw err; }),
+          delay(5000),
+          take(12),
+        ),
+      ),
+    ).subscribe({
       next: (shift) => this.currentShift.set(shift),
-      error: () => {
+      error: (err) => {
+        if (isNetworkError(err)) {
+          this.currentShift.set(null);
+          return;
+        }
         // Fallback: try the list endpoint to find any open shift
         this.shiftsApi.list().subscribe({
           next: (shifts) => {
