@@ -239,6 +239,36 @@
   max-width: 440px;
 }
 
+.back-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 14px 30px;
+  border-radius: 14px;
+  border: none;
+  background: #059669;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+
+  .material-symbols-outlined {
+    font-size: 1.3rem;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
 @keyframes meal-pop {
   from { transform: scale(0.35); opacity: 0; }
   to { transform: scale(1); opacity: 1; }

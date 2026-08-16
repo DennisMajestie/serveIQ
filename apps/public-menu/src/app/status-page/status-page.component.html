@@ -65,6 +65,10 @@
             Your meal has been served to your table. Bon appétit — we hope it's as wonderful as you are! If you need anything else, your server is just a wave away. 🎉
           }
         </p>
+        <button type="button" class="back-menu-btn" (click)="goBackToMenu()">
+          <span class="material-symbols-outlined">restaurant_menu</span>
+          Back to Menu
+        </button>
       </section>
     } @else if (stages().length > 0) {
       <div class="stepper">

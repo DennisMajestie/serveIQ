@@ -166,6 +166,12 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  goBackToMenu() {
+    const branchId = this.cartService.branchId();
+    const target = branchId ? `/public/menu/${branchId}` : '/public/menu/default';
+    this.router.navigateByUrl(target);
+  }
+
   confirmPickup() {
     const tabId = this.cartService.tabId();
     const trackingCode = this.cartService.trackingCode();
