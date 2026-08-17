@@ -129,6 +129,12 @@ export class MenuManagementComponent implements OnInit {
       }).then((result) => {
         if (result.isConfirmed && result.value?.trim()) {
           const name = result.value.trim();
+          const existing = this.apiCategories().find(c => c.toLowerCase() === name.toLowerCase());
+          if (existing) {
+            this.formCategory.set(existing);
+            Swal.fire({ icon: 'info', title: `"${existing}" already exists — selected it`, timer: 1500, showConfirmButton: false });
+            return;
+          }
           this.menuService.createCategory(name).subscribe({
             next: (cat: any) => {
               this.apiCategories.update(list => [...new Set([...list, cat?.name || name])]);
@@ -158,6 +164,12 @@ export class MenuManagementComponent implements OnInit {
       }).then((result) => {
         if (result.isConfirmed && result.value?.trim()) {
           const name = result.value.trim();
+          const existing = this.apiUnits().find(u => u.toLowerCase() === name.toLowerCase());
+          if (existing) {
+            this.formUnit.set(existing);
+            Swal.fire({ icon: 'info', title: `"${existing}" already exists — selected it`, timer: 1500, showConfirmButton: false });
+            return;
+          }
           this.menuService.createUnit(name).subscribe({
             next: (unit: any) => {
               this.apiUnits.update(list => [...new Set([...list, unit?.name || name])]);
