@@ -245,6 +245,8 @@ export const API_CONFIG = {
       systemHealth: '/api/v1/admin/system/health',
       revenue: '/api/v1/admin/revenue',
       auditLogs: '/api/v1/admin/audit-logs',
+      feedback: '/api/v1/admin/feedback',
+      feedbackStatus: '/api/v1/admin/feedback/:id/status',
       extend: '/api/v1/admin/businesses/extend',
       paymentProviders: '/api/v1/admin/payment-providers',
       paymentProvider: '/api/v1/admin/payment-providers/:id',

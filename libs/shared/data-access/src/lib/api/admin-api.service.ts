@@ -109,6 +109,33 @@ export interface AdminAuditLogResponse {
   };
 }
 
+export interface AdminFeedback {
+  id: string;
+  business_id: string;
+  branch_id?: string | null;
+  user_id?: string | null;
+  category: string;
+  message: string;
+  screenshot?: string | null;
+  url?: string | null;
+  user_agent?: string | null;
+  status: string;
+  admin_notes?: string | null;
+  created_at: string;
+  updated_at: string;
+  user?: { id: string; full_name?: string; fullName?: string; email?: string; role?: string } | null;
+}
+
+export interface AdminFeedbackResponse {
+  data: AdminFeedback[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export interface AdminRevenueSeries {
   month: string;
   revenueKobo?: number;
@@ -223,6 +250,27 @@ export class AdminApiService extends BaseApiService {
       API_CONFIG.endpoints.admin.auditLogs,
       undefined,
       Object.keys(queryParams).length ? queryParams : undefined,
+    );
+  }
+
+  getAdminFeedback(params?: Record<string, string | number>): Observable<AdminFeedbackResponse> {
+    const queryParams: Record<string, string> = {};
+    if (params) {
+      for (const [key, value] of Object.entries(params)) {
+        queryParams[key] = String(value);
+      }
+    }
+    return this.getPaginated<AdminFeedbackResponse>(
+      API_CONFIG.endpoints.admin.feedback,
+      undefined,
+      Object.keys(queryParams).length ? queryParams : undefined,
+    );
+  }
+
+  updateFeedbackStatus(id: string, status: string, adminNotes?: string): Observable<AdminFeedback> {
+    return this.patch<AdminFeedback>(
+      buildUrl(API_CONFIG.endpoints.admin.feedbackStatus, { id }),
+      { status, admin_notes: adminNotes },
     );
   }
 

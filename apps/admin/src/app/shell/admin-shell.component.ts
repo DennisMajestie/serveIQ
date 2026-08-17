@@ -81,6 +81,12 @@ interface NavItem {
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" routerLink="/app/admin/feedback" routerLinkActive="active">
+                <span class="material-symbols-outlined">feedback</span>
+                <span>Feedback</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" routerLink="/app/admin/revenue" routerLinkActive="active">
                 <span class="material-symbols-outlined">analytics</span>
                 <span>Revenue &amp; Analytics</span>
