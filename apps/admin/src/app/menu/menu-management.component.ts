@@ -39,8 +39,19 @@ export class MenuManagementComponent implements OnInit {
 
   apiCategories = signal<string[]>([]);
   apiUnits = signal<string[]>([]);
-  categoryOptions = computed(() => [...new Set([...this.apiCategories(), ...this.DEFAULT_CATEGORIES])]);
-  unitOptions = computed(() => [...new Set([...this.apiUnits(), ...this.DEFAULT_UNITS])]);
+
+  private static dedupeCaseInsensitive(values: string[]): string[] {
+    const seen = new Set<string>();
+    return values.filter(v => {
+      const key = v.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  categoryOptions = computed(() => MenuManagementComponent.dedupeCaseInsensitive([...this.apiCategories(), ...this.DEFAULT_CATEGORIES]));
+  unitOptions = computed(() => MenuManagementComponent.dedupeCaseInsensitive([...this.apiUnits(), ...this.DEFAULT_UNITS]));
 
   // Add Item Modal state
   showAddModal = signal(false);
@@ -60,15 +71,15 @@ export class MenuManagementComponent implements OnInit {
     if (!Array.isArray(items)) return [];
     return cat === 'All'
       ? items
-      : items.filter(i => i.category === cat);
+      : items.filter(i => i.category.toLowerCase() === cat.toLowerCase());
   });
 
   categories = computed(() => {
     const items = this.items();
     if (!Array.isArray(items)) return [{ name: 'All', count: 0, imageUrl: '', imageUrls: [] as string[] }];
-    const cats = ['All', ...new Set(items.map(i => i.category))];
+    const cats = ['All', ...MenuManagementComponent.dedupeCaseInsensitive(items.map(i => i.category))];
     return cats.map(c => {
-      const catItems = c === 'All' ? items : items.filter(i => i.category === c);
+      const catItems = c === 'All' ? items : items.filter(i => i.category.toLowerCase() === c.toLowerCase());
       const firstWithImage = catItems.find(i => i.imageUrl);
       const imageUrls = c === 'All'
         ? [...new Set(items.filter(i => i.imageUrl).map(i => i.category))]
