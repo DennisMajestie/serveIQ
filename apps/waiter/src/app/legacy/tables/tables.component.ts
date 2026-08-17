@@ -45,7 +45,7 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
   vipOccupied = computed(() => {
     return this.vipTables().filter(t => {
       const tab = this.openTabs().find(tab => tab.tableId === t.id);
-      return !!tab && tab.status === 'open';
+      return !!tab && (tab.status === 'open' || tab.status === 'billed');
     }).length;
   });
 
@@ -94,7 +94,7 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
 
   loadOpenTabs() {
     this.tabsSub?.unsubscribe();
-    this.tabsSub = this.tabsApi.getAllTabs({ status: 'open' }).subscribe({
+    this.tabsSub = this.tabsApi.getAllTabs({ status: 'open,billed' }).subscribe({
       next: (tabs) => {
         this.openTabs.set(Array.isArray(tabs) ? tabs : []);
       },
@@ -120,7 +120,7 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
 
     if (!tab && table.status === 'occupied') {
       try {
-        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open' }));
+        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open,billed' }));
         this.openTabs.set(Array.isArray(allTabs) ? allTabs : []);
         tab = (Array.isArray(allTabs) ? allTabs : []).find(t => t.tableId === table.id);
       } catch (err: any) {

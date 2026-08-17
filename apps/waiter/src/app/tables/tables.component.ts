@@ -58,7 +58,7 @@ export class TablesComponent implements OnInit, OnDestroy {
   vipOccupied = computed(() => {
     return this.vipTables().filter(t => {
       const tab = this.getTabForTable(t.id);
-      return !!tab && tab.status === 'open';
+      return !!tab && (tab.status === 'open' || tab.status === 'billed');
     }).length;
   });
 
@@ -128,7 +128,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     const tab = this.getTabForTable(table.id);
     if (!tab) return null;
     if (!tab.waiterId || tab.waiterId !== this.currentUserId) return null;
-    if (tab.status !== 'open' || table.status !== 'occupied') return null;
+    if ((tab.status !== 'open' && tab.status !== 'billed') || table.status !== 'occupied') return null;
     const code = (tab as any).trackingCode;
     if (!code) return null;
     const orders: any[] = Array.isArray((tab as any).orders) ? (tab as any).orders : [];
@@ -155,13 +155,13 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.cache.getCached<Tab>('tabs').pipe(
       catchError(() => of([])),
     ).subscribe(tabs => {
-      const open = tabs.filter(t => t.status === 'open');
+      const open = tabs.filter(t => t.status === 'open' || t.status === 'billed');
       if (open.length > 0) this.openTabs.set(open);
     });
 
     forkJoin({
       tables: this.offlineData.getTables(),
-      tabs: this.offlineData.getOpenTabs(),
+      tabs: this.offlineData.getActiveTabs(),
     }).subscribe({
       next: (result) => {
         this.tables.set(Array.isArray(result.tables) ? result.tables : []);
@@ -181,7 +181,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     this.loadNotifications();
     this.pollSub = interval(30000).subscribe(async () => {
       try {
-        const tabs = await firstValueFrom(this.offlineData.getOpenTabs());
+        const tabs = await firstValueFrom(this.offlineData.getActiveTabs());
         this.openTabs.set(Array.isArray(tabs) ? tabs : []);
         const tables = await firstValueFrom(this.offlineData.getTables());
         if (Array.isArray(tables)) this.tables.set(tables);
@@ -209,7 +209,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
   loadOpenTabs() {
     this.tabsSub?.unsubscribe();
-    this.tabsSub = this.offlineData.getOpenTabs().subscribe({
+    this.tabsSub = this.offlineData.getActiveTabs().subscribe({
       next: (tabs) => {
         this.openTabs.set(Array.isArray(tabs) ? tabs : []);
       },
@@ -325,7 +325,7 @@ export class TablesComponent implements OnInit, OnDestroy {
 
     if (!tab && table.status === 'occupied') {
       try {
-        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open' }));
+        const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open,billed' }));
         this.openTabs.set(Array.isArray(allTabs) ? allTabs : []);
         tab = (Array.isArray(allTabs) ? allTabs : []).find(t => {
           if (t.tableId === table.id) return true;
@@ -429,7 +429,7 @@ export class TablesComponent implements OnInit, OnDestroy {
     // Cancel the stale subscribe-based load so it doesn't overwrite our fresh data
     this.tabsSub?.unsubscribe();
     try {
-      const tabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open' }));
+      const tabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open,billed' }));
       this.openTabs.set(Array.isArray(tabs) ? tabs : []);
       return true;
     } catch {

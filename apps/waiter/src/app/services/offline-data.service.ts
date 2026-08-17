@@ -52,12 +52,14 @@ export class OfflineDataService {
     );
   }
 
-  getOpenTabs(): Observable<Tab[]> {
+  getActiveTabs(): Observable<Tab[]> {
     const cache$ = this.cache.getCached<Tab>('tabs').pipe(
-      map(tabs => tabs.filter(t => t.status === 'open')),
+      map(tabs =>
+        tabs.filter(t => t.status === 'open' || t.status === 'billed'),
+      ),
     );
     if (!this.network.isOnline()) return cache$;
-    return this.tabsApi.getAllTabs({ status: 'open' }).pipe(
+    return this.tabsApi.getAllTabs({ status: 'open,billed' }).pipe(
       tap(tabs => this.cache.cacheAll('tabs', tabs)),
       catchError(() => cache$),
     );
