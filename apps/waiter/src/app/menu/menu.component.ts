@@ -102,7 +102,13 @@ export class MenuComponent implements OnInit {
         isAvailable: isManuallyAvailable && !outOfStock,
       };
     });
-    const cats = ['All', ...new Set(items.map(i => i.category))];
+    const seen = new Set<string>();
+    const cats = ['All', ...items.map(i => i.category).filter(c => {
+      const key = c.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })];
     this.categories.set(cats);
     this.selectedCategory = cats[0] ?? 'All';
     this.isLoading.set(false);
@@ -126,7 +132,7 @@ export class MenuComponent implements OnInit {
   get filteredItems(): LocalMenuItem[] {
     return this.selectedCategory === 'All'
       ? this.menuItems
-      : this.menuItems.filter(i => i.category === this.selectedCategory);
+      : this.menuItems.filter(i => i.category.toLowerCase() === this.selectedCategory.toLowerCase());
   }
 
   get selectionTotal(): number {
