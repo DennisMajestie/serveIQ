@@ -62,6 +62,7 @@ export const API_CONFIG = {
             get: '/api/v1/orders/:id',
             update: '/api/v1/orders/:id',
             delete: '/api/v1/orders/:id',
+            cancel: '/api/v1/orders/:id/cancel',
         },
         // Bills
         bills: {

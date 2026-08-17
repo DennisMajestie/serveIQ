@@ -25,6 +25,10 @@ let OrdersApiService = class OrdersApiService extends BaseApiService {
     deleteItem(id) {
         return this.delete(buildUrl(API_CONFIG.endpoints.orders.delete, { id }));
     }
+    /** Cancel an order item (waiter-accessible). */
+    cancelOrder(id, cancel_reason) {
+        return this.post(buildUrl(API_CONFIG.endpoints.orders.cancel, { id }), { cancel_reason });
+    }
 };
 OrdersApiService = __decorate([
     Injectable({ providedIn: 'root' }),

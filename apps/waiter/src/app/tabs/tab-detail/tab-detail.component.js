@@ -58,7 +58,7 @@ let TabDetailComponent = class TabDetailComponent {
             confirmButtonText: 'Remove'
         }).then(result => {
             if (result.isConfirmed) {
-                this.orderService.deleteItem(item.id).subscribe(() => this.items.update(is => is.filter(i => i.id !== item.id)));
+                this.orderService.cancelOrder(item.id, 'Removed by waiter').subscribe(() => this.items.update(is => is.filter(i => i.id !== item.id)));
             }
         });
     }

@@ -35,6 +35,10 @@ export class OrdersApiService extends BaseApiService {
     return this.delete<void>(buildUrl(API_CONFIG.endpoints.orders.delete, { id }));
   }
 
+  cancelOrder(id: string, cancel_reason: string): Observable<Order> {
+    return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.cancel, { id }), { cancel_reason });
+  }
+
   getPending(): Observable<OrderGroup[]> {
     return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.pending);
   }

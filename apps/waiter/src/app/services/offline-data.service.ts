@@ -202,7 +202,7 @@ export class OfflineDataService {
       this.cache.remove('orders', orderId);
       return { offline: true };
     }
-    const result = await this.ordersApi.deleteItem(orderId).toPromise();
+    const result = await this.ordersApi.cancelOrder(orderId, 'Removed by waiter').toPromise();
     this.cache.remove('orders', orderId);
     return result;
   }
