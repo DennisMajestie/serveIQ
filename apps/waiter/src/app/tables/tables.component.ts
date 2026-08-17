@@ -5,7 +5,7 @@ import { TablesApiService, TabsApiService, UserApiService, AuthService, Business
 import { Table, Tab, User, Business, Shift, Notification } from '@serveiq/shared/models';
 import { forkJoin, interval, Subscription, of } from 'rxjs';
 import { firstValueFrom, catchError, delay, retryWhen, take, tap } from 'rxjs';
-import { isNetworkError } from '@serveiq/shared/data-access';
+import { isNetworkError, NETWORK_ERROR_MESSAGE } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
 import { OfflineDataService } from '../services/offline-data.service';
 
@@ -332,16 +332,41 @@ export class TablesComponent implements OnInit, OnDestroy {
           const tableObj = (t as any).table;
           return tableObj?.id === table.id;
         });
-      } catch {
-        // Fallback — continue with null tab
+      } catch (err: any) {
+        if (isNetworkError(err)) {
+          this.showToast(NETWORK_ERROR_MESSAGE);
+          return;
+        }
       }
     }
 
     if (!tab) {
       if (table.status === 'occupied') {
-        console.warn('[TableMismatch] table=%s occupied but no matching tab found. Auto-recovering...', table.id);
-        await firstValueFrom(this.tablesApi.updateTableStatus(table.id!, 'available')).catch(() => {});
-        await this.router.navigate(['/tabs/create', table.id]);
+        const result = await Swal.fire({
+          icon: 'error',
+          title: 'Table Mismatch',
+          text: 'This table shows as occupied but no active tab was found.',
+          showConfirmButton: true,
+          showDenyButton: true,
+          confirmButtonText: 'Reset Table',
+          denyButtonText: 'Refresh',
+        });
+        if (result.isConfirmed) {
+          try {
+            await firstValueFrom(this.tablesApi.updateTableStatus(table.id!, 'available'));
+            this.loadTables();
+            this.loadOpenTabs();
+          } catch (err: any) {
+            if (isNetworkError(err)) {
+              this.showToast(NETWORK_ERROR_MESSAGE);
+              return;
+            }
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to reset table status' });
+          }
+        } else if (result.isDenied) {
+          this.loadTables();
+          this.loadOpenTabs();
+        }
         return;
       }
       if (!this.hasOpenShift()) {

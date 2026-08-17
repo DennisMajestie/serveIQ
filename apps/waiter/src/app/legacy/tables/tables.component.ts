@@ -123,7 +123,11 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
         const allTabs = await firstValueFrom(this.tabsApi.getAllTabs({ status: 'open' }));
         this.openTabs.set(Array.isArray(allTabs) ? allTabs : []);
         tab = (Array.isArray(allTabs) ? allTabs : []).find(t => t.tableId === table.id);
-      } catch {
+      } catch (err: any) {
+        if (isNetworkError(err)) {
+          Swal.fire({ icon: 'info', title: 'Network Error', text: 'Could not check this table. Please try again.', timer: 2500, showConfirmButton: false });
+          return;
+        }
       }
     }
 
