@@ -27,6 +27,13 @@ interface NavItem {
   badge?: number;
 }
 
+interface MobileTab {
+  label: string;
+  icon: string;
+  route: string | null;
+  opensDrawer?: boolean;
+}
+
 @Component({
   selector: 'app-admin-shell',
   standalone: true,
@@ -42,7 +49,7 @@ interface NavItem {
       </div>
 
       <!-- Sidebar -->
-      <aside class="sidebar">
+      <aside class="sidebar" [class.mobile-open]="mobileNavOpen()">
         <div class="sidebar-header">
           <h1 class="brand-name">ServeIQ</h1>
           <p class="brand-subtitle">Management Portal</p>
@@ -252,25 +259,32 @@ interface NavItem {
         </div>
       </aside>
 
+      <div class="sidebar-overlay" *ngIf="mobileNavOpen()" (click)="closeMobileNav()"></div>
+
       <!-- Main Content -->
       <div class="main-content-wrapper">
         <!-- Top Nav -->
         <header class="top-nav">
-          <div class="search-wrapper">
-            <div class="search-container">
-              <span class="material-symbols-outlined">search</span>
-              <input type="text" [formControl]="searchControl" placeholder="Search orders, tables, or staff..." (blur)="onSearchBlur()">
-            </div>
-            <div class="suggestions-dropdown" *ngIf="showDropdown()">
-              <div class="suggestion-item" *ngFor="let item of searchResults()" (click)="navigateTo(item)">
-                <span class="material-symbols-outlined">{{ item.type === 'table' ? 'table_restaurant' : item.type === 'staff' ? 'person' : 'receipt_long' }}</span>
-                <div>
-                  <span class="label">{{ item.label }}</span>
-                  <span class="subtitle">{{ item.subtitle }}</span>
-                </div>
+          <div class="top-nav-left">
+            <button class="icon-btn mobile-hamburger" (click)="mobileNavOpen.set(!mobileNavOpen())" aria-label="Toggle menu">
+              <span class="material-symbols-outlined">menu</span>
+            </button>
+            <div class="search-wrapper">
+              <div class="search-container">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" [formControl]="searchControl" placeholder="Search orders, tables, or staff..." (blur)="onSearchBlur()">
               </div>
-              <div class="no-results" *ngIf="searchResults().length === 0">
-                No results found
+              <div class="suggestions-dropdown" *ngIf="showDropdown()">
+                <div class="suggestion-item" *ngFor="let item of searchResults()" (click)="navigateTo(item)">
+                  <span class="material-symbols-outlined">{{ item.type === 'table' ? 'table_restaurant' : item.type === 'staff' ? 'person' : 'receipt_long' }}</span>
+                  <div>
+                    <span class="label">{{ item.label }}</span>
+                    <span class="subtitle">{{ item.subtitle }}</span>
+                  </div>
+                </div>
+                <div class="no-results" *ngIf="searchResults().length === 0">
+                  No results found
+                </div>
               </div>
             </div>
           </div>
@@ -336,6 +350,20 @@ interface NavItem {
         </main>
       </div>
     </div>
+
+    <!-- Mobile Bottom Tab Bar -->
+    <nav class="mobile-tab-bar" *ngIf="mobileTabs().length">
+      <button
+        class="tab-item"
+        *ngFor="let tab of mobileTabs()"
+        [class.active]="tab.opensDrawer ? mobileNavOpen() : activeTab() === tab.route"
+        (click)="onTab(tab)"
+      >
+        <span class="material-symbols-outlined">{{ tab.icon }}</span>
+        <span class="tab-label">{{ tab.label }}</span>
+      </button>
+    </nav>
+
     <app-feedback></app-feedback>
   `,
   styles: [`
@@ -739,10 +767,135 @@ interface NavItem {
     .impersonate-loader p { margin: 16px 0 0; font-size: 15px; color: var(--on-surface); }
     .spinner { width: 40px; height: 40px; margin: 0 auto; border: 3px solid var(--outline-variant); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .top-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mobile-hamburger {
+      display: none;
+    }
+
+    .sidebar-overlay {
+      display: none;
+    }
+
+    .mobile-tab-bar {
+      display: none;
+    }
+
+    @media (max-width: 1023.98px) {
+      .mobile-hamburger { display: inline-flex; }
+
+      .sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 45;
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(2px);
+      }
+
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 60;
+        transform: translateX(-100%);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: 0 0 48px rgba(0,0,0,0.25);
+      }
+
+      .top-nav {
+        padding: 0 12px;
+        height: 56px;
+      }
+
+      .search-container {
+        width: 100%;
+        max-width: none;
+      }
+
+      .btn-text { display: none; }
+      .divider { display: none; }
+      .user-info { display: none; }
+      .user-profile { padding-left: 0; }
+
+      .mobile-tab-bar {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 55;
+        height: 64px;
+        background: var(--surface-container-lowest);
+        border-top: 1px solid var(--outline-variant);
+        box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+        padding-bottom: env(safe-area-inset-bottom, 0);
+      }
+
+      .tab-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        border: none;
+        background: none;
+        color: var(--secondary);
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        min-height: 56px;
+        padding: 6px 0;
+        transition: color 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .tab-item .material-symbols-outlined {
+        font-size: 24px;
+        line-height: 24px;
+      }
+
+      .tab-label {
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 14px;
+      }
+
+      .tab-item.active {
+        color: var(--primary);
+      }
+
+      .tab-item.active .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+
+      .content-area {
+        padding-bottom: 80px;
+      }
+    }
+
+    @media (max-width: 639.98px) {
+      .top-nav-actions { gap: 4px; }
+      .main-content-wrapper { min-height: calc(100vh - 64px); }
+    }
   `]
 })
 export class AdminShellComponent implements OnInit, OnDestroy {
   sidebarCollapsed = signal(false);
+  mobileNavOpen = signal(false);
+  mobileSearchOpen = signal(false);
   impersLoading = signal(false);
   profile = signal<{ fullName?: string; role?: string; avatarUrl?: string }>({ fullName: 'Admin', role: localStorage.getItem('userRole') || '' });
   hasNotifications = signal(false);
@@ -755,6 +908,60 @@ export class AdminShellComponent implements OnInit, OnDestroy {
     if (!sub || this.profile().role === 'super_admin') return null;
     return sub;
   });
+
+  mobileTabs = computed<MobileTab[]>(() => {
+    const role = this.profile().role;
+    if (role === 'super_admin') {
+      return [
+        { label: 'Overview', icon: 'home', route: '/app/admin/dashboard' },
+        { label: 'Businesses', icon: 'business', route: '/app/admin/businesses' },
+        { label: 'Revenue', icon: 'analytics', route: '/app/admin/revenue' },
+        { label: 'Audit', icon: 'receipt_long', route: '/app/admin/audit-logs' },
+        { label: 'More', icon: 'more_horiz', route: null, opensDrawer: true },
+      ];
+    }
+    const p = this.permissionService;
+    const tabs: MobileTab[] = [];
+    if (p.hasPermission('view_dashboard')) {
+      tabs.push({ label: 'Dashboard', icon: 'home', route: '/app/dashboard' });
+    }
+    if (p.hasPermission('approve_orders')) {
+      tabs.push({ label: 'Orders', icon: 'receipt_long', route: '/app/order-queue' });
+    } else if (p.hasPermission('open_table')) {
+      tabs.push({ label: 'Tables', icon: 'table_restaurant', route: '/app/tables' });
+    }
+    if (p.hasPermission('view_reports')) {
+      tabs.push({ label: 'Reports', icon: 'bar_chart', route: '/app/reports' });
+    }
+    if (p.hasPermission('view_staff')) {
+      tabs.push({ label: 'Staff', icon: 'group', route: '/app/staff' });
+    }
+    if (tabs.length < 4) {
+      tabs.push({ label: 'Bills', icon: 'credit_card', route: '/app/bills' });
+    }
+    return tabs.slice(0, 4).concat({ label: 'More', icon: 'more_horiz', route: null, opensDrawer: true });
+  });
+
+  activeTab = computed<string | null>(() => {
+    const url = this.router.url;
+    for (const tab of this.mobileTabs()) {
+      if (tab.route && url.startsWith(tab.route)) return tab.route;
+    }
+    return null;
+  });
+
+  onTab(tab: MobileTab) {
+    if (tab.opensDrawer) {
+      this.mobileNavOpen.set(true);
+      return;
+    }
+    if (tab.route) this.router.navigate([tab.route]);
+  }
+
+  closeMobileNav() {
+    this.mobileNavOpen.set(false);
+    this.mobileSearchOpen.set(false);
+  }
 
   impersonating(): string | null {
     return localStorage.getItem('impersonating');

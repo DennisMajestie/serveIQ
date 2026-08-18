@@ -12,8 +12,120 @@
       {{ errorMessage() }}
     </div>
 
-    <!-- Asymmetric Bento Grid -->
-    <div class="grid grid-cols-12 gap-6">
+    <!-- ===== Mobile Layout (lg:hidden) ===== -->
+    <div class="mobile-dashboard lg:hidden space-y-4">
+      <!-- Hero Metric -->
+      <div class="hero-card">
+        <div class="hero-top">
+          <span class="hero-label">Today's Revenue</span>
+          <span class="hero-pill">Today</span>
+        </div>
+        <div class="hero-value">{{ revenueDisplay() }}</div>
+        <div class="hero-sub" *ngIf="todayTabsCount() > 0">{{ todayTabsCount() }} tab{{ todayTabsCount() === 1 ? '' : 's' }} completed today</div>
+        <a routerLink="/app/reports" class="hero-link">
+          View full report
+          <span class="material-symbols-outlined">chevron_right</span>
+        </a>
+      </div>
+
+      <!-- Swipeable Stat Carousel -->
+      <div class="carousel-wrap">
+        <div class="carousel" [class.no-scroll]="mobileStatCards().length <= 3">
+          <div class="stat-chip" *ngFor="let card of mobileStatCards()">
+            <div class="chip-icon" [style.background]="'color-mix(in srgb, ' + card.tint + ' 14%, transparent)'">
+              <span class="material-symbols-outlined" [style.color]="card.tint">{{ card.icon }}</span>
+            </div>
+            <div class="chip-meta">
+              <span class="chip-value">{{ card.value }}</span>
+              <span class="chip-label">{{ card.label }}</span>
+              <span class="chip-sub">{{ card.sub }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simplified Chart -->
+      <div class="m-card">
+        <div class="m-card-head">
+          <div>
+            <h3 class="m-card-title">Peak Hours</h3>
+            <p class="m-card-sub">Recent order volume</p>
+          </div>
+          <a routerLink="/app/reports" class="m-card-link">Full report</a>
+        </div>
+        <div class="flex items-end gap-1.5 h-[110px]" *ngIf="simplifiedPeakHours().length > 0; else mobileChartEmpty">
+          <div *ngFor="let entry of simplifiedPeakHours()" class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full rounded-t transition-all duration-500" [style.height.px]="(entry.orderCount / maxPeakValue()) * 90 || 2" style="background: color-mix(in srgb, var(--primary-container) 80%, transparent)"></div>
+            <span class="text-[9px] text-[var(--secondary)] font-medium">{{ formatHour(entry.hour) }}</span>
+          </div>
+        </div>
+        <ng-template #mobileChartEmpty>
+          <div class="flex flex-col items-center justify-center h-[110px] text-[var(--secondary)]">
+            <span class="material-symbols-outlined text-3xl mb-1">bar_chart</span>
+            <p class="text-xs">No peak hours data yet</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Needs Attention -->
+      <div class="m-card">
+        <div class="m-card-head">
+          <div>
+            <h3 class="m-card-title">Needs Attention</h3>
+            <p class="m-card-sub">Live operational items</p>
+          </div>
+        </div>
+        <ng-container *ngIf="mobileNeedsAttention().length > 0; else mobileAttentionEmpty">
+          <a *ngFor="let item of mobileNeedsAttention()" [routerLink]="item.route" class="attention-row">
+            <div class="attention-icon" [style.background]="'color-mix(in srgb, ' + item.tint + ' 14%, transparent)'">
+              <span class="material-symbols-outlined" [style.color]="item.tint">{{ item.icon }}</span>
+            </div>
+            <div class="attention-meta">
+              <span class="attention-label">{{ item.label }}</span>
+              <span class="attention-sub">{{ item.sub }}</span>
+            </div>
+            <span class="material-symbols-outlined attention-chevron">chevron_right</span>
+          </a>
+        </ng-container>
+        <ng-template #mobileAttentionEmpty>
+          <div class="flex flex-col items-center justify-center py-8 text-[var(--secondary)]">
+            <span class="material-symbols-outlined text-3xl mb-1">check_circle</span>
+            <p class="text-xs">All clear — nothing needs your attention</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Recent Orders (mobile) -->
+      <div class="m-card">
+        <div class="m-card-head">
+          <div>
+            <h3 class="m-card-title">Recent Orders</h3>
+            <p class="m-card-sub">Latest activity</p>
+          </div>
+        </div>
+        <ng-container *ngIf="recentOrders().length > 0; else mobileEmptyOrders">
+          <a *ngFor="let order of recentOrders().slice(0, 4)" routerLink="/app/tables" class="attention-row">
+            <div class="attention-icon" style="background: color-mix(in srgb, #059669 14%, transparent)">
+              <span class="material-symbols-outlined" style="color:#059669">shopping_cart</span>
+            </div>
+            <div class="attention-meta">
+              <span class="attention-label">{{ order.menuItemName }}</span>
+              <span class="attention-sub">x{{ order.quantity }} • {{ order.createdAt | date:'short' }}</span>
+            </div>
+            <span class="font-bold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">{{ currency.getSymbol() }}{{ (order.subtotalKobo / 100).toLocaleString() }}</span>
+          </a>
+        </ng-container>
+        <ng-template #mobileEmptyOrders>
+          <div class="flex flex-col items-center justify-center py-8 text-[var(--secondary)]">
+            <span class="material-symbols-outlined text-3xl mb-1">receipt_long</span>
+            <p class="text-xs">No orders yet today</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- ===== Desktop Bento Grid (hidden below lg) ===== -->
+    <div class="grid grid-cols-12 gap-6 desktop-dashboard hidden lg:grid">
       <!-- Revenue Pulse -->
       <div class="col-span-12 lg:col-span-4 bento-card bg-[var(--surface-container-low)] rounded-xl p-6 relative overflow-hidden group">
         <div class="absolute -right-12 -top-12 w-48 h-48 decor-blob rounded-full blur-3xl transition-all duration-500"></div>

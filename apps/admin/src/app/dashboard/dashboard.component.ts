@@ -187,6 +187,36 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     ];
   });
 
+  mobileStatCards = computed(() => {
+    const s = this.stats();
+    const vel = this.avgTableVelocity();
+    return [
+      { label: 'Active Tables', value: s.activeTables.toString(), sub: `of ${s.totalTables}`, icon: 'table_restaurant', tint: '#FF7043' },
+      { label: 'Open Tabs', value: s.openTabs.toString(), sub: 'live right now', icon: 'receipt_long', tint: '#0059bb' },
+      { label: 'Completed', value: s.todayTabsCount.toString(), sub: 'tabs today', icon: 'check_circle', tint: '#8b5cf6' },
+      { label: 'Staff on Duty', value: this.staffOnDuty().toString(), sub: 'waiters', icon: 'groups', tint: '#0ea5e9' },
+      { label: 'Avg Turnover', value: vel, sub: 'table velocity', icon: 'timer', tint: '#059669' },
+      { label: 'Occupancy', value: `${this.occupancyPercent()}%`, sub: 'of tables busy', icon: 'speed', tint: '#d97706' }
+    ];
+  });
+
+  simplifiedPeakHours = computed(() => this.peakHours().slice(-8));
+
+  mobileNeedsAttention = computed(() => {
+    const items: { label: string; sub: string; icon: string; tint: string; route: string }[] = [];
+    const s = this.stats();
+    if (s.openTabs > 0) {
+      items.push({ label: `${s.openTabs} open tab${s.openTabs === 1 ? '' : 's'}`, sub: 'need service', icon: 'receipt_long', tint: '#0059bb', route: '/app/tabs' });
+    }
+    if (s.activeTables > 0) {
+      items.push({ label: `${s.activeTables} active table${s.activeTables === 1 ? '' : 's'}`, sub: 'currently seated', icon: 'table_restaurant', tint: '#FF7043', route: '/app/tables' });
+    }
+    if (this.staffOnDuty() === 0) {
+      items.push({ label: 'No staff on duty', sub: 'shift may be empty', icon: 'groups', tint: '#d97706', route: '/app/shifts' });
+    }
+    return items.slice(0, 4);
+  });
+
   waiterPerformance = computed(() => (this.stats().waiterPerformance || []).slice(0, 5));
   recentOrders = computed(() => (this.stats().recentOrders || []));
   activeTables = computed(() => this.stats().activeTables);
