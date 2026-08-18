@@ -9,17 +9,30 @@
         <rect width="32" height="32" rx="8" fill="var(--primary)"/>
         <path d="M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z" fill="white" opacity="0.9"/>
       </svg>
+      <span class="brand-wordmark">Serve<span class="brand-accent">IQ</span></span>
     </div>
-    <div class="nav-links">
-      <a class="nav-link active" href="#">Product</a>
-      <a class="nav-link" href="#">Solutions</a>
-      <a class="nav-link" href="#">Pricing</a>
-      <a class="nav-link" href="#">Resources</a>
+    <div class="nav-links" [class.open]="mobileMenuOpen">
+      <a class="nav-link active" href="#features">Product</a>
+      <a class="nav-link" href="#how-it-works">How it works</a>
+      <a class="nav-link" href="#pricing">Pricing</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+      <div class="nav-actions-mobile">
+        <a routerLink="/login" class="btn btn-ghost-sm btn-block">Log In</a>
+        <a routerLink="/register" class="btn btn-primary-sm btn-block">Book a Demo</a>
+      </div>
     </div>
     <div class="nav-actions">
       <a routerLink="/login" class="btn btn-ghost-sm">Log In</a>
-      <button class="btn btn-primary-sm">Book a Demo</button>
+      <a routerLink="/register" class="btn btn-primary-sm">Book a Demo</a>
     </div>
+    <button
+      class="nav-toggle"
+      [attr.aria-label]="mobileMenuOpen ? 'Close menu' : 'Open menu'"
+      [attr.aria-expanded]="mobileMenuOpen"
+      (click)="toggleMobileMenu()"
+    >
+      <span class="material-symbols-outlined">{{ mobileMenuOpen ? 'close' : 'menu' }}</span>
+    </button>
   </nav>
 </header>
 
@@ -31,11 +44,29 @@
         <span class="material-symbols-outlined text-tertiary text-lg">warning</span>
         <span>RESTAURANTS LOSE 4-8% OF REVENUE TO UNSEEN LEAKAGE</span>
       </div>
-      <h1 class="hero-title">Every order. Every table.<br/>Every naira, accounted for.</h1>
+      <h1 class="hero-title">Every order. Every table.<br/>Every <span class="text-gradient">naira</span>, accounted for.</h1>
       <p class="hero-desc">Stop the leakage. ServeIQ gives you total visibility into every transaction, payment, and staff action so nothing slips through the cracks.</p>
       <div class="hero-actions">
-        <button class="btn btn-primary">Book a demo</button>
-        <button class="btn btn-outline">See pricing</button>
+        <a routerLink="/register" class="btn btn-primary">Book a demo</a>
+        <a href="#pricing" class="btn btn-outline">See pricing</a>
+      </div>
+      <div class="hero-proof">
+        <div class="avatar-stack">
+          <span class="avatar" style="--avatar-color:#4be277">A</span>
+          <span class="avatar" style="--avatar-color:#93ccff">K</span>
+          <span class="avatar" style="--avatar-color:#adc6ff">T</span>
+          <span class="avatar" style="--avatar-color:#ffb4ab">O</span>
+        </div>
+        <div>
+          <div class="stars">
+            <span class="material-symbols-outlined text-lg">star</span>
+            <span class="material-symbols-outlined text-lg">star</span>
+            <span class="material-symbols-outlined text-lg">star</span>
+            <span class="material-symbols-outlined text-lg">star</span>
+            <span class="material-symbols-outlined text-lg">star</span>
+          </div>
+          <span class="proof-text">Trusted by 120+ restaurants recovering <b>₦380M+</b> a year</span>
+        </div>
       </div>
     </div>
     <div class="hero-mockup">
@@ -45,7 +76,7 @@
             <span class="material-symbols-outlined text-primary">security</span>
             Live Revenue Protection
           </h3>
-          <span class="mockup-badge">LIVE</span>
+          <span class="mockup-badge"><span class="live-dot"></span> LIVE</span>
         </div>
         <div class="mockup-alerts">
           @for (alert of alerts; track alert.title) {
@@ -66,6 +97,20 @@
     </div>
   </section>
 
+  <!-- Trust Strip -->
+  <section class="trust-strip">
+    <div class="trust-inner">
+      <span class="trust-label">Powering revenue protection for</span>
+      <div class="trust-logos">
+        <span class="trust-logo">Naija Grills</span>
+        <span class="trust-logo">Lagos Bistro Co.</span>
+        <span class="trust-logo">Yam &amp; Co.</span>
+        <span class="trust-logo">Suya Republic</span>
+        <span class="trust-logo">Kiyi Kitchen</span>
+      </div>
+    </div>
+  </section>
+
   <!-- Stats Bar -->
   <section class="stats-bar">
     <div class="stats-grid">
@@ -78,17 +123,39 @@
         <p class="stat-label">1 table, 1 waiter logic</p>
       </div>
       <div class="stat-item">
-        <span class="stat-number">Live Visibility</span>
-        <p class="stat-label">Sales data from anywhere</p>
+        <span class="stat-number">4-8%</span>
+        <p class="stat-label">Revenue recovered on average</p>
       </div>
     </div>
   </section>
 
+  <!-- How It Works -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="section-head">
+      <span class="section-eyebrow">How it works</span>
+      <h2 class="section-title">From messy floor to total control in three steps</h2>
+      <p class="section-desc">Set up in an afternoon. See results on the first shift.</p>
+    </div>
+    <div class="steps-grid">
+      @for (step of steps; track step.title; let i = $index) {
+        <div class="step-card glass-card">
+          <span class="step-number">0{{ i + 1 }}</span>
+          <div class="step-icon-wrap">
+            <span class="material-symbols-outlined text-primary text-[32px]">{{ step.icon }}</span>
+          </div>
+          <h3 class="step-title">{{ step.title }}</h3>
+          <p class="step-desc">{{ step.desc }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
   <!-- Features -->
-  <section class="features">
+  <section class="features" id="features">
     <div class="features-intro">
+      <span class="section-eyebrow">Why ServeIQ</span>
       <h2 class="features-title">Designed for Complete Operational Precision</h2>
-      <p class="features-desc">Eliminate disputes, track every kobo, and regain control.</p>
+      <p class="features-desc">Eliminate disputes, track every kobo, and regain control of your floor.</p>
     </div>
     <div class="features-grid">
       @for (feature of features; track feature.title) {
@@ -98,6 +165,96 @@
           </div>
           <h3 class="feature-title">{{ feature.title }}</h3>
           <p class="feature-desc">{{ feature.desc }}</p>
+          <ul class="feature-points">
+            @for (point of feature.points; track point) {
+              <li><span class="material-symbols-outlined text-check">check</span>{{ point }}</li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials" id="testimonials">
+    <div class="section-head">
+      <span class="section-eyebrow">Loved by operators</span>
+      <h2 class="section-title">Restaurant owners stopped guessing</h2>
+    </div>
+    <div class="testimonials-grid">
+      @for (quote of testimonials; track quote.name) {
+        <div class="testimonial-card glass-card">
+          <div class="testimonial-stars">
+            <span class="material-symbols-outlined text-lg">star</span>
+            <span class="material-symbols-outlined text-lg">star</span>
+            <span class="material-symbols-outlined text-lg">star</span>
+            <span class="material-symbols-outlined text-lg">star</span>
+            <span class="material-symbols-outlined text-lg">star</span>
+          </div>
+          <p class="testimonial-quote">"{{ quote.quote }}"</p>
+          <div class="testimonial-author">
+            <span class="avatar" [style.--avatar-color]="quote.color">{{ quote.name.charAt(0) }}</span>
+            <div>
+              <p class="testimonial-name">{{ quote.name }}</p>
+              <span class="testimonial-role">{{ quote.role }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <div class="features-intro">
+      <span class="section-eyebrow">Pricing</span>
+      <h2 class="features-title">Simple plans that pay for themselves</h2>
+      <p class="features-desc">Most restaurants recover the monthly cost before the first invoice.</p>
+    </div>
+    <div class="pricing-grid">
+      @for (plan of plans; track plan.name) {
+        <div class="plan-card" [class.plan-featured]="plan.featured">
+          @if (plan.featured) {
+            <span class="plan-flag">Most popular</span>
+          }
+          <h3 class="plan-name">{{ plan.name }}</h3>
+          <div class="plan-price">
+            <span class="plan-currency">₦</span>
+            <span class="plan-amount">{{ plan.price }}</span>
+            <span class="plan-period">/month</span>
+          </div>
+          <p class="plan-tagline">{{ plan.tagline }}</p>
+          <ul class="plan-features">
+            @for (item of plan.features; track item) {
+              <li><span class="material-symbols-outlined text-check">check</span>{{ item }}</li>
+            }
+          </ul>
+          <a routerLink="/register" class="btn plan-btn" [class.btn-primary]="plan.featured" [class.btn-outline]="!plan.featured">
+            {{ plan.cta }}
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="features-intro">
+      <span class="section-eyebrow">FAQ</span>
+      <h2 class="features-title">Questions, answered</h2>
+    </div>
+    <div class="faq-list">
+      @for (item of faqs; track item.question; let i = $index) {
+        <div class="faq-item" [class.open]="openFaq === i">
+          <button class="faq-question" (click)="toggleFaq(i)" [attr.aria-expanded]="openFaq === i">
+            <span>{{ item.question }}</span>
+            <span class="material-symbols-outlined faq-icon">{{ openFaq === i ? 'remove' : 'add' }}</span>
+          </button>
+          @if (openFaq === i) {
+            <div class="faq-answer">
+              <p>{{ item.answer }}</p>
+            </div>
+          }
         </div>
       }
     </div>
@@ -109,7 +266,10 @@
     <div class="cta-content">
       <h2 class="cta-title">Stop guessing where the money goes.</h2>
       <p class="cta-subtitle">14 day free trial. No card required to start.</p>
-      <button class="btn btn-cta">Start free trial</button>
+      <div class="cta-actions">
+        <a routerLink="/register" class="btn btn-cta">Start free trial</a>
+        <a routerLink="/login" class="btn btn-cta-ghost">Log in to your account</a>
+      </div>
     </div>
   </section>
 </main>
@@ -117,12 +277,15 @@
 <footer class="landing-footer">
   <div class="footer-grid">
     <div class="footer-brand-section">
-      <svg class="logo" viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="8" fill="var(--primary)"/>
-        <path d="M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z" fill="white" opacity="0.9"/>
-      </svg>
+      <div class="footer-brand-row">
+        <svg class="logo" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="var(--primary)"/>
+          <path d="M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z" fill="white" opacity="0.9"/>
+        </svg>
+        <span class="brand-wordmark">Serve<span class="brand-accent">IQ</span></span>
+      </div>
       <p class="footer-about">Precision hospitality management software built for the modern restaurant. Recover your revenue and empower your team.</p>
-      <p class="footer-copyright">© 2024 ServeIQ. Precision in Hospitality.</p>
+      <p class="footer-copyright">© 2026 ServeIQ. Precision in Hospitality.</p>
     </div>
     <div class="footer-col">
       <h4 class="footer-heading">Platform</h4>

@@ -46,21 +46,138 @@ export class LandingComponent implements AfterViewInit {
   @HostBinding('attr.data-theme') theme = 'dark';
   @ViewChild('luxuryCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  mobileMenuOpen = false;
+  openFaq: number | null = 0;
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  toggleFaq(index: number): void {
+    this.openFaq = this.openFaq === index ? null : index;
+  }
+
   features = [
     {
       icon: 'lock',
       title: 'One waiter, one table',
-      desc: 'Enforce strict table ownership. No more staff disputes over tables or confusion during peak hours. Each table is locked to an assigned server.'
+      desc: 'Enforce strict table ownership. No more staff disputes over tables or confusion during peak hours.',
+      points: ['Table locking to assigned servers', 'No double-ordering, ever', 'Fair shift distribution']
     },
     {
       icon: 'history',
       title: 'Every action, on record',
-      desc: 'Transparency at every touchpoint. Every edit, void, or discount is logged instantly with the staff member\'s name and a high-resolution timestamp.'
+      desc: 'Transparency at every touchpoint. Every edit, void, or discount is logged instantly with the staff member\'s name.',
+      points: ['High-resolution timestamps', 'Full audit trail per action', 'Instant staff attribution']
     },
     {
       icon: 'mobile_friendly',
       title: 'Your restaurant, in your pocket',
-      desc: 'Freedom from the floor. Monitor live sales, staff performance, and inventory alerts directly from your mobile device, anywhere in the world.'
+      desc: 'Freedom from the floor. Monitor live sales, staff performance, and inventory alerts from your mobile device.',
+      points: ['Live sales anywhere', 'Staff performance tracking', 'Inventory alerts in real time']
+    },
+    {
+      icon: 'account_balance',
+      title: 'Cash & card reconciliation',
+      desc: 'Shift-close reports that catch discrepancies before they hit your bottom line.',
+      points: ['Cash vs. recorded sales checks', 'Refund frequency alerts', 'Shift-close discrepancy detection']
+    },
+    {
+      icon: 'group',
+      title: 'Staff performance analytics',
+      desc: 'Spot top performers and flag anomalies. Know exactly who drives sales — and who leaks them.',
+      points: ['Per-waiter sales breakdown', 'Void & refund anomaly alerts', 'Ranked performance dashboards']
+    },
+    {
+      icon: 'inventory_2',
+      title: 'Inventory without the guesswork',
+      desc: 'Track stock movements tied to real orders so shrinkage is caught the moment it happens.',
+      points: ['Order-linked stock tracking', 'Shrinkage detection alerts', 'Live inventory levels']
+    }
+  ];
+
+  steps = [
+    {
+      icon: 'settings',
+      title: 'Connect your floor',
+      desc: 'Import your menu, tables, and staff in minutes. No hardware or training marathon required.'
+    },
+    {
+      icon: 'monitor_heart',
+      title: 'Go live & monitor',
+      desc: 'Orders, payments, and staff actions flow through one system you can watch from anywhere.'
+    },
+    {
+      icon: 'savings',
+      title: 'Recover your revenue',
+      desc: 'Get flagged on leakage as it happens — edits, voids, refunds, and cash gaps — and fix it instantly.'
+    }
+  ];
+
+  testimonials = [
+    {
+      quote: 'We found ₦1.2M in lost revenue in our first month. The refund and void alerts alone paid for the subscription ten times over.',
+      name: 'Adaeze Okonkwo',
+      role: 'Owner, Naija Grills Lekki',
+      color: '#4be277'
+    },
+    {
+      quote: 'No more arguing over who took which table. The one-table-one-waiter lock ended every shift dispute we had.',
+      name: 'Kunle Adeyemi',
+      role: 'GM, Lagos Bistro Co.',
+      color: '#93ccff'
+    },
+    {
+      quote: 'I run two branches from my phone now. Cash reconciliation at shift close finally lines up with what\'s in the till.',
+      name: 'Tunde Bakare',
+      role: 'Director, Suya Republic',
+      color: '#adc6ff'
+    }
+  ];
+
+  plans = [
+    {
+      name: 'Starter',
+      price: '49,000',
+      tagline: 'For single-location restaurants getting a grip on leakage.',
+      features: ['1 branch', '10 staff seats', 'Table ownership & audit trail', 'Shift-close reports', 'Email support'],
+      cta: 'Start free trial',
+      featured: false
+    },
+    {
+      name: 'Growth',
+      price: '99,000',
+      tagline: 'For growing operations that want full revenue visibility.',
+      features: ['3 branches', 'Unlimited staff seats', 'Everything in Starter', 'Live revenue monitoring', 'Refund & void anomaly alerts', 'Priority support'],
+      cta: 'Start free trial',
+      featured: true
+    },
+    {
+      name: 'Enterprise',
+      price: 'Let\'s talk',
+      tagline: 'For multi-brand groups with custom needs.',
+      features: ['Unlimited branches', 'Custom roles & permissions', 'Everything in Growth', 'Dedicated success manager', 'API access & SSO', 'On-site onboarding'],
+      cta: 'Contact sales',
+      featured: false
+    }
+  ];
+
+  faqs = [
+    {
+      question: 'How fast can I set up ServeIQ?',
+      answer: 'Most restaurants go live in under an hour. Import your menu and staff, assign tables, and you\'re operating on the same shift. No dedicated hardware needed — it runs on the devices your team already uses.'
+    },
+    {
+      question: 'Does ServeIQ work with our existing POS?',
+      answer: 'Yes. ServeIQ layers on top of your current setup, reconciling cash, cards, and recorded sales at shift close. You keep your hardware; we bring the visibility and audit trail.'
+    },
+    {
+      question: 'What counts as "leakage" that ServeIQ catches?',
+      answer: 'Anything that moves money off your books: bill edits before payment, voids, refunds, cash collected vs. recorded sales, and orders that never reach a till. Each gets flagged to the right person instantly.'
+    },
+    {
+      question: 'Is my data secure?',
+      answer: 'Every action is logged with a timestamp and staff attribution, and access is locked down by role-based permissions. Your data is encrypted in transit and at rest.'
     }
   ];
 
@@ -89,6 +206,9 @@ export class LandingComponent implements AfterViewInit {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.innerWidth < 768;
+
     let W = window.innerWidth, H = window.innerHeight;
     let scrollProgress = 0;
     const self = this;
@@ -98,12 +218,15 @@ export class LandingComponent implements AfterViewInit {
     const gg = parseInt(hex.slice(3, 5), 16);
     const bb = parseInt(hex.slice(5, 7), 16);
 
+    const gridCols = isMobile ? 2 : 4;
+    const gridRows = isMobile ? 2 : 3;
+
     const tables: TableDef[] = [];
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 4; c++) {
-        const id = r * 4 + c;
+    for (let r = 0; r < gridRows; r++) {
+      for (let c = 0; c < gridCols; c++) {
+        const id = r * gridCols + c;
         const foods: FoodParticle[] = [];
-        const count = 5 + Math.floor(Math.random() * 5);
+        const count = isMobile ? 3 : 5 + Math.floor(Math.random() * 5);
         for (let i = 0; i < count; i++) {
           foods.push({
             angle: (i / count) * Math.PI * 2 + Math.random() * 0.3,
@@ -119,7 +242,7 @@ export class LandingComponent implements AfterViewInit {
           id,
           col: c,
           row: r,
-          pairId: c % 2 === 0 && c < 3 ? id + 1 : (c % 2 === 1 ? id - 1 : -1),
+          pairId: c % 2 === 0 && c < gridCols - 1 ? id + 1 : (c % 2 === 1 ? id - 1 : -1),
           baseX: 0, baseY: 0,
           targetX: 0, targetY: 0,
           foods,
@@ -127,8 +250,9 @@ export class LandingComponent implements AfterViewInit {
       }
     }
 
+    const ambientCount = isMobile ? 20 : 50;
     const ambientParticles: AmbientParticle[] = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < ambientCount; i++) {
       ambientParticles.push({
         x: Math.random() * W,
         y: Math.random() * H,
@@ -145,8 +269,8 @@ export class LandingComponent implements AfterViewInit {
     function layout() {
       const marginX = W * 0.12;
       const marginY = H * 0.18;
-      const spacingX = (W - marginX * 2) / 3;
-      const spacingY = (H - marginY * 2) / 2;
+      const spacingX = (W - marginX * 2) / (gridCols - 1 || 1);
+      const spacingY = (H - marginY * 2) / (gridRows - 1 || 1);
       for (const t of tables) {
         t.baseX = marginX + t.col * spacingX;
         t.baseY = marginY + t.row * spacingY;
@@ -402,11 +526,14 @@ export class LandingComponent implements AfterViewInit {
 
       drawAmbient(phase);
 
-      requestAnimationFrame(animate);
+      if (!prefersReducedMotion && !document.hidden) {
+        requestAnimationFrame(animate);
+      }
     };
 
     resize();
     onScroll();
+
     animate();
   }
 
@@ -435,6 +562,6 @@ export class LandingComponent implements AfterViewInit {
       },
       { threshold: 0.1 }
     );
-    document.querySelectorAll('.feature-card').forEach(card => observer.observe(card));
+    document.querySelectorAll('.feature-card, .step-card, .testimonial-card, .plan-card').forEach(card => observer.observe(card));
   }
 }

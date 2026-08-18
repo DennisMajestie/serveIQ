@@ -6,6 +6,10 @@ import { permissionGuard } from './core/permission.guard';
 export const appRoutes: Route[] = [
   {
     path: '',
+    loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent)
+  },
+  {
+    path: 'login',
     loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
   },
   {
@@ -237,10 +241,6 @@ export const appRoutes: Route[] = [
   {
     path: 'register',
     loadComponent: () => import('./register/register-business.component').then(m => m.RegisterBusinessComponent)
-  },
-  {
-    path: 'login',
-    loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
   },
   {
     path: 'reset-password',
