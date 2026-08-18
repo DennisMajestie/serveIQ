@@ -130,14 +130,14 @@
         </thead>
         <tbody>
           <tr *ngFor="let shift of shifts()">
-            <td>{{ shift.openedAt | date:'mediumDate' }}</td>
-            <td>
+            <td data-label="Date">{{ shift.openedAt | date:'mediumDate' }}</td>
+            <td data-label="Shift">
               <span class="shift-type-badge" [style.background]="shift.template?.color || '#64748b'">
                 {{ shift.template?.name || shift.shiftType || 'Custom' }}
               </span>
             </td>
-            <td>{{ shift.scheduledStartTime }} - {{ shift.scheduledEndTime }}</td>
-<td>
+            <td data-label="Time">{{ shift.scheduledStartTime }} - {{ shift.scheduledEndTime }}</td>
+<td data-label="Staff">
   <div class="staff-avatars" *ngIf="shift.assignedStaff?.length">
     <span *ngFor="let staff of (shift.assignedStaff || []).slice(0, 3)" class="avatar" title="{{ staff.fullName }}">
       {{ staff.fullName.charAt(0) }}
@@ -146,14 +146,14 @@
   </div>
   <span *ngIf="!(shift.assignedStaff?.length)" class="text-muted">—</span>
 </td>
-            <td>{{ formatKobo(shift.startingCashKobo || 0) }}</td>
-            <td>{{ formatKobo(shift.expectedCashKobo || 0) }}</td>
-            <td>{{ formatKobo(shift.actualCashKobo || 0) }}</td>
-            <td [style.color]="getVarianceColor(shift)" [title]="varianceExplanationFor(shift)">
+            <td data-label="Starting Cash">{{ formatKobo(shift.startingCashKobo || 0) }}</td>
+            <td data-label="Expected">{{ formatKobo(shift.expectedCashKobo || 0) }}</td>
+            <td data-label="Actual">{{ formatKobo(shift.actualCashKobo || 0) }}</td>
+            <td data-label="Variance" [style.color]="getVarianceColor(shift)" [title]="varianceExplanationFor(shift)">
               {{ getVariancePrefix(shift) }}{{ formatKobo(getVariance(shift)) }}
             </td>
-            <td><span class="status-badge" [style.background]="getShiftStatusColor(shift.status)">{{ shift.status }}</span></td>
-            <td class="actions-cell">
+            <td data-label="Status"><span class="status-badge" [style.background]="getShiftStatusColor(shift.status)">{{ shift.status }}</span></td>
+            <td data-label="Actions" class="actions-cell">
               <button class="icon-btn" (click)="viewShiftReport(shift)" title="View Report">
                 <span class="material-symbols-outlined">analytics</span>
               </button>

@@ -33,15 +33,15 @@
               <span>{{ terminal.label }}</span>
             </div>
           </td>
-          <td>
+          <td data-label="Account Number">
             <span class="mono">{{ terminal.accountNumber || '—' }}</span>
           </td>
-          <td>
+          <td data-label="Status">
             <span class="status-pill" [class.active]="terminal.isActive" [class.inactive]="!terminal.isActive">
               {{ terminal.isActive ? 'Active' : 'Inactive' }}
             </span>
           </td>
-          <td>
+          <td data-label="Actions">
             <div class="action-buttons">
               <button class="btn-icon" (click)="editTerminal(terminal)" title="Edit">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

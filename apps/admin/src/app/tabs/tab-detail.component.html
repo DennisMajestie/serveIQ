@@ -50,17 +50,17 @@
                 <span class="item-name">{{ item.menuItemName }}</span>
               </div>
             </td>
-            <td>
+            <td data-label="Qty">
               <div class="qty-input-wrapper">
                 <button class="qty-btn" (click)="updateOrderQuantity(item, (item.quantity || 1) - 1)" [disabled]="(item.quantity || 1) <= 1">−</button>
                 <input type="number" [value]="item.quantity || 1" (change)="updateOrderQuantity(item, $event.target.valueAsNumber)" class="qty-input" min="1" style="width: 50px;">
                 <button class="qty-btn" (click)="updateOrderQuantity(item, (item.quantity || 1) + 1)">+</button>
               </div>
             </td>
-            <td>{{ formatKobo(item.priceKobo || 0) }}</td>
-            <td>{{ formatKobo((item.priceKobo || 0) * (item.quantity || 1)) }}</td>
-            <td class="notes-cell">{{ item.notes || '—' }}</td>
-            <td>
+            <td data-label="Price">{{ formatKobo(item.priceKobo || 0) }}</td>
+            <td data-label="Subtotal">{{ formatKobo((item.priceKobo || 0) * (item.quantity || 1)) }}</td>
+            <td data-label="Notes" class="notes-cell">{{ item.notes || '—' }}</td>
+            <td data-label="Actions">
               <button class="action-btn delete" (click)="removeOrderItem(item)" title="Remove Item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               </button>

@@ -145,3 +145,46 @@
   &:hover:not(:disabled) { transform: translateY(-1px); }
   &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 }
+
+/* ===== RESPONSIVE: table -> cards on mobile ===== */
+@media (max-width: 768px) {
+  .waiter-canvas { padding: 16px; }
+
+  .overflow-x-auto thead { display: none; }
+  .overflow-x-auto tbody { display: flex; flex-direction: column; gap: 12px; }
+  .overflow-x-auto tbody tr {
+    display: block;
+    background: var(--surface);
+    border: 1px solid color-mix(in srgb, var(--on-background) 10%, transparent);
+    border-radius: 20px;
+    padding: 4px 16px;
+  }
+  .overflow-x-auto td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--on-background) 6%, transparent);
+  }
+  .overflow-x-auto td:last-child { border-bottom: none; }
+  .overflow-x-auto td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--on-surface-variant);
+    flex-shrink: 0;
+  }
+  .overflow-x-auto td:first-child {
+    justify-content: flex-start;
+    padding-top: 16px;
+  }
+  .overflow-x-auto td:first-child::before { display: none; }
+  .overflow-x-auto td[data-label="Actions"] {
+    justify-content: flex-end;
+    border-bottom: none;
+  }
+  .overflow-x-auto td[data-label="Actions"]::before { display: none; }
+}

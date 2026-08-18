@@ -118,13 +118,13 @@
                     <span class="block text-[12px] leading-none font-medium text-on-surface-variant-60">{{ getRoleLabel(waiter.role) }}</span>
                   </div>
                 </td>
-                <td class="px-6 py-5">
+                <td data-label="Status" class="px-6 py-5">
                   <div class="flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full" [class.bg-[var(--primary)]]="waiter.isActive !== false" [style.background]="waiter.isActive === false ? 'color-mix(in srgb, var(--on-surface-variant) 40%, transparent)' : ''"></span>
                     <span class="text-[var(--on-surface-variant)] text-sm">{{ waiter.isActive !== false ? 'Active' : 'Inactive' }}</span>
                   </div>
                 </td>
-                <td class="px-6 py-5">
+                <td data-label="Actions" class="px-6 py-5">
                   <div class="flex items-center gap-2">
                     <button class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors p-1" (click)="openEditWaiter(waiter)" title="Edit" *appPermission="'edit_staff'">
                       <span class="material-symbols-outlined text-[16px]">edit</span>

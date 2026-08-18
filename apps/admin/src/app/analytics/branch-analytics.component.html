@@ -80,17 +80,17 @@
           </thead>
           <tbody>
             <tr *ngFor="let kpi of branchKPIs(); let i = index" [class.top-rank]="i < 3">
-<td>
+<td data-label="Rank">
   <span class="rank-badge" [class]="getRankClass(kpi.rank!)">{{ kpi.rank }}</span>
 </td>
-              <td class="branch-name">{{ kpi.branchName }}</td>
-              <td class="currency">{{ formatKobo(kpi.totalRevenue) }}</td>
-              <td>{{ kpi.totalOrders | number }}</td>
-              <td class="currency">{{ formatKobo(kpi.avgTicket) }}</td>
-              <td>{{ kpi.tableVelocity }} min</td>
-              <td>{{ kpi.activeTables }}</td>
-              <td>{{ kpi.openTabs }}</td>
-<td>
+              <td data-label="Branch" class="branch-name">{{ kpi.branchName }}</td>
+              <td data-label="Revenue" class="currency">{{ formatKobo(kpi.totalRevenue) }}</td>
+              <td data-label="Orders">{{ kpi.totalOrders | number }}</td>
+              <td data-label="Avg Ticket" class="currency">{{ formatKobo(kpi.avgTicket) }}</td>
+              <td data-label="Table Turnover">{{ kpi.tableVelocity }} min</td>
+              <td data-label="Active Tables">{{ kpi.activeTables }}</td>
+              <td data-label="Open Tabs">{{ kpi.openTabs }}</td>
+<td data-label="Trend">
   <span class="trend-badge" [class]="getTrendClass(kpi.trend!)">
     <span class="material-symbols-outlined">{{ getTrendIcon(kpi.trend!) }}</span>
     {{ kpi.trendValue }}

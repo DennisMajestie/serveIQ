@@ -86,10 +86,10 @@ import { PermissionService } from '../core/permission.service';
                           </div>
                         </div>
                       </td>
-                      <td class="text-center">{{ item.quantity || item.qty }}</td>
-                      <td class="text-right">{{ formatKobo(item.priceKobo || item.price_kobo || item.unitPriceKobo || item.unit_price_kobo || 0) }}</td>
-                      <td class="text-right total">{{ formatKobo((item.priceKobo || item.price_kobo || item.unitPriceKobo || item.unit_price_kobo || 0) * (item.quantity || item.qty || 1)) }}</td>
-                      <td class="text-center">
+                      <td data-label="Qty" class="text-center">{{ item.quantity || item.qty }}</td>
+                      <td data-label="Unit Price" class="text-right">{{ formatKobo(item.priceKobo || item.price_kobo || item.unitPriceKobo || item.unit_price_kobo || 0) }}</td>
+                      <td data-label="Total" class="text-right total">{{ formatKobo((item.priceKobo || item.price_kobo || item.unitPriceKobo || item.unit_price_kobo || 0) * (item.quantity || item.qty || 1)) }}</td>
+                      <td data-label="Actions" class="text-center">
                         <button class="delete-btn" (click)="removeOrderItem(item)" title="Remove item">
                           <span class="material-symbols-outlined">delete</span>
                         </button>
@@ -490,6 +490,59 @@ import { PermissionService } from '../core/permission.service';
       border: none; border-radius: 8px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer;
     }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ===== RESPONSIVE: table -> cards on mobile ===== */
+    @media (max-width: 768px) {
+      .page-content { padding: 16px; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .page-title-section { flex-wrap: wrap; gap: 12px; }
+      .page-actions { width: 100%; }
+      .grid-layout { grid-template-columns: 1fr; gap: 24px; }
+      .table-wrapper { overflow: visible; }
+      .order-table thead { display: none; }
+      .order-table tbody { display: flex; flex-direction: column; gap: 12px; }
+      .order-table .table-row {
+        display: block;
+        background: var(--surface);
+        border: 1px solid var(--outline-variant);
+        border-radius: 16px;
+        padding: 4px 16px;
+        margin: 0;
+      }
+      .order-table .table-row:hover { transform: none; }
+      .order-table td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--outline-variant);
+      }
+      .order-table td:last-child { border-bottom: none; }
+      .order-table td::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--secondary);
+        flex-shrink: 0;
+      }
+      .order-table td[data-label="Actions"] { justify-content: flex-end; }
+      .order-table td[data-label="Actions"]::before { display: none; }
+      .order-table td[data-label="Actions"] .delete-btn { opacity: 1; }
+      .order-table td:first-child {
+        justify-content: flex-start;
+        padding-top: 16px;
+      }
+      .order-table td:first-child::before { display: none; }
+      .order-table td.text-right, .order-table td.text-center {
+        text-align: right;
+        font-family: 'JetBrains Mono', monospace;
+      }
+      .summary-footer { flex-direction: row; gap: 12px; }
+      .summary-footer button { flex: 1; }
+    }
   `]
 })
 export class TableDetailComponent implements OnInit {

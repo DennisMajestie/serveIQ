@@ -87,21 +87,21 @@
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-5">
+              <td data-label="Price" class="px-6 py-5">
                 <span class="font-semibold text-[var(--on-background)]">₦{{ (item.priceKobo / 100).toLocaleString() }}</span>
               </td>
-              <td class="px-6 py-5 text-[var(--on-surface-variant)]">{{ item.unit | titlecase }}</td>
-              <td class="px-6 py-5">
+              <td data-label="Unit" class="px-6 py-5 text-[var(--on-surface-variant)]">{{ item.unit | titlecase }}</td>
+              <td data-label="Serve" class="px-6 py-5">
                 <span class="text-[11px] font-bold uppercase tracking-wide rounded-full px-2.5 py-1" [style.background]="(item.prepType ?? item.prep_type) === 'instant' ? 'color-mix(in srgb, var(--tertiary) 20%, transparent)' : 'color-mix(in srgb, var(--surface-variant) 40%, transparent)'" [class.text-[var(--tertiary)]]="(item.prepType ?? item.prep_type) === 'instant'" [class.text-[var(--on-surface-variant)]]="(item.prepType ?? item.prep_type) !== 'instant'">
                   {{ (item.prepType ?? item.prep_type) === 'instant' ? 'Instant' : 'To cook' }}
                 </span>
               </td>
-              <td class="px-6 py-5">
+              <td data-label="Available" class="px-6 py-5">
                 <button class="px-3 py-1 rounded-full text-xs font-bold transition-colors" [style.background]="item.isAvailable ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : 'color-mix(in srgb, var(--error) 20%, transparent)'" [class.text-[var(--primary)]]="item.isAvailable" [class.text-[var(--error)]]="!item.isAvailable" (click)="toggleAvailability(item)">
                   {{ item.isAvailable ? 'Available' : 'Unavailable' }}
                 </button>
               </td>
-              <td class="px-6 py-5">
+              <td data-label="Actions" class="px-6 py-5">
                 <div class="flex items-center gap-2">
                   <button class="text-[var(--on-surface-variant)] hover:text-[var(--error)] transition-colors p-1" (click)="deleteItem(item)" title="Delete">
                     <span class="material-symbols-outlined text-[16px]">delete</span>

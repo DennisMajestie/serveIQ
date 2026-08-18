@@ -313,6 +313,72 @@
   .stat-grid {
     grid-template-columns: 1fr;
   }
+
+  /* Shifts table -> cards */
+  .shifts-table-container {
+    overflow: visible;
+  }
+  .shifts-table thead {
+    display: none;
+  }
+  .shifts-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .shifts-table tbody tr {
+    display: block;
+    background: var(--surface-container-lowest);
+    border: 1px solid var(--outline-variant);
+    border-radius: 16px;
+    padding: 4px 16px;
+  }
+  .shifts-table th, .shifts-table td {
+    padding: 12px 0;
+  }
+  .shifts-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--outline-variant);
+    font-size: 0.875rem;
+  }
+  .shifts-table td:last-child {
+    border-bottom: none;
+  }
+  .shifts-table td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--secondary);
+    flex-shrink: 0;
+  }
+  .shifts-table td:first-child {
+    justify-content: flex-start;
+    padding-top: 16px;
+    font-weight: 600;
+    color: var(--on-surface);
+  }
+  .shifts-table td:first-child::before {
+    display: none;
+  }
+  .shifts-table td[data-label="Actions"] {
+    justify-content: flex-end;
+    border-bottom: none;
+  }
+  .shifts-table td[data-label="Actions"]::before {
+    display: none;
+  }
+  .shifts-table td[data-label="Actions"] .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .shifts-table td .staff-avatars {
+    justify-content: flex-end;
+  }
 }
 
 /* Header Actions */

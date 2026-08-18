@@ -404,4 +404,42 @@
   .actions-bar { flex-direction: column; }
   .actions-bar button { width: 100%; justify-content: center; }
   .modal-content { max-height: 100vh; border-radius: 0; }
+
+  /* Orders table -> cards */
+  .orders-table thead { display: none; }
+  .orders-table tbody { display: flex; flex-direction: column; gap: 12px; }
+  .orders-table tbody tr {
+    display: block;
+    background: var(--surface-container-lowest);
+    border: 1px solid var(--outline-variant);
+    border-radius: 16px;
+    padding: 4px 16px;
+  }
+  .orders-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--outline-variant);
+  }
+  .orders-table td:last-child { border-bottom: none; }
+  .orders-table td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--secondary);
+    flex-shrink: 0;
+  }
+  .orders-table td:first-child {
+    justify-content: flex-start;
+    padding-top: 16px;
+  }
+  .orders-table td:first-child::before { display: none; }
+  .orders-table td[data-label="Actions"] { justify-content: flex-end; border-bottom: none; }
+  .orders-table td[data-label="Actions"]::before { display: none; }
+  .orders-table td[data-label="Notes"] { max-width: none; white-space: normal; overflow: visible; text-overflow: clip; text-align: right; }
+  .orders-section { padding: 16px; }
 }

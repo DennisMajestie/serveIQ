@@ -533,4 +533,75 @@ tr:hover td { background: var(--surface-container-low); }
   .insights-grid {
     grid-template-columns: 1fr;
   }
+
+  /* Comparison table -> cards */
+  .table-wrapper {
+    overflow: visible;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+  table {
+    min-width: 0;
+  }
+  table thead {
+    display: none;
+  }
+  table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  table tbody tr {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--outline-variant);
+    border-radius: 16px;
+    padding: 4px 16px;
+  }
+  table tbody tr:hover td { background: transparent; }
+  table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--outline-variant);
+    border-top: none;
+    font-size: 13px;
+  }
+  table td:last-child {
+    border-bottom: none;
+  }
+  table td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--secondary);
+    flex-shrink: 0;
+  }
+  table td:first-child {
+    justify-content: flex-start;
+    padding-top: 16px;
+  }
+  table td:first-child::before {
+    display: none;
+  }
+  table td[data-label="Trend"] {
+    justify-content: flex-end;
+    border-bottom: none;
+  }
+  table td[data-label="Trend"]::before {
+    display: none;
+  }
+  .branch-name {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    font-weight: 600;
+    text-align: right;
+  }
 }
