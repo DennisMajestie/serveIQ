@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,7 +20,7 @@ export class LegacyOpenTabComponent implements OnInit {
   private tablesApi = inject(TablesApiService);
 
   tableId = '';
-  tableName = 'Table —';
+  tableName = signal('Table —');
   customerName = '';
   numPeople = 1;
   isLoading = true;
@@ -31,7 +31,7 @@ export class LegacyOpenTabComponent implements OnInit {
       this.tableId = id;
       this.tablesApi.getTable(id).subscribe({
         next: (table: Table) => {
-          this.tableName = `Table ${table.tableNumber}`;
+          this.tableName.set(`Table ${table.tableNumber}`);
           this.isLoading = false;
         },
         error: () => {

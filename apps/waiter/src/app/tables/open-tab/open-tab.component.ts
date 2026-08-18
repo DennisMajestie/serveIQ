@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,7 +24,7 @@ export class OpenTabComponent implements OnInit {
   private network = inject(NetworkService);
 
   tableId = '';
-  tableName = 'Table —';
+  tableName = signal('Table —');
   customerName = '';
   numPeople = 1;
   tabType: 'dine_in' | 'takeaway' = 'dine_in';
@@ -56,7 +56,7 @@ export class OpenTabComponent implements OnInit {
   private loadTableDetails() {
     this.tablesApi.getTable(this.tableId).subscribe({
       next: (table: Table) => {
-        this.tableName = `Table ${table.tableNumber}`;
+        this.tableName.set(`Table ${table.tableNumber}`);
         this.isLoading = false;
       },
       error: () => {
