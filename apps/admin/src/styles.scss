@@ -280,6 +280,21 @@ body.fonts-loaded mat-icon {
   border-color: var(--outline) !important;
 }
 
+/* ===== Mobile: prevent tap/input zoom ===== */
+@media (max-width: 768px) {
+  /* Kills iOS double-tap-to-zoom on taps while preserving pinch zoom */
+  button, a, [role="button"], [role="tab"], label, select, input, textarea, .swal2-popup * {
+    touch-action: manipulation;
+  }
+
+  /* iOS auto-zooms into inputs with font-size < 16px; bump them so focus doesn't zoom */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 /* ===== SweetAlert2 Theme Overrides ===== */
 .swal2-popup {
   border: 1px solid color-mix(in srgb, var(--on-background) 10%, transparent);
