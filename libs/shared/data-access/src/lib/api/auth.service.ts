@@ -23,6 +23,21 @@ export interface AuthResponse {
   };
 }
 
+export interface MeResponse {
+  id: string;
+  email: string;
+  fullName: string | null;
+  role: string;
+  roleName: string | null;
+  role_id: string | null;
+  businessId: string;
+  branchId: string;
+  businessName: string | null;
+  branchName: string | null;
+  isActive: boolean;
+  permissions: string[];
+}
+
 let _adminToken: string | null = null;
 let _staffToken: string | null = null;
 
@@ -68,6 +83,35 @@ export class AuthService {
     return _staffToken || _adminToken
       || localStorage.getItem(STAFF_TOKEN_KEY)
       || localStorage.getItem(ADMIN_TOKEN_KEY);
+  }
+
+  /** Decode the signed JWT payload to read the authoritative role claim */
+  getTokenRole(): string {
+    const token = this.getToken();
+    if (!token) return '';
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return (payload.role || '').toLowerCase();
+    } catch {
+      return '';
+    }
+  }
+
+  /** Fetch the authoritative current user from the backend */
+  getMe(): Observable<MeResponse> {
+    return this.http.get<MeResponse>(`${this.apiUrl}/api/v1/auth/me`, {
+      withCredentials: true
+    }).pipe(
+      tap((me) => {
+        if (me.role === 'superadmin') {
+          localStorage.setItem('userRole', 'super_admin');
+        } else {
+          localStorage.setItem('userRole', me.role);
+        }
+        if (me.businessId) localStorage.setItem('businessId', me.businessId);
+        if (me.branchId) localStorage.setItem('branchId', me.branchId);
+      })
+    );
   }
 
   setToken(token: string): void {

@@ -1,11 +1,18 @@
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { CanActivateFn, Router, UrlTree } from '@angular/router';
+import { PermissionService } from './permission.service';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-export const ownerGuard = () => {
+export const ownerGuard: CanActivateFn = (): Observable<boolean | UrlTree> => {
   const router = inject(Router);
-  const role = localStorage.getItem('userRole');
-  if (role === 'owner' || role === 'super_admin') {
-    return true;
-  }
-  return router.parseUrl('/login');
+  const permissionService = inject(PermissionService);
+  return permissionService.loadPermissions().pipe(
+    map(() => {
+      if (permissionService.isOwner()) {
+        return true;
+      }
+      return router.parseUrl('/login');
+    })
+  );
 };
