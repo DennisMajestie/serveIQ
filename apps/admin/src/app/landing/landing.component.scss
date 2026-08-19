@@ -224,13 +224,22 @@
   pointer-events: none;
 }
 
-.hero-content, .hero-mockup {
+.hero-container {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: center;
 
   @media (min-width: 768px) {
     padding: 0 40px;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
   }
 }
 
@@ -239,11 +248,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 20px;
-
-  @media (min-width: 1024px) {
-    max-width: 560px;
-    margin: 0;
-  }
+  max-width: 560px;
 }
 
 .hero-badge {
@@ -374,15 +379,12 @@
 
 /* Mockup */
 .hero-mockup {
-  margin-top: 48px;
+  .mockup-card {
+    max-width: 480px;
 
-  @media (min-width: 1024px) {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-top: 0;
-    padding-right: 24px;
+    @media (min-width: 1024px) {
+      margin-left: auto;
+    }
   }
 }
 

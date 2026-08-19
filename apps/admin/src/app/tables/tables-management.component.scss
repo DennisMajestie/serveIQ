@@ -5,6 +5,10 @@
   min-height: 100%;
 }
 
+@media (max-width: 768px) {
+  .tables-canvas { padding: 16px; }
+}
+
 .glass-card {
   background: var(--surface-container);
   border: 1px solid var(--outline-variant);
