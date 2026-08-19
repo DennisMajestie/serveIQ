@@ -12,8 +12,9 @@
       <span class="brand-wordmark">Serve<span class="brand-accent">IQ</span></span>
     </div>
     <div class="nav-links" [class.open]="mobileMenuOpen">
-      <a class="nav-link active" href="#features">Product</a>
+      <a class="nav-link active" href="#leaks">The Problem</a>
       <a class="nav-link" href="#how-it-works">How it works</a>
+      <a class="nav-link" href="#showcase">Product</a>
       <a class="nav-link" href="#pricing">Pricing</a>
       <a class="nav-link" href="#faq">FAQ</a>
       <div class="nav-actions-mobile">
@@ -48,57 +49,63 @@
   <section class="hero">
     <div class="hero-container">
       <div class="hero-content">
-      <div class="hero-badge">
-        <span class="material-symbols-outlined text-tertiary text-lg">warning</span>
-        <span>RESTAURANTS LOSE 4-8% OF REVENUE TO UNSEEN LEAKAGE</span>
-      </div>
-      <h1 class="hero-title">Every order. Every table.<br/>Every <span class="text-gradient">naira</span>, accounted for.</h1>
-      <p class="hero-desc">Stop the leakage. ServeIQ gives you total visibility into every transaction, payment, and staff action so nothing slips through the cracks.</p>
-      <div class="hero-actions">
-        <a routerLink="/register" class="btn btn-primary">Book a demo</a>
-        <a href="#pricing" class="btn btn-outline">See pricing</a>
-      </div>
-      <div class="hero-proof">
-        <div class="avatar-stack">
-          <span class="avatar" style="--avatar-color:#4be277">A</span>
-          <span class="avatar" style="--avatar-color:#93ccff">K</span>
-          <span class="avatar" style="--avatar-color:#adc6ff">T</span>
-          <span class="avatar" style="--avatar-color:#ffb4ab">O</span>
+        <div class="hero-badge">
+          <span class="material-symbols-outlined text-lg">security</span>
+          <span>Revenue leakage protection for restaurants</span>
         </div>
-        <div>
-          <div class="stars">
-            <span class="material-symbols-outlined text-lg">star</span>
-            <span class="material-symbols-outlined text-lg">star</span>
-            <span class="material-symbols-outlined text-lg">star</span>
-            <span class="material-symbols-outlined text-lg">star</span>
-            <span class="material-symbols-outlined text-lg">star</span>
+        <h1 class="hero-title">Every order. Every table. Every cent, <span class="text-gradient">protected.</span></h1>
+        <p class="hero-desc">ServeIQ catches the silent leaks — voided orders, edited bills, cash gaps, and unreconciled sales — before they ever hit your bottom line.</p>
+        <div class="hero-actions">
+          <a routerLink="/register" class="btn btn-primary">Book a demo</a>
+          <a href="#showcase" class="btn btn-outline">See it in action</a>
+        </div>
+        <div class="hero-proof">
+          <div class="avatar-stack">
+            <span class="avatar" style="--avatar-color:#4be277">A</span>
+            <span class="avatar" style="--avatar-color:#93ccff">K</span>
+            <span class="avatar" style="--avatar-color:#adc6ff">T</span>
+            <span class="avatar" style="--avatar-color:#ffb4ab">O</span>
           </div>
-          <span class="proof-text">Trusted by 120+ restaurants recovering <b>₦380M+</b> a year</span>
-        </div>
-      </div>
-    </div>
-    <div class="hero-mockup">
-      <div class="mockup-card">
-        <div class="mockup-header">
-          <h3 class="mockup-title">
-            <span class="material-symbols-outlined text-primary">security</span>
-            Live Revenue Protection
-          </h3>
-          <span class="mockup-badge"><span class="live-dot"></span> LIVE</span>
-        </div>
-        <div class="mockup-alerts">
-          @for (alert of alerts; track alert.title) {
-            <div class="alert-card" [class]="'alert-' + alert.color">
-              <span class="material-symbols-outlined" [class]="'text-' + alert.color">{{ alert.icon }}</span>
-              <div>
-                <p class="alert-title">{{ alert.title }}</p>
-                <span class="alert-desc">{{ alert.desc }}</span>
-              </div>
+          <div>
+            <div class="stars">
+              <span class="material-symbols-outlined text-lg">star</span>
+              <span class="material-symbols-outlined text-lg">star</span>
+              <span class="material-symbols-outlined text-lg">star</span>
+              <span class="material-symbols-outlined text-lg">star</span>
+              <span class="material-symbols-outlined text-lg">star</span>
             </div>
-          }
+            <span class="proof-text">Trusted by 120+ restaurants protecting their revenue</span>
+          </div>
         </div>
       </div>
-    </div>
+      <div class="hero-mockup">
+        <div class="mockup-card">
+          <div class="mockup-header">
+            <h3 class="mockup-title">
+              <span class="material-symbols-outlined text-primary">shield_with_heart</span>
+              Revenue Protection
+            </h3>
+            <span class="mockup-badge"><span class="live-dot"></span> LIVE</span>
+          </div>
+          <div class="mockup-metric">
+            <span class="metric-label">Protected today</span>
+            <span class="metric-value">$2,340</span>
+            <span class="metric-delta">+12% vs yesterday</span>
+          </div>
+          <div class="mockup-alerts">
+            @for (alert of alerts; track alert.title) {
+              <div class="alert-card" [class]="'alert-' + alert.color">
+                <span class="material-symbols-outlined" [class]="'text-' + alert.color">{{ alert.icon }}</span>
+                <div>
+                  <p class="alert-title">{{ alert.title }}</p>
+                  <span class="alert-desc">{{ alert.desc }}</span>
+                </div>
+                <span class="alert-chip">Caught</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
     </div>
     <div class="scroll-indicator">
       <div class="scroll-mouse"></div>
@@ -124,17 +131,44 @@
   <section class="stats-bar">
     <div class="stats-grid">
       <div class="stat-item">
-        <span class="stat-number">100%</span>
-        <p class="stat-label">Orders traceable to a waiter</p>
+        <span class="stat-number">4-8%</span>
+        <p class="stat-label">of revenue leaks on average</p>
       </div>
       <div class="stat-item bordered">
-        <span class="stat-number">Zero Overlap</span>
-        <p class="stat-label">1 table, 1 waiter logic</p>
+        <span class="stat-number">$1,900</span>
+        <p class="stat-label">recovered per location / month</p>
       </div>
       <div class="stat-item">
-        <span class="stat-number">4-8%</span>
-        <p class="stat-label">Revenue recovered on average</p>
+        <span class="stat-number">100%</span>
+        <p class="stat-label">of orders traceable to a staff member</p>
       </div>
+    </div>
+  </section>
+
+  <!-- Where Money Leaks -->
+  <section class="leaks" id="leaks">
+    <div class="features-intro">
+      <span class="section-eyebrow">The problem</span>
+      <h2 class="features-title">Your restaurant is losing money in six quiet places</h2>
+      <p class="features-desc">None of these show up on a standard sales report. ServeIQ surfaces all of them, in real time.</p>
+    </div>
+    <div class="leaks-grid">
+      @for (leak of leaks; track leak.title) {
+        <div class="leak-card glass-card">
+          <div class="leak-head">
+            <div class="feature-icon-wrap">
+              <span class="material-symbols-outlined text-[var(--error)] text-[32px]">{{ leak.icon }}</span>
+            </div>
+            <span class="leak-amount">${{ leak.amount }}</span>
+          </div>
+          <h3 class="feature-title">{{ leak.title }}</h3>
+          <p class="feature-desc">{{ leak.desc }}</p>
+          <div class="leak-flag">
+            <span class="material-symbols-outlined text-primary">sensors</span>
+            <span>Flagged by ServeIQ</span>
+          </div>
+        </div>
+      }
     </div>
   </section>
 
@@ -159,12 +193,64 @@
     </div>
   </section>
 
+  <!-- Live Product Showcase -->
+  <section class="showcase" id="showcase">
+    <div class="features-intro">
+      <span class="section-eyebrow">Product tour</span>
+      <h2 class="features-title">See every leak before it costs you money</h2>
+      <p class="features-desc">One dashboard. Three views: catch, trace, recover.</p>
+    </div>
+    <div class="showcase-tabs" role="tablist" [attr.aria-label]="'Product views'">
+      @for (tab of showcaseTabs; track tab.id; let i = $index) {
+        <button
+          class="showcase-tab"
+          [class.active]="activeShowcaseTab === i"
+          role="tab"
+          [attr.aria-selected]="activeShowcaseTab === i"
+          [attr.aria-controls]="'showcase-panel-' + tab.id"
+          id="'showcase-tab-' + tab.id"
+          (click)="setShowcaseTab(i)"
+        >
+          <span class="material-symbols-outlined">{{ tab.icon }}</span>
+          <span>{{ tab.label }}</span>
+        </button>
+      }
+    </div>
+    <div class="showcase-panel glass-card" [id]="'showcase-panel-' + showcaseTabs[activeShowcaseTab].id" role="tabpanel">
+      <div class="showcase-panel-inner">
+        <div class="showcase-copy">
+          <h3 class="showcase-title">{{ showcaseTabs[activeShowcaseTab].title }}</h3>
+          <p class="showcase-desc">{{ showcaseTabs[activeShowcaseTab].desc }}</p>
+          <ul class="showcase-points">
+            @for (point of showcaseTabs[activeShowcaseTab].points; track point) {
+              <li><span class="material-symbols-outlined text-check">check</span>{{ point }}</li>
+            }
+          </ul>
+          <a routerLink="/register" class="btn btn-primary showcase-cta">Try it free</a>
+        </div>
+        <div class="showcase-visual">
+          @for (row of showcaseTabs[activeShowcaseTab].rows; track row.label) {
+            <div class="trace-row" [class]="'trace-' + row.state">
+              <span class="trace-icon material-symbols-outlined">{{ row.icon }}</span>
+              <div class="trace-main">
+                <span class="trace-label">{{ row.label }}</span>
+                <span class="trace-meta">{{ row.meta }}</span>
+              </div>
+              <span class="trace-value">{{ row.value }}</span>
+              <span class="trace-status">{{ row.status }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Features -->
   <section class="features" id="features">
     <div class="features-intro">
       <span class="section-eyebrow">Why ServeIQ</span>
       <h2 class="features-title">Designed for Complete Operational Precision</h2>
-      <p class="features-desc">Eliminate disputes, track every kobo, and regain control of your floor.</p>
+      <p class="features-desc">Eliminate disputes, track every cent, and regain control of your floor.</p>
     </div>
     <div class="features-grid">
       @for (feature of features; track feature.title) {
@@ -228,7 +314,7 @@
           }
           <h3 class="plan-name">{{ plan.name }}</h3>
           <div class="plan-price">
-            <span class="plan-currency">₦</span>
+            <span class="plan-currency">$</span>
             <span class="plan-amount">{{ plan.price }}</span>
             <span class="plan-period">/month</span>
           </div>

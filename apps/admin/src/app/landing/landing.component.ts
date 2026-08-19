@@ -49,6 +49,7 @@ export class LandingComponent implements AfterViewInit {
 
   mobileMenuOpen = false;
   openFaq: number | null = 0;
+  activeShowcaseTab = 0;
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
@@ -61,6 +62,106 @@ export class LandingComponent implements AfterViewInit {
   toggleFaq(index: number): void {
     this.openFaq = this.openFaq === index ? null : index;
   }
+
+  setShowcaseTab(index: number): void {
+    this.activeShowcaseTab = index;
+  }
+
+  leaks = [
+    {
+      icon: 'edit_off',
+      title: 'Bill edits before payment',
+      desc: 'Prices quietly changed on checks at the last second — a classic walkout-style leak that never appears on reports.',
+      amount: '960'
+    },
+    {
+      icon: 'restaurant',
+      title: 'Voided orders',
+      desc: 'Meals served, then voided after the fact. Food leaves the kitchen, but nothing reaches the till.',
+      amount: '2,100'
+    },
+    {
+      icon: 'payments',
+      title: 'Cash vs. card gaps',
+      desc: 'Cash collected at the table rarely matches recorded sales. The difference disappears with the shift.',
+      amount: '1,400'
+    },
+    {
+      icon: 'currency_exchange',
+      title: 'Refund frequency',
+      desc: 'The same cashier or waiter refunding again and again — sometimes for orders that were never paid for.',
+      amount: '780'
+    },
+    {
+      icon: 'person_off',
+      title: 'Unassigned orders',
+      desc: 'Food served with no waiter on record means no one owns the table — and no one answers for the money.',
+      amount: '1,150'
+    },
+    {
+      icon: 'inventory_2',
+      title: 'Inventory shrinkage',
+      desc: 'Stock consumed with no matching order. Portioning, theft, or waste — invisible until ServeIQ ties it to orders.',
+      amount: '890'
+    }
+  ];
+
+  showcaseTabs = [
+    {
+      id: 'catch',
+      icon: 'sensors',
+      label: 'Catch',
+      title: 'Catch leaks the moment they happen',
+      desc: 'Every suspicious action — a bill edited three times, a refund spike, cash that doesn\u2019t match — is flagged instantly to the right person.',
+      points: [
+        'Real-time alerts, not end-of-month surprises',
+        'Thresholds tuned to your floor',
+        'Alerts routed to owner, manager, or shift lead'
+      ],
+      rows: [
+        { icon: 'edit_calendar', label: 'Table 7 bill edited 3 times before payment', meta: '2 min ago · Waiter #402', value: '$84', status: 'Caught', state: 'danger' },
+        { icon: 'person_off', label: 'Same cashier processed 5 refunds today', meta: 'Today · Cashier #118', value: '5×', status: 'Flagged', state: 'warn' },
+        { icon: 'account_balance_wallet', label: 'Cash exceeds recorded sales', meta: 'Shift close · Branch A', value: '$212', status: 'Flagged', state: 'warn' },
+        { icon: 'verified', label: 'All other orders reconciled', meta: 'Last 60 min', value: '$3,410', status: 'Secure', state: 'ok' }
+      ]
+    },
+    {
+      id: 'trace',
+      icon: 'history',
+      label: 'Trace',
+      title: 'Every action has an owner',
+      desc: 'Edits, voids, refunds, and discounts carry a high-resolution timestamp and the staff member who did it. No more guessing who to ask.',
+      points: [
+        'Full audit trail per action',
+        'Instant staff attribution',
+        'Disputes settle in seconds'
+      ],
+      rows: [
+        { icon: 'edit_note', label: 'Bill edit', meta: 'Waiter #402 · John D. · 14:32:08', value: '-$12', status: 'Tracked', state: 'warn' },
+        { icon: 'delete', label: 'Order void', meta: 'Waiter #211 · Ada O. · 13:05:44', value: '-$36', status: 'Tracked', state: 'warn' },
+        { icon: 'sell', label: 'Discount applied', meta: 'Manager · K. Smith · 12:18:03', value: '-$8', status: 'Tracked', state: 'info' },
+        { icon: 'receipt_long', label: 'Order closed', meta: 'Waiter #402 · John D. · 14:31:59', value: '$210', status: 'Tracked', state: 'ok' }
+      ]
+    },
+    {
+      id: 'recover',
+      icon: 'savings',
+      label: 'Recover',
+      title: 'Close the shift with the till on the books',
+      desc: 'Shift-close reports reconcile cash, cards, and recorded sales — so discrepancies are caught before they become losses.',
+      points: [
+        'Cash vs. recorded sales checks',
+        'Refund & void anomaly alerts',
+        'Discrepancy detection at shift close'
+      ],
+      rows: [
+        { icon: 'account_balance_wallet', label: 'Cash reconciled', meta: 'Branch A · Night shift', value: '$4,220', status: 'Matched', state: 'ok' },
+        { icon: 'credit_card', label: 'Card payments reconciled', meta: 'Branch A · Night shift', value: '$2,190', status: 'Matched', state: 'ok' },
+        { icon: 'warning', label: 'Cash gap flagged', meta: 'Branch B · Day shift', value: '-$145', status: 'Escalated', state: 'danger' },
+        { icon: 'savings', label: 'Recovered this month', meta: 'All branches', value: '$1,900', status: 'Protected', state: 'ok' }
+      ]
+    }
+  ];
 
   features = [
     {
@@ -121,7 +222,7 @@ export class LandingComponent implements AfterViewInit {
 
   testimonials = [
     {
-      quote: 'We found ₦1.2M in lost revenue in our first month. The refund and void alerts alone paid for the subscription ten times over.',
+      quote: 'We found $1.2M in lost revenue in our first month. The refund and void alerts alone paid for the subscription ten times over.',
       name: 'Adaeze Okonkwo',
       role: 'Owner, Naija Grills Lekki',
       color: '#4be277'
@@ -143,7 +244,7 @@ export class LandingComponent implements AfterViewInit {
   plans = [
     {
       name: 'Starter',
-      price: '49,000',
+      price: '49',
       tagline: 'For single-location restaurants getting a grip on leakage.',
       features: ['1 branch', '10 staff seats', 'Table ownership & audit trail', 'Shift-close reports', 'Email support'],
       cta: 'Start free trial',
@@ -151,7 +252,7 @@ export class LandingComponent implements AfterViewInit {
     },
     {
       name: 'Growth',
-      price: '99,000',
+      price: '99',
       tagline: 'For growing operations that want full revenue visibility.',
       features: ['3 branches', 'Unlimited staff seats', 'Everything in Starter', 'Live revenue monitoring', 'Refund & void anomaly alerts', 'Priority support'],
       cta: 'Start free trial',
@@ -189,7 +290,7 @@ export class LandingComponent implements AfterViewInit {
   alerts = [
     { icon: 'edit_calendar', color: 'tertiary', title: 'Table 7 bill edited 3 times before payment', desc: 'Potential bill splitting manipulation' },
     { icon: 'person_off', color: 'amber', title: 'Same cashier processed 5 refunds today', desc: 'Unusual refund frequency threshold exceeded' },
-    { icon: 'account_balance_wallet', color: 'tertiary', title: 'Cash collected exceeds recorded sales by ₦12,400', desc: 'Discrepancy detected at Shift Close' },
+    { icon: 'account_balance_wallet', color: 'tertiary', title: 'Cash collected exceeds recorded sales by $212', desc: 'Discrepancy detected at Shift Close' },
     { icon: 'cancel_presentation', color: 'primary', title: 'One waiter voids far more orders than the rest of the floor', desc: 'Performance anomaly: Waiter ID #402 (John D.)' }
   ];
 
@@ -583,6 +684,6 @@ export class LandingComponent implements AfterViewInit {
       },
       { threshold: 0.1 }
     );
-    document.querySelectorAll('.feature-card, .step-card, .testimonial-card, .plan-card').forEach(card => observer.observe(card));
+    document.querySelectorAll('.feature-card, .step-card, .testimonial-card, .plan-card, .leak-card').forEach(card => observer.observe(card));
   }
 }
