@@ -129,6 +129,9 @@
   color: var(--primary);
   letter-spacing: -0.02em;
   margin: 0;
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
 }
 
 .dash-subtitle {

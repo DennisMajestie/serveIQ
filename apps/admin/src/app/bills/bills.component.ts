@@ -178,6 +178,7 @@ interface BillWithTab {
     .page-header { margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; }
     .title-group { display: flex; flex-direction: column; gap: 8px; }
     .page-title { margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; color: var(--on-surface); }
+    @media (max-width: 768px) { .page-title { font-size: 1.5rem; } }
     .page-subtitle { margin: 0; font-size: 1rem; color: var(--secondary); }
 
     .summary-bar { display: flex; gap: 32px; flex-wrap: wrap; background: var(--surface-container); border-radius: 16px; padding: 20px 24px; }

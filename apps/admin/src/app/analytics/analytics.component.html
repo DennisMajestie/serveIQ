@@ -1,7 +1,7 @@
 <div class="analytics-canvas space-y-8">
   <!-- Header -->
   <header class="flex flex-col gap-1">
-    <h2 class="text-[32px] leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Analytics</h2>
+    <h2 class="text-[24px] leading-[32px] sm:text-[32px] sm:leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Analytics</h2>
     <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Real-time revenue intelligence and staff performance metrics</p>
   </header>
 
@@ -23,7 +23,7 @@
     <section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
       <div>
         <p class="text-[14px] leading-none font-semibold text-[var(--secondary)] uppercase tracking-[0.3em] mb-2 opacity-70" style="font-family:'Inter',sans-serif">Global Revenue Pulse</p>
-        <h2 class="text-[64px] font-bold text-[var(--on-background)] leading-tight" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 15px color-mix(in srgb, var(--primary) 40%, transparent)">{{ kpiMetrics()[0]?.value || '₦0' }}</h2>
+        <h2 class="text-[36px] sm:text-[64px] font-bold text-[var(--on-background)] leading-tight" style="font-family:'Space Grotesk',sans-serif;text-shadow:0 0 15px color-mix(in srgb, var(--primary) 40%, transparent)">{{ kpiMetrics()[0]?.value || '₦0' }}</h2>
           <div class="flex items-center gap-2 mt-2">
             <div class="flex items-center text-[var(--primary)] px-3 py-1 rounded-full" style="background: color-mix(in srgb, var(--primary) 10%, transparent)">
               @if (kpiMetrics()[0]?.trend === 'up') {

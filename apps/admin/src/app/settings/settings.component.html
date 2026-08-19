@@ -43,7 +43,7 @@
       } @else {
         <!-- Header -->
         <div class="mb-10">
-          <h2 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">
+          <h2 class="text-[24px] leading-[1.2] sm:text-[32px] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">
             {{ activeSection() === 'branch-setup' ? 'Branch Settings' : activeSection() === 'payment' ? 'Payment & Webhooks' : activeSection() === 'branding' ? 'Branding' : activeSection() === 'staff' ? 'Staff Management' : activeSection() === 'security' ? 'Security' : 'Email Verification' }}
           </h2>
           <p class="text-[var(--on-surface-variant)] text-[18px] leading-[1.6] mt-1" style="font-family:'Inter',sans-serif">
@@ -72,7 +72,7 @@
                   <input type="email" [ngModel]="profileEmail()" (ngModelChange)="profileEmail.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="email@business.com" style="font-family:'Inter',sans-serif" />
                 </div>
               </div>
-              <button (click)="updateProfile()" [disabled]="isUpdatingProfile()" class="mt-6 px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+              <button (click)="updateProfile()" [disabled]="isUpdatingProfile()" class="mt-6 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
                 {{ isUpdatingProfile() ? 'Saving...' : 'Save Changes' }}
               </button>
             </div>
@@ -144,7 +144,7 @@
                   </div>
                   <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Your Branches</h3>
                 </div>
-                <button (click)="showCreateBranch()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all flex items-center gap-2" style="font-family:'Inter',sans-serif">
+                <button (click)="showCreateBranch()" class="px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all flex items-center gap-2" style="font-family:'Inter',sans-serif">
                   <span class="material-symbols-outlined text-sm">add</span>
                   Add Branch
                 </button>
@@ -427,7 +427,7 @@
           <div class="space-y-6">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Waiters</h3>
-              <button (click)="showCreateWaiter()" class="px-6 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all flex items-center gap-2" style="font-family:'Inter',sans-serif">
+              <button (click)="showCreateWaiter()" class="px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all flex items-center gap-2" style="font-family:'Inter',sans-serif">
                 <span class="material-symbols-outlined text-sm">add</span>
                 Add Waiter
               </button>

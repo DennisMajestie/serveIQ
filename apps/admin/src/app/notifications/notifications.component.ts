@@ -46,6 +46,7 @@ import Swal from 'sweetalert2';
     .notifications-page { padding: 24px; max-width: 800px; }
     .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
     .page-header h1 { margin: 0; font-size: 28px; font-weight: 700; color: var(--on-surface); }
+    @media (max-width: 768px) { .page-header h1 { font-size: 22px; } }
 
     .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
     .btn-outline { background: transparent; border: 1px solid var(--outline-variant); color: var(--secondary); }

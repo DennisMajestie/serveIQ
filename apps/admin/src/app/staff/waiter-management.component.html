@@ -2,10 +2,10 @@
   <!-- Header -->
   <header class="flex justify-between items-start">
     <div class="flex flex-col gap-1">
-      <h2 class="text-[32px] leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Staff Management</h2>
+      <h2 class="text-[24px] leading-[32px] sm:text-[32px] sm:leading-[40px] font-bold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Staff Management</h2>
       <p class="text-[16px] leading-[24px] text-[var(--secondary)]" style="font-family:'Inter',sans-serif">Manage your staff roster and performance</p>
     </div>
-    <button class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 shadow-lg" (click)="openAddStaffModal()" *appPermission="'create_staff'">
+    <button class="bg-[var(--primary)] text-[var(--on-primary)] px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold text-sm flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 shadow-lg" (click)="openAddStaffModal()" *appPermission="'create_staff'">
       <span class="material-symbols-outlined">person_add</span>
       Add Staff
     </button>
@@ -16,7 +16,7 @@
       <!-- Top Performers (8 cols) -->
       <section class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="col-span-full mb-2">
-          <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Top Performers</h3>
+          <h3 class="text-[20px] leading-[1.2] sm:text-[32px] font-semibold text-[var(--on-background)] tracking-tight" style="font-family:'Space Grotesk',sans-serif">Top Performers</h3>
         </div>
         <ng-container *ngIf="filteredWaiters().length > 0; else noStaff">
           <div *ngFor="let tp of topPerformers(); let i = index" class="glass-card p-6 rounded-[32px] flex items-center gap-6">
@@ -54,7 +54,7 @@
       <!-- Duty State (4 cols) -->
       <aside class="col-span-12 lg:col-span-4 glass-card p-6 rounded-[40px] flex flex-col gap-6">
         <div class="flex justify-between items-center">
-          <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Duty State</h3>
+          <h3 class="text-[20px] leading-[1.2] sm:text-[32px] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Duty State</h3>
           <span class="text-[var(--primary)] text-[12px] leading-none font-medium px-2 py-1 bg-primary-10 rounded-lg">{{ filteredWaiters().length }} Active</span>
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -75,7 +75,7 @@
       <!-- Personnel Roster (8 cols) -->
       <section class="col-span-12 lg:col-span-8 glass-card rounded-[40px] overflow-hidden">
         <div class="p-6 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Personnel Roster</h3>
+          <h3 class="text-[20px] leading-[1.2] sm:text-[32px] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Personnel Roster</h3>
           <div class="flex items-center gap-2 w-full sm:w-auto">
             <div class="relative flex-1 sm:flex-initial">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--on-surface-variant)] text-[18px]">search</span>
@@ -148,7 +148,7 @@
 
       <!-- Shift Load (4 cols) -->
       <section class="col-span-12 lg:col-span-4 glass-card p-6 rounded-[40px] flex flex-col gap-6">
-        <h3 class="text-[32px] leading-[1.2] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Shift Load</h3>
+        <h3 class="text-[20px] leading-[1.2] sm:text-[32px] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Shift Load</h3>
         <div class="flex-grow flex items-end justify-between gap-2 h-40 pb-4">
           <div class="w-full bg-primary-20 rounded-t-lg relative" style="height: 30%">
             <div class="absolute inset-0 bg-primary-40 rounded-t-lg blur-[4px]"></div>
