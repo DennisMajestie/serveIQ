@@ -113,6 +113,7 @@ import Swal from 'sweetalert2';
   styles: [`
     .page-container { padding: 24px; margin: 0 auto; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    @media (max-width: 768px) { .page-header { flex-direction: column; align-items: flex-start; gap: 12px; } }
     .page-header h1 { margin: 0; font-size: 24px; }
     .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 10px; background: var(--primary); color: var(--on-primary); font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 25%, transparent); }
     .btn-primary:hover:not(:disabled) { opacity: 0.9; }

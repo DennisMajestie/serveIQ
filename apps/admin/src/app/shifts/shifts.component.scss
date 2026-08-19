@@ -316,6 +316,13 @@
   .page-title {
     font-size: 1.5rem;
   }
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .header-actions {
+    width: 100%;
+  }
 
   /* Shifts table -> cards */
   .shifts-table-container {

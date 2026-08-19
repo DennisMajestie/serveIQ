@@ -496,6 +496,9 @@ select.form-input {
   .card-body { flex-direction: column; gap: 12px; }
   .tally-summary { grid-template-columns: repeat(2, 1fr); }
   .page-title { font-size: 1.5rem; }
+  .btn-primary, .btn-secondary, .btn-danger {
+    flex: none;
+  }
 }
 
 /* Radio group */

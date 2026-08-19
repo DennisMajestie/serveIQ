@@ -320,6 +320,12 @@
     padding: 16px;
   }
 
+  .section-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
   .data-table thead {
     display: none;
   }
