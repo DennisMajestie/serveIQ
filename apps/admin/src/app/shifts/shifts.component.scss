@@ -31,6 +31,10 @@
 }
 
 .btn-primary, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 12px 24px;
   border: none;
   border-radius: 10px;
@@ -38,6 +42,13 @@
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.btn-primary, .btn-secondary {
+  .material-symbols-outlined {
+    font-size: 20px;
+    line-height: 1;
+  }
 }
 
 .btn-primary {
