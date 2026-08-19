@@ -1,37 +1,26 @@
-<div id="shader-bg"></div>
-<canvas class="fixed inset-0" id="luxury-canvas" #luxuryCanvas></canvas>
-<div class="canvas-overlay"></div>
-
-<header class="landing-header">
+<header class="landing-header" id="home">
   <nav class="nav-container">
-    <div class="nav-brand">
+    <a class="nav-brand" href="#home">
       <svg class="logo" viewBox="0 0 32 32" fill="none">
         <rect width="32" height="32" rx="8" fill="var(--primary)"/>
         <path d="M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z" fill="white" opacity="0.9"/>
       </svg>
-      <span class="brand-wordmark">Serve<span class="brand-accent">IQ</span></span>
-    </div>
+      <span class="brand-wordmark">Naija<span class="brand-accent">Bistro</span></span>
+    </a>
     <div class="nav-links" [class.open]="mobileMenuOpen">
-      <a class="nav-link active" href="#leaks">The Problem</a>
-      <a class="nav-link" href="#how-it-works">How it works</a>
-      <a class="nav-link" href="#showcase">Product</a>
-      <a class="nav-link" href="#pricing">Pricing</a>
-      <a class="nav-link" href="#faq">FAQ</a>
+      @for (link of navLinks; track link.href) {
+        <a class="nav-link" [class.active]="link.href === '#home'" [attr.href]="link.href">{{ link.label }}</a>
+      }
       <div class="nav-actions-mobile">
-        <button class="btn btn-ghost-sm btn-block theme-toggle" (click)="toggleTheme()" [attr.aria-label]="theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+        <button class="theme-toggle" (click)="toggleTheme()" [attr.aria-label]="theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
           <span class="material-symbols-outlined">{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
-          <span>{{ theme() === 'dark' ? 'Light mode' : 'Dark mode' }}</span>
         </button>
-        <a routerLink="/login" class="btn btn-ghost-sm btn-block">Log In</a>
-        <a routerLink="/register" class="btn btn-primary-sm btn-block">Book a Demo</a>
       </div>
     </div>
     <div class="nav-actions">
-      <button class="btn btn-ghost-sm theme-toggle" (click)="toggleTheme()" [attr.aria-label]="theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+      <button class="theme-toggle" (click)="toggleTheme()" [attr.aria-label]="theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
         <span class="material-symbols-outlined">{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
       </button>
-      <a routerLink="/login" class="btn btn-ghost-sm">Log In</a>
-      <a routerLink="/register" class="btn btn-primary-sm">Book a Demo</a>
     </div>
     <button
       class="nav-toggle"
@@ -50,361 +39,139 @@
     <div class="hero-container">
       <div class="hero-content">
         <div class="hero-badge">
-          <span class="material-symbols-outlined text-lg">security</span>
-          <span>Revenue leakage protection for restaurants</span>
+          <span class="material-symbols-outlined">restaurant_menu</span>
+          <span>{{ heroBadge }}</span>
         </div>
-        <h1 class="hero-title">Every order. Every table. Every cent, <span class="text-gradient">protected.</span></h1>
-        <p class="hero-desc">ServeIQ catches the silent leaks — voided orders, edited bills, cash gaps, and unreconciled sales — before they ever hit your bottom line.</p>
+        <h1 class="hero-title">
+          {{ heroTitleLead }}
+          <span class="text-gradient">{{ heroTitleAccent }}</span>
+        </h1>
+        <p class="hero-desc">{{ heroDesc }}</p>
         <div class="hero-actions">
-          <a routerLink="/register" class="btn btn-primary">Book a demo</a>
-          <a href="#showcase" class="btn btn-outline">See it in action</a>
+          <a href="#menu" class="btn btn-primary">Order Now</a>
+          <a href="#about" class="btn btn-outline">Explore Menu</a>
         </div>
         <div class="hero-proof">
-          <div class="avatar-stack">
-            <span class="avatar" style="--avatar-color:#4be277">A</span>
-            <span class="avatar" style="--avatar-color:#93ccff">K</span>
-            <span class="avatar" style="--avatar-color:#adc6ff">T</span>
-            <span class="avatar" style="--avatar-color:#ffb4ab">O</span>
+          <div class="stars">
+            <span class="material-symbols-outlined">star</span>
+            <span class="material-symbols-outlined">star</span>
+            <span class="material-symbols-outlined">star</span>
+            <span class="material-symbols-outlined">star</span>
+            <span class="material-symbols-outlined">star</span>
           </div>
-          <div>
-            <div class="stars">
-              <span class="material-symbols-outlined text-lg">star</span>
-              <span class="material-symbols-outlined text-lg">star</span>
-              <span class="material-symbols-outlined text-lg">star</span>
-              <span class="material-symbols-outlined text-lg">star</span>
-              <span class="material-symbols-outlined text-lg">star</span>
-            </div>
-            <span class="proof-text">Trusted by 120+ restaurants protecting their revenue</span>
-          </div>
+          <span class="proof-text">Loved by food lovers across the neighbourhood</span>
         </div>
       </div>
-      <div class="hero-mockup">
-        <div class="mockup-card">
-          <div class="mockup-header">
-            <h3 class="mockup-title">
-              <span class="material-symbols-outlined text-primary">shield_with_heart</span>
-              Revenue Protection
-            </h3>
-            <span class="mockup-badge"><span class="live-dot"></span> LIVE</span>
-          </div>
-          <div class="mockup-metric">
-            <span class="metric-label">Protected today</span>
-            <span class="metric-value">$2,340</span>
-            <span class="metric-delta">+12% vs yesterday</span>
-          </div>
-          <div class="mockup-alerts">
-            @for (alert of alerts; track alert.title) {
-              <div class="alert-card" [class]="'alert-' + alert.color">
-                <span class="material-symbols-outlined" [class]="'text-' + alert.color">{{ alert.icon }}</span>
-                <div>
-                  <p class="alert-title">{{ alert.title }}</p>
-                  <span class="alert-desc">{{ alert.desc }}</span>
-                </div>
-                <span class="alert-chip">Caught</span>
-              </div>
-            }
+      <div class="hero-visual">
+        <div class="hero-photo-wrap">
+          <img class="hero-photo" src="assets/food/jollof.png" alt="Smoky jollof rice" />
+          <div class="hero-photo-badge">
+            <span class="material-symbols-outlined">local_fire_department</span>
+            <span>Fire-grilled daily</span>
           </div>
         </div>
       </div>
     </div>
-    <div class="scroll-indicator">
-      <div class="scroll-mouse"></div>
-      <span>Scroll to explore</span>
-    </div>
   </section>
 
-  <!-- Trust Strip -->
-  <section class="trust-strip">
-    <div class="trust-inner">
-      <span class="trust-label">Powering revenue protection for</span>
-      <div class="trust-logos">
-        <span class="trust-logo">Naija Grills</span>
-        <span class="trust-logo">Lagos Bistro Co.</span>
-        <span class="trust-logo">Yam &amp; Co.</span>
-        <span class="trust-logo">Suya Republic</span>
-        <span class="trust-logo">Kiyi Kitchen</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats Bar -->
-  <section class="stats-bar">
-    <div class="stats-grid">
-      <div class="stat-item">
-        <span class="stat-number">4-8%</span>
-        <p class="stat-label">of revenue leaks on average</p>
-      </div>
-      <div class="stat-item bordered">
-        <span class="stat-number">$1,900</span>
-        <p class="stat-label">recovered per location / month</p>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">100%</span>
-        <p class="stat-label">of orders traceable to a staff member</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Where Money Leaks -->
-  <section class="leaks" id="leaks">
-    <div class="features-intro">
-      <span class="section-eyebrow">The problem</span>
-      <h2 class="features-title">Your restaurant is losing money in six quiet places</h2>
-      <p class="features-desc">None of these show up on a standard sales report. ServeIQ surfaces all of them, in real time.</p>
-    </div>
-    <div class="leaks-grid">
-      @for (leak of leaks; track leak.title) {
-        <div class="leak-card glass-card">
-          <div class="leak-head">
-            <div class="feature-icon-wrap">
-              <span class="material-symbols-outlined text-[var(--error)] text-[32px]">{{ leak.icon }}</span>
-            </div>
-            <span class="leak-amount">${{ leak.amount }}</span>
-          </div>
-          <h3 class="feature-title">{{ leak.title }}</h3>
-          <p class="feature-desc">{{ leak.desc }}</p>
-          <div class="leak-flag">
-            <span class="material-symbols-outlined text-primary">sensors</span>
-            <span>Flagged by ServeIQ</span>
-          </div>
-        </div>
-      }
-    </div>
-  </section>
-
-  <!-- How It Works -->
-  <section class="how-it-works" id="how-it-works">
+  <!-- Top List -->
+  <section class="top-list" id="menu">
     <div class="section-head">
-      <span class="section-eyebrow">How it works</span>
-      <h2 class="section-title">From messy floor to total control in three steps</h2>
-      <p class="section-desc">Set up in an afternoon. See results on the first shift.</p>
+      <span class="section-eyebrow">Top List</span>
+      <h2 class="section-title">The plates people keep coming back for</h2>
+      <p class="section-desc">Our three most-loved dishes. Made fresh, served hot, gone fast.</p>
     </div>
-    <div class="steps-grid">
-      @for (step of steps; track step.title; let i = $index) {
-        <div class="step-card glass-card">
-          <span class="step-number">0{{ i + 1 }}</span>
-          <div class="step-icon-wrap">
-            <span class="material-symbols-outlined text-primary text-[32px]">{{ step.icon }}</span>
+    <div class="dishes-grid">
+      @for (dish of dishes; track dish.name) {
+        <article class="dish-card">
+          <div class="dish-photo-wrap">
+            <img class="dish-photo" [src]="dish.image" [alt]="dish.name" />
+            <button class="dish-add" (click)="addToOrder(dish)" [attr.aria-label]="'Add ' + dish.name + ' to order'">
+              <span class="material-symbols-outlined">add</span>
+            </button>
           </div>
-          <h3 class="step-title">{{ step.title }}</h3>
-          <p class="step-desc">{{ step.desc }}</p>
-        </div>
-      }
-    </div>
-  </section>
-
-  <!-- Live Product Showcase -->
-  <section class="showcase" id="showcase">
-    <div class="features-intro">
-      <span class="section-eyebrow">Product tour</span>
-      <h2 class="features-title">See every leak before it costs you money</h2>
-      <p class="features-desc">One dashboard. Three views: catch, trace, recover.</p>
-    </div>
-    <div class="showcase-tabs" role="tablist" [attr.aria-label]="'Product views'">
-      @for (tab of showcaseTabs; track tab.id; let i = $index) {
-        <button
-          class="showcase-tab"
-          [class.active]="activeShowcaseTab === i"
-          role="tab"
-          [attr.aria-selected]="activeShowcaseTab === i"
-          [attr.aria-controls]="'showcase-panel-' + tab.id"
-          id="'showcase-tab-' + tab.id"
-          (click)="setShowcaseTab(i)"
-        >
-          <span class="material-symbols-outlined">{{ tab.icon }}</span>
-          <span>{{ tab.label }}</span>
-        </button>
-      }
-    </div>
-    <div class="showcase-panel glass-card" [id]="'showcase-panel-' + showcaseTabs[activeShowcaseTab].id" role="tabpanel">
-      <div class="showcase-panel-inner">
-        <div class="showcase-copy">
-          <h3 class="showcase-title">{{ showcaseTabs[activeShowcaseTab].title }}</h3>
-          <p class="showcase-desc">{{ showcaseTabs[activeShowcaseTab].desc }}</p>
-          <ul class="showcase-points">
-            @for (point of showcaseTabs[activeShowcaseTab].points; track point) {
-              <li><span class="material-symbols-outlined text-check">check</span>{{ point }}</li>
-            }
-          </ul>
-          <a routerLink="/register" class="btn btn-primary showcase-cta">Try it free</a>
-        </div>
-        <div class="showcase-visual">
-          @for (row of showcaseTabs[activeShowcaseTab].rows; track row.label) {
-            <div class="trace-row" [class]="'trace-' + row.state">
-              <span class="trace-icon material-symbols-outlined">{{ row.icon }}</span>
-              <div class="trace-main">
-                <span class="trace-label">{{ row.label }}</span>
-                <span class="trace-meta">{{ row.meta }}</span>
-              </div>
-              <span class="trace-value">{{ row.value }}</span>
-              <span class="trace-status">{{ row.status }}</span>
+          <div class="dish-body">
+            <div class="dish-rating">
+              <span class="material-symbols-outlined">star</span>
+              <span class="dish-rating-value">{{ dish.rating }}</span>
+              <span class="dish-reviews">({{ dish.reviews }} reviews)</span>
             </div>
-          }
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="features" id="features">
-    <div class="features-intro">
-      <span class="section-eyebrow">Why ServeIQ</span>
-      <h2 class="features-title">Designed for Complete Operational Precision</h2>
-      <p class="features-desc">Eliminate disputes, track every cent, and regain control of your floor.</p>
-    </div>
-    <div class="features-grid">
-      @for (feature of features; track feature.title) {
-        <div class="feature-card glass-card">
-          <div class="feature-icon-wrap">
-            <span class="material-symbols-outlined text-primary text-[32px]">{{ feature.icon }}</span>
+            <h3 class="dish-name">{{ dish.name }}</h3>
+            <p class="dish-desc">{{ dish.desc }}</p>
+            <div class="dish-foot">
+              <span class="dish-price">₦{{ dish.price.toLocaleString() }}</span>
+              <span class="dish-price-suffix">per plate</span>
+            </div>
           </div>
-          <h3 class="feature-title">{{ feature.title }}</h3>
-          <p class="feature-desc">{{ feature.desc }}</p>
-          <ul class="feature-points">
-            @for (point of feature.points; track point) {
-              <li><span class="material-symbols-outlined text-check">check</span>{{ point }}</li>
-            }
-          </ul>
-        </div>
+        </article>
       }
     </div>
   </section>
 
-  <!-- Testimonials -->
-  <section class="testimonials" id="testimonials">
+  <!-- Feature -->
+  <section class="feature" id="about">
+    <div class="feature-photo">
+      <img src="assets/food/suya.png" alt="Spicy suya skewers over open flame" />
+    </div>
+    <div class="feature-copy">
+      <span class="section-eyebrow">{{ feature.eyebrow }}</span>
+      <h2 class="section-title">{{ feature.title }}</h2>
+      <p class="section-desc">{{ feature.desc }}</p>
+      <ul class="feature-points">
+        @for (point of feature.points; track point) {
+          <li><span class="material-symbols-outlined">check_circle</span>{{ point }}</li>
+        }
+      </ul>
+      <a href="#menu" class="btn btn-primary">Order from the menu</a>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services">
     <div class="section-head">
-      <span class="section-eyebrow">Loved by operators</span>
-      <h2 class="section-title">Restaurant owners stopped guessing</h2>
+      <span class="section-eyebrow">Services</span>
+      <h2 class="section-title">We go where the appetite goes</h2>
+      <p class="section-desc">Whatever the craving looks like, we have a way to serve it.</p>
     </div>
-    <div class="testimonials-grid">
-      @for (quote of testimonials; track quote.name) {
-        <div class="testimonial-card glass-card">
-          <div class="testimonial-stars">
-            <span class="material-symbols-outlined text-lg">star</span>
-            <span class="material-symbols-outlined text-lg">star</span>
-            <span class="material-symbols-outlined text-lg">star</span>
-            <span class="material-symbols-outlined text-lg">star</span>
-            <span class="material-symbols-outlined text-lg">star</span>
+    <div class="services-row">
+      @for (service of services; track service.label) {
+        <div class="service-item">
+          <div class="service-icon-wrap">
+            <span class="material-symbols-outlined">{{ service.icon }}</span>
           </div>
-          <p class="testimonial-quote">"{{ quote.quote }}"</p>
-          <div class="testimonial-author">
-            <span class="avatar" [style.--avatar-color]="quote.color">{{ quote.name.charAt(0) }}</span>
-            <div>
-              <p class="testimonial-name">{{ quote.name }}</p>
-              <span class="testimonial-role">{{ quote.role }}</span>
-            </div>
-          </div>
+          <h3 class="service-label">{{ service.label }}</h3>
+          <p class="service-desc">{{ service.desc }}</p>
         </div>
       }
     </div>
   </section>
 
-  <!-- Pricing -->
-  <section class="pricing" id="pricing">
-    <div class="features-intro">
-      <span class="section-eyebrow">Pricing</span>
-      <h2 class="features-title">Simple plans that pay for themselves</h2>
-      <p class="features-desc">Most restaurants recover the monthly cost before the first invoice.</p>
-    </div>
-    <div class="pricing-grid">
-      @for (plan of plans; track plan.name) {
-        <div class="plan-card" [class.plan-featured]="plan.featured">
-          @if (plan.featured) {
-            <span class="plan-flag">Most popular</span>
-          }
-          <h3 class="plan-name">{{ plan.name }}</h3>
-          <div class="plan-price">
-            <span class="plan-currency">$</span>
-            <span class="plan-amount">{{ plan.price }}</span>
-            <span class="plan-period">/month</span>
-          </div>
-          <p class="plan-tagline">{{ plan.tagline }}</p>
-          <ul class="plan-features">
-            @for (item of plan.features; track item) {
-              <li><span class="material-symbols-outlined text-check">check</span>{{ item }}</li>
-            }
-          </ul>
-          <a routerLink="/register" class="btn plan-btn" [class.btn-primary]="plan.featured" [class.btn-outline]="!plan.featured">
-            {{ plan.cta }}
-          </a>
-        </div>
-      }
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq" id="faq">
-    <div class="features-intro">
-      <span class="section-eyebrow">FAQ</span>
-      <h2 class="features-title">Questions, answered</h2>
-    </div>
-    <div class="faq-list">
-      @for (item of faqs; track item.question; let i = $index) {
-        <div class="faq-item" [class.open]="openFaq === i">
-          <button class="faq-question" (click)="toggleFaq(i)" [attr.aria-expanded]="openFaq === i">
-            <span>{{ item.question }}</span>
-            <span class="material-symbols-outlined faq-icon">{{ openFaq === i ? 'remove' : 'add' }}</span>
-          </button>
-          @if (openFaq === i) {
-            <div class="faq-answer">
-              <p>{{ item.answer }}</p>
-            </div>
-          }
-        </div>
-      }
-    </div>
-  </section>
-
-  <!-- CTA -->
+  <!-- CTA Band -->
   <section class="cta-band">
-    <div class="cta-glow"></div>
     <div class="cta-content">
-      <h2 class="cta-title">Stop guessing where the money goes.</h2>
-      <p class="cta-subtitle">14 day free trial. No card required to start.</p>
+      <h2 class="cta-title">Hungry yet?</h2>
+      <p class="cta-subtitle">Come in for a plate tonight, or call ahead and we will have it waiting.</p>
       <div class="cta-actions">
-        <a routerLink="/register" class="btn btn-cta">Start free trial</a>
-        <a routerLink="/login" class="btn btn-cta-ghost">Log in to your account</a>
+        <a href="#menu" class="btn btn-cta">Order Now</a>
+        <a href="tel:+2340000000000" class="btn btn-cta-ghost">Call the Kitchen</a>
       </div>
     </div>
   </section>
 </main>
 
 <footer class="landing-footer">
-  <div class="footer-grid">
-    <div class="footer-brand-section">
-      <div class="footer-brand-row">
-        <svg class="logo" viewBox="0 0 32 32" fill="none">
-          <rect width="32" height="32" rx="8" fill="var(--primary)"/>
-          <path d="M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z" fill="white" opacity="0.9"/>
-        </svg>
-        <span class="brand-wordmark">Serve<span class="brand-accent">IQ</span></span>
-      </div>
-      <p class="footer-about">Precision hospitality management software built for the modern restaurant. Recover your revenue and empower your team.</p>
-      <p class="footer-copyright">© 2026 ServeIQ. Precision in Hospitality.</p>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <svg class="logo" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="var(--primary)"/>
+        <path d="M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z" fill="white" opacity="0.9"/>
+      </svg>
+      <span class="brand-wordmark">Naija<span class="brand-accent">Bistro</span></span>
     </div>
-    <div class="footer-col">
-      <h4 class="footer-heading">Platform</h4>
-      <a href="#">Point of Sale</a>
-      <a href="#">Inventory Control</a>
-      <a href="#">Staff Analytics</a>
-      <a href="#">Security Suite</a>
-    </div>
-    <div class="footer-col">
-      <h4 class="footer-heading">Resources</h4>
-      <a href="#">Case Studies</a>
-      <a href="#">Pricing Plans</a>
-      <a href="#">API Documentation</a>
-      <a href="#">Status</a>
-    </div>
-    <div class="footer-col">
-      <h4 class="footer-heading">Legal & Support</h4>
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
-      <a href="#">Contact Support</a>
-      <div class="footer-social">
-        <span class="material-symbols-outlined">public</span>
-        <span class="material-symbols-outlined">verified_user</span>
-      </div>
-    </div>
+    <p class="footer-copy">© 2026 Naija Bistro. Fired up every single day.</p>
   </div>
 </footer>
+
+<a class="fab" href="#menu" aria-label="Order now">
+  <span class="material-symbols-outlined">restaurant_menu</span>
+</a>
