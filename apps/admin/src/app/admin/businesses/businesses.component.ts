@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFilter } from '@serveiq/shared/data-access';
+import { ShiftTemplate, CreateShiftTemplateRequest, ShiftType } from '@serveiq/shared/models';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-businesses',
@@ -137,6 +139,14 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
                       <polyline points="12 6 12 12 16 14"/>
                     </svg>
                   </button>
+                  <button class="action-icon-btn" (click)="openShiftTemplates(biz)" title="Shift Templates">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                      <line x1="16" y1="2" x2="16" y2="6"/>
+                      <line x1="8" y1="2" x2="8" y2="6"/>
+                      <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                  </button>
                 </td>
               </tr>
               <tr *ngIf="!filteredBusinesses().length">
@@ -150,6 +160,94 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
           <p>Loading businesses...</p>
         </div>
       </section>
+    </div>
+
+    <!-- Shift Templates Modal -->
+    <div class="impersonate-overlay" *ngIf="showShiftTemplates()">
+      <div class="templates-modal" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <div>
+            <h3 class="modal-title">Shift Templates</h3>
+            <p class="modal-subtitle">{{ selectedBusiness()?.name }}</p>
+          </div>
+          <button class="modal-close" (click)="closeShiftTemplates()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div *ngIf="!editingTemplate()">
+            <div class="template-row" *ngFor="let t of businessTemplates()">
+              <span class="template-dot" [style.background]="t.color"></span>
+              <div class="template-info">
+                <strong>{{ t.name }}</strong>
+                <span>{{ t.scheduledStartTime }} - {{ t.scheduledEndTime }} • {{ getDaysString(t.daysOfWeek) }}</span>
+              </div>
+              <button class="action-icon-btn" (click)="editTemplate(t)" title="Edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+              </button>
+              <button class="action-icon-btn" (click)="deleteTemplate(t)" title="Delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+            <div class="template-empty" *ngIf="!businessTemplates().length">
+              <p>No shift templates yet for this business.</p>
+            </div>
+            <button class="btn-add-template" (click)="newTemplate()">
+              + New Shift Template
+            </button>
+          </div>
+
+          <div class="template-form" *ngIf="editingTemplate()">
+            <div class="form-group">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-input" [(ngModel)]="templateForm().name" placeholder="e.g., Morning Shift">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Type</label>
+                <select class="form-select" [(ngModel)]="templateForm().type">
+                  <option value="morning">Morning</option>
+                  <option value="evening">Evening</option>
+                  <option value="night">Night</option>
+                  <option value="split">Split</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Color</label>
+                <input type="color" class="form-input color-input" [(ngModel)]="templateForm().color">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Start Time</label>
+                <input type="time" class="form-input" [(ngModel)]="templateForm().scheduledStartTime">
+              </div>
+              <div class="form-group">
+                <label class="form-label">End Time</label>
+                <input type="time" class="form-input" [(ngModel)]="templateForm().scheduledEndTime">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Days of Week</label>
+              <div class="days-selector">
+                <label class="day-chip" *ngFor="let day of daysOfWeek" [class.active]="templateForm().daysOfWeek.includes(day.value)">
+                  <input type="checkbox" [checked]="templateForm().daysOfWeek.includes(day.value)" (change)="toggleDay(day.value, $event)">
+                  <span>{{ day.label }}</span>
+                </label>
+              </div>
+            </div>
+            <div class="modal-foot">
+              <button class="btn-secondary" (click)="cancelTemplateEdit()">Cancel</button>
+              <button class="btn-primary" (click)="saveTemplate()" [disabled]="isSavingTemplate() || !templateForm().name">
+                <span *ngIf="isSavingTemplate()" class="spinner"></span>
+                {{ editingTemplate()?.id ? 'Update' : 'Create' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -211,6 +309,36 @@ import { AdminApiService, AdminBusiness, AdminStats, AuthService, SubscriptionFi
     .impersonate-loader p { margin: 16px 0 0; font-size: 15px; color: var(--on-surface); }
     .spinner { width: 40px; height: 40px; margin: 0 auto; border: 3px solid var(--outline-variant); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .templates-modal { background: var(--surface-container-lowest); border-radius: 16px; padding: 24px; width: min(560px, 92vw); max-height: 84vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+    .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+    .modal-title { font-size: 18px; font-weight: 700; color: var(--on-surface); margin: 0 0 2px; }
+    .modal-subtitle { font-size: 13px; color: var(--secondary); margin: 0; }
+    .modal-close { background: none; border: none; cursor: pointer; color: var(--secondary); padding: 4px; border-radius: 6px; }
+    .modal-close:hover { background: var(--surface-container-low); color: var(--on-surface); }
+    .modal-body { display: flex; flex-direction: column; gap: 12px; }
+    .template-row { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--outline-variant); border-radius: 10px; margin-bottom: 8px; }
+    .template-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .template-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .template-info strong { font-size: 14px; color: var(--on-surface); }
+    .template-info span { font-size: 12px; color: var(--secondary); }
+    .template-empty { text-align: center; padding: 24px; color: var(--secondary); font-size: 14px; border: 1px dashed var(--outline-variant); border-radius: 10px; }
+    .btn-add-template { width: 100%; padding: 12px; border: 1px dashed var(--primary); color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent); border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-add-template:hover { background: color-mix(in srgb, var(--primary) 15%, transparent); }
+    .template-form { display: flex; flex-direction: column; gap: 12px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 13px; font-weight: 600; color: var(--on-surface); }
+    .form-input, .form-select { padding: 10px 12px; border: 1px solid var(--outline-variant); border-radius: 8px; font-size: 14px; background: var(--surface-container-lowest); color: var(--on-surface); }
+    .color-input { height: 42px; padding: 4px; }
+    .days-selector { display: flex; flex-wrap: wrap; gap: 8px; }
+    .day-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 9999px; border: 1px solid var(--outline-variant); cursor: pointer; font-size: 13px; color: var(--secondary); }
+    .day-chip.active { background: color-mix(in srgb, var(--primary) 15%, transparent); border-color: var(--primary); color: var(--primary); }
+    .day-chip input { display: none; }
+    .modal-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+    .btn-secondary { padding: 10px 20px; border-radius: 9999px; border: 1px solid var(--outline-variant); background: transparent; color: var(--on-surface); font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-primary { padding: 10px 20px; border-radius: 9999px; border: none; background: var(--primary); color: var(--on-primary); font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .templates-modal .spinner { width: 16px; height: 16px; border-width: 2px; margin: 0 6px 0 0; display: inline-block; vertical-align: middle; }
   `]
 })
 export class BusinessesComponent implements OnInit {
@@ -223,6 +351,31 @@ export class BusinessesComponent implements OnInit {
   stats = signal<AdminStats | null>(null);
   subFilter = signal<SubscriptionFilter>('all');
   impersonatingId = signal<string | null>(null);
+
+  showShiftTemplates = signal(false);
+  selectedBusiness = signal<AdminBusiness | null>(null);
+  businessTemplates = signal<ShiftTemplate[]>([]);
+  editingTemplate = signal<ShiftTemplate | null>(null);
+  isSavingTemplate = signal(false);
+
+  templateForm = signal({
+    name: '',
+    type: 'morning' as ShiftType,
+    scheduledStartTime: '07:00',
+    scheduledEndTime: '15:00',
+    daysOfWeek: [1, 2, 3, 4, 5] as number[],
+    color: '#22c55e'
+  });
+
+  readonly daysOfWeek = [
+    { value: 0, label: 'Sun' },
+    { value: 1, label: 'Mon' },
+    { value: 2, label: 'Tue' },
+    { value: 3, label: 'Wed' },
+    { value: 4, label: 'Thu' },
+    { value: 5, label: 'Fri' },
+    { value: 6, label: 'Sat' }
+  ];
 
   filteredBusinesses = computed(() => {
     const list = this.businesses();
@@ -319,5 +472,131 @@ export class BusinessesComponent implements OnInit {
         );
       },
     });
+  }
+
+  // --- Shift Template Management (superadmin) ---
+
+  openShiftTemplates(biz: AdminBusiness) {
+    this.selectedBusiness.set(biz);
+    this.showShiftTemplates.set(true);
+    this.editingTemplate.set(null);
+    this.loadBusinessTemplates(biz.id);
+  }
+
+  closeShiftTemplates() {
+    this.showShiftTemplates.set(false);
+    this.selectedBusiness.set(null);
+    this.businessTemplates.set([]);
+    this.editingTemplate.set(null);
+  }
+
+  private loadBusinessTemplates(businessId: string) {
+    this.adminApi.listBusinessShiftTemplates(businessId).subscribe({
+      next: (data) => this.businessTemplates.set(data || []),
+      error: () => this.businessTemplates.set([]),
+    });
+  }
+
+  newTemplate() {
+    this.editingTemplate.set(null);
+    this.templateForm.set({
+      name: '',
+      type: 'morning',
+      scheduledStartTime: '07:00',
+      scheduledEndTime: '15:00',
+      daysOfWeek: [1, 2, 3, 4, 5],
+      color: '#22c55e'
+    });
+  }
+
+  editTemplate(template: ShiftTemplate) {
+    this.editingTemplate.set(template);
+    this.templateForm.set({
+      name: template.name,
+      type: template.type,
+      scheduledStartTime: template.scheduledStartTime,
+      scheduledEndTime: template.scheduledEndTime,
+      daysOfWeek: [...template.daysOfWeek],
+      color: template.color
+    });
+  }
+
+  cancelTemplateEdit() {
+    this.editingTemplate.set(null);
+  }
+
+  saveTemplate() {
+    const biz = this.selectedBusiness();
+    if (!biz) return;
+    const form = this.templateForm();
+    if (!form.name.trim()) return;
+
+    this.isSavingTemplate.set(true);
+    const payload: CreateShiftTemplateRequest = {
+      name: form.name,
+      type: form.type,
+      scheduledStartTime: form.scheduledStartTime,
+      scheduledEndTime: form.scheduledEndTime,
+      daysOfWeek: form.daysOfWeek,
+      color: form.color
+    };
+
+    const request = this.editingTemplate()?.id
+      ? this.adminApi.updateBusinessShiftTemplate(biz.id, this.editingTemplate()!.id!, payload)
+      : this.adminApi.createBusinessShiftTemplate(biz.id, payload);
+
+    request.subscribe({
+      next: () => {
+        this.isSavingTemplate.set(false);
+        this.editingTemplate.set(null);
+        this.loadBusinessTemplates(biz.id);
+        Swal.fire({ icon: 'success', title: 'Shift template saved', timer: 1500, showConfirmButton: false });
+      },
+      error: (err: any) => {
+        this.isSavingTemplate.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to save template', text: err?.error?.message || undefined });
+      }
+    });
+  }
+
+  deleteTemplate(template: ShiftTemplate) {
+    const biz = this.selectedBusiness();
+    if (!biz) return;
+    Swal.fire({
+      title: 'Delete Template?',
+      text: `This will delete "${template.name}".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      confirmButtonText: 'Yes, delete'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.adminApi.deleteBusinessShiftTemplate(biz.id, template.id).subscribe({
+          next: () => {
+            this.loadBusinessTemplates(biz.id);
+            Swal.fire({ icon: 'success', title: 'Template Deleted', timer: 1500, showConfirmButton: false });
+          },
+          error: () => Swal.fire({ icon: 'error', title: 'Failed to delete template' })
+        });
+      }
+    });
+  }
+
+  toggleDay(dayValue: number, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.templateForm.update(f => ({
+      ...f,
+      daysOfWeek: checked
+        ? [...f.daysOfWeek, dayValue]
+        : f.daysOfWeek.filter(d => d !== dayValue)
+    }));
+  }
+
+  getDaysString(days: number[]): string {
+    if (!days?.length) return '—';
+    if (days.length === 7) return 'Daily';
+    if (days.length === 5 && days.every(d => d >= 1 && d <= 5)) return 'Mon-Fri';
+    if (days.length === 2 && days.includes(0) && days.includes(6)) return 'Weekends';
+    return days.map(d => this.daysOfWeek.find(w => w.value === d)?.label).join(', ');
   }
 }

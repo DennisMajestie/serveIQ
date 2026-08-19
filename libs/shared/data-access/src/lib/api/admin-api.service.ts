@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
+import { ShiftTemplate, CreateShiftTemplateRequest } from '@serveiq/shared/models';
 
 export interface AdminBusiness {
   id: string;
@@ -296,5 +297,21 @@ export class AdminApiService extends BaseApiService {
 
   deletePaymentProvider(id: string): Observable<{ id: string }> {
     return this.delete<{ id: string }>(buildUrl(API_CONFIG.endpoints.admin.paymentProvider, { id }));
+  }
+
+  listBusinessShiftTemplates(businessId: string): Observable<ShiftTemplate[]> {
+    return this.get<ShiftTemplate[]>(buildUrl(API_CONFIG.endpoints.admin.shiftTemplates, { businessId }));
+  }
+
+  createBusinessShiftTemplate(businessId: string, data: CreateShiftTemplateRequest): Observable<ShiftTemplate> {
+    return this.post<ShiftTemplate>(buildUrl(API_CONFIG.endpoints.admin.shiftTemplates, { businessId }), data);
+  }
+
+  updateBusinessShiftTemplate(businessId: string, templateId: string, data: Partial<CreateShiftTemplateRequest>): Observable<ShiftTemplate> {
+    return this.patch<ShiftTemplate>(buildUrl(API_CONFIG.endpoints.admin.shiftTemplate, { businessId, templateId }), data);
+  }
+
+  deleteBusinessShiftTemplate(businessId: string, templateId: string): Observable<{ success: boolean }> {
+    return this.delete<{ success: boolean }>(buildUrl(API_CONFIG.endpoints.admin.shiftTemplate, { businessId, templateId }));
   }
 }

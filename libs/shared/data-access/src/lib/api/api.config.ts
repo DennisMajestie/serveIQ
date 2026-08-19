@@ -250,6 +250,8 @@ export const API_CONFIG = {
       extend: '/api/v1/admin/businesses/extend',
       paymentProviders: '/api/v1/admin/payment-providers',
       paymentProvider: '/api/v1/admin/payment-providers/:id',
+      shiftTemplates: '/api/v1/admin/businesses/:businessId/shift-templates',
+      shiftTemplate: '/api/v1/admin/businesses/:businessId/shift-templates/:templateId',
     },
     reviews: {
       list: '/api/v1/admin/reviews',
