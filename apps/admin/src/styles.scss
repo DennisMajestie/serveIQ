@@ -161,6 +161,13 @@
 .bg-secondary-10 { background: color-mix(in srgb, var(--secondary) 10%, transparent); }
 .placeholder-text-on-surface-variant-50::placeholder { color: color-mix(in srgb, var(--on-surface-variant) 50%, transparent); }
 
+/* ===== Global Pill Buttons ===== */
+/* Consistent fully-rounded (pill) buttons across every page */
+button,
+[class*="btn"] {
+  border-radius: var(--radius-full) !important;
+}
+
 body {
   margin: 0;
   background-color: var(--background);
@@ -317,7 +324,7 @@ body.fonts-loaded mat-icon {
 }
 
 .swal2-confirm {
-  border-radius: 12px !important;
+  border-radius: var(--radius-full) !important;
   font-weight: 600 !important;
   font-size: 14px !important;
   padding: 12px 24px !important;
@@ -331,7 +338,7 @@ body.fonts-loaded mat-icon {
 }
 
 .swal2-cancel {
-  border-radius: 12px !important;
+  border-radius: var(--radius-full) !important;
   font-weight: 600 !important;
   font-size: 14px !important;
   padding: 12px 24px !important;
