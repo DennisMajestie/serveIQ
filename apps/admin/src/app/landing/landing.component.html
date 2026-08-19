@@ -17,11 +17,18 @@
       <a class="nav-link" href="#pricing">Pricing</a>
       <a class="nav-link" href="#faq">FAQ</a>
       <div class="nav-actions-mobile">
+        <button class="btn btn-ghost-sm btn-block theme-toggle" (click)="toggleTheme()" [attr.aria-label]="theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+          <span class="material-symbols-outlined">{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
+          <span>{{ theme() === 'dark' ? 'Light mode' : 'Dark mode' }}</span>
+        </button>
         <a routerLink="/login" class="btn btn-ghost-sm btn-block">Log In</a>
         <a routerLink="/register" class="btn btn-primary-sm btn-block">Book a Demo</a>
       </div>
     </div>
     <div class="nav-actions">
+      <button class="btn btn-ghost-sm theme-toggle" (click)="toggleTheme()" [attr.aria-label]="theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+        <span class="material-symbols-outlined">{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
+      </button>
       <a routerLink="/login" class="btn btn-ghost-sm">Log In</a>
       <a routerLink="/register" class="btn btn-primary-sm">Book a Demo</a>
     </div>

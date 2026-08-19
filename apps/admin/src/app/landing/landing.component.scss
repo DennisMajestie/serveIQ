@@ -209,6 +209,28 @@
   opacity: 0.9;
 }
 
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--surface-variant) 40%, transparent);
+  color: var(--on-background);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  background: color-mix(in srgb, var(--surface-variant) 70%, transparent);
+  color: var(--primary);
+}
+
+.nav-actions-mobile .theme-toggle {
+  width: 100%;
+  gap: 8px;
+}
+
 /* ===== HERO ===== */
 .hero {
   position: relative;

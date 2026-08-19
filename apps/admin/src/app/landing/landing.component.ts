@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, ElementRef, ViewChild, Inject, PLATFORM_ID, HostBinding } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild, Inject, PLATFORM_ID, Signal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ThemeService } from '../core/theme.service';
+import { ThemeService, Theme } from '../core/theme.service';
 
 interface FoodParticle {
   angle: number;
@@ -43,14 +43,19 @@ interface AmbientParticle {
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent implements AfterViewInit {
-  @HostBinding('attr.data-theme') theme = 'dark';
   @ViewChild('luxuryCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
+
+  theme!: Signal<Theme>;
 
   mobileMenuOpen = false;
   openFaq: number | null = 0;
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   toggleFaq(index: number): void {
@@ -191,7 +196,9 @@ export class LandingComponent implements AfterViewInit {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private themeService: ThemeService
-  ) {}
+  ) {
+    this.theme = themeService.theme;
+  }
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -212,6 +219,18 @@ export class LandingComponent implements AfterViewInit {
     let W = window.innerWidth, H = window.innerHeight;
     let scrollProgress = 0;
     const self = this;
+
+    const themeColors = () => {
+      const dark = self.theme() === 'dark';
+      return {
+        floor: dark ? '#0a0a0f' : '#eef1f8',
+        floorGrid: dark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.03)',
+        tableInactive: dark ? '#1e1e2a' : '#dfe5f2',
+        text: dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.25)',
+        seat: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.10)',
+        seatStroke: dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.15)',
+      };
+    };
 
     const hex = this.themeService.getCssVar('--primary') || '#4be277';
     const rr = parseInt(hex.slice(1, 3), 16);
@@ -303,11 +322,12 @@ export class LandingComponent implements AfterViewInit {
     }
 
     function drawFloor() {
-      ctx!.fillStyle = '#0a0a0f';
+      const c = themeColors();
+      ctx!.fillStyle = c.floor;
       ctx!.fillRect(0, 0, W, H);
 
       const tileSize = 48;
-      ctx!.strokeStyle = `rgba(255,255,255,0.02)`;
+      ctx!.strokeStyle = c.floorGrid;
       ctx!.lineWidth = 1;
       for (let x = 0; x < W; x += tileSize) {
         ctx!.beginPath();
@@ -392,9 +412,10 @@ export class LandingComponent implements AfterViewInit {
       ctx!.arc(t.targetX, t.targetY, glowRadius, 0, Math.PI * 2);
       ctx!.fill();
 
+      const c = themeColors();
       ctx!.fillStyle = phase > 0.3
         ? `rgb(${Math.min(255, rr + 40)}, ${Math.min(255, gg + 40)}, ${Math.min(255, bb + 40)})`
-        : '#1e1e2a';
+        : c.tableInactive;
       ctx!.strokeStyle = `rgba(${rr},${gg},${bb},${0.3 + phase * 0.4})`;
       ctx!.lineWidth = 1.5;
       self.roundRect(ctx!, x, y, tableW, tableH, 6);
@@ -408,7 +429,7 @@ export class LandingComponent implements AfterViewInit {
       self.roundRect(ctx!, x + 2, y + 2, tableW - 4, tableH - 4, 4);
       ctx!.fill();
 
-      ctx!.fillStyle = `rgba(255,255,255,0.15)`;
+      ctx!.fillStyle = c.text;
       ctx!.font = '8px "Plus Jakarta Sans", sans-serif';
       ctx!.textAlign = 'center';
       ctx!.textBaseline = 'middle';
@@ -422,9 +443,9 @@ export class LandingComponent implements AfterViewInit {
         const sy = t.targetY + Math.sin(sa) * seatDistance;
         ctx!.beginPath();
         ctx!.arc(sx, sy, seatRadius, 0, Math.PI * 2);
-        ctx!.fillStyle = `rgba(255,255,255,0.08)`;
+        ctx!.fillStyle = c.seat;
         ctx!.fill();
-        ctx!.strokeStyle = `rgba(255,255,255,0.12)`;
+        ctx!.strokeStyle = c.seatStroke;
         ctx!.lineWidth = 0.5;
         ctx!.stroke();
       }
