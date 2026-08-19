@@ -109,6 +109,8 @@ export class LoginComponent {
   resetBusiness() {
     localStorage.removeItem('businessId');
     localStorage.removeItem('businessName');
+    localStorage.removeItem('branchId');
+    localStorage.removeItem('userId');
     this.isResolved.set(false);
     this.pin.set('');
   }

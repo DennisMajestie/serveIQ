@@ -308,6 +308,8 @@ export class AuthService {
     localStorage.removeItem('userRole');
     localStorage.removeItem('businessId');
     localStorage.removeItem('businessName');
+    localStorage.removeItem('branchId');
+    localStorage.removeItem('userId');
     this.tokenSubject.next(null);
     this.serverLogout().subscribe({ error: () => {} });
     window.location.href = '/login';
