@@ -77,7 +77,7 @@ import Swal from 'sweetalert2';
       align-items: center;
     }
     .brand { display: flex; align-items: center; gap: 8px; }
-    .brand-logo { height: 100px; width: auto; object-fit: contain; }
+    .brand-logo { height: 8rem; width: auto; object-fit: contain; }
     .onboarding-main {
       flex: 1;
       display: flex;

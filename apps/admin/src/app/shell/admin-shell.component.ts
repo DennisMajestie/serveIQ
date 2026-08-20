@@ -407,7 +407,7 @@ interface MobileTab {
 
     .brand-logo {
       display: block;
-      height: 32px;
+      height: 8rem;
       width: auto;
       max-width: 160px;
       object-fit: contain;
