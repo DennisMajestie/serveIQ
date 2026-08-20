@@ -925,6 +925,328 @@
   max-width: 240px;
 }
 
+/* ===== Stats ===== */
+.stats-bar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  padding: 24px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface-container) 50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.stat-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+}
+
+.stat-label {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--secondary);
+}
+
+/* ===== Restaurants carousel ===== */
+.restaurants {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 72px 24px 24px;
+}
+
+.carousel {
+  overflow: hidden;
+}
+
+.carousel-window {
+  overflow: hidden;
+  padding: 4px 0 12px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 24px;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.restaurant-card {
+  flex: 0 0 calc((100% - 0px) / 1);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface-container) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
+  box-sizing: border-box;
+  transition: transform 0.25s, box-shadow 0.25s;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px color-mix(in srgb, var(--primary) 12%, transparent);
+  }
+}
+
+.restaurant-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.restaurant-metric-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.restaurant-metric-label {
+  font-size: 0.8125rem;
+  color: var(--secondary);
+}
+
+.restaurant-quote {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--on-background);
+}
+
+.restaurant-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--avatar-color, var(--primary));
+  color: #0a0a0f;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.restaurant-name {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--on-background);
+}
+
+.restaurant-role {
+  font-size: 0.8125rem;
+  color: var(--secondary);
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.carousel-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid color-mix(in srgb, var(--on-background) 12%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-container-low) 80%, transparent);
+  color: var(--on-background);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  &:hover {
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    color: var(--primary);
+  }
+  .material-symbols-outlined {
+    font-size: 22px;
+  }
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--on-background) 20%, transparent);
+  cursor: pointer;
+  transition: background 0.2s, width 0.2s;
+  &.active {
+    width: 24px;
+    background: var(--primary);
+  }
+}
+
+/* ===== How It Works ===== */
+.how-it-works {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 72px 24px 24px;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.step-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 28px 24px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface-container) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px color-mix(in srgb, var(--primary) 12%, transparent);
+  }
+}
+
+.step-number {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.step-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  .material-symbols-outlined {
+    font-size: 28px;
+  }
+}
+
+.step-title {
+  margin: 4px 0 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--on-background);
+}
+
+.step-desc {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--secondary);
+}
+
+/* ===== FAQ ===== */
+.faq {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 72px 24px 24px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-item {
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--surface-container) 50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  &.open {
+    border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 20px;
+  border: none;
+  background: transparent;
+  color: var(--on-background);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s;
+  &:hover {
+    color: var(--primary);
+  }
+}
+
+.faq-icon {
+  font-size: 22px;
+  color: var(--primary);
+  flex: none;
+}
+
+.faq-answer {
+  padding: 0 20px 18px;
+  p {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--secondary);
+  }
+}
+
 /* ===== CTA Band ===== */
 .cta-band {
   position: relative;
@@ -1068,6 +1390,18 @@
     grid-template-columns: repeat(2, 1fr);
   }
   .partners-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    .stat-item {
+      border-right: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+  .steps-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }

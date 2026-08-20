@@ -147,6 +147,18 @@
     </div>
   </section>
 
+  <!-- Stats -->
+  <section class="stats-bar">
+    <div class="stats-grid">
+      @for (stat of stats; track stat.label) {
+        <div class="stat-item">
+          <span class="stat-value">{{ stat.value }}</span>
+          <p class="stat-label">{{ stat.label }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
   <!-- Modules -->
   <section class="top-list" id="modules">
     <div class="section-head">
@@ -182,6 +194,84 @@
             </div>
           </div>
         </article>
+      }
+    </div>
+  </section>
+
+  <!-- Restaurants -->
+  <section class="restaurants">
+    <div class="section-head">
+      <span class="section-eyebrow">Restaurants on ServeIQ</span>
+      <h2 class="section-title">Powering kitchens across the country</h2>
+      <p class="section-desc">Real operators, real floors — running every shift on ServeIQ.</p>
+    </div>
+    <div class="carousel">
+      <div class="carousel-window">
+        <div
+          class="carousel-track"
+          [style.transform]="carouselTransform()"
+          (mouseenter)="pauseAutoplay()"
+          (mouseleave)="resumeAutoplay()"
+        >
+          @for (restaurant of restaurants; track restaurant.name) {
+            <article
+              class="restaurant-card"
+              [style.flex]="'0 0 calc((100% - ' + (itemsPerView() - 1) * 24 + 'px) / ' + itemsPerView() + ')'"
+            >
+              <div class="restaurant-metric">
+                <span class="restaurant-metric-value" [style.color]="restaurant.color">{{ restaurant.metric }}</span>
+                <span class="restaurant-metric-label">{{ restaurant.metricLabel }}</span>
+              </div>
+              <p class="restaurant-quote">"{{ restaurant.quote }}"</p>
+              <div class="restaurant-author">
+                <span class="avatar" [style.--avatar-color]="restaurant.color">{{ restaurant.author.charAt(0) }}</span>
+                <div>
+                  <p class="restaurant-name">{{ restaurant.name }}</p>
+                  <span class="restaurant-role">{{ restaurant.role }} · {{ restaurant.type }}</span>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+      <div class="carousel-controls">
+        <button class="carousel-arrow" (click)="prevRestaurants()" aria-label="Previous restaurants">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <div class="carousel-dots">
+          @for (dot of carouselDots(); track dot) {
+            <button
+              class="carousel-dot"
+              [class.active]="carouselIndex() === dot"
+              (click)="goToRestaurant(dot)"
+              [attr.aria-label]="'Go to slide ' + (dot + 1)"
+            ></button>
+          }
+        </div>
+        <button class="carousel-arrow" (click)="nextRestaurants()" aria-label="Next restaurants">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="section-head">
+      <span class="section-eyebrow">How it works</span>
+      <h2 class="section-title">From messy floor to total control in three steps</h2>
+      <p class="section-desc">Set up in an afternoon. See results on the first shift.</p>
+    </div>
+    <div class="steps-grid">
+      @for (step of steps; track step.title; let i = $index) {
+        <div class="step-card">
+          <span class="step-number">0{{ i + 1 }}</span>
+          <div class="step-icon-wrap">
+            <span class="material-symbols-outlined">{{ step.icon }}</span>
+          </div>
+          <h3 class="step-title">{{ step.title }}</h3>
+          <p class="step-desc">{{ step.desc }}</p>
+        </div>
       }
     </div>
   </section>
@@ -245,6 +335,30 @@
           </div>
           <h3 class="service-label">{{ service.label }}</h3>
           <p class="service-desc">{{ service.desc }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="section-head">
+      <span class="section-eyebrow">FAQ</span>
+      <h2 class="section-title">Questions, answered</h2>
+      <p class="section-desc">The things operators ask us most before going live.</p>
+    </div>
+    <div class="faq-list">
+      @for (item of faqs; track item.question; let i = $index) {
+        <div class="faq-item" [class.open]="openFaq === i">
+          <button class="faq-question" (click)="toggleFaq(i)" [attr.aria-expanded]="openFaq === i">
+            <span>{{ item.question }}</span>
+            <span class="material-symbols-outlined faq-icon">{{ openFaq === i ? 'remove' : 'add' }}</span>
+          </button>
+          @if (openFaq === i) {
+            <div class="faq-answer">
+              <p>{{ item.answer }}</p>
+            </div>
+          }
         </div>
       }
     </div>
