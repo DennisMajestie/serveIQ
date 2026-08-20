@@ -74,7 +74,15 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   itemsPerView = signal(3);
   isPaused = signal(false);
   openFaq: number | null = 0;
+  heroSlide = signal(0);
+  heroSlides: string[] = [
+    '/assets/brand/hero-1.png',
+    '/assets/brand/hero-2.jpg',
+    '/assets/brand/hero-3.jpg',
+    '/assets/brand/hero-4.jpg'
+  ];
   private autoplayTimer: ReturnType<typeof setInterval> | null = null;
+  private heroTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -247,12 +255,28 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       this.updateItemsPerView();
       window.addEventListener('resize', this.onResize);
       this.startAutoplay();
+      this.startHeroSlides();
     }
   }
 
   ngOnDestroy() {
     this.stopAutoplay();
+    this.stopHeroSlides();
     window.removeEventListener('resize', this.onResize);
+  }
+
+  private startHeroSlides(): void {
+    this.stopHeroSlides();
+    this.heroTimer = setInterval(() => {
+      this.heroSlide.update(i => (i + 1) % this.heroSlides.length);
+    }, 6000);
+  }
+
+  private stopHeroSlides(): void {
+    if (this.heroTimer) {
+      clearInterval(this.heroTimer);
+      this.heroTimer = null;
+    }
   }
 
   private onResize = (): void => {

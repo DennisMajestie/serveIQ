@@ -32,6 +32,12 @@
 <main>
   <!-- Hero -->
   <section class="hero">
+    <div class="hero-slides" aria-hidden="true">
+      @for (img of heroSlides; track img; let i = $index) {
+        <div class="hero-slide" [class.active]="heroSlide() === i" [style.background-image]="'url(' + img + ')'"></div>
+      }
+    </div>
+    <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-container">
       <div class="hero-content">
         <div class="hero-badge">
