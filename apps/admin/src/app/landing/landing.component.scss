@@ -247,7 +247,7 @@
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
+  background-position: top center;
   opacity: 0;
   transition: opacity 1.2s ease;
   &.active {
@@ -1485,8 +1485,7 @@
     flex: 1.1;
   }
   .hero-visual {
-    flex: 1;
-    justify-content: flex-end;
+    display: none;
   }
   .hero-title {
     font-size: 3.25rem;
