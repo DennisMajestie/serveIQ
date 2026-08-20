@@ -48,8 +48,8 @@
         </h1>
         <p class="hero-desc">{{ heroDesc }}</p>
         <div class="hero-actions">
-          <a href="#menu" class="btn btn-primary">Order Now</a>
-          <a href="#about" class="btn btn-outline">Explore Menu</a>
+          <a routerLink="/register" class="btn btn-primary">Book a Demo</a>
+          <a routerLink="/login" class="btn btn-outline">Log In</a>
         </div>
         <div class="hero-proof">
           <div class="stars">
@@ -59,15 +59,15 @@
             <span class="material-symbols-outlined">star</span>
             <span class="material-symbols-outlined">star</span>
           </div>
-          <span class="proof-text">Loved by food lovers across the neighbourhood</span>
+          <span class="proof-text">Trusted by 120+ restaurants keeping their revenue safe</span>
         </div>
       </div>
       <div class="hero-visual">
         <div class="hero-photo-wrap">
           <img class="hero-photo" src="assets/food/jollof.png" alt="Smoky jollof rice" />
           <div class="hero-photo-badge">
-            <span class="material-symbols-outlined">local_fire_department</span>
-            <span>Fire-grilled daily</span>
+            <span class="material-symbols-outlined">sensors</span>
+            <span>Running live on ServeIQ</span>
           </div>
         </div>
       </div>
@@ -77,9 +77,9 @@
   <!-- Top List -->
   <section class="top-list" id="menu">
     <div class="section-head">
-      <span class="section-eyebrow">Top List</span>
-      <h2 class="section-title">The plates people keep coming back for</h2>
-      <p class="section-desc">Our three most-loved dishes. Made fresh, served hot, gone fast.</p>
+      <span class="section-eyebrow">Menu Module</span>
+      <h2 class="section-title">Your best sellers, front and center</h2>
+      <p class="section-desc">ServeIQ's menu management keeps dishes one tap away — photos, prices, and live inventory linked to every order.</p>
     </div>
     <div class="dishes-grid">
       @for (dish of dishes; track dish.name) {
@@ -129,9 +129,9 @@
   <!-- Services -->
   <section class="services">
     <div class="section-head">
-      <span class="section-eyebrow">Services</span>
-      <h2 class="section-title">We go where the appetite goes</h2>
-      <p class="section-desc">Whatever the craving looks like, we have a way to serve it.</p>
+      <span class="section-eyebrow">Platform</span>
+      <h2 class="section-title">Every part of the restaurant, covered</h2>
+      <p class="section-desc">ServeIQ handles the operations, so the kitchen can handle the food.</p>
     </div>
     <div class="services-row">
       @for (service of services; track service.label) {
@@ -149,11 +149,11 @@
   <!-- CTA Band -->
   <section class="cta-band">
     <div class="cta-content">
-      <h2 class="cta-title">Hungry yet?</h2>
-      <p class="cta-subtitle">Come in for a plate tonight, or call ahead and we will have it waiting.</p>
+      <h2 class="cta-title">Power your kitchen with ServeIQ</h2>
+      <p class="cta-subtitle">Book a demo and watch the platform running the restaurant above — live.</p>
       <div class="cta-actions">
-        <a href="#menu" class="btn btn-cta">Order Now</a>
-        <a href="tel:+2340000000000" class="btn btn-cta-ghost">Call the Kitchen</a>
+        <a routerLink="/register" class="btn btn-cta">Book a Demo</a>
+        <a routerLink="/login" class="btn btn-cta-ghost">Log In</a>
       </div>
     </div>
   </section>
@@ -168,10 +168,10 @@
       </svg>
       <span class="brand-wordmark">Serve<span class="brand-accent">IQ</span></span>
     </div>
-    <p class="footer-copy">© 2026 ServeIQ. Fired up every single day.</p>
+    <p class="footer-copy">© 2026 ServeIQ. The software powering great restaurants.</p>
   </div>
 </footer>
 
-<a class="fab" href="#menu" aria-label="Order now">
-  <span class="material-symbols-outlined">restaurant_menu</span>
+<a class="fab" routerLink="/register" aria-label="Book a demo">
+  <span class="material-symbols-outlined">rocket_launch</span>
 </a>

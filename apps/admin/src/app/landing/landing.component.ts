@@ -58,12 +58,12 @@ export class LandingComponent implements AfterViewInit {
     { label: 'About', href: '#about' }
   ];
 
-  heroBadge = 'Open daily · 10am — 10pm';
+  heroBadge = 'Powered by ServeIQ';
 
-  heroTitleLead = 'Every plate, made with fire.';
-  heroTitleAccent = 'Taste the difference.';
+  heroTitleLead = 'This kitchen runs on ServeIQ.';
+  heroTitleAccent = 'So can yours.';
 
-  heroDesc = 'Smoky jollof, char-grilled suya, and drinks that do the talking. Cooked to order, served hot, and priced like your neighbourhood should be.';
+  heroDesc = 'The restaurant you see here — its orders, tables, stock, and cash — all runs through ServeIQ. One platform for the whole operation, so owners focus on the food.';
 
   dishes: Dish[] = [
     {
@@ -94,21 +94,21 @@ export class LandingComponent implements AfterViewInit {
 
   feature: FeatureItem = {
     image: 'assets/food/suya.png',
-    eyebrow: 'About the kitchen',
-    title: 'Char first. Question nothing.',
-    desc: 'We cook over open flame because food built on fire has no room for shortcuts. Every order is prepped the moment it hits the pass — nothing sits, nothing waits.',
+    eyebrow: 'One platform',
+    title: 'The whole restaurant, running on one system',
+    desc: 'The kitchen in these photos runs on ServeIQ. Orders from the floor, stock in the store, and cash in the till are all connected — no loose ends, no guesswork.',
     points: [
-      'Fire-grilled proteins, made to order',
-      'Fresh pepper sauces blended daily',
-      'Small-batch cooking for peak freshness'
+      'POS that never slows down a busy night',
+      'Table & floor management with a full audit trail',
+      'Inventory tied to every order placed'
     ]
   };
 
   services: ServiceItem[] = [
-    { icon: 'restaurant', label: 'Dine-In', desc: 'Comfortable seats, full table service.' },
-    { icon: 'delivery_dining', label: 'Delivery', desc: 'Hot food at your door within the hour.' },
-    { icon: 'event_seat', label: 'Private Events', desc: 'Birthdays, launches and corporate nights.' },
-    { icon: 'local_bar', label: 'Bar & Drinks', desc: 'Chapman, zobo and cold refreshments.' }
+    { icon: 'point_of_sale', label: 'Point of Sale', desc: 'Fast, reliable checkout from any device.' },
+    { icon: 'table_restaurant', label: 'Table & Floor', desc: 'Live floor plan and table ownership.' },
+    { icon: 'inventory_2', label: 'Inventory', desc: 'Stock linked to real orders, caught live.' },
+    { icon: 'monitoring', label: 'Staff Analytics', desc: 'Per-waiter sales and audit trail.' }
   ];
 
   addToOrder(dish: Dish): void {
