@@ -70,10 +70,10 @@
   text-align: center;
   flex-direction: column;
 
-  @media (min-width: 480px) {
-    text-align: left;
-    flex-direction: row;
-  }
+  // @media (min-width: 480px) {
+  //   text-align: left;
+  //   flex-direction: row;
+  // }
 }
 
 .header-logo {
