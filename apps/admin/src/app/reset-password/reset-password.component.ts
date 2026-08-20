@@ -13,10 +13,7 @@ import Swal from 'sweetalert2';
     <div class="onboarding-layout inter-font">
       <header class="onboarding-topbar">
         <div class="brand">
-          <svg class="brand-x" viewBox="0 0 14 14" fill="#F97316">
-            <path d="M7 0L8.5 5.5L14 7L8.5 8.5L7 14L5.5 8.5L0 7L5.5 5.5Z"/>
-          </svg>
-          <span class="brand-name space-font">ServeIQ</span>
+          <img class="brand-logo" src="assets/brand/serveiq-logo.jpeg" alt="ServeIQ" />
         </div>
       </header>
 
@@ -80,8 +77,7 @@ import Swal from 'sweetalert2';
       align-items: center;
     }
     .brand { display: flex; align-items: center; gap: 8px; }
-    .brand-x { width: 20px; height: 20px; }
-    .brand-name { font-size: 1.25rem; color: #fff; }
+    .brand-logo { height: 28px; width: auto; object-fit: contain; }
     .onboarding-main {
       flex: 1;
       display: flex;

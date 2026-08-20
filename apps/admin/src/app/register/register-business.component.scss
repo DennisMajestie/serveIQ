@@ -76,14 +76,13 @@
   }
 }
 
-.header-icon {
+.header-logo {
   width: 48px;
   height: 48px;
   border-radius: 16px;
-  background: color-mix(in srgb, var(--primary) 20%, transparent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  object-fit: contain;
+  background: var(--surface-container-lowest);
+  padding: 6px;
   flex-shrink: 0;
 }
 

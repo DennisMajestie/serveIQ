@@ -51,7 +51,7 @@ interface MobileTab {
       <!-- Sidebar -->
       <aside class="sidebar" [class.mobile-open]="mobileNavOpen()">
         <div class="sidebar-header">
-          <h1 class="brand-name">ServeIQ</h1>
+          <img class="brand-logo" src="assets/brand/serveiq-logo.jpeg" alt="ServeIQ" />
           <p class="brand-subtitle">Management Portal</p>
         </div>
         <nav class="sidebar-nav">
@@ -403,6 +403,15 @@ interface MobileTab {
     .sidebar-header {
       padding: 32px 24px;
       flex-shrink: 0;
+    }
+
+    .brand-logo {
+      display: block;
+      height: 32px;
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+      margin-bottom: 8px;
     }
 
     .brand-name {

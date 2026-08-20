@@ -46,6 +46,18 @@
   flex: none;
 }
 
+.logo-img {
+  display: block;
+  height: 40px;
+  width: auto;
+  flex: none;
+  object-fit: contain;
+}
+
+.footer-logo-img {
+  height: 32px;
+}
+
 .brand-wordmark {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.25rem;

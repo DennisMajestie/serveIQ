@@ -122,6 +122,15 @@
   gap: 8px;
 }
 
+.login-logo {
+  display: block;
+  height: 44px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+
 .login-title {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 32px;
