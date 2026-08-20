@@ -180,12 +180,14 @@
 
   <!-- Payment Partners -->
   <section class="partners">
+    <div class="partners-head">
+      <span class="section-eyebrow">Payments</span>
+      <h2 class="partners-title">Settle through partners your customers already trust</h2>
+    </div>
     <div class="partners-row">
       @for (partner of paymentPartners; track partner.name) {
         <div class="partner-card">
-          <div class="partner-logo">
-            <img [src]="partner.image" [alt]="partner.name + ' logo'" loading="lazy" />
-          </div>
+          <img [src]="partner.image" [alt]="partner.name + ' logo'" loading="lazy" />
         </div>
       }
     </div>

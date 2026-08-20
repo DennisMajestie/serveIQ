@@ -9,8 +9,7 @@ initSentry();
 bootstrapSwal();
 
 const savedTheme = localStorage.getItem('serveiq-admin-theme');
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-document.documentElement.setAttribute('data-theme', savedTheme || (prefersDark ? 'dark' : 'light'));
+document.documentElement.setAttribute('data-theme', savedTheme || 'light');
 
 bootstrapApplication(App, appConfig).catch((err) => console.error(err));
 

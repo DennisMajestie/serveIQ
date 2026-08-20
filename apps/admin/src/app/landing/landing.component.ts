@@ -80,7 +80,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     { url: '/assets/brand/hero-1.png', position: 'center' },
     { url: '/assets/brand/hero-2.jpg', position: 'center' },
     { url: '/assets/brand/hero-3.jpg', position: 'center' },
-    { url: '/assets/brand/hero-4.jpg', position: 'center' }
+    { url: '/assets/brand/hero-4.jpg', position: 'center' },
+    { url: '/assets/brand/hero-5.jpg', position: 'center' }
   ];
   private autoplayTimer: ReturnType<typeof setInterval> | null = null;
   private heroTimer: ReturnType<typeof setInterval> | null = null;
@@ -276,7 +277,6 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     if (typeof window === 'undefined') {
       return;
     }
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const content = document.querySelector('.hero-content');
     if (!content) {
       return;
@@ -295,11 +295,6 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       .to(desc, { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.45')
       .to(actions, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'back.out(1.7)' }, '-=0.4')
       .to(proof, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '-=0.3');
-
-    if (reduced) {
-      gsap.set([badge, title, desc, actions, proof], { clearProps: 'all' });
-      tl.pause(0);
-    }
   }
 
   private animateOpsCard(): void {
@@ -313,8 +308,6 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     const kpis = Array.from(panel.querySelectorAll('.ops-kpi'));
     const tiles = Array.from(panel.querySelectorAll('.ops-table'));
     const orders = Array.from(panel.querySelectorAll('.ops-order'));
-
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     gsap.set(panel, { autoAlpha: 0, y: 48, scale: 0.94, rotateX: -8 });
     gsap.set(kpis, { autoAlpha: 0, y: 24 });
@@ -331,14 +324,6 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       .add(() => this.pulseLiveDot(panel))
       .add(() => this.floatTiles(panel))
       .add(() => this.shimmerBadge(panel), '-=0.5');
-
-    if (prefersReduced) {
-      gsap.set(panel, { clearProps: 'all' });
-      gsap.set(kpis, { clearProps: 'all' });
-      gsap.set(tiles, { clearProps: 'all' });
-      gsap.set(orders, { clearProps: 'all' });
-      tl.pause(0);
-    }
   }
 
   private countUpKpis(panel: HTMLElement): void {
@@ -496,11 +481,6 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   }
 
   private initIntersectionObserver() {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      return;
-    }
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
