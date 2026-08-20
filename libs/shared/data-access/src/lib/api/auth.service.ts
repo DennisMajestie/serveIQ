@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
 import { RegisterRequest, RegisterResponse, ForgotPasswordRequest, ResetPasswordRequest, VerifyEmailRequest } from '@serveiq/shared/models';
 
@@ -99,10 +99,11 @@ export class AuthService {
 
   /** Fetch the authoritative current user from the backend */
   getMe(): Observable<MeResponse> {
-    return this.http.get<MeResponse>(`${this.apiUrl}/api/v1/auth/me`, {
+    return this.http.get<{ success: boolean; data: MeResponse }>(`${this.apiUrl}/api/v1/auth/me`, {
       withCredentials: true
     }).pipe(
-      tap((me) => {
+      tap((res) => {
+        const me = res?.data || res;
         if (me.role === 'superadmin') {
           localStorage.setItem('userRole', 'super_admin');
         } else {
@@ -110,7 +111,8 @@ export class AuthService {
         }
         if (me.businessId) localStorage.setItem('businessId', me.businessId);
         if (me.branchId) localStorage.setItem('branchId', me.branchId);
-      })
+      }),
+      map((res) => (res?.data || res) as MeResponse)
     );
   }
 
