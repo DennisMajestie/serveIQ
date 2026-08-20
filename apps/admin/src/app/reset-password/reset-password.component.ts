@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+﻿import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
     <div class="onboarding-layout inter-font">
       <header class="onboarding-topbar">
         <div class="brand">
-          <img class="brand-logo" src="assets/brand/serveiq-logo.jpeg" alt="ServeIQ" />
+          <img class="brand-logo" src="assets/brand/serveiq-logo.png" alt="ServeIQ" />
         </div>
       </header>
 

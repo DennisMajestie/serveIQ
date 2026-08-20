@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -51,7 +51,7 @@ interface MobileTab {
       <!-- Sidebar -->
       <aside class="sidebar" [class.mobile-open]="mobileNavOpen()">
         <div class="sidebar-header">
-          <img class="brand-logo" src="assets/brand/serveiq-logo.jpeg" alt="ServeIQ" />
+          <img class="brand-logo" src="assets/brand/serveiq-logo.png" alt="ServeIQ" />
           <p class="brand-subtitle">Management Portal</p>
         </div>
         <nav class="sidebar-nav">
