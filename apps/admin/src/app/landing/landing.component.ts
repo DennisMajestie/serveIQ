@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeService, Theme } from '../core/theme.service';
 import { PublicMenuApiService, PublicBusiness } from '@serveiq/shared/data-access';
+import gsap from 'gsap';
 
 interface ModuleItem {
   icon: string;
@@ -75,11 +76,11 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   isPaused = signal(false);
   openFaq: number | null = 0;
   heroSlide = signal(0);
-  heroSlides: string[] = [
-    '/assets/brand/hero-1.png',
-    '/assets/brand/hero-2.jpg',
-    '/assets/brand/hero-3.jpg',
-    '/assets/brand/hero-4.jpg'
+  heroSlides: { url: string; position: string }[] = [
+    { url: '/assets/brand/hero-1.png', position: 'center' },
+    { url: '/assets/brand/hero-2.jpg', position: 'center' },
+    { url: '/assets/brand/hero-3.jpg', position: 'center' },
+    { url: '/assets/brand/hero-4.jpg', position: 'center' }
   ];
   private autoplayTimer: ReturnType<typeof setInterval> | null = null;
   private heroTimer: ReturnType<typeof setInterval> | null = null;
@@ -94,6 +95,10 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
   }
 
   toggleTheme(): void {
@@ -256,6 +261,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       window.addEventListener('resize', this.onResize);
       this.startAutoplay();
       this.startHeroSlides();
+      this.animateHeroText();
+      this.animateOpsCard();
     }
   }
 
@@ -263,6 +270,149 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     this.stopAutoplay();
     this.stopHeroSlides();
     window.removeEventListener('resize', this.onResize);
+  }
+
+  private animateHeroText(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const content = document.querySelector('.hero-content');
+    if (!content) {
+      return;
+    }
+    const badge = content.querySelector('.hero-badge');
+    const title = content.querySelector('.hero-title');
+    const desc = content.querySelector('.hero-desc');
+    const actions = content.querySelector('.hero-actions');
+    const proof = content.querySelector('.hero-proof');
+
+    gsap.set([badge, title, desc, actions, proof], { autoAlpha: 0, y: 28 });
+
+    const tl = gsap.timeline({ delay: 0.3 });
+    tl.to(badge, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' })
+      .to(title, { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.3')
+      .to(desc, { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.45')
+      .to(actions, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'back.out(1.7)' }, '-=0.4')
+      .to(proof, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '-=0.3');
+
+    if (reduced) {
+      gsap.set([badge, title, desc, actions, proof], { clearProps: 'all' });
+      tl.pause(0);
+    }
+  }
+
+  private animateOpsCard(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const panel = document.querySelector<HTMLElement>('.hero-panel-wrap');
+    if (!panel) {
+      return;
+    }
+    const kpis = Array.from(panel.querySelectorAll('.ops-kpi'));
+    const tiles = Array.from(panel.querySelectorAll('.ops-table'));
+    const orders = Array.from(panel.querySelectorAll('.ops-order'));
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    gsap.set(panel, { autoAlpha: 0, y: 48, scale: 0.94, rotateX: -8 });
+    gsap.set(kpis, { autoAlpha: 0, y: 24 });
+    gsap.set(tiles, { autoAlpha: 0, scale: 0.4, rotate: gsap.utils.random(-180, 180) });
+    gsap.set(orders, { autoAlpha: 0, x: gsap.utils.random(-40, 40), y: 16 });
+
+    const tl = gsap.timeline({ delay: 0.5 });
+
+    tl.to(panel, { autoAlpha: 1, y: 0, scale: 1, rotateX: 0, duration: 1.1, ease: 'power3.out' })
+      .to(kpis, { autoAlpha: 1, y: 0, stagger: 0.12, duration: 0.7, ease: 'back.out(1.7)' }, '-=0.55')
+      .to(tiles, { autoAlpha: 1, scale: 1, rotate: 0, stagger: 0.045, duration: 0.55, ease: 'back.out(2)', onStart: this.sparkTiles }, '-=0.3')
+      .to(orders, { autoAlpha: 1, x: 0, y: 0, stagger: 0.12, duration: 0.6, ease: 'power3.out' }, '-=0.25')
+      .add(() => this.countUpKpis(panel))
+      .add(() => this.pulseLiveDot(panel))
+      .add(() => this.floatTiles(panel))
+      .add(() => this.shimmerBadge(panel), '-=0.5');
+
+    if (prefersReduced) {
+      gsap.set(panel, { clearProps: 'all' });
+      gsap.set(kpis, { clearProps: 'all' });
+      gsap.set(tiles, { clearProps: 'all' });
+      gsap.set(orders, { clearProps: 'all' });
+      tl.pause(0);
+    }
+  }
+
+  private countUpKpis(panel: HTMLElement): void {
+    panel.querySelectorAll<HTMLElement>('.ops-kpi-value').forEach((el) => {
+      const raw = el.textContent?.trim() ?? '';
+      const isMoney = raw.startsWith('₦');
+      const isPct = raw.endsWith('%');
+      const target = parseFloat(raw.replace(/[^\d.-]/g, ''));
+      if (Number.isNaN(target)) {
+        return;
+      }
+      const obj = { v: 0 };
+      gsap.to(obj, {
+        v: target,
+        duration: 1.4,
+        ease: 'power2.out',
+        onUpdate: () => {
+          const formatted = isMoney
+            ? '₦' + Math.round(obj.v).toLocaleString()
+            : isPct
+              ? Math.round(obj.v) + '%'
+              : Math.round(obj.v).toLocaleString();
+          el.textContent = formatted;
+        }
+      });
+    });
+  }
+
+  private pulseLiveDot(panel: HTMLElement): void {
+    const dot = panel.querySelector('.live-dot');
+    if (!dot) {
+      return;
+    }
+    gsap.to(dot, { scale: 1.5, opacity: 0.4, repeat: -1, yoyo: true, duration: 0.8, ease: 'sine.inOut' });
+  }
+
+  private sparkTiles(): void {
+    const tiles = Array.from(document.querySelectorAll('.ops-table'));
+    tiles.forEach((t, i) => {
+      if (i % 3 === 0) {
+        gsap.fromTo(t, { boxShadow: '0 0 0 rgba(255,255,255,0)' }, {
+          boxShadow: '0 0 24px color-mix(in srgb, var(--primary) 60%, transparent)',
+          duration: 0.5,
+          yoyo: true,
+          repeat: 1,
+          ease: 'power1.out'
+        });
+      }
+    });
+  }
+
+  private floatTiles(panel: HTMLElement): void {
+    panel.querySelectorAll('.ops-table').forEach((tile, i) => {
+      gsap.to(tile, {
+        y: (i % 2 === 0 ? -4 : 4),
+        repeat: -1,
+        yoyo: true,
+        duration: 1.6 + (i % 4) * 0.3,
+        ease: 'sine.inOut'
+      });
+    });
+  }
+
+  private shimmerBadge(panel: HTMLElement): void {
+    const badge = panel.querySelector('.hero-panel-badge');
+    if (!badge) {
+      return;
+    }
+    gsap.fromTo(badge, { backgroundPosition: '200% 0' }, {
+      backgroundPosition: '-200% 0',
+      duration: 3.5,
+      repeat: -1,
+      ease: 'sine.inOut'
+    });
   }
 
   private startHeroSlides(): void {
@@ -346,16 +496,70 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   }
 
   private initIntersectionObserver() {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('animate-fade-up');
+            observer.unobserve(entry.target);
+            this.animateReveal(entry.target as HTMLElement);
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.12 }
     );
-    document.querySelectorAll('.module-card, .feature-copy, .service-item, .step-card, .restaurant-card, .faq-item').forEach(card => observer.observe(card));
+
+    document.querySelectorAll('.module-card, .feature-copy, .service-item, .step-card, .faq-item, .partner-card').forEach(card => observer.observe(card));
+    const stats = document.querySelector('.stats-bar');
+    if (stats) {
+      observer.observe(stats);
+    }
+  }
+
+  private animateReveal(el: HTMLElement): void {
+    if (el.classList.contains('stats-bar')) {
+      this.countUpStats(el);
+      return;
+    }
+    gsap.fromTo(
+      el,
+      { autoAlpha: 0, y: 40, scale: 0.96 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out' }
+    );
+  }
+
+  private countUpStats(bar: HTMLElement): void {
+    const values = Array.from(bar.querySelectorAll<HTMLElement>('.stat-value'));
+    gsap.fromTo(
+      bar.querySelectorAll('.stat-item'),
+      { autoAlpha: 0, y: 30 },
+      { autoAlpha: 1, y: 0, stagger: 0.12, duration: 0.7, ease: 'back.out(1.7)' }
+    );
+    values.forEach((el) => {
+      const raw = el.textContent?.trim() ?? '';
+      const match = raw.match(/^([^\d]*)([\d.,]+)([^\d]*)$/);
+      if (!match) {
+        return;
+      }
+      const [, prefix, numPart, suffix] = match;
+      const decimals = numPart.includes('.') ? numPart.split('.')[1].length : 0;
+      const target = parseFloat(numPart.replace(/,/g, ''));
+      if (Number.isNaN(target)) {
+        return;
+      }
+      const obj = { v: 0 };
+      gsap.to(obj, {
+        v: target,
+        duration: 1.6,
+        ease: 'power2.out',
+        onUpdate: () => {
+          el.textContent = prefix + obj.v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+        }
+      });
+    });
   }
 }

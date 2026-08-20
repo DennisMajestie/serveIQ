@@ -37,6 +37,7 @@
     "@sentry/browser": "^10.68.0",
     "chart.js": "^4.5.1",
     "express": "^4.22.2",
+    "gsap": "^3.15.0",
     "openai": "^6.42.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "~7.8.0",
