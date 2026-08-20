@@ -4,6 +4,7 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@serveiq/shared/data-access';
 import { PermissionService } from '../core/permission.service';
+import { ThemeService } from '../core/theme.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private permissionService = inject(PermissionService);
+  themeService = inject(ThemeService);
 
   ngOnInit() {
     const token = this.route.snapshot.queryParamMap.get('token');

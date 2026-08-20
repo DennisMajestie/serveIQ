@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BranchesApiService, ReportsApiService, TabsApiService, ShiftsApiService } from '@serveiq/shared/data-access';
 import { DashboardStats, Tab, PeakHoursEntry, Shift, WaiterPerformance } from '@serveiq/shared/models';
+import { ThemeService } from '../core/theme.service';
 import { catchError, forkJoin, of } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -28,6 +29,7 @@ interface StaffAvatar {
 })
 export class PremiumDashboardComponent implements OnInit, AfterViewInit {
   private branchesApi = inject(BranchesApiService);
+  themeService = inject(ThemeService);
   private reportsApi = inject(ReportsApiService);
   private tabsApi = inject(TabsApiService);
   private shiftsApi = inject(ShiftsApiService);

@@ -1,7 +1,7 @@
 ﻿<header class="landing-header" id="home">
   <nav class="nav-container">
     <a class="nav-brand" href="#home">
-      <img class="logo-img" src="assets/brand/serveiq-logo.png" alt="ServeIQ" />
+      <img class="logo-img" [src]="theme() === 'dark' ? 'assets/brand/serveiq-dark-logo.png' : 'assets/brand/serveiq-logo.png'" alt="ServeIQ" />
     </a>
     <div class="nav-links" [class.open]="mobileMenuOpen">
       @for (link of navLinks; track link.href) {
@@ -379,7 +379,7 @@
 <footer class="landing-footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <img class="logo-img footer-logo-img" src="assets/brand/serveiq-logo.png" alt="ServeIQ" />
+      <img class="logo-img footer-logo-img" [src]="theme() === 'dark' ? 'assets/brand/serveiq-dark-logo.png' : 'assets/brand/serveiq-logo.png'" alt="ServeIQ" />
     </div>
     <p class="footer-copy">© 2026 ServeIQ. The software powering great restaurants.</p>
   </div>

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ThemeService } from '../core/theme.service';
 
 interface OrderItem {
   name: string;
@@ -17,6 +18,7 @@ interface OrderItem {
   styleUrls: ['./tab-detail-view.component.scss']
 })
 export class TabDetailViewComponent {
+  themeService = inject(ThemeService);
   orderItems: OrderItem[] = [
     {
       name: 'Spicy Suya',

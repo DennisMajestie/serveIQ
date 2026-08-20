@@ -6,6 +6,7 @@ import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../core/currency-context.service';
 import { PermissionService } from '../core/permission.service';
+import { ThemeService } from '../core/theme.service';
 
 @Component({
   selector: 'app-table-detail',
@@ -547,6 +548,7 @@ import { PermissionService } from '../core/permission.service';
 })
 export class TableDetailComponent implements OnInit {
   private tabsApi = inject(TabsApiService);
+  themeService = inject(ThemeService);
   private ordersApi = inject(OrdersApiService);
   private billsApi = inject(BillsApiService);
   private menuApi = inject(MenuApiService);

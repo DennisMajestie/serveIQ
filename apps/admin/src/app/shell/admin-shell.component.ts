@@ -51,7 +51,7 @@ interface MobileTab {
       <!-- Sidebar -->
       <aside class="sidebar" [class.mobile-open]="mobileNavOpen()">
         <div class="sidebar-header">
-          <img class="brand-logo" src="assets/brand/serveiq-logo.png" alt="ServeIQ" />
+          <img class="brand-logo" [src]="themeService.theme() === 'dark' ? 'assets/brand/serveiq-dark-logo.png' : 'assets/brand/serveiq-logo.png'" alt="ServeIQ" />
           <p class="brand-subtitle">Management Portal</p>
         </div>
         <nav class="sidebar-nav">

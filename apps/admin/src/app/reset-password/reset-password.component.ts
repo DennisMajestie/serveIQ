@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@serveiq/shared/data-access';
+import { ThemeService } from '../core/theme.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -13,7 +14,7 @@ import Swal from 'sweetalert2';
     <div class="onboarding-layout inter-font">
       <header class="onboarding-topbar">
         <div class="brand">
-          <img class="brand-logo" src="assets/brand/serveiq-logo.png" alt="ServeIQ" />
+          <img class="brand-logo" [src]="themeService.theme() === 'dark' ? 'assets/brand/serveiq-dark-logo.png' : 'assets/brand/serveiq-logo.png'" alt="ServeIQ" />
         </div>
       </header>
 
@@ -148,6 +149,7 @@ export class ResetPasswordComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private authService = inject(AuthService);
+  themeService = inject(ThemeService);
 
   token = signal<string>('');
   password = '';
