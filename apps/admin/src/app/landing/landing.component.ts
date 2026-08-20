@@ -25,6 +25,12 @@ interface ServiceItem {
   desc: string;
 }
 
+interface PaymentPartner {
+  name: string;
+  icon: string;
+  desc: string;
+}
+
 @Component({
   selector: 'app-landing',
   standalone: true,
@@ -115,6 +121,12 @@ export class LandingComponent implements AfterViewInit {
     { icon: 'table_restaurant', label: 'Table & Floor', desc: 'Live floor plan and table ownership.' },
     { icon: 'inventory_2', label: 'Inventory', desc: 'Stock linked to real orders, caught live.' },
     { icon: 'monitoring', label: 'Staff Analytics', desc: 'Per-waiter sales and audit trail.' }
+  ];
+
+  paymentPartners: PaymentPartner[] = [
+    { name: 'OPay', icon: 'account_balance_wallet', desc: 'Mobile wallets & transfers' },
+    { name: 'Moniepoint', icon: 'credit_card', desc: 'POS & card terminals' },
+    { name: 'Paystack', icon: 'payment', desc: 'Card & bank payments' }
   ];
 
   ngAfterViewInit() {

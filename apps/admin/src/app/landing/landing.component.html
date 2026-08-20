@@ -126,6 +126,27 @@
     </div>
   </section>
 
+  <!-- Payment Partners -->
+  <section class="partners">
+    <div class="partners-head">
+      <span class="section-eyebrow">Payments</span>
+      <h2 class="partners-title">Settle through partners your customers already trust</h2>
+    </div>
+    <div class="partners-row">
+      @for (partner of paymentPartners; track partner.name) {
+        <div class="partner-card">
+          <div class="partner-icon">
+            <span class="material-symbols-outlined">{{ partner.icon }}</span>
+          </div>
+          <div class="partner-info">
+            <h3 class="partner-name">{{ partner.name }}</h3>
+            <p class="partner-desc">{{ partner.desc }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
   <!-- Modules -->
   <section class="top-list" id="modules">
     <div class="section-head">
