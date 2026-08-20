@@ -175,6 +175,7 @@ export const API_CONFIG = {
     publicMenu: '/api/v1/public/menu/:branchId',
     publicTracking: '/api/v1/tracking/:code',
     publicAds: '/api/v1/public/ads/:branchId',
+    publicBusinesses: '/api/v1/public/businesses',
     // AI / Nemotron
     ai: {
       generateLogic: '/api/v1/ai/generate-logic',

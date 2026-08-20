@@ -2,6 +2,7 @@ import { Component, AfterViewInit, OnDestroy, Inject, PLATFORM_ID, Signal, signa
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeService, Theme } from '../core/theme.service';
+import { PublicMenuApiService, PublicBusiness } from '@serveiq/shared/data-access';
 
 interface ModuleItem {
   icon: string;
@@ -37,14 +38,14 @@ interface StatItem {
 }
 
 interface RestaurantItem {
+  id: string;
   name: string;
   type: string;
-  quote: string;
-  author: string;
-  role: string;
-  metric: string;
-  metricLabel: string;
-  color: string;
+  address?: string;
+  logoUrl?: string;
+  brandPrimaryColor?: string;
+  branchCount: number;
+  createdAt?: Date;
 }
 
 interface StepItem {
@@ -77,7 +78,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private publicApi: PublicMenuApiService
   ) {
     this.theme = themeService.theme;
   }
@@ -100,68 +102,30 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     { value: '4–8%', label: 'of revenue leaks caught' }
   ];
 
-  restaurants: RestaurantItem[] = [
-    {
-      name: 'Naija Grills',
-      type: 'Grill house · Lekki',
-      quote: 'We cut walkout-style bill edits to zero in the first month.',
-      author: 'Adaeze Okonkwo',
-      role: 'Owner',
-      metric: '₦1.2M',
-      metricLabel: 'recovered in 30 days',
-      color: '#4be277'
-    },
-    {
-      name: 'Lagos Bistro Co.',
-      type: 'Bistro · Victoria Island',
-      quote: 'Shift disputes over tables ended the week we onboarded.',
-      author: 'Kunle Adeyemi',
-      role: 'GM',
-      metric: '0',
-      metricLabel: 'table disputes since',
-      color: '#93ccff'
-    },
-    {
-      name: 'Suya Republic',
-      type: 'Suya & grills · Yaba',
-      quote: 'I run two branches from my phone. Cash finally matches the till.',
-      author: 'Tunde Bakare',
-      role: 'Director',
-      metric: '2',
-      metricLabel: 'branches on one account',
-      color: '#adc6ff'
-    },
-    {
-      name: 'Yam & Co.',
-      type: 'Kitchen · Surulere',
-      quote: 'Inventory shrinkage dropped by half once stock tied to orders.',
-      author: 'Bisi Falade',
-      role: 'Ops Lead',
-      metric: '50%',
-      metricLabel: 'less shrinkage',
-      color: '#ffb4ab'
-    },
-    {
-      name: 'Kiyi Kitchen',
-      type: 'Family kitchen · Ikeja',
-      quote: 'Refund anomalies surface before the cashier even leaves the floor.',
-      author: 'Chidi Nwosu',
-      role: 'Manager',
-      metric: '2.4s',
-      metricLabel: 'refund alert delay',
-      color: '#ffd280'
-    },
-    {
-      name: 'Pepper Palace',
-      type: 'Fast casual · Ibadan',
-      quote: 'Every order has an owner now. No more guessing who took which table.',
-      author: 'Funmi Ogunleye',
-      role: 'Owner',
-      metric: '100%',
-      metricLabel: 'orders traceable',
-      color: '#ffb690'
-    }
-  ];
+  restaurants: RestaurantItem[] = [];
+  restaurantsLoaded = signal(false);
+
+  private loadRestaurants(): void {
+    this.publicApi.getBusinesses().subscribe({
+      next: (businesses: PublicBusiness[]) => {
+        this.restaurants = businesses.map((b) => ({
+          id: b.id,
+          name: b.name,
+          type: b.type,
+          address: b.address,
+          logoUrl: b.logoUrl,
+          brandPrimaryColor: b.brandPrimaryColor,
+          branchCount: b.branchCount,
+          createdAt: b.createdAt
+        }));
+        this.restaurantsLoaded.set(true);
+        this.carouselIndex.set(0);
+      },
+      error: () => {
+        this.restaurantsLoaded.set(true);
+      }
+    });
+  }
 
   steps: StepItem[] = [
     {
@@ -278,6 +242,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
+      this.loadRestaurants();
       this.initIntersectionObserver();
       this.updateItemsPerView();
       window.addEventListener('resize', this.onResize);

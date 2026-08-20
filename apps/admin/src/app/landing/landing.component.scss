@@ -1022,6 +1022,7 @@
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+  color: var(--primary);
 }
 
 .restaurant-metric-label {
@@ -1029,47 +1030,59 @@
   color: var(--secondary);
 }
 
-.restaurant-quote {
+.restaurant-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.restaurant-logo {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--surface-container-lowest);
+  border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
+}
+
+.restaurant-name-lg {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.6;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--on-background);
 }
 
-.restaurant-author {
+.restaurant-meta {
+  margin: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 8px;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  color: var(--secondary);
+  text-transform: capitalize;
+}
+
+.restaurant-sep {
+  color: color-mix(in srgb, var(--on-background) 30%, transparent);
 }
 
 .avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   flex: none;
-  border-radius: 999px;
+  border-radius: 12px;
   background: var(--avatar-color, var(--primary));
   color: #0a0a0f;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
-}
-
-.restaurant-name {
-  margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--on-background);
-}
-
-.restaurant-role {
-  font-size: 0.8125rem;
-  color: var(--secondary);
+  font-size: 1.25rem;
 }
 
 .carousel-controls {

@@ -25,6 +25,19 @@ export interface PublicMenuData {
   items: PublicMenuItem[];
 }
 
+export interface PublicBusiness {
+  id: string;
+  name: string;
+  slug: string;
+  type: string;
+  address?: string;
+  logoUrl?: string;
+  brandPrimaryColor?: string;
+  brandAccentColor?: string;
+  branchCount: number;
+  createdAt?: Date;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PublicMenuApiService {
   private http: HttpClient;
@@ -44,6 +57,22 @@ export class PublicMenuApiService {
           data = data.data;
         }
         return snakeToCamel<PublicMenuData>(data);
+      })
+    );
+  }
+
+  getBusinesses(): Observable<PublicBusiness[]> {
+    const url = `${this.env.apiUrl}${API_CONFIG.endpoints.publicBusinesses}`;
+    return this.http.get<any>(url).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) {
+          data = data.data;
+        }
+        if (!Array.isArray(data)) {
+          return [];
+        }
+        return data.map((item: any) => snakeToCamel<PublicBusiness>(item));
       })
     );
   }

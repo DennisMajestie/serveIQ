@@ -199,61 +199,64 @@
   </section>
 
   <!-- Restaurants -->
-  <section class="restaurants">
-    <div class="section-head">
-      <span class="section-eyebrow">Restaurants on ServeIQ</span>
-      <h2 class="section-title">Powering kitchens across the country</h2>
-      <p class="section-desc">Real operators, real floors — running every shift on ServeIQ.</p>
-    </div>
-    <div class="carousel">
-      <div class="carousel-window">
-        <div
-          class="carousel-track"
-          [style.transform]="carouselTransform()"
-          (mouseenter)="pauseAutoplay()"
-          (mouseleave)="resumeAutoplay()"
-        >
-          @for (restaurant of restaurants; track restaurant.name) {
-            <article
-              class="restaurant-card"
-              [style.flex]="'0 0 calc((100% - ' + (itemsPerView() - 1) * 24 + 'px) / ' + itemsPerView() + ')'"
-            >
-              <div class="restaurant-metric">
-                <span class="restaurant-metric-value" [style.color]="restaurant.color">{{ restaurant.metric }}</span>
-                <span class="restaurant-metric-label">{{ restaurant.metricLabel }}</span>
-              </div>
-              <p class="restaurant-quote">"{{ restaurant.quote }}"</p>
-              <div class="restaurant-author">
-                <span class="avatar" [style.--avatar-color]="restaurant.color">{{ restaurant.author.charAt(0) }}</span>
-                <div>
-                  <p class="restaurant-name">{{ restaurant.name }}</p>
-                  <span class="restaurant-role">{{ restaurant.role }} · {{ restaurant.type }}</span>
+  @if (restaurantsLoaded() && restaurants.length) {
+    <section class="restaurants">
+      <div class="section-head">
+        <span class="section-eyebrow">Restaurants on ServeIQ</span>
+        <h2 class="section-title">Powering kitchens across the country</h2>
+        <p class="section-desc">Real operators, real floors — running every shift on ServeIQ.</p>
+      </div>
+      <div class="carousel">
+        <div class="carousel-window">
+          <div
+            class="carousel-track"
+            [style.transform]="carouselTransform()"
+            (mouseenter)="pauseAutoplay()"
+            (mouseleave)="resumeAutoplay()"
+          >
+            @for (restaurant of restaurants; track restaurant.id) {
+              <article
+                class="restaurant-card"
+                [style.flex]="'0 0 calc((100% - ' + (itemsPerView() - 1) * 24 + 'px) / ' + itemsPerView() + ')'"
+              >
+                <div class="restaurant-metric">
+                  <span class="restaurant-metric-value">{{ restaurant.branchCount }}</span>
+                  <span class="restaurant-metric-label">branch{{ restaurant.branchCount === 1 ? '' : 'es' }} live</span>
                 </div>
-              </div>
-            </article>
-          }
+                <div class="restaurant-identity">
+                  @if (restaurant.logoUrl) {
+                    <img class="restaurant-logo" [src]="restaurant.logoUrl" [alt]="restaurant.name + ' logo'" loading="lazy" />
+                  } @else {
+                    <span class="avatar" [style.--avatar-color]="restaurant.brandPrimaryColor || 'var(--primary)'">{{ restaurant.name.charAt(0) }}</span>
+                  }
+                  <h3 class="restaurant-name-lg">{{ restaurant.name }}</h3>
+                </div>
+                <p class="restaurant-meta">{{ restaurant.type | titlecase }}<span class="restaurant-sep">·</span>{{ restaurant.address || 'Nigeria' }}</p>
+              </article>
+            }
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-arrow" (click)="prevRestaurants()" aria-label="Previous restaurants">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <div class="carousel-dots">
+            @for (dot of carouselDots(); track dot) {
+              <button
+                class="carousel-dot"
+                [class.active]="carouselIndex() === dot"
+                (click)="goToRestaurant(dot)"
+                [attr.aria-label]="'Go to slide ' + (dot + 1)"
+              ></button>
+            }
+          </div>
+          <button class="carousel-arrow" (click)="nextRestaurants()" aria-label="Next restaurants">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
         </div>
       </div>
-      <div class="carousel-controls">
-        <button class="carousel-arrow" (click)="prevRestaurants()" aria-label="Previous restaurants">
-          <span class="material-symbols-outlined">chevron_left</span>
-        </button>
-        <div class="carousel-dots">
-          @for (dot of carouselDots(); track dot) {
-            <button
-              class="carousel-dot"
-              [class.active]="carouselIndex() === dot"
-              (click)="goToRestaurant(dot)"
-              [attr.aria-label]="'Go to slide ' + (dot + 1)"
-            ></button>
-          }
-        </div>
-        <button class="carousel-arrow" (click)="nextRestaurants()" aria-label="Next restaurants">
-          <span class="material-symbols-outlined">chevron_right</span>
-        </button>
-      </div>
-    </div>
-  </section>
+    </section>
+  }
 
   <!-- How It Works -->
   <section class="how-it-works">
