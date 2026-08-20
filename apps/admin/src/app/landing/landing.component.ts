@@ -27,7 +27,7 @@ interface ServiceItem {
 
 interface PaymentPartner {
   name: string;
-  icon: string;
+  image: string;
   desc: string;
 }
 
@@ -271,9 +271,9 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   ];
 
   paymentPartners: PaymentPartner[] = [
-    { name: 'OPay', icon: 'account_balance_wallet', desc: 'Mobile wallets & transfers' },
-    { name: 'Moniepoint', icon: 'credit_card', desc: 'POS & card terminals' },
-    { name: 'Paystack', icon: 'payment', desc: 'Card & bank payments' }
+    { name: 'OPay', image: 'assets/payments/opay.webp', desc: 'Mobile wallets & transfers' },
+    { name: 'Moniepoint', image: 'assets/payments/moniepoint.webp', desc: 'POS & card terminals' },
+    { name: 'Paystack', image: 'assets/payments/paystack.webp', desc: 'Card & bank payments' }
   ];
 
   ngAfterViewInit() {

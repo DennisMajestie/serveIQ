@@ -568,18 +568,24 @@
   }
 }
 
-.partner-icon {
+.partner-logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
+  width: 64px;
   height: 48px;
   flex: none;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-  color: var(--primary);
-  .material-symbols-outlined {
-    font-size: 26px;
+  border-radius: 12px;
+  background: var(--surface-container-lowest);
+  border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
+  padding: 6px;
+  overflow: hidden;
+  img {
+    display: block;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
   }
 }
 
