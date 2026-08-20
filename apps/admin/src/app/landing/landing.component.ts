@@ -3,17 +3,16 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeService, Theme } from '../core/theme.service';
 
-interface Dish {
-  image: string;
+interface ModuleItem {
+  icon: string;
   name: string;
   desc: string;
-  price: number;
-  rating: number;
-  reviews: number;
+  metric: string;
+  metricLabel: string;
+  tag: string;
 }
 
 interface FeatureItem {
-  image: string;
   eyebrow: string;
   title: string;
   desc: string;
@@ -54,53 +53,60 @@ export class LandingComponent implements AfterViewInit {
 
   navLinks = [
     { label: 'Home', href: '#home' },
-    { label: 'Menu', href: '#menu' },
-    { label: 'About', href: '#about' }
+    { label: 'Modules', href: '#modules' },
+    { label: 'Platform', href: '#platform' }
   ];
 
   heroBadge = 'Powered by ServeIQ';
 
-  heroTitleLead = 'This kitchen runs on ServeIQ.';
-  heroTitleAccent = 'So can yours.';
+  heroTitleLead = 'One system for the whole restaurant.';
+  heroTitleAccent = 'From till to stockroom.';
 
-  heroDesc = 'The restaurant you see here — its orders, tables, stock, and cash — all runs through ServeIQ. One platform for the whole operation, so owners focus on the food.';
+  heroDesc = 'ServeIQ connects the point of sale, the kitchen display, the floor plan, and the inventory — so orders, stock, and cash never slip between them.';
 
-  dishes: Dish[] = [
+  heroProof = 'Trusted by 120+ restaurants keeping their revenue safe';
+
+  floorTiles = [
+    true, false, true, false,
+    true, true, false, true,
+    false, true, false, false
+  ];
+
+  modules: ModuleItem[] = [
     {
-      image: 'assets/food/jollof.png',
-      name: 'Smoky Jollof Rice',
-      desc: 'Long-grain basmati simmered in fire-roasted peppers with grilled chicken.',
-      price: 4500,
-      rating: 4.9,
-      reviews: 128
+      icon: 'point_of_sale',
+      name: 'Point of Sale',
+      desc: 'Fast, reliable checkout at the till — on any device your team already uses.',
+      metric: '99.9%',
+      metricLabel: 'uptime',
+      tag: 'Core module'
     },
     {
-      image: 'assets/food/suya.png',
-      name: 'Spicy Suya Skewers',
-      desc: 'Beef skewers dusted in yaji spice, finished with onions and fresh tomato.',
-      price: 3800,
-      rating: 4.8,
-      reviews: 96
+      icon: 'restaurant',
+      name: 'Kitchen Display',
+      desc: 'Orders land on the kitchen screen the second they hit the pass, with timers and routing.',
+      metric: '2.4s',
+      metricLabel: 'avg ticket time',
+      tag: 'Kitchen'
     },
     {
-      image: 'assets/food/chapman.png',
-      name: 'Zesty Chapman',
-      desc: 'Our signature citrus mocktail with grenadine and a whisper of bitters.',
-      price: 1800,
-      rating: 4.7,
-      reviews: 74
+      icon: 'monitoring',
+      name: 'Ops Analytics',
+      desc: 'Live sales, efficiency, and staff performance for every shift — in a single view.',
+      metric: 'Live',
+      metricLabel: 'revenue',
+      tag: 'Analytics'
     }
   ];
 
   feature: FeatureItem = {
-    image: 'assets/food/suya.png',
-    eyebrow: 'One platform',
-    title: 'The whole restaurant, running on one system',
-    desc: 'The kitchen in these photos runs on ServeIQ. Orders from the floor, stock in the store, and cash in the till are all connected — no loose ends, no guesswork.',
+    eyebrow: 'Built for the floor',
+    title: 'Infrastructure your kitchen can rely on',
+    desc: 'ServeIQ wires the till, the kitchen display, the floor plan, and the stockroom into one system — so every order is accounted for, start to finish.',
     points: [
-      'POS that never slows down a busy night',
-      'Table & floor management with a full audit trail',
-      'Inventory tied to every order placed'
+      'Floor plan that mirrors the room in real time',
+      'Kitchen display that never loses an order',
+      'Stock and cash reconciled at every shift close'
     ]
   };
 
@@ -110,10 +116,6 @@ export class LandingComponent implements AfterViewInit {
     { icon: 'inventory_2', label: 'Inventory', desc: 'Stock linked to real orders, caught live.' },
     { icon: 'monitoring', label: 'Staff Analytics', desc: 'Per-waiter sales and audit trail.' }
   ];
-
-  addToOrder(dish: Dish): void {
-    console.log('Added to order:', dish.name);
-  }
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -132,6 +134,6 @@ export class LandingComponent implements AfterViewInit {
       },
       { threshold: 0.1 }
     );
-    document.querySelectorAll('.dish-card, .feature-copy, .service-item').forEach(card => observer.observe(card));
+    document.querySelectorAll('.module-card, .feature-copy, .service-item').forEach(card => observer.observe(card));
   }
 }

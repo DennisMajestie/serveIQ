@@ -39,7 +39,7 @@
     <div class="hero-container">
       <div class="hero-content">
         <div class="hero-badge">
-          <span class="material-symbols-outlined">restaurant_menu</span>
+          <span class="material-symbols-outlined">sensors</span>
           <span>{{ heroBadge }}</span>
         </div>
         <h1 class="hero-title">
@@ -59,48 +59,105 @@
             <span class="material-symbols-outlined">star</span>
             <span class="material-symbols-outlined">star</span>
           </div>
-          <span class="proof-text">Trusted by 120+ restaurants keeping their revenue safe</span>
+          <span class="proof-text">{{ heroProof }}</span>
         </div>
       </div>
       <div class="hero-visual">
-        <div class="hero-photo-wrap">
-          <img class="hero-photo" src="assets/food/jollof.png" alt="Smoky jollof rice" />
-          <div class="hero-photo-badge">
-            <span class="material-symbols-outlined">sensors</span>
-            <span>Running live on ServeIQ</span>
+        <div class="hero-panel-wrap">
+          <div class="ops-panel">
+            <div class="ops-header">
+              <span class="ops-title">
+                <span class="material-symbols-outlined">dashboard_customize</span>
+                Live Operations
+              </span>
+              <span class="ops-live"><span class="live-dot"></span>LIVE</span>
+            </div>
+            <div class="ops-kpis">
+              <div class="ops-kpi">
+                <span class="ops-kpi-label">Sales today</span>
+                <span class="ops-kpi-value">₦284,500</span>
+              </div>
+              <div class="ops-kpi">
+                <span class="ops-kpi-label">Open orders</span>
+                <span class="ops-kpi-value">23</span>
+              </div>
+              <div class="ops-kpi">
+                <span class="ops-kpi-label">Efficiency</span>
+                <span class="ops-kpi-value">94%</span>
+              </div>
+            </div>
+            <div class="ops-floor">
+              <span class="ops-floor-label">Floor plan · 12 tables</span>
+              <div class="ops-floor-grid">
+                @for (tile of floorTiles; track tile; let i = $index) {
+                  <div class="ops-table" [class.active]="tile" [class.occupied]="!tile">
+                    <span>#{{ i + 1 }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="ops-orders">
+              <div class="ops-order">
+                <span class="ops-order-table">T4</span>
+                <span class="ops-order-items">3 items</span>
+                <span class="ops-order-amount">₦9,300</span>
+                <span class="ops-order-status ok">Paid</span>
+              </div>
+              <div class="ops-order">
+                <span class="ops-order-table">T7</span>
+                <span class="ops-order-items">2 items</span>
+                <span class="ops-order-amount">₦3,600</span>
+                <span class="ops-order-status warn">Cooking</span>
+              </div>
+              <div class="ops-order">
+                <span class="ops-order-table">T2</span>
+                <span class="ops-order-items">4 items</span>
+                <span class="ops-order-amount">₦18,200</span>
+                <span class="ops-order-status ok">Paid</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-panel-badge">
+            <span class="material-symbols-outlined">verified</span>
+            <span>Every order accounted for</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Top List -->
-  <section class="top-list" id="menu">
+  <!-- Modules -->
+  <section class="top-list" id="modules">
     <div class="section-head">
-      <span class="section-eyebrow">Menu Module</span>
-      <h2 class="section-title">Your best sellers, front and center</h2>
-      <p class="section-desc">ServeIQ's menu management keeps dishes one tap away — photos, prices, and live inventory linked to every order.</p>
+      <span class="section-eyebrow">Modules</span>
+      <h2 class="section-title">Everything the restaurant runs on</h2>
+      <p class="section-desc">Three core modules, one connected system — from the till to the kitchen to the books.</p>
     </div>
     <div class="dishes-grid">
-      @for (dish of dishes; track dish.name) {
-        <article class="dish-card">
-          <div class="dish-photo-wrap">
-            <img class="dish-photo" [src]="dish.image" [alt]="dish.name" />
-            <button class="dish-add" (click)="addToOrder(dish)" [attr.aria-label]="'Add ' + dish.name + ' to order'">
-              <span class="material-symbols-outlined">add</span>
+      @for (module of modules; track module.name) {
+        <article class="module-card">
+          <div class="module-visual">
+            <div class="module-icon-tile">
+              <span class="material-symbols-outlined">{{ module.icon }}</span>
+            </div>
+            <div class="module-visual-bars" aria-hidden="true">
+              <span class="bar bar-1"></span>
+              <span class="bar bar-2"></span>
+              <span class="bar bar-3"></span>
+            </div>
+            <button class="module-more" [attr.aria-label]="'Learn more about ' + module.name">
+              <span class="material-symbols-outlined">arrow_forward</span>
             </button>
           </div>
-          <div class="dish-body">
-            <div class="dish-rating">
-              <span class="material-symbols-outlined">star</span>
-              <span class="dish-rating-value">{{ dish.rating }}</span>
-              <span class="dish-reviews">({{ dish.reviews }} reviews)</span>
+          <div class="module-body">
+            <div class="module-metric">
+              <span class="module-metric-value">{{ module.metric }}</span>
+              <span class="module-metric-label">{{ module.metricLabel }}</span>
             </div>
-            <h3 class="dish-name">{{ dish.name }}</h3>
-            <p class="dish-desc">{{ dish.desc }}</p>
-            <div class="dish-foot">
-              <span class="dish-price">₦{{ dish.price.toLocaleString() }}</span>
-              <span class="dish-price-suffix">per plate</span>
+            <h3 class="module-name">{{ module.name }}</h3>
+            <p class="module-desc">{{ module.desc }}</p>
+            <div class="module-foot">
+              <span class="module-tag">{{ module.tag }}</span>
             </div>
           </div>
         </article>
@@ -109,9 +166,35 @@
   </section>
 
   <!-- Feature -->
-  <section class="feature" id="about">
-    <div class="feature-photo">
-      <img src="assets/food/suya.png" alt="Spicy suya skewers over open flame" />
+  <section class="feature" id="platform">
+    <div class="feature-visual">
+      <svg viewBox="0 0 400 300" fill="none" role="img" aria-label="Restaurant floor plan with tables connected to the kitchen">
+        <rect class="fp-room" x="6" y="6" width="388" height="288" rx="16"/>
+        <rect class="fp-kitchen" x="292" y="24" width="86" height="252" rx="12"/>
+        <rect class="fp-kitchen-bar" x="300" y="44" width="70" height="8" rx="4"/>
+        <rect class="fp-kitchen-bar" x="300" y="64" width="70" height="8" rx="4"/>
+        <rect class="fp-kitchen-bar" x="300" y="84" width="70" height="8" rx="4"/>
+        <rect class="fp-pos" x="24" y="24" width="56" height="34" rx="8"/>
+        <text class="fp-label" x="36" y="45">POS</text>
+        <g class="fp-tables">
+          <rect class="fp-table" x="44" y="110" width="34" height="24" rx="6"/>
+          <rect class="fp-table" x="92" y="110" width="34" height="24" rx="6"/>
+          <rect class="fp-table active" x="44" y="170" width="34" height="24" rx="6"/>
+          <rect class="fp-table" x="92" y="170" width="34" height="24" rx="6"/>
+          <rect class="fp-table active" x="140" y="140" width="34" height="24" rx="6"/>
+          <rect class="fp-table" x="188" y="140" width="34" height="24" rx="6"/>
+          <rect class="fp-table active" x="140" y="210" width="34" height="24" rx="6"/>
+          <rect class="fp-table" x="188" y="210" width="34" height="24" rx="6"/>
+        </g>
+        <g class="fp-links">
+          <path d="M61 110 L235 60" />
+          <path d="M61 170 L235 60" />
+          <path d="M157 140 L235 60" />
+          <path d="M157 210 L235 60" />
+        </g>
+        <rect class="fp-legend-chip" x="140" y="258" width="120" height="26" rx="13"/>
+        <text class="fp-label" x="152" y="275">12 tables online</text>
+      </svg>
     </div>
     <div class="feature-copy">
       <span class="section-eyebrow">{{ feature.eyebrow }}</span>
@@ -122,7 +205,7 @@
           <li><span class="material-symbols-outlined">check_circle</span>{{ point }}</li>
         }
       </ul>
-      <a href="#menu" class="btn btn-primary">Order from the menu</a>
+      <a routerLink="/register" class="btn btn-primary">Book a demo</a>
     </div>
   </section>
 
