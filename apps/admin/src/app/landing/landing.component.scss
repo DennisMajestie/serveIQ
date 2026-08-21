@@ -322,6 +322,23 @@
   line-height: 1.65;
   color: var(--secondary);
   max-width: 520px;
+  @media (prefers-contrast: more) {
+    color: var(--primary);
+  }
+}
+
+/* Light mode hero text enhancements */
+[data-theme='light'] .hero-title {
+  background: linear-gradient(120deg, var(--primary), color-mix(in srgb, var(--primary) 80%, transparent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 4px color-mix(in srgb, var(--on-background) 20%, transparent);
+}
+
+[data-theme='light'] .hero-desc {
+  color: var(--primary);
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--on-background) 20%, transparent);
 }
 
 .hero-actions {
