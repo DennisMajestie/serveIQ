@@ -221,7 +221,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       tag: 'Kitchen'
     },
     {
-      icon: 'monitoring',
+      icon: 'analytics',
       name: 'Ops Analytics',
       desc: 'Live sales, efficiency, and staff performance for every shift — in a single view.',
       metric: 'Live',
@@ -245,7 +245,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     { icon: 'point_of_sale', label: 'Point of Sale', desc: 'Fast, reliable checkout from any device.' },
     { icon: 'table_restaurant', label: 'Table & Floor', desc: 'Live floor plan and table ownership.' },
     { icon: 'inventory_2', label: 'Inventory', desc: 'Stock linked to real orders, caught live.' },
-    { icon: 'monitoring', label: 'Staff Analytics', desc: 'Per-waiter sales and audit trail.' }
+    { icon: 'analytics', label: 'Staff Analytics', desc: 'Per-waiter sales and audit trail.' }
   ];
 
   paymentPartners: PaymentPartner[] = [
