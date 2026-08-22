@@ -94,6 +94,10 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     this.theme = themeService.theme;
   }
 
+  get year(): number {
+    return new Date().getFullYear();
+  }
+
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
   }
