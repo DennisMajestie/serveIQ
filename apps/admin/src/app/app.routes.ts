@@ -257,5 +257,25 @@ export const appRoutes: Route[] = [
   {
     path: 'payment-success',
     loadComponent: () => import('./payment-success/payment-success.component').then(m => m.PaymentSuccessComponent)
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./site/privacy.page').then(m => m.PrivacyPageComponent)
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./site/terms.page').then(m => m.TermsPageComponent)
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./site/contact.page').then(m => m.ContactPageComponent)
+  },
+  {
+    path: 'pricing',
+    loadComponent: () => import('./site/pricing.page').then(m => m.PricingPageComponent)
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./site/about.page').then(m => m.AboutPageComponent)
   }
 ];
