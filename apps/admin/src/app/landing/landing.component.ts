@@ -337,13 +337,20 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
         return;
       }
       const obj = { v: 0 };
+      const step = target >= 100000 ? 500 : target >= 10000 ? 100 : target >= 1000 ? 10 : 1;
+      let shown = -1;
       gsap.to(obj, {
         v: target,
         duration: 2,
         delay: i * 0.18,
         ease: 'power1.inOut',
         onUpdate: () => {
-          el.textContent = (isMoney ? '₦' : '') + fmt.format(Math.round(obj.v)) + (isPct ? '%' : '');
+          const n = Math.round(obj.v / step) * step;
+          if (n === shown) {
+            return;
+          }
+          shown = n;
+          el.textContent = (isMoney ? '₦' : '') + fmt.format(n) + (isPct ? '%' : '');
         },
         onComplete: () => {
           el.textContent = raw;

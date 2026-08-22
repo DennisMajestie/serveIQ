@@ -463,6 +463,8 @@
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--on-background);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
 }
 
 .ops-floor {
