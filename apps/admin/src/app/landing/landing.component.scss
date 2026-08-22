@@ -902,6 +902,7 @@
   background: color-mix(in srgb, var(--surface-container) 50%, transparent);
   border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
   text-align: center;
+  overflow: hidden;
   transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
   &:hover {
     transform: translateY(-3px);
