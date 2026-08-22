@@ -111,9 +111,9 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   }
 
   stats: StatItem[] = [
-    { value: '120+', label: 'restaurants on ServeIQ' },
-    { value: '₦1.9M', label: 'recovered per location / month' },
-    { value: '4–8%', label: 'of revenue leaks caught' }
+    { value: '3', label: 'core modules, one connected system' },
+    { value: '2.4s', label: 'avg order-to-kitchen-screen time' },
+    { value: '100%', label: 'of orders accounted for at shift close' }
   ];
 
   restaurants: RestaurantItem[] = [];
@@ -195,7 +195,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   heroDesc = 'ServeIQ connects the point of sale, the kitchen display, the floor plan, and the inventory — so orders, stock, and cash never slip between them.';
 
-  heroProof = 'Trusted by 120+ restaurants keeping their revenue safe';
+  heroProof = 'Now onboarding pilot restaurants across Nigeria';
 
   floorTiles = [
     true, false, true, false,
