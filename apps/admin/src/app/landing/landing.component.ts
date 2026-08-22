@@ -322,12 +322,13 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       .to(orders, { autoAlpha: 1, x: 0, y: 0, stagger: 0.12, duration: 0.6, ease: 'power3.out' }, '-=0.25')
       .add(() => this.countUpKpis(panel))
       .add(() => this.pulseLiveDot(panel))
-      .add(() => this.floatTiles(panel))
-      .add(() => this.shimmerBadge(panel), '-=0.5');
+      .add(() => this.floatTiles(panel), '+=1.6')
+      .add(() => this.shimmerBadge(panel), '<');
   }
 
   private countUpKpis(panel: HTMLElement): void {
-    panel.querySelectorAll<HTMLElement>('.ops-kpi-value').forEach((el) => {
+    const fmt = new Intl.NumberFormat('en-US');
+    panel.querySelectorAll<HTMLElement>('.ops-kpi-value').forEach((el, i) => {
       const raw = el.textContent?.trim() ?? '';
       const isMoney = raw.startsWith('₦');
       const isPct = raw.endsWith('%');
@@ -338,15 +339,18 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       const obj = { v: 0 };
       gsap.to(obj, {
         v: target,
-        duration: 1.4,
-        ease: 'power2.out',
+        duration: 2,
+        delay: i * 0.18,
+        ease: 'power1.inOut',
         onUpdate: () => {
-          const formatted = isMoney
-            ? '₦' + Math.round(obj.v).toLocaleString()
-            : isPct
-              ? Math.round(obj.v) + '%'
-              : Math.round(obj.v).toLocaleString();
-          el.textContent = formatted;
+          el.textContent = (isMoney ? '₦' : '') + fmt.format(Math.round(obj.v)) + (isPct ? '%' : '');
+        },
+        onComplete: () => {
+          el.textContent = raw;
+          gsap.fromTo(el,
+            { scale: 1 },
+            { scale: 1.15, duration: 0.22, yoyo: true, repeat: 1, ease: 'power2.out' }
+          );
         }
       });
     });
