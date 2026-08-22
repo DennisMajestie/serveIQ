@@ -921,6 +921,7 @@
   background: color-mix(in srgb, var(--primary) 12%, transparent);
   color: var(--primary);
   margin-bottom: 4px;
+  overflow: hidden;
   .material-symbols-outlined {
     font-size: 28px;
   }
