@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, effect, Inject } from '@angular/core';
+import { Injectable, inject, signal, effect } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { OfflineCacheService, SyncQueueEntry } from './offline-cache.service';
 import { NetworkService } from './network.service';
@@ -7,6 +7,10 @@ import { catchError, firstValueFrom, timeout } from 'rxjs';
 
 const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 2000;
+/** Periodic sweep while the app stays online (covers server restarts etc.). */
+const RETRY_TICK_MS = 30_000;
+/** Entries that exhausted in-process retries get re-attempted at most this often. */
+const DEAD_RETRY_MS = 5 * 60_000;
 
 @Injectable({ providedIn: 'root' })
 export class OfflineSyncEngine {
@@ -18,12 +22,18 @@ export class OfflineSyncEngine {
   readonly pendingCount = signal(0);
   readonly lastSyncError = signal<string | null>(null);
   private processing = false;
+  private retryTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.refreshPendingCount();
     effect(() => {
       if (this.network.isOnline()) this.processSync();
     });
+    this.retryTimer = setInterval(() => {
+      if (this.network.isOnline() && this.pendingCount() > 0 && !this.processing) {
+        void this.processSync();
+      }
+    }, RETRY_TICK_MS);
   }
 
   private syncUrl(path: string): string {
@@ -40,7 +50,7 @@ export class OfflineSyncEngine {
       timestamp: Date.now(),
       attempts: 0,
     };
-    this.cache.queueMutation(entry);
+    await this.cache.queueMutation(entry);
     this.refreshPendingCount();
 
     if (this.network.isOnline()) {
@@ -59,22 +69,26 @@ export class OfflineSyncEngine {
         return;
       }
 
+      const now = Date.now();
       let anyFailed = false;
+
       for (const entry of queue) {
-        // Skip entries that have already hit max retries
+        // Exhausted entries are retried again after a cool-down instead of
+        // being stranded forever — server outages should heal themselves.
         if (entry.attempts >= MAX_RETRIES) {
-          if (entry.lastError) this.lastSyncError.set(entry.lastError);
-          anyFailed = true;
-          continue;
+          const sinceLast = now - (entry.lastAttemptAt ?? 0);
+          if (sinceLast < DEAD_RETRY_MS) {
+            continue;
+          }
         }
 
-        let attempts = entry.attempts;
+        let attempts = entry.attempts >= MAX_RETRIES ? 0 : entry.attempts; // dead-entry revival starts a fresh cycle
         let lastErr: unknown = null;
 
         for (; attempts < MAX_RETRIES; attempts++) {
           try {
             await this.replayMutation(entry);
-            this.cache.removeMutation(entry.id);
+            await this.cache.removeMutation(entry.id);
             lastErr = null;
             break;
           } catch (err) {
@@ -86,10 +100,10 @@ export class OfflineSyncEngine {
           }
         }
 
-        this.cache.updateMutation(entry.id, { attempts });
+        await this.cache.updateMutation(entry.id, { attempts, lastAttemptAt: Date.now() });
         if (lastErr) {
           const message = lastErr instanceof Error ? lastErr.message : 'Sync failed';
-          this.cache.updateMutation(entry.id, { lastError: message });
+          await this.cache.updateMutation(entry.id, { lastError: message });
           this.lastSyncError.set(message);
           anyFailed = true;
         }

@@ -71,6 +71,9 @@ Business development decides which businesses to onboard. For each business:
 - Offline sync on the device is not verified.
 - Load testing at 100 concurrent users is not done.
 - Production Paystack keys not wired (test keys only).
+- **No real-time push**: the backend socket.io gateway exists but no frontend connects
+  to it yet. Staff should pull-to-refresh to see updates during beta; the waiter app's
+  offline queue + replay is the source of truth for connectivity resilience.
 
 ## 7. Exit criteria → commercial
 

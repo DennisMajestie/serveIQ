@@ -169,8 +169,7 @@ export class OfflineDataService {
       await this.syncEngine.queueMutation('tab', 'update', { id: tabId, status: 'paid' });
       this.cache.upsert('tabs', { id: tabId, status: 'paid' });
       return { offline: true };
-    }
-    const result = await this.tabsApi.closeTab(tabId).toPromise();
+    }    const result = await this.tabsApi.closeTab(tabId).toPromise();
     if (result) this.cache.upsert('tabs', result);
     return result;
   }
@@ -188,7 +187,10 @@ export class OfflineDataService {
 
   async recordPayment(tabId: string, payment: any): Promise<any> {
     if (!this.network.isOnline()) {
-      await this.syncEngine.queueMutation('bill', 'pay', { tab_id: tabId, ...payment });
+      // Deterministic per-action id keeps the sync idempotency key stable
+      // across app restarts (never Date.now()-derived).
+      const paymentId = payment.id ?? crypto.randomUUID();
+      await this.syncEngine.queueMutation('bill', 'pay', { id: paymentId, tab_id: tabId, ...payment });
       return { offline: true };
     }
     const result = await this.billsApi.recordPayment(tabId, payment).toPromise();

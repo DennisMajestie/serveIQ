@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, from, Subject } from 'rxjs';
+import { Observable, from } from 'rxjs';
 
 export interface SyncQueueEntry {
   id: string;
@@ -10,6 +10,7 @@ export interface SyncQueueEntry {
   timestamp: number;
   attempts: number;
   lastError?: string;
+  lastAttemptAt?: number;
 }
 
 const DB_NAME = 'serveiq-offline';
@@ -18,49 +19,53 @@ const DB_VERSION = 2;
 @Injectable({ providedIn: 'root' })
 export class OfflineCacheService {
   private db: IDBDatabase | null = null;
-  private ready$ = new Subject<void>();
+  private ready: Promise<void>;
 
   constructor() {
-    this.openDb();
+    this.ready = this.openDb();
   }
 
-  private openDb(): void {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      const stores = ['menu', 'tables', 'tabs', 'orders', 'bills', 'sync_queue'];
-      for (const name of stores) {
-        if (!db.objectStoreNames.contains(name)) {
-          const store = db.createObjectStore(name, { keyPath: 'id' });
-          if (name === 'sync_queue') {
-            store.createIndex('timestamp', 'timestamp', { unique: false });
-          }
-          if (name === 'orders') {
-            store.createIndex('tab_id', 'tab_id', { unique: false });
-          }
-          if (name === 'bills') {
-            store.createIndex('tab_id', 'tab_id', { unique: false });
+  private openDb(): Promise<void> {
+    return new Promise((resolve) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        const stores = ['menu', 'tables', 'tabs', 'orders', 'bills', 'sync_queue'];
+        for (const name of stores) {
+          if (!db.objectStoreNames.contains(name)) {
+            const store = db.createObjectStore(name, { keyPath: 'id' });
+            if (name === 'sync_queue') {
+              store.createIndex('timestamp', 'timestamp', { unique: false });
+            }
+            if (name === 'orders') {
+              store.createIndex('tab_id', 'tab_id', { unique: false });
+            }
+            if (name === 'bills') {
+              store.createIndex('tab_id', 'tab_id', { unique: false });
+            }
           }
         }
-      }
-    };
-    request.onsuccess = (event) => {
-      this.db = (event.target as IDBOpenDBRequest).result;
-      this.ready$.next();
-    };
-    request.onerror = () => {
-      console.warn('Offline cache unavailable');
-    };
+      };
+      request.onsuccess = (event) => {
+        this.db = (event.target as IDBOpenDBRequest).result;
+        resolve();
+      };
+      request.onerror = () => {
+        console.warn('Offline cache unavailable');
+        resolve();
+      };
+    });
   }
 
-  private getStore(storeName: string, mode: IDBTransactionMode = 'readonly'): IDBObjectStore | null {
+  private async getStore(storeName: string, mode: IDBTransactionMode = 'readonly'): Promise<IDBObjectStore | null> {
+    await this.ready;
     if (!this.db) return null;
     const tx = this.db.transaction(storeName, mode);
     return tx.objectStore(storeName);
   }
 
-  cacheAll<T extends { id: string }>(storeName: string, items: T[]): void {
-    const store = this.getStore(storeName, 'readwrite');
+  async cacheAll<T extends { id: string }>(storeName: string, items: T[]): Promise<void> {
+    const store = await this.getStore(storeName, 'readwrite');
     if (!store) return;
     for (const item of items) {
       store.put(item);
@@ -68,64 +73,80 @@ export class OfflineCacheService {
   }
 
   getCached<T>(storeName: string): Observable<T[]> {
-    return from(new Promise<T[]>((resolve) => {
-      const store = this.getStore(storeName);
-      if (!store) { resolve([]); return; }
+    return from(this.getAll<T>(storeName));
+  }
+
+  private async getAll<T>(storeName: string): Promise<T[]> {
+    const store = await this.getStore(storeName);
+    if (!store) return [];
+    return new Promise<T[]>((resolve) => {
       const request = store.getAll();
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => resolve([]);
-    }));
+    });
   }
 
   getById<T>(storeName: string, id: string): Observable<T | null> {
-    return from(new Promise<T | null>((resolve) => {
-      const store = this.getStore(storeName);
-      if (!store) { resolve(null); return; }
+    return from(this.getOne<T>(storeName, id));
+  }
+
+  private async getOne<T>(storeName: string, id: string): Promise<T | null> {
+    const store = await this.getStore(storeName);
+    if (!store) return null;
+    return new Promise<T | null>((resolve) => {
       const request = store.get(id);
       request.onsuccess = () => resolve(request.result ?? null);
       request.onerror = () => resolve(null);
-    }));
+    });
   }
 
   getByIndex<T>(storeName: string, indexName: string, value: string): Observable<T[]> {
-    return from(new Promise<T[]>((resolve) => {
-      const store = this.getStore(storeName);
-      if (!store) { resolve([]); return; }
+    return from(this.getIndexed<T>(storeName, indexName, value));
+  }
+
+  private async getIndexed<T>(storeName: string, indexName: string, value: string): Promise<T[]> {
+    const store = await this.getStore(storeName);
+    if (!store) return [];
+    return new Promise<T[]>((resolve) => {
       const index = store.index(indexName);
       const request = index.getAll(value);
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => resolve([]);
-    }));
+    });
   }
 
-  upsert<T extends { id: string }>(storeName: string, item: T): void {
-    const store = this.getStore(storeName, 'readwrite');
+  async upsert<T extends { id: string }>(storeName: string, item: T): Promise<void> {
+    const store = await this.getStore(storeName, 'readwrite');
     if (!store) return;
     store.put(item);
   }
 
-  remove(storeName: string, id: string): void {
-    const store = this.getStore(storeName, 'readwrite');
+  async remove(storeName: string, id: string): Promise<void> {
+    const store = await this.getStore(storeName, 'readwrite');
     if (!store) return;
     store.delete(id);
   }
 
-  clearStore(storeName: string): void {
-    const store = this.getStore(storeName, 'readwrite');
+  async clearStore(storeName: string): Promise<void> {
+    const store = await this.getStore(storeName, 'readwrite');
     if (!store) return;
     store.clear();
   }
 
-  queueMutation(entry: SyncQueueEntry): void {
-    const store = this.getStore('sync_queue', 'readwrite');
+  async queueMutation(entry: SyncQueueEntry): Promise<void> {
+    const store = await this.getStore('sync_queue', 'readwrite');
     if (!store) return;
     store.put(entry);
   }
 
   getPendingMutations(): Observable<SyncQueueEntry[]> {
-    return from(new Promise<SyncQueueEntry[]>((resolve) => {
-      const store = this.getStore('sync_queue', 'readonly');
-      if (!store) { resolve([]); return; }
+    return from(this.pending());
+  }
+
+  private async pending(): Promise<SyncQueueEntry[]> {
+    const store = await this.getStore('sync_queue');
+    if (!store) return [];
+    return new Promise<SyncQueueEntry[]>((resolve) => {
       const index = store.index('timestamp');
       const request = index.openCursor(null, 'next');
       const results: SyncQueueEntry[] = [];
@@ -139,29 +160,23 @@ export class OfflineCacheService {
         }
       };
       request.onerror = () => resolve([]);
-    }));
+    });
   }
 
-  removeMutation(id: string): void {
-    this.remove('sync_queue', id);
+  async removeMutation(id: string): Promise<void> {
+    await this.remove('sync_queue', id);
   }
 
-  updateMutation(id: string, updates: Partial<SyncQueueEntry>): void {
-    const store = this.getStore('sync_queue', 'readwrite');
-    if (!store) return;
-    const getReq = store.get(id);
-    getReq.onsuccess = () => {
-      const entry = getReq.result;
-      if (entry) {
-        Object.assign(entry, updates);
-        store.put(entry);
-      }
-    };
+  async updateMutation(id: string, updates: Partial<SyncQueueEntry>): Promise<void> {
+    const entry = await this.getOne<SyncQueueEntry>('sync_queue', id);
+    if (!entry) return;
+    Object.assign(entry, updates);
+    await this.upsert('sync_queue', entry);
   }
 
-  clearAll(): void {
+  async clearAll(): Promise<void> {
     for (const name of ['menu', 'tables', 'tabs', 'orders', 'bills', 'sync_queue']) {
-      this.clearStore(name);
+      await this.clearStore(name);
     }
   }
 }
