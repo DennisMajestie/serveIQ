@@ -26,7 +26,7 @@
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2px 24px;
+  padding: 8px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -153,7 +153,8 @@
 
 .nav-actions-mobile {
   display: flex;
-  padding-top: 8px;
+  align-items: center;
+  margin-left: auto;
 }
 
 /* ===== Shared section bits ===== */
@@ -581,7 +582,7 @@
 .partners {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 24px 0;
+  padding: 84px 24px 0;
 }
 
 .partners-head {
