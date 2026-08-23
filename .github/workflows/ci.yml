@@ -37,3 +37,54 @@ jobs:
         run: npx nx build waiter
       - name: Build public-menu
         run: npx nx build public-menu
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: serveiq
+          POSTGRES_PASSWORD: serveiq
+          POSTGRES_DB: serveiq_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://serveiq:serveiq@localhost:5432/serveiq_test
+      REDIS_URL: redis://localhost:6379
+      JWT_SECRET: ci-secret-change-me
+      JWT_EXPIRES_IN: 15m
+      JWT_REFRESH_SECRET: ci-refresh-secret-change-me
+      JWT_REFRESH_EXPIRES_IN: 7d
+      NODE_ENV: test
+      PAYSTACK_SECRET_KEY: sk_test_CI
+      PAYSTACK_PUBLIC_KEY: pk_test_CI
+      NEMOTRON_API_KEY: ci-nemotron
+      BETA_MODE: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint -w apps/api
+      - name: Build
+        run: npm run build -w apps/api
+      - name: Unit tests
+        run: npm run test -w apps/api
+      - name: Run migrations
+        run: npm run migration:run -w apps/api
+      - name: E2E tests
+        run: npm run test:e2e -w apps/api
