@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
 import { SitePageComponent } from './site-page';
 import { SiteFooterComponent } from './site-footer.component';
+import { PageHeaderComponent } from './page-header.component';
 
 @Component({
   standalone: true,
-  imports: [SiteFooterComponent],
+  imports: [SiteFooterComponent, PageHeaderComponent],
   template: `
+    <app-page-header
+      title="Privacy Policy"
+      subtitle="Last updated: August 2026"
+      [breadcrumbs]="[{ label: 'Home', url: '/' }, { label: 'Privacy' }]"
+    />
     <main class="legal">
-      <header class="legal-head">
-        <h1>Privacy Policy</h1>
-        <p class="updated">Last updated: August 2026</p>
-      </header>
 
       <section>
         <h2>1. Who we are</h2>
@@ -113,17 +115,6 @@ import { SiteFooterComponent } from './site-footer.component';
         max-width: 820px;
         margin: 0 auto;
         padding: 48px 24px 80px;
-      }
-      .legal-head h1 {
-        margin: 0 0 6px;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 2rem;
-        letter-spacing: -0.02em;
-      }
-      .updated {
-        margin: 0 0 36px;
-        color: var(--secondary);
-        font-size: 0.875rem;
       }
       section {
         margin-bottom: 32px;

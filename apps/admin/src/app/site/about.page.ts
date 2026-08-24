@@ -2,17 +2,18 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SitePageComponent } from './site-page';
 import { SiteFooterComponent } from './site-footer.component';
+import { PageHeaderComponent } from './page-header.component';
 
 @Component({
   standalone: true,
-  imports: [RouterLink, SiteFooterComponent],
+  imports: [RouterLink, SiteFooterComponent, PageHeaderComponent],
   template: `
+    <app-page-header
+      eyebrow="About ServeIQ"
+      title="Restaurants lose money in the gaps between their tools. We close them."
+      [breadcrumbs]="[{ label: 'Home', url: '/' }, { label: 'About' }]"
+    />
     <main class="about">
-      <header class="head">
-        <span class="eyebrow">About ServeIQ</span>
-        <h1>Restaurants lose money in the gaps between their tools. We close them.</h1>
-      </header>
-
       <section class="story">
         <p>
           Most Nigerian restaurants run on a patchwork: a till here, a notebook there, a
@@ -67,22 +68,6 @@ import { SiteFooterComponent } from './site-footer.component';
         max-width: 880px;
         margin: 0 auto;
         padding: 56px 24px 80px;
-      }
-      .eyebrow {
-        display: inline-block;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: var(--primary);
-        margin-bottom: 12px;
-      }
-      .head h1 {
-        margin: 0 0 32px;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: clamp(1.75rem, 4vw, 2.5rem);
-        line-height: 1.2;
-        letter-spacing: -0.02em;
       }
       .story p {
         margin: 0 0 16px;

@@ -2,20 +2,18 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SitePageComponent } from './site-page';
 import { SiteFooterComponent } from './site-footer.component';
+import { PageHeaderComponent } from './page-header.component';
 
 @Component({
   standalone: true,
-  imports: [RouterLink, SiteFooterComponent],
+  imports: [RouterLink, SiteFooterComponent, PageHeaderComponent],
   template: `
+    <app-page-header
+      title="Talk to a human"
+      subtitle="Demo requests, onboarding help, or just questions — the fastest way to reach us is WhatsApp. We reply within business hours (Mon–Sat, 8am–6pm WAT)."
+      [breadcrumbs]="[{ label: 'Home', url: '/' }, { label: 'Contact' }]"
+    />
     <main class="contact">
-      <header class="head">
-        <h1>Talk to a human</h1>
-        <p>
-          Demo requests, onboarding help, or just questions — the fastest way to reach
-          us is WhatsApp. We reply within business hours (Mon–Sat, 8am–6pm WAT).
-        </p>
-      </header>
-
       <div class="cards">
         <a class="card primary" href="https://wa.me/2348000000000?text=Hello%20ServeIQ%2C%20I%27d%20like%20to%20know%20more" target="_blank" rel="noopener">
           <span class="material-symbols-outlined">chat</span>
@@ -52,18 +50,6 @@ import { SiteFooterComponent } from './site-footer.component';
         max-width: 960px;
         margin: 0 auto;
         padding: 56px 24px 80px;
-      }
-      .head h1 {
-        margin: 0 0 10px;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 2.25rem;
-        letter-spacing: -0.02em;
-      }
-      .head p {
-        margin: 0 0 40px;
-        max-width: 560px;
-        line-height: 1.7;
-        color: var(--secondary);
       }
       .cards {
         display: grid;

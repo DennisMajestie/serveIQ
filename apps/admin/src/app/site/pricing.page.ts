@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SitePageComponent } from './site-page';
 import { SiteFooterComponent } from './site-footer.component';
+import { PageHeaderComponent } from './page-header.component';
 
 interface Plan {
   name: string;
@@ -15,18 +16,15 @@ interface Plan {
 
 @Component({
   standalone: true,
-  imports: [RouterLink, SiteFooterComponent],
+  imports: [RouterLink, SiteFooterComponent, PageHeaderComponent],
   template: `
+    <app-page-header
+      eyebrow="Beta pricing"
+      title="Simple plans that grow with your floor"
+      subtitle="Early partners lock in beta pricing for their first year — no setup fees, no per-order cut. Your money stays yours."
+      [breadcrumbs]="[{ label: 'Home', url: '/' }, { label: 'Pricing' }]"
+    />
     <main class="pricing">
-      <header class="head">
-        <span class="eyebrow">Beta pricing</span>
-        <h1>Simple plans that grow with your floor</h1>
-        <p>
-          Early partners lock in beta pricing for their first year — no setup fees, no
-          per-order cut. Your money stays yours.
-        </p>
-      </header>
-
       <div class="plans">
         @for (plan of plans; track plan.name) {
           <article class="plan" [class.highlighted]="plan.highlighted">
@@ -66,31 +64,6 @@ interface Plan {
         max-width: 1040px;
         margin: 0 auto;
         padding: 56px 24px 80px;
-      }
-      .head {
-        text-align: center;
-        max-width: 640px;
-        margin: 0 auto 48px;
-      }
-      .eyebrow {
-        display: inline-block;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: var(--primary);
-        margin-bottom: 12px;
-      }
-      .head h1 {
-        margin: 0 0 12px;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 2.25rem;
-        letter-spacing: -0.02em;
-      }
-      .head p {
-        margin: 0;
-        color: var(--secondary);
-        line-height: 1.7;
       }
       .plans {
         display: grid;
