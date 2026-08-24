@@ -235,6 +235,7 @@
   position: relative;
   overflow: hidden;
   background: var(--background);
+  min-height: 80vh;
 }
 
 .hero-slides {
@@ -246,9 +247,8 @@
 .hero-slide {
   position: absolute;
   inset: 0;
-  background-size: 90%;
+  background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
   opacity: 0;
   transition: opacity 1.2s ease;
   &.active {
