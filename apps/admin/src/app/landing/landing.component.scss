@@ -246,8 +246,9 @@
 .hero-slide {
   position: absolute;
   inset: 0;
-  background-size: cover;
+  background-size: 90%;
   background-position: center;
+  background-repeat: no-repeat;
   opacity: 0;
   transition: opacity 1.2s ease;
   &.active {
