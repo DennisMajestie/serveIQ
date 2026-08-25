@@ -54,7 +54,7 @@ export class PaymentSuccessComponent implements OnInit, AfterViewInit, OnDestroy
   private loadBill(tabId: string) {
     this.offlineData.getBill(tabId).subscribe({
       next: (b) => {
-        if (b) this.amountPaid.set(b.totalKobo ?? null);
+        if (b) this.amountPaid.set((b.totalKobo ?? 0) / 100);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
