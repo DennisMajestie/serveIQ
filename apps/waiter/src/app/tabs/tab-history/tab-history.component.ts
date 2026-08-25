@@ -109,7 +109,11 @@ export class TabHistoryComponent implements OnInit {
         this.shifts.set(Array.isArray(shifts) ? shifts : []);
       }
     });
-    this.tabsApi.getAllTabsUnpaginated({ status: 'paid,voided' }).pipe(
+    const waiterId = localStorage.getItem('userId');
+    this.tabsApi.getAllTabsUnpaginated({
+      status: 'paid,voided',
+      ...(waiterId ? { waiter_id: waiterId } : {}),
+    }).pipe(
       catchError(() => this.cache.getCached<Tab>('tabs')),
       map(tabs => {
         const arr = Array.isArray(tabs) ? tabs : [];
