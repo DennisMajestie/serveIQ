@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TabsApiService, TablesApiService, ShiftsApiService, OfflineCacheService } from '@serveiq/shared/data-access';
 import { Tab, Shift } from '@serveiq/shared/models';
-import { of, switchMap, map, catchError } from 'rxjs';
+import { map, catchError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../../services/currency-context.service';
 import { OfflineDataService } from '../../services/offline-data.service';
@@ -109,15 +109,8 @@ export class TabHistoryComponent implements OnInit {
         this.shifts.set(Array.isArray(shifts) ? shifts : []);
       }
     });
-    this.cache.getCached<Tab>('tabs').pipe(
-      switchMap(cached => {
-        if (cached.length > 0) {
-          return of(cached);
-        }
-        return this.tabsApi.getAllTabsUnpaginated().pipe(
-          catchError(() => of([]))
-        );
-      }),
+    this.tabsApi.getAllTabsUnpaginated({ status: 'paid,voided' }).pipe(
+      catchError(() => this.cache.getCached<Tab>('tabs')),
       map(tabs => {
         const arr = Array.isArray(tabs) ? tabs : [];
         return arr.filter(t => t.status === 'paid' || t.status === 'voided');
