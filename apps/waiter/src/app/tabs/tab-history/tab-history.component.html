@@ -37,8 +37,11 @@
         </div>
         <div class="glass-card p-4 rounded-3xl flex flex-col gap-1">
           <span class="text-[12px] leading-none font-medium text-[#bccbb9]/70 uppercase tracking-widest" style="font-family:'Inter',sans-serif">Transactions</span>
-          <div class="flex items-baseline gap-1">
-            <span class="text-[28px] leading-[1.2] font-semibold text-[#adc6ff]" style="font-family:'Space Grotesk',sans-serif">{{ transactionCount() }}</span>
+          <div class="flex items-baseline gap-2">
+            <span class="text-[28px] leading-[1.2] font-semibold text-[#adc6ff]" style="font-family:'Space Grotesk',sans-serif">{{ salesCount() }}</span>
+            @if (voidedCount() > 0) {
+              <span class="text-[11px] leading-none font-medium text-[#bccbb9]/50" style="font-family:'Inter',sans-serif">+{{ voidedCount() }} voided</span>
+            }
           </div>
         </div>
       </div>
@@ -84,7 +87,7 @@
                 <div class="flex items-center gap-4">
                   <div class="text-right">
                     <p class="text-[14px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">{{ formatKobo(group.totalKobo) }}</p>
-                    <p class="text-[11px] leading-none font-medium text-[#bccbb9]/60 mt-1" style="font-family:'Inter',sans-serif">{{ group.transactions.length }} transaction{{ group.transactions.length !== 1 ? 's' : '' }}</p>
+                    <p class="text-[11px] leading-none font-medium text-[#bccbb9]/60 mt-1" style="font-family:'Inter',sans-serif">{{ group.salesCount }} sale{{ group.salesCount !== 1 ? 's' : '' }}{{ group.voidedCount > 0 ? ' · ' + group.voidedCount + ' voided' : '' }}</p>
                   </div>
                   <span class="material-symbols-outlined text-[#bccbb9]/60 transition-transform duration-300" [class.rotate-180]="expandedShift() === group.shift.id">expand_more</span>
                 </div>
@@ -108,7 +111,7 @@
                         </div>
                       </div>
                       <div class="flex items-center gap-2">
-                        <span class="text-[16px] leading-none font-semibold text-[#adc6ff]" style="font-family:'Space Grotesk',sans-serif">{{ formatKobo(txn.amount) }}</span>
+                        <span class="text-[16px] leading-none font-semibold text-[#adc6ff]" [class.opacity-40]="!txn.countedInTotal" style="font-family:'Space Grotesk',sans-serif">{{ formatKobo(txn.amount) }}</span>
                         <span class="material-symbols-outlined text-[#bccbb9]/40 text-[18px]">chevron_right</span>
                       </div>
                     </div>

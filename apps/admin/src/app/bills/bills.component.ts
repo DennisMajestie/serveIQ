@@ -363,15 +363,13 @@ export class BillsComponent implements OnInit {
     return this.billsApi.getByTab(tab.id).pipe(
       switchMap(bill => {
         if (bill) return this.fetchOrdersAndWrap(tab, bill, 'receipt');
-        return this.billsApi.generate(tab.id, { serviceChargePercent: 5 }).pipe(
-          switchMap(genBill => this.fetchOrdersAndWrap(tab, genBill, 'generated')),
-          catchError(() =>
-            this.ordersApi.getByTab(tab.id).pipe(
-              map(items => this.wrapComputed(tab, items)),
-            )
-          )
+        // Read-only estimate. Do NOT call billsApi.generate here — it persists a
+        // bill and flips the tab to 'billed' as a side effect of viewing this page.
+        return this.ordersApi.getByTab(tab.id).pipe(
+          map(items => this.wrapComputed(tab, items)),
         );
-      })
+      }),
+      catchError(() => of(null as BillWithTab | null))
     );
   }
 
