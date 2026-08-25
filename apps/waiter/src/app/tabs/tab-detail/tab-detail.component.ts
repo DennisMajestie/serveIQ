@@ -309,9 +309,17 @@ export class TabDetailComponent implements OnInit, OnDestroy {
       error: (err) => {
         const httpStatus = err.status ?? err.statusCode;
         if (httpStatus === 403) {
-          const msg = err.message || 'This table is being served by another waiter';
-          this.showToast(msg);
-          setTimeout(() => this.router.navigate(['/tables']), 2500);
+          const msg = err.serverMessage || err.error?.message || err.error?.detail || 'This table is being served by another waiter';
+          this.isLoading.set(false);
+          Swal.fire({
+            icon: 'warning',
+            title: 'Table Unavailable',
+            text: msg,
+            confirmButtonText: 'Back to Tables',
+            confirmButtonColor: '#f97316',
+            background: '#1A1A1A',
+            color: '#fff'
+          }).then(() => this.router.navigate(['/tables']));
         } else {
           this.isLoading.set(false);
         }

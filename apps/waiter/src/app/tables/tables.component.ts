@@ -386,8 +386,16 @@ export class TablesComponent implements OnInit, OnDestroy {
       } catch (err: any) {
         const httpStatus = err.status ?? err.statusCode;
         if (httpStatus === 403) {
-          const msg = err.error?.message || err.message || 'This table is being served by another waiter';
-          this.showToast(msg);
+          const msg = err.serverMessage || err.error?.message || err.error?.detail || 'This table is being served by another waiter';
+          Swal.fire({
+            icon: 'warning',
+            title: 'Table Unavailable',
+            text: msg,
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#f97316',
+            background: '#1A1A1A',
+            color: '#fff'
+          });
         } else {
           // Non-auth error — still try to navigate; detail component handles its own errors
           await this.router.navigate(['/tabs/detail', tab.id]);
