@@ -32,24 +32,6 @@
       }
     </header>
 
-    <!-- TEST MODE (pre-launch): fires a dummy OPay webhook so a payment can
-         be verified end-to-end without a real terminal. Remove for go-live. -->
-    @if (testMode()) {
-      <section class="test-section">
-        <button
-          type="button"
-          class="test-btn"
-          [disabled]="initializingPayment()"
-          (click)="simulateTestPayment()"
-        >
-          {{ initializingPayment() ? 'Simulating…' : '🧪 TEST MODE — Simulate Payment Received' }}
-        </button>
-        @if (paymentStatus()?.paymentStatus === 'paid') {
-          <p class="test-note">Payment confirmed as paid. Success screen shows once the order is marked collected.</p>
-        }
-      </section>
-    }
-
     <!-- Progress tracker / served celebration -->
     @if (isServed()) {
       <section class="served-section">

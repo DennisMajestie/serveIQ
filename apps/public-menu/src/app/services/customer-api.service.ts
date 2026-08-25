@@ -185,29 +185,6 @@ export class CustomerApiService {
     );
   }
 
-  /** TEST MODE: fire a dummy OPay "transfer received" webhook for the tab's bill.
-   *  Temporarily re-enabled in all environments (incl. production) during
-   *  pre-launch so payments can be verified end-to-end without a terminal. */
-  simulateOpayWebhook(reference: string, amountKobo: number): Observable<any> {
-    const url = `${this.apiUrl}/api/v1/public/payments/webhooks/opay`;
-    return this.http.post<any>(url, {
-      data: {
-        reference,
-        amount: amountKobo,
-        status: 'SUCCESS',
-        transactionType: 'TRANSFER',
-      },
-    }, {
-      headers: { 'x-simulate': '1' },
-    }).pipe(
-      map(res => {
-        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
-        while (data && typeof data === 'object' && 'data' in data) data = data.data;
-        return data;
-      })
-    );
-  }
-
   /** Self-service: submit a star rating + optional comment after payment. */
   submitReview(tabId: string, trackingCode: string, body: { rating: number; comment?: string }): Observable<any> {
     const url = `${this.apiUrl}/api/v1/public/tabs/${tabId}/review`;

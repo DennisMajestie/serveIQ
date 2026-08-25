@@ -352,22 +352,6 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     return 'pending_approval';
   });
 
-  /** TEST MODE: shows the "Simulate Payment Received" button on the tracking
-   *  page so payments can be verified end-to-end without a real terminal.
-   *  Enabled by default right now; use `?test=0` to hide. */
-  readonly testMode = signal(true);
-  private testModeSub?: Subscription;
-
-  private setupTestMode() {
-    this.testModeSub = this.route.queryParamMap.subscribe((params) => {
-      if (params.get('test') === '0') {
-        this.testMode.set(false);
-      } else if (params.get('test') === '1') {
-        this.testMode.set(true);
-      }
-    });
-  }
-
   readonly progressWidth = computed(() => {
     const steps: StatusStep[] = ['pending_approval', 'preparing', 'ready', 'on_the_way', 'payment', 'paid'];
     const idx = steps.indexOf(this.step());
@@ -375,7 +359,6 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
-    this.setupTestMode();
     const codeParam = this.route.snapshot.paramMap.get('code');
     const tabId = this.cartService.tabId();
     const trackingCode = this.cartService.trackingCode();
@@ -411,7 +394,6 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopPolling();
-    this.testModeSub?.unsubscribe();
     this.pickupWatcherEffect.destroy();
     this.servedWatcher.destroy();
     this.stopPickupAlarm();
@@ -522,45 +504,6 @@ export class StatusPageComponent implements OnInit, OnDestroy {
         this.startPaymentPolling(tabId, trackingCode);
       },
       error: (err) => showApiErrorToast(err, 'Failed to initialize payment'),
-    });
-  }
-
-  /** TEST MODE: initialize the bill then fire a dummy OPay "transfer received"
-   *  webhook, so the payment can be verified end-to-end before going live.
-   *  Only reachable when the status page URL includes `?test=1`. */
-  simulateTestPayment() {
-    const tabId = this.cartService.tabId();
-    const trackingCode = this.cartService.trackingCode();
-    if (!tabId || !trackingCode) return;
-
-    this.initializingPayment.set(true);
-    this.api.initializePayment(tabId, trackingCode).pipe(
-      finalize(() => this.initializingPayment.set(false)),
-    ).subscribe({
-      next: (res) => {
-        const reference = res.paymentReference;
-        if (!reference) {
-          showApiErrorToast({ serverMessage: 'No payment_reference returned — bill may already be paid.' }, 'Test payment failed');
-          return;
-        }
-        this.api.simulateOpayWebhook(reference, res.amountKobo).subscribe({
-          next: () => {
-            this.paymentInfo.set(res);
-            this.selectedTerminalId.set(null);
-            this.startPaymentPolling(tabId, trackingCode);
-          },
-          error: (err) => showApiErrorToast(err, 'Test webhook failed'),
-        });
-      },
-      error: (err) => {
-        const msg = showApiErrorToast(err, 'Failed to initialize payment');
-        const notPayable = /not payable|not open|already.paid|no_bill/i.test(msg);
-        if (notPayable) {
-          this.cartService.clearTabSession();
-          this.paymentInfo.set(null);
-          this.stopPolling();
-        }
-      },
     });
   }
 
