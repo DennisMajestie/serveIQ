@@ -1,0 +1,64 @@
+.call-waiter {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000;
+  max-width: 320px;
+}
+
+.cw-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary, #16a34a);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.cw-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cw-icon {
+  font-size: 18px;
+}
+
+.cw-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  color: #111;
+}
+
+.cw-card.resolved {
+  background: #ecfdf5;
+}
+
+.cw-status {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.cw-msg {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.cw-cancel {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}

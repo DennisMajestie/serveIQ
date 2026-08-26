@@ -14,6 +14,7 @@ import { TabHistoryComponent } from './tabs/tab-history/tab-history.component';
 import { ProfileComponent } from './profile/profile.component';
 import { OpenTabComponent } from './tables/open-tab/open-tab.component';
 import { WaiterNotificationsComponent } from './notifications/notifications.component';
+import { WaiterCallsComponent } from './waiter-calls/waiter-calls.component';
 
 import { LegacyTablesComponent } from './legacy/tables/tables.component';
 import { LegacyTabDetailComponent } from './legacy/tab-detail/tab-detail.component';
@@ -43,6 +44,7 @@ export const appRoutes: Route[] = [
   { path: 'menu', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: MenuComponent },
   { path: 'tabs/create/:tableId', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: OpenTabComponent },
   { path: 'profile', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: ProfileComponent },
+  { path: 'waiter-calls', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: WaiterCallsComponent },
 
   // ===== Legacy theme (pre-Luminous) =====
   { path: 'tables', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyTablesComponent },

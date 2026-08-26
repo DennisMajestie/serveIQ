@@ -132,6 +132,12 @@ interface MobileTab {
                 <span>Tables</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/waiter-calls" routerLinkActive="active">
+                <span class="material-symbols-outlined">room_service</span>
+                <span>Waiter Calls</span>
+              </a>
+            </li>
             <li class="nav-item" *ngIf="permissionService.hasPermission('create_menu')">
               <a class="nav-link" routerLink="/app/menu" routerLinkActive="active">
                 <span class="material-symbols-outlined">restaurant_menu</span>

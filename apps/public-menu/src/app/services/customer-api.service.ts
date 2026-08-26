@@ -207,4 +207,54 @@ export class CustomerApiService {
       })
     );
   }
+
+  /** Customer calls a waiter for a table (public, no auth). */
+  callWaiter(branchId: string, tableId: string, customerSessionId?: string): Observable<any> {
+    const url = `${this.apiUrl}/api/v1/waiter-calls?branchId=${encodeURIComponent(branchId)}`;
+    const body: any = { table_id: tableId };
+    if (customerSessionId) body.customer_session_id = customerSessionId;
+    return this.http.post<any>(url, body).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return data;
+      })
+    );
+  }
+
+  /** Customer polls the status of their waiter call. */
+  getWaiterCallStatus(id: string): Observable<any> {
+    const url = `${this.apiUrl}/api/v1/waiter-calls/${id}/status`;
+    return this.http.get<any>(url).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return data;
+      })
+    );
+  }
+
+  /** Customer looks up any active waiter call for their table. */
+  getWaiterCallByTable(tableId: string): Observable<any> {
+    const url = `${this.apiUrl}/api/v1/waiter-calls/table/${tableId}`;
+    return this.http.get<any>(url).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return data;
+      })
+    );
+  }
+
+  /** Customer cancels the active waiter call for their table (public). */
+  cancelWaiterCallByTable(tableId: string): Observable<any> {
+    const url = `${this.apiUrl}/api/v1/waiter-calls/table/${tableId}/cancel`;
+    return this.http.post<any>(url, {}).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return data;
+      })
+    );
+  }
 }

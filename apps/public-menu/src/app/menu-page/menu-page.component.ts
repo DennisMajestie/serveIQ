@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PublicMenuApiService, PublicMenuData } from '@serveiq/shared/data-access';
 import { CartService, OrderType } from '../services/cart.service';
+import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-menu-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, CallWaiterComponent],
   templateUrl: './menu-page.component.html',
   styleUrls: ['./menu-page.component.scss'],
 })

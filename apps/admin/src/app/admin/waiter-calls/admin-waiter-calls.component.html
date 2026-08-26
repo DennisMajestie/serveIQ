@@ -1,0 +1,39 @@
+<div class="awc-page">
+  <h1>Waiter Calls</h1>
+
+  <section class="awc-section">
+    <h2>Active ({{ active().length }})</h2>
+    @if (loading()) {
+      <p>Loading…</p>
+    }
+    @if (!loading() && active().length === 0) {
+      <p class="awc-empty">No active waiter calls.</p>
+    }
+    <ul class="awc-list">
+      @for (call of active(); track call.id) {
+        <li class="awc-item">
+          <span class="awc-table">Table {{ call.tableId }}</span>
+          <span class="awc-badge">{{ call.status }}</span>
+          @if (call.assignedWaiter?.name) {
+            <span class="awc-waiter">{{ call.assignedWaiter?.name }}</span>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="awc-section">
+    <h2>Queue ({{ queue().length }})</h2>
+    @if (queue().length === 0) {
+      <p class="awc-empty">Queue is empty.</p>
+    }
+    <ul class="awc-list">
+      @for (call of queue(); track call.id) {
+        <li class="awc-item queued">
+          <span class="awc-table">Table {{ call.tableId }}</span>
+          <span class="awc-badge queued">queued</span>
+        </li>
+      }
+    </ul>
+  </section>
+</div>

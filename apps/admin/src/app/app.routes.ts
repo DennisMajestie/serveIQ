@@ -2,6 +2,8 @@ import { Route } from '@angular/router';
 import { authGuard } from './core/auth.guard';
 import { superAdminGuard } from './core/super-admin.guard';
 import { permissionGuard } from './core/permission.guard';
+import { managerOrOwnerGuard } from './core/manager-or-owner.guard';
+import { AdminWaiterCallsComponent } from './admin/waiter-calls/admin-waiter-calls.component';
 
 export const appRoutes: Route[] = [
   {
@@ -69,6 +71,11 @@ export const appRoutes: Route[] = [
             path: 'dashboard',
             canActivate: [permissionGuard('view_dashboard')],
             loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+          },
+          {
+            path: 'waiter-calls',
+            canActivate: [managerOrOwnerGuard],
+            loadComponent: () => import('./admin/waiter-calls/admin-waiter-calls.component').then(m => m.AdminWaiterCallsComponent)
           },
           {
             path: 'analytics',

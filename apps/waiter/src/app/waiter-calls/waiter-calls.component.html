@@ -1,0 +1,48 @@
+<div class="wc-page">
+  <header class="wc-header">
+    <h1>Waiter Calls</h1>
+    @if (workload(); as w) {
+      <div class="wc-workload" [class.full]="!w.isAvailable">
+        Tables: {{ w.activeTables }} / {{ w.maxTables }}
+      </div>
+    }
+  </header>
+
+  @if (loading()) {
+    <p class="wc-loading">Loading…</p>
+  }
+
+  @if (errorMsg()) {
+    <p class="wc-error">{{ errorMsg() }}</p>
+  }
+
+  @if (!loading() && activeCalls().length === 0) {
+    <div class="wc-empty">
+      <span class="material-symbols-outlined">check_circle</span>
+      <p>No active calls. You're all caught up.</p>
+    </div>
+  }
+
+  <ul class="wc-list">
+    @for (call of activeCalls(); track call.id) {
+      <li class="wc-item" [class]="'status-' + call.status">
+        <div class="wc-row">
+          <span class="wc-table">Table {{ call.tableId }}</span>
+          <span class="wc-badge">{{ call.status }}</span>
+        </div>
+        <div class="wc-actions">
+          @if (call.status === 'pending') {
+            <button class="wc-btn primary" (click)="accept(call.id)">Accept</button>
+          }
+          @if (call.status === 'accepted') {
+            <button class="wc-btn primary" (click)="arrived(call.id)">Arrived</button>
+          }
+          @if (call.status === 'arrived') {
+            <button class="wc-btn primary" (click)="resolve(call.id)">Resolve</button>
+          }
+          <button class="wc-btn ghost" (click)="cancel(call.id)">Cancel</button>
+        </div>
+      </li>
+    }
+  </ul>
+</div>
