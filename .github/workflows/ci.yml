@@ -64,6 +64,16 @@ jobs:
       BETA_MODE: 'true'
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve pinned backend commit
+        id: backendref
+        run: echo "sha=$(git ls-tree HEAD backend | awk '{print $3}')" >> "$GITHUB_OUTPUT"
+      - name: Checkout backend (private submodule)
+        uses: actions/checkout@v4
+        with:
+          repository: DennisMajestie/ServeIQ-Backend
+          ref: ${{ steps.backendref.outputs.sha }}
+          path: backend
+          token: ${{ secrets.BACKEND_REPO_TOKEN }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
