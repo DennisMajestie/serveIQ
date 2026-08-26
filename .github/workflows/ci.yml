@@ -98,4 +98,4 @@ jobs:
         # time-based unique values (tab_number, tracking_code, payment refs);
         # parallel workers collide on those and fail with 409. --runInBand also
         # lets each spec's afterAll cleanup finish before the next begins.
-        run: npm run test:e2e -w apps/api -- --runInBand --forceExit
+        run: npm run test:e2e -w apps/api -- --runInBand
