@@ -235,7 +235,8 @@
 }
 
 .cw-input-row input {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 12px 14px;
   border: 1.5px solid #d1d5db;
   border-radius: 10px;
@@ -283,11 +284,12 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  flex-shrink: 0;
   background: linear-gradient(135deg, var(--primary, #16a34a) 0%, #15803d 100%);
   color: #fff;
   border: none;
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 12px 14px;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
