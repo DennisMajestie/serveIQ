@@ -2,12 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { PublicMenuApiService, PublicMenuData } from '@serveiq/shared/data-access';
+import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-public-menu-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CallWaiterComponent],
   templateUrl: './public-menu-page.component.html',
   styleUrls: ['./public-menu-page.component.scss'],
 })
