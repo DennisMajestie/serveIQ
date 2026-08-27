@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { CustomerApiService } from '../services/customer-api.service';
 import { CartService } from '../services/cart.service';
 
@@ -79,7 +80,7 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
     this.tableError.set('');
 
     try {
-      const res = await this.api.resolveTable(branchId, number).toPromise();
+      const res = await firstValueFrom(this.api.resolveTable(branchId, number));
       const tableId = res?.tableId;
       if (!tableId) throw new Error('No table ID returned');
       this.showTableInput.set(false);
