@@ -82,7 +82,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: transparent;
+  background: #f0fdf4;
   border: 2px solid var(--primary, #16a34a);
   color: var(--primary, #16a34a);
   border-radius: 100px;
@@ -107,7 +107,7 @@
 }
 
 .cw-btn-outline:hover:not(:disabled) {
-  background: rgba(22, 163, 74, 0.08);
+  background: #dcfce7;
   border-color: #15803d;
   color: #15803d;
   transform: translateY(-2px);
