@@ -46,14 +46,14 @@
               [disabled]="busy()"
               autocomplete="off"
             />
-            <button class="cw-btn" (click)="resolveAndCall()" [disabled]="busy() || !tableNumber().trim()">
+            <button class="cw-confirm" (click)="resolveAndCall()" [disabled]="busy() || !tableNumber().trim()">
               @if (busy()) { Resolving… } @else { Confirm }
             </button>
           </div>
           @if (tableError()) {
             <p class="cw-error">{{ tableError() }}</p>
           }
-          <button class="cw-btn cw-btn-ghost" (click)="showTableInput.set(false); tableNumber.set(''); tableError.set('')">Cancel</button>
+          <button class="cw-secondary" (click)="showTableInput.set(false); tableNumber.set(''); tableError.set('')">Cancel</button>
         </div>
       }
     }
