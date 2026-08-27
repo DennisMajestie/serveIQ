@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
 import { CustomerApiService, PaymentMethod, PaymentInitResponse, PaymentStatusResponse, TabStatusResponse } from '../services/customer-api.service';
+import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
 import { PublicAdsApiService, Ad, showApiErrorToast } from '@serveiq/shared/data-access';
 import { interval, Subscription, switchMap, finalize } from 'rxjs';
 
@@ -19,7 +20,7 @@ interface Stage {
 @Component({
   selector: 'app-status-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CallWaiterComponent],
   templateUrl: './status-page.component.html',
   styleUrls: ['./status-page.component.scss'],
 })

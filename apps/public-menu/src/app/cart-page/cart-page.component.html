@@ -51,9 +51,10 @@
             <button (click)="cartService.updateQuantity(item.menuItemId, item.quantity + 1)" class="qty-btn">+</button>
             <span class="line-total">₦{{ ((item.priceKobo * item.quantity) / 100).toLocaleString() }}</span>
             <button (click)="cartService.removeItem(item.menuItemId)" class="remove-btn" title="Remove item">✕</button>
-          </div>
-        </div>
-      }
+    </div>
+  </div>
+}
+<app-call-waiter></app-call-waiter>
     </section>
 
     <!-- Total -->

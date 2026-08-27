@@ -4,12 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../services/cart.service';
 import { CustomerApiService } from '../services/customer-api.service';
+import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
 import { showApiErrorToast } from '@serveiq/shared/data-access';
 
 @Component({
   selector: 'app-cart-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, CallWaiterComponent],
   templateUrl: './cart-page.component.html',
   styleUrls: ['./cart-page.component.scss'],
 })
