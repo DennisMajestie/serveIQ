@@ -1,39 +1,163 @@
 <div class="awc-page">
-  <h1>Waiter Calls</h1>
+  <!-- Header -->
+  <header class="awc-header">
+    <div>
+      <h1 class="awc-title">Waiter Calls</h1>
+      <p class="awc-subtitle">Monitor and manage active waiter requests</p>
+    </div>
+    <button class="awc-refresh" (click)="refresh()" [disabled]="loading()" aria-label="Refresh">
+      <span class="material-symbols-outlined">{{ loading() ? 'sync' : 'refresh' }}</span>
+      <span class="btn-label">Refresh</span>
+    </button>
+  </header>
 
+  <!-- Summary Stats -->
+  <div class="awc-stats">
+    <div class="awc-stat">
+      <div class="awc-stat-icon active"><span class="material-symbols-outlined">person_check_circle</span></div>
+      <div class="awc-stat-value">{{ active().length }}</div>
+      <div class="awc-stat-label">Active</div>
+    </div>
+    <div class="awc-stat">
+      <div class="awc-stat-icon queued"><span class="material-symbols-outlined">queue</span></div>
+      <div class="awc-stat-value">{{ queue().length }}</div>
+      <div class="awc-stat-label">Queued</div>
+    </div>
+    <div class="awc-stat">
+      <div class="awc-stat-icon total"><span class="material-symbols-outlined">notifications_active</span></div>
+      <div class="awc-stat-value">{{ active().length + queue().length }}</div>
+      <div class="awc-stat-label">Total</div>
+    </div>
+  </div>
+
+  <!-- Active Calls -->
   <section class="awc-section">
-    <h2>Active ({{ active().length }})</h2>
+    <div class="awc-section-head">
+      <h2 class="awc-section-title">Active Calls</h2>
+      <span class="awc-count-badge">{{ active().length }}</span>
+    </div>
+
     @if (loading()) {
-      <p>Loading…</p>
+      <div class="awc-skeleton-list">
+        <div class="awc-skeleton-item"></div>
+        <div class="awc-skeleton-item"></div>
+        <div class="awc-skeleton-item"></div>
+      </div>
+    } @else if (active().length === 0) {
+      <div class="awc-empty-state">
+        <span class="material-symbols-outlined awc-empty-icon">check_circle</span>
+        <h3>No Active Waiter Calls</h3>
+        <p>All tables are currently being served.</p>
+      </div>
+    } @else {
+      <div class="awc-list">
+        @for (call of active(); track call.id) {
+          <div class="awc-item" [class.awc-resolved]="call.status === 'resolved'">
+            <div class="awc-item-main">
+              <span class="material-symbols-outlined awc-table-icon">table_restaurant</span>
+              <div class="awc-table-info">
+                <span class="awc-table-label">Table</span>
+                <span class="awc-table-id">{{ call.tableId }}</span>
+              </div>
+            </div>
+            <span class="awc-status-badge" [class]="'status-' + call.status.toLowerCase()">
+              {{ call.status }}
+            </span>
+            @if (call.assignedWaiter?.name) {
+              <div class="awc-waiter-info">
+                <span class="material-symbols-outlined awc-waiter-icon">person</span>
+                <span class="awc-waiter-name">{{ call.assignedWaiter?.name }}</span>
+              </div>
+            }
+            <span class="awc-time">{{ formatTime(call.createdAt) }}</span>
+
+            @if (isActionable(call.status)) {
+              <div class="awc-item-actions">
+                <button class="awc-action resolve" (click)="resolveCall(call.id)" [disabled]="busyId() === call.id">
+                  Resolve
+                </button>
+                <button class="awc-action reassign" (click)="openReassign(call)" [disabled]="busyId() === call.id">
+                  Reassign
+                </button>
+                <button class="awc-action cancel" (click)="cancelCall(call.id)" [disabled]="busyId() === call.id">
+                  Cancel
+                </button>
+              </div>
+            }
+
+            @if (reassignTarget() === call.id) {
+              <div class="awc-reassign">
+                <select class="awc-select" [(ngModel)]="selectedWaiterId" aria-label="Select waiter">
+                  <option value="">Select waiter…</option>
+                  @for (w of waiters(); track w.id) {
+                    <option [value]="w.id">{{ w.fullName }}</option>
+                  }
+                </select>
+                <button class="awc-action confirm" (click)="confirmReassign(call)" [disabled]="!selectedWaiterId || busyId() === call.id">
+                  Confirm
+                </button>
+                <button class="awc-action cancel" (click)="closeReassign()">Close</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
     }
-    @if (!loading() && active().length === 0) {
-      <p class="awc-empty">No active waiter calls.</p>
-    }
-    <ul class="awc-list">
-      @for (call of active(); track call.id) {
-        <li class="awc-item">
-          <span class="awc-table">Table {{ call.tableId }}</span>
-          <span class="awc-badge">{{ call.status }}</span>
-          @if (call.assignedWaiter?.name) {
-            <span class="awc-waiter">{{ call.assignedWaiter?.name }}</span>
-          }
-        </li>
-      }
-    </ul>
   </section>
 
+  <!-- Queue -->
   <section class="awc-section">
-    <h2>Queue ({{ queue().length }})</h2>
+    <div class="awc-section-head">
+      <h2 class="awc-section-title">Queue</h2>
+      <span class="awc-count-badge">{{ queue().length }}</span>
+    </div>
+
     @if (queue().length === 0) {
-      <p class="awc-empty">Queue is empty.</p>
+      <div class="awc-empty-state">
+        <span class="material-symbols-outlined awc-empty-icon">queue_music</span>
+        <h3>Queue is Empty</h3>
+        <p>No waiter calls waiting for assignment.</p>
+      </div>
+    } @else {
+      <div class="awc-list">
+        @for (call of queue(); track call.id) {
+          <div class="awc-item awc-queued">
+            <div class="awc-item-main">
+              <span class="material-symbols-outlined awc-table-icon">table_restaurant</span>
+              <div class="awc-table-info">
+                <span class="awc-table-label">Table</span>
+                <span class="awc-table-id">{{ call.tableId }}</span>
+              </div>
+            </div>
+            <span class="awc-status-badge queued">Queued</span>
+            <span class="awc-time">{{ formatTime(call.createdAt) }}</span>
+
+            <div class="awc-item-actions">
+              <button class="awc-action reassign" (click)="openReassign(call)" [disabled]="busyId() === call.id">
+                Assign to
+              </button>
+              <button class="awc-action cancel" (click)="cancelCall(call.id)" [disabled]="busyId() === call.id">
+                Cancel
+              </button>
+            </div>
+
+            @if (reassignTarget() === call.id) {
+              <div class="awc-reassign">
+                <select class="awc-select" [(ngModel)]="selectedWaiterId" aria-label="Select waiter">
+                  <option value="">Select waiter…</option>
+                  @for (w of waiters(); track w.id) {
+                    <option [value]="w.id">{{ w.fullName }}</option>
+                  }
+                </select>
+                <button class="awc-action confirm" (click)="confirmReassign(call)" [disabled]="!selectedWaiterId || busyId() === call.id">
+                  Confirm
+                </button>
+                <button class="awc-action cancel" (click)="closeReassign()">Close</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
     }
-    <ul class="awc-list">
-      @for (call of queue(); track call.id) {
-        <li class="awc-item queued">
-          <span class="awc-table">Table {{ call.tableId }}</span>
-          <span class="awc-badge queued">queued</span>
-        </li>
-      }
-    </ul>
   </section>
 </div>

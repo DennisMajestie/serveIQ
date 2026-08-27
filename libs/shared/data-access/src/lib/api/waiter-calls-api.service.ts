@@ -68,6 +68,10 @@ export class WaiterCallsApiService extends BaseApiService {
     return this.post<WaiterCallDto>(`/api/v1/waiter-calls/${id}/cancel`);
   }
 
+  reassign(id: string, waiterId: string) {
+    return this.post<WaiterCallDto>(`/api/v1/waiter-calls/${id}/reassign`, { waiterId });
+  }
+
   getActive() {
     return this.get<WaiterCallDto[]>(`/api/v1/waiter-calls/active`);
   }
