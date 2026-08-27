@@ -208,6 +208,18 @@ export class CustomerApiService {
     );
   }
 
+  /** Resolve a table number/label to its UUID within a branch. */
+  resolveTable(branchId: string, tableNumber: string): Observable<{ tableId: string }> {
+    const url = `${this.apiUrl}/api/v1/public/tables/${branchId}/resolve?number=${encodeURIComponent(tableNumber)}`;
+    return this.http.get<any>(url).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return { tableId: data.tableId };
+      })
+    );
+  }
+
   /** Customer calls a waiter for a table (public, no auth). */
   callWaiter(branchId: string, tableId: string, customerSessionId?: string): Observable<any> {
     const url = `${this.apiUrl}/api/v1/waiter-calls?branchId=${encodeURIComponent(branchId)}`;

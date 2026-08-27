@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, FormsModule } from '@angular/common';
 import { CustomerApiService } from '../services/customer-api.service';
 import { CartService } from '../services/cart.service';
 
@@ -8,7 +8,7 @@ type CallStatus = 'idle' | 'pending' | 'queued' | 'accepted' | 'arrived' | 'reso
 @Component({
   selector: 'app-call-waiter',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './call-waiter.component.html',
   styleUrls: ['./call-waiter.component.scss'],
 })
@@ -20,12 +20,16 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
   callId = signal<string | null>(null);
   message = signal<string>('');
   hasTable = computed(() => !!this.cart.tableId());
+  isDineIn = computed(() => this.cart.orderType() === 'dine_in');
   busy = signal(false);
+  showTableInput = signal(false);
+  tableNumber = signal('');
+  tableError = signal('');
 
   private pollTimer: any = null;
 
   ngOnInit() {
-    if (this.hasTable()) {
+    if (this.isDineIn() && this.hasTable()) {
       this.checkExisting();
     }
   }
@@ -54,8 +58,39 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
   call() {
     const tableId = this.cart.tableId();
     const branchId = this.cart.branchId();
-    if (!tableId || !branchId || this.busy()) return;
+    if (!branchId || this.busy()) return;
+
+    if (!tableId) {
+      this.showTableInput.set(true);
+      this.tableError.set('');
+      return;
+    }
+
+    this.doCall(tableId, branchId);
+  }
+
+  async resolveAndCall() {
+    const number = this.tableNumber().trim();
+    const branchId = this.cart.branchId();
+    if (!number || !branchId || this.busy()) return;
+
     this.busy.set(true);
+    this.tableError.set('');
+
+    try {
+      const res = await this.api.resolveTable(branchId, number).toPromise();
+      const tableId = res?.tableId;
+      if (!tableId) throw new Error('No table ID returned');
+      this.showTableInput.set(false);
+      this.tableNumber.set('');
+      this.doCall(tableId, branchId);
+    } catch (err: any) {
+      this.busy.set(false);
+      this.tableError.set(err?.error?.message || 'Table not found. Check the number and try again.');
+    }
+  }
+
+  private doCall(tableId: string, branchId: string) {
     this.api.callWaiter(branchId, tableId).subscribe({
       next: (res: any) => {
         const data = res?.data ?? res;

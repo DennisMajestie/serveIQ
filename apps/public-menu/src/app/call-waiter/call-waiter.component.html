@@ -1,29 +1,61 @@
-@if (hasTable()) {
+@if (isDineIn()) {
   <div class="call-waiter">
-    @if (status() === 'idle') {
-      <button class="cw-btn" (click)="call()" [disabled]="busy()">
-        <span class="cw-icon">🔔</span> Call Waiter
-      </button>
-    } @else {
-      <div class="cw-card" [class.resolved]="status() === 'resolved'">
-        <div class="cw-status">
-          @switch (status()) {
-            @case ('pending') { <span>🔔 Finding a waiter…</span> }
-            @case ('queued') { <span>⏳ All waiters busy — you're in the queue</span> }
-            @case ('accepted') { <span>🚶 Waiter is on the way</span> }
-            @case ('arrived') { <span>✅ Waiter has arrived</span> }
-            @case ('resolved') { <span>🎉 Thanks! Your waiter was with you.</span> }
-            @case ('cancelled') { <span>Call cancelled.</span> }
-            @default { <span>{{ message() }}</span> }
+    @if (hasTable()) {
+      <!-- Has table — normal call-waiter flow -->
+      @if (status() === 'idle') {
+        <button class="cw-btn" (click)="call()" [disabled]="busy()">
+          <span class="cw-icon">🔔</span> Call Waiter
+        </button>
+      } @else {
+        <div class="cw-card" [class.resolved]="status() === 'resolved'">
+          <div class="cw-status">
+            @switch (status()) {
+              @case ('pending') { <span>🔔 Finding a waiter…</span> }
+              @case ('queued') { <span>⏳ All waiters busy — you're in the queue</span> }
+              @case ('accepted') { <span>🚶 Waiter is on the way</span> }
+              @case ('arrived') { <span>✅ Waiter has arrived</span> }
+              @case ('resolved') { <span>🎉 Thanks! Your waiter was with you.</span> }
+              @case ('cancelled') { <span>Call cancelled.</span> }
+              @default { <span>{{ message() }}</span> }
+            }
+          </div>
+          @if (message() && status() !== 'resolved') {
+            <div class="cw-msg">{{ message() }}</div>
+          }
+          @if (status() === 'pending' || status() === 'queued' || status() === 'accepted' || status() === 'arrived') {
+            <button class="cw-cancel" (click)="cancel()" [disabled]="busy()">Cancel</button>
           }
         </div>
-        @if (message() && status() !== 'resolved') {
-          <div class="cw-msg">{{ message() }}</div>
-        }
-        @if (status() === 'pending' || status() === 'queued' || status() === 'accepted' || status() === 'arrived') {
-          <button class="cw-cancel" (click)="cancel()" [disabled]="busy()">Cancel</button>
-        }
-      </div>
+      }
+    } @else {
+      <!-- No table yet — show table number input -->
+      @if (!showTableInput()) {
+        <button class="cw-btn cw-btn-outline" (click)="showTableInput.set(true)" [disabled]="busy()">
+          <span class="cw-icon">🔔</span> Call Waiter
+        </button>
+        <p class="cw-hint">Enter your table number to call a waiter</p>
+      } @else {
+        <div class="cw-table-input">
+          <label>Table Number</label>
+          <div class="cw-input-row">
+            <input
+              type="text"
+              [(ngModel)]="tableNumber"
+              (keydown.enter)="resolveAndCall()"
+              placeholder="e.g. 5, A1, Table 5"
+              [disabled]="busy()"
+              autocomplete="off"
+            />
+            <button class="cw-btn" (click)="resolveAndCall()" [disabled]="busy() || !tableNumber().trim()">
+              @if (busy()) { Resolving… } @else { Confirm }
+            </button>
+          </div>
+          @if (tableError()) {
+            <p class="cw-error">{{ tableError() }}</p>
+          }
+          <button class="cw-btn cw-btn-ghost" (click)="showTableInput.set(false); tableNumber.set(''); tableError.set('')">Cancel</button>
+        </div>
+      }
     }
   </div>
 }
