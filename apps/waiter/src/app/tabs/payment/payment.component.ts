@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { TabsApiService, TablesApiService, PosApiService, OfflineCacheService } from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
@@ -407,6 +408,48 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.stopPaymentPolling();
     this.router.navigate(['/menu'], {
       queryParams: { tabId: this.tabId() }
+    });
+  }
+
+  get currentRole(): string {
+    return (localStorage.getItem('userRole') || '').toLowerCase();
+  }
+
+  get canConfirmCashAtCounter(): boolean {
+    return ['supervisor', 'manager', 'owner'].includes(this.currentRole);
+  }
+
+  isCashPending = computed(() => {
+    const b = this.bill() as any;
+    if (!b || b.paidAt) return false;
+    const status = b.paymentStatus ?? b.payment_status;
+    const method = b.method;
+    return status === 'pending_cash' || (status === 'pending' && method === 'cash');
+  });
+
+  get showCounterCashConfirm(): boolean {
+    return this.isCashPending() && this.canConfirmCashAtCounter;
+  }
+
+  confirmCashAtCounter() {
+    if (this.isProcessing() || (this.bill() as any)?.paidAt) return;
+    this.isProcessing.set(true);
+    const url = `${environment.apiUrl}/api/v1/bills/tab/${this.tabId()}/confirm-cash`;
+    this.http.post<any>(url, {}).subscribe({
+      next: () => {
+        this.isProcessing.set(false);
+        this.isSuccess.set(true);
+        this.isAutoConfirmed.set(true);
+        const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
+        setTimeout(() => this.router.navigate(['/tabs/payment-success', this.tabId()], {
+          state: { terminalLabel: 'Cash (Counter)', showConfetti: true, splitAllocations: allocations }
+        }), 1000);
+      },
+      error: (err) => {
+        this.isProcessing.set(false);
+        const msg = err?.error?.message || err?.message || 'Could not confirm the cash payment.';
+        Swal.fire({ icon: 'error', title: 'Confirmation Failed', text: msg, background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      }
     });
   }
 }
