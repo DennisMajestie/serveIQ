@@ -223,8 +223,8 @@ export class CustomerApiService {
   /** Customer calls a waiter for a table (public, no auth). */
   callWaiter(branchId: string, tableId: string, customerSessionId?: string): Observable<any> {
     const url = `${this.apiUrl}/api/v1/waiter-calls?branchId=${encodeURIComponent(branchId)}`;
-    const body: any = { table_id: tableId };
-    if (customerSessionId) body.customer_session_id = customerSessionId;
+    const body: any = { tableId };
+    if (customerSessionId) body.customerSessionId = customerSessionId;
     return this.http.post<any>(url, body).pipe(
       map(res => {
         let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
