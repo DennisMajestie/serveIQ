@@ -178,46 +178,43 @@ export class BillComponent implements OnInit {
     };
   }
 
+  private withVatInTotal(bill: Bill): Bill {
+    const subtotalKobo = bill.subtotalKobo ?? 0;
+    const taxRate = Number(this.businessSettings()?.taxRate ?? 7.5);
+    const vatKobo = Math.round(subtotalKobo * (taxRate / 100));
+    const totalKobo = Math.max(
+      0,
+      subtotalKobo + (bill.serviceChargeKobo ?? 0) + vatKobo - (bill.discountKobo ?? 0),
+    );
+    return { ...bill, totalKobo };
+  }
+
   private loadBill(tabId: string) {
     this.isLoading.set(true);
     this.error.set('');
-    this.cache.getByIndex<Bill>('bills', 'tab_id', tabId).pipe(
-      map(bills => {
-        const sorted = [...(bills || [])].sort((a, b) =>
-          (new Date((b as any).createdAt ?? 0) as any) - (new Date((a as any).createdAt ?? 0) as any));
-        return sorted.length > 0 ? sorted[0] : null;
-      }),
-      switchMap(cached =>
-        cached
-          ? of(cached)
-          : this.offlineData.getBill(tabId).pipe(
-              switchMap(bill =>
-                bill
-                  ? of(bill)
-                  : from(this.offlineData.generateBill(tabId)).pipe(
-                      map(gen => ((gen as any)?.offline || !(gen as any)?.id) ? null : gen),
-                      catchError(() => of(null))
-                    )
-              ),
+
+    const withOrders = (bill: Bill | null) =>
+      this.offlineData.getOrdersByTab(tabId).pipe(
+        map(orders => {
+          const orderItems = this.mapOrderItems(orders);
+          if (!bill) return this.buildBillFromOrders(tabId, this.currentDiscountKobo, orderItems);
+          bill.orderItems = orderItems;
+          this.currentDiscountKobo = bill.discountKobo;
+          return bill;
+        }),
+        catchError(() => (bill ? of(bill) : of(null)))
+      );
+
+    this.offlineData.getBill(tabId).pipe(
+      switchMap(bill =>
+        bill
+          ? of(bill)
+          : from(this.offlineData.generateBill(tabId)).pipe(
+              map(gen => ((gen as any)?.offline || !(gen as any)?.id) ? null : gen),
               catchError(() => of(null))
             )
       ),
-      switchMap(bill => {
-        if (!bill) {
-          return this.offlineData.getOrdersByTab(tabId).pipe(
-            map(orders => this.buildBillFromOrders(tabId, this.currentDiscountKobo, this.mapOrderItems(orders))),
-            catchError(() => of(null))
-          );
-        }
-        return this.offlineData.getOrdersByTab(tabId).pipe(
-          map(orders => {
-            bill.orderItems = this.mapOrderItems(orders);
-            this.currentDiscountKobo = bill.discountKobo;
-            return bill;
-          }),
-          catchError(() => of(bill))
-        );
-      }),
+      switchMap(bill => withOrders(bill)),
       catchError(() =>
         this.offlineData.getOrdersByTab(tabId).pipe(
           map(orders => this.buildBillFromOrders(tabId, this.currentDiscountKobo, this.mapOrderItems(orders))),
@@ -230,8 +227,9 @@ export class BillComponent implements OnInit {
         this.isLoading.set(false);
         return;
       }
-      this.cache.upsert('bills', { ...bill, tab_id: (bill as any).tab_id ?? (bill as any).tabId });
-      this.bill.set(bill);
+      const settled = this.withVatInTotal(bill);
+      this.cache.upsert('bills', { ...settled, tab_id: (settled as any).tab_id ?? (settled as any).tabId });
+      this.bill.set(settled);
       this.isLoading.set(false);
     });
   }

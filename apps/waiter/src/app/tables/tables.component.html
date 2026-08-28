@@ -2,13 +2,13 @@
   <!-- Top App Bar -->
   <header class="fixed top-0 w-full backdrop-blur-[32px] bg-white/10 z-50 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
     <div class="flex items-center justify-between px-6 py-4 w-full">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 shrink-0">
         <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#4be277]/40">
           <img alt="Staff" class="w-full h-full object-cover" [src]="currentUser()?.avatarUrl || 'https://ui-avatars.com/api/?name=' + (currentUser()?.fullName || 'Staff') + '&background=4be277&color=fff'">
         </div>
       </div>
-      <h1 class="text-[28px] leading-[1.2] font-semibold tracking-tighter text-[#4be277]" style="text-shadow:0 0 10px rgba(75,226,119,0.4);font-family:'Space Grotesk',sans-serif">{{ branchName() || 'ServeIQ' }}</h1>
-      <button (click)="openNotifications()" class="relative active:scale-95 transition-transform p-2 bg-white/5 rounded-full">
+      <h1 class="text-[16px] sm:text-[20px] leading-[1.2] font-semibold tracking-tight text-[#4be277] flex-1 min-w-0 truncate text-center px-2" style="text-shadow:0 0 10px rgba(75,226,119,0.4);font-family:'Space Grotesk',sans-serif" title="{{ branchName() }}">{{ branchName() || 'ServeIQ' }}</h1>
+      <button (click)="openNotifications()" class="relative active:scale-95 transition-transform p-2 bg-white/5 rounded-full shrink-0">
         <span class="material-symbols-outlined text-[#4be277]">notifications</span>
         @if (unreadCount() > 0) {
           <span class="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[#ffb4ab] text-[#003915] text-[10px] rounded-full flex items-center justify-center font-bold">{{ unreadCount() }}</span>

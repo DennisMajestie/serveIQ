@@ -105,31 +105,31 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   private loadBill(tabId: string) {
-    this.cache.getByIndex<Bill>('bills', 'tab_id', tabId).pipe(
-      map(bills => {
-        const sorted = [...(bills || [])].sort((a, b) =>
-          (new Date((b as any).createdAt ?? 0) as any) - (new Date((a as any).createdAt ?? 0) as any));
-        return sorted.length > 0 ? sorted[0] : null;
-      })
-    ).subscribe(cached => {
-      if (cached) {
-        this.bill.set(cached);
-        this.currentAmount.set((cached.totalKobo / 100).toFixed(2));
+    this.offlineData.getBill(tabId).subscribe({
+      next: (b) => {
+        if (b) {
+          this.bill.set(b);
+          this.currentAmount.set((b.totalKobo / 100).toFixed(2));
+        }
         this.isLoading.set(false);
         this.startPaymentPolling(tabId);
-      } else {
-        this.offlineData.getBill(tabId).subscribe({
-          next: (b) => {
-            if (b) {
-              this.bill.set(b);
-              this.currentAmount.set((b.totalKobo / 100).toFixed(2));
-            }
-            this.isLoading.set(false);
-            this.startPaymentPolling(tabId);
-          },
-          error: () => this.isLoading.set(false),
+      },
+      error: () => {
+        this.cache.getByIndex<Bill>('bills', 'tab_id', tabId).pipe(
+          map(bills => {
+            const sorted = [...(bills || [])].sort((a, b) =>
+              (new Date((b as any).createdAt ?? 0) as any) - (new Date((a as any).createdAt ?? 0) as any));
+            return sorted.length > 0 ? sorted[0] : null;
+          })
+        ).subscribe(cached => {
+          if (cached) {
+            this.bill.set(cached);
+            this.currentAmount.set((cached.totalKobo / 100).toFixed(2));
+          }
+          this.isLoading.set(false);
+          this.startPaymentPolling(tabId);
         });
-      }
+      },
     });
   }
 
