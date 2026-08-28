@@ -253,10 +253,29 @@
               }
             }
 
+            @if (selectedTerminalId() === 'cash') {
+              @if (cashPending()) {
+                <div class="cash-waiting">
+                  <span class="spinner-sm"></span> Waiting to confirm pay…
+                </div>
+              } @else {
+                <button
+                  type="button"
+                  class="pay-confirm-cash"
+                  [disabled]="cashSubmitting()"
+                  (click)="confirmCash()"
+                >
+                  {{ cashSubmitting() ? 'Sending…' : 'Confirm Cash Payment' }}
+                </button>
+              }
+            }
+
             @if (paymentStatus(); as ps) {
               <div class="payment-status" [class.paid]="ps.paymentStatus === 'paid'">
                 @if (ps.paymentStatus === 'paid') {
                   <p>✅ Payment confirmed! Thank you.</p>
+                } @else if (cashPending()) {
+                  <p class="cash-confirming">⏳ Waiting to confirm pay at the counter…</p>
                 } @else {
                   <p>💳 {{ selectedTerminalLabel() || 'Choose a payment option' }} — @if (selectedTerminal()?.autoConfirm) { auto-confirms once your transfer arrives. } @else { notify counter staff once you've paid. }</p>
                 }

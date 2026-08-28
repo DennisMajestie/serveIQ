@@ -41,6 +41,13 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   initializingPayment = signal(false);
   errorMessage = signal('');
 
+  // ── Cash-at-counter flow ───────────────────────────────────────────────────
+  // Customer taps cash → request is held pending supervisor confirmation at the
+  // counter. `cashPending` drives the "Waiting to confirm pay" loader until the
+  // supervisor confirms (payment status flips to 'paid' via polling).
+  cashSubmitting = signal(false);
+  cashPending = signal(false);
+
   // ── Review modal (shown after payment success) ─────────────────────────────
   showReviewModal = signal(false);
   reviewRating = signal(0);
@@ -254,9 +261,32 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   private onPaymentPaid() {
     if (this.celebratedPayment) return;
     this.celebratedPayment = true;
+    this.cashPending.set(false);
     this.playSuccessChime();
     this.launchConfetti();
     this.showReviewModal.set(true);
+  }
+
+  /** Cash-at-counter: register the customer's intent to pay with cash. The order
+   *  is held pending supervisor confirmation; the existing payment poll flips the
+   *  status to 'paid' once the supervisor confirms at the counter. */
+  confirmCash() {
+    const tabId = this.cartService.tabId();
+    const trackingCode = this.cartService.trackingCode();
+    if (!tabId || !trackingCode || this.cashPending()) return;
+
+    this.cashSubmitting.set(true);
+    this.api.submitCashIntent(tabId, trackingCode).pipe(
+      finalize(() => this.cashSubmitting.set(false)),
+    ).subscribe({
+      next: () => {
+        this.cashPending.set(true);
+        this.startPaymentPolling(tabId, trackingCode);
+      },
+      error: (err) => {
+        showApiErrorToast(err, 'Cash payment request failed');
+      },
+    });
   }
 
   setRating(rating: number) {
@@ -365,7 +395,11 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const trackingCode = this.cartService.trackingCode();
 
     if (codeParam) {
-      this.api.getTrackingByCode(codeParam).subscribe({
+      const branchId =
+        this.route.snapshot.queryParamMap.get('branch_id') ??
+        this.cartService.branchId() ??
+        undefined;
+      this.api.getTrackingByCode(codeParam, branchId).subscribe({
         next: (data) => {
           this.loading.set(false);
           if (data.tabId) {

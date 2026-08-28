@@ -32,6 +32,56 @@
   to { transform: rotate(360deg); }
 }
 
+.spinner-sm {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.pay-confirm-cash {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.pay-confirm-cash:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cash-waiting {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  font-weight: 600;
+  text-align: center;
+  justify-content: center;
+}
+
+.cash-confirming {
+  color: #b45309 !important;
+  font-weight: 600;
+}
+
 .big-icon {
   font-size: 3rem;
 }

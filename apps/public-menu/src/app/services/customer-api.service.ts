@@ -33,6 +33,8 @@ export interface PaymentMethod {
   autoConfirm?: boolean;
   provider?: string;
   terminals?: { id: string; label: string }[];
+  /** Cash is confirmed by a supervisor at the counter, not by a gateway. */
+  requiresCounterConfirmation?: boolean;
 }
 
 export interface PaymentInitResponse {
@@ -48,6 +50,7 @@ export interface PaymentStatusResponse {
   tabId: string;
   tabStatus: string;
   paymentStatus: string;
+  paymentMethod?: string | null;
   paidAt: string | null;
 }
 
@@ -185,6 +188,19 @@ export class CustomerApiService {
     );
   }
 
+  /** Customer chooses to pay with cash at the counter. Holds the takeaway order
+   *  pending supervisor confirmation. Poll getPaymentStatus until 'paid'. */
+  submitCashIntent(tabId: string, trackingCode: string): Observable<any> {
+    const url = `${this.apiUrl}/api/v1/public/payments/cash-intent`;
+    return this.http.post<any>(url, { tab_id: tabId, tracking_code: trackingCode }).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return snakeToCamel<any>(data);
+      })
+    );
+  }
+
   /** Self-service: submit a star rating + optional comment after payment. */
   submitReview(tabId: string, trackingCode: string, body: { rating: number; comment?: string }): Observable<any> {
     const url = `${this.apiUrl}/api/v1/public/tabs/${tabId}/review`;
@@ -197,9 +213,11 @@ export class CustomerApiService {
     );
   }
 
-  getTrackingByCode(code: string): Observable<TrackingData> {
+  getTrackingByCode(code: string, branchId?: string): Observable<TrackingData> {
     const url = `${this.apiUrl}/api/v1/tracking/${code}`;
-    return this.http.get<any>(url).pipe(
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (branchId) headers['X-Branch-Id'] = branchId;
+    return this.http.get<any>(url, { headers }).pipe(
       map(res => {
         let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
         while (data && typeof data === 'object' && 'data' in data) data = data.data;
