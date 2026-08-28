@@ -86,7 +86,10 @@ export class MenuPageComponent implements OnInit {
       return;
     }
     this.trackingError.set('');
-    this.router.navigate(['/public/track', code.toUpperCase()]);
+    const branchId = this.cartService.branchId();
+    this.router.navigate(['/public/track', code.toUpperCase()], {
+      queryParams: branchId ? { branch_id: branchId } : {},
+    });
   }
 
   private maybeShowTypeChooser() {
