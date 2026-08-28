@@ -254,20 +254,13 @@
             }
 
             @if (selectedTerminalId() === 'cash') {
-              @if (cashPending()) {
-                <div class="cash-waiting">
-                  <span class="spinner-sm"></span> Waiting to confirm pay…
-                </div>
-              } @else {
-                <button
-                  type="button"
-                  class="pay-confirm-cash"
-                  [disabled]="cashSubmitting()"
-                  (click)="confirmCash()"
-                >
-                  {{ cashSubmitting() ? 'Sending…' : 'Confirm Cash Payment' }}
-                </button>
-              }
+              <div class="cash-waiting">
+                @if (cashSubmitting()) {
+                  <span class="spinner-sm"></span> Registering cash payment…
+                } @else {
+                  💵 Pay with cash at the counter — a staff member will confirm your payment.
+                }
+              </div>
             }
 
             @if (paymentStatus(); as ps) {

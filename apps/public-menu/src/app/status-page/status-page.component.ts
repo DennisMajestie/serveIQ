@@ -544,6 +544,9 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   selectTerminal(id: string) {
     this.selectedTerminalId.set(this.selectedTerminalId() === id ? null : id);
+    if (id === 'cash' && this.selectedTerminalId() === 'cash') {
+      this.confirmCash();
+    }
   }
 
   copiedAccount = signal<string | null>(null);
