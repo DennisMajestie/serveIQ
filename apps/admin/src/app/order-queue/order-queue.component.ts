@@ -624,7 +624,7 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
       html: `<div style="text-align:left;font-size:14px;color:#ccc;">
         <p style="margin:0 0 8px;">Table <strong>${this.getTableLabel(group)}</strong> has chosen to pay cash at the counter.</p>
         <p style="margin:0;">Expected amount: <strong style="color:#22c55e;">${this.formatKobo(amount)}</strong></p>
-        <p style="margin:8px 0 0;font-size:12px;color:#888;">Confirming records the cash payment and sends the held order to the kitchen for approval.</p>
+        <p style="margin:8px 0 0;font-size:12px;color:#888;">Confirming records the cash payment and returns the held order to the Pending tab for supervisor approval (assign department &amp; prep time).</p>
       </div>`,
       icon: 'question',
       showCancelButton: true,
@@ -642,7 +642,7 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
           Swal.fire({
             icon: 'success',
             title: 'Payment Confirmed',
-            text: 'Cash received — the order has been sent to the kitchen.',
+            text: 'Cash received — order is back in Pending. Choose department & prep time to send it to the kitchen.',
             background: '#1A1A1A',
             color: '#fff',
             confirmButtonColor: '#22c55e',
