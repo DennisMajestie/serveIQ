@@ -575,7 +575,13 @@ export class StatusPageComponent implements OnInit, OnDestroy {
    *  only one socket is ever opened. */
   private connectPaymentSocket(tabId: string, trackingCode: string) {
     if (this.paymentSocket) return;
-    const socket: Socket = io(`${this.env.apiUrl}/public`, {
+    // In production `apiUrl` is empty (REST is proxied via Vercel's /api/v1
+    // rewrite), so the socket must target the real backend origin directly —
+    // Vercel does not proxy /socket.io. Fall back to the backend when apiUrl is blank.
+    const base =
+      (this.env.apiUrl && this.env.apiUrl.trim()) ||
+      'https://serveiq-backend-5zy9.onrender.com';
+    const socket: Socket = io(`${base}/public`, {
       transports: ['websocket'],
       reconnection: true,
     });
