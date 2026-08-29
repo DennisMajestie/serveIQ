@@ -5,7 +5,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
 import { CustomerApiService, PaymentMethod, PaymentInitResponse, PaymentStatusResponse, TabStatusResponse } from '../services/customer-api.service';
 import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
-import { PublicAdsApiService, Ad, showApiErrorToast } from '@serveiq/shared/data-access';
+import {
+  PublicAdsApiService,
+  Ad,
+  showApiErrorToast,
+  ENVIRONMENT_CONFIG,
+} from '@serveiq/shared/data-access';
+import { io, Socket } from 'socket.io-client';
 import { interval, Subscription, switchMap, finalize } from 'rxjs';
 
 type StatusStep = 'ordering' | 'pending_approval' | 'preparing' | 'ready' | 'on_the_way' | 'payment' | 'paid';
@@ -62,6 +68,8 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   private pollSub?: Subscription;
   private paymentSub?: Subscription;
+  private env = inject(ENVIRONMENT_CONFIG);
+  private paymentSocket?: Socket;
 
   // ── Pickup alert (client-side only) ───────────────────────────────────────
   readonly pickupConfirmed = signal(false);
@@ -262,6 +270,11 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     if (this.celebratedPayment) return;
     this.celebratedPayment = true;
     this.cashPending.set(false);
+    // Reflect the paid state so the progress step computes 'paid' immediately.
+    this.paymentStatus.set({
+      ...(this.paymentStatus() as PaymentStatusResponse),
+      paymentStatus: 'paid',
+    } as PaymentStatusResponse);
     this.playSuccessChime();
     this.launchConfetti();
     this.showReviewModal.set(true);
@@ -280,8 +293,8 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       finalize(() => this.cashSubmitting.set(false)),
     ).subscribe({
       next: () => {
-        this.cashPending.set(true);
-        this.startPaymentPolling(tabId, trackingCode);
+      this.cashPending.set(true);
+      this.connectPaymentSocket(tabId, trackingCode);
       },
       error: (err) => {
         showApiErrorToast(err, 'Cash payment request failed');
@@ -443,6 +456,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       clearInterval(this.adRotateInterval);
       this.adRotateInterval = null;
     }
+    this.disconnectPaymentSocket();
   }
 
   private loadAds(branchId: string) {
@@ -477,23 +491,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.api.getTabStatus(tabId, trackingCode).subscribe({
       next: (data) => this.tabData.set(data),
     });
-    this.pollPaymentStatus(tabId, trackingCode);
-  }
-
-  private pollPaymentStatus(tabId: string, trackingCode: string) {
-    this.paymentSub?.unsubscribe();
-    this.paymentSub = interval(8000).pipe(
-      switchMap(() => this.api.getPaymentStatus(tabId, trackingCode))
-    ).subscribe({
-      next: (status) => {
-        this.paymentStatus.set(status);
-        if (status.paymentStatus === 'paid') {
-          this.paymentSub?.unsubscribe();
-          this.onPaymentPaid();
-        }
-      },
-      error: () => {},
-    });
+    this.connectPaymentSocket(tabId, trackingCode);
   }
 
   private stopPolling() {
@@ -536,7 +534,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.paymentInfo.set(res);
         this.selectedTerminalId.set(null);
-        this.startPaymentPolling(tabId, trackingCode);
+        this.connectPaymentSocket(tabId, trackingCode);
       },
       error: (err) => showApiErrorToast(err, 'Failed to initialize payment'),
     });
@@ -571,20 +569,32 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     return this.selectedTerminal()?.label || 'POS terminal';
   }
 
-  private startPaymentPolling(tabId: string, trackingCode: string) {
-    this.paymentSub?.unsubscribe();
-    this.paymentSub = interval(5000).pipe(
-      switchMap(() => this.api.getPaymentStatus(tabId, trackingCode))
-    ).subscribe({
-      next: (status) => {
-        this.paymentStatus.set(status);
-        if (status.paymentStatus === 'paid') {
-          this.paymentSub?.unsubscribe();
-          this.onPaymentPaid();
-        }
-      },
-      error: () => {},
+  /** Connect to the public realtime channel and wait for a `paymentConfirmed`
+   *  push for this tab. This replaces the previous 5s REST polling — the status
+   *  page is now poll-free for payment confirmation. Safe to call more than once;
+   *  only one socket is ever opened. */
+  private connectPaymentSocket(tabId: string, trackingCode: string) {
+    if (this.paymentSocket) return;
+    const socket: Socket = io(`${this.env.apiUrl}/public`, {
+      transports: ['websocket'],
+      reconnection: true,
     });
+    this.paymentSocket = socket;
+    socket.on('connect', () =>
+      socket.emit('subscribe:tab', { tabId, trackingCode }),
+    );
+    socket.on('paymentConfirmed', () => {
+      this.disconnectPaymentSocket();
+      this.onPaymentPaid();
+    });
+  }
+
+  private disconnectPaymentSocket() {
+    if (this.paymentSocket) {
+      this.paymentSocket.removeAllListeners();
+      this.paymentSocket.disconnect();
+      this.paymentSocket = undefined;
+    }
   }
 
   isDeclined(status: string): boolean {
