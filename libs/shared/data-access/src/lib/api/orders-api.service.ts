@@ -59,6 +59,10 @@ export class OrdersApiService extends BaseApiService {
     return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.readyForPickup);
   }
 
+  getPendingCash(): Observable<OrderGroup[]> {
+    return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.pendingCash);
+  }
+
   getOutForDelivery(): Observable<OrderGroup[]> {
     return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.outForDelivery);
   }

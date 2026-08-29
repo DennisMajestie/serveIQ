@@ -41,6 +41,11 @@
         <div class="stat-value">{{ avgApprovalTime() }}</div>
         <div class="stat-label">Avg Approval</div>
       </div>
+      <div class="glass-stat cash-stat">
+        <div class="stat-icon-bg"><span class="material-symbols-outlined">payments</span></div>
+        <div class="stat-value">{{ cashOrders().length }}</div>
+        <div class="stat-label">Cash @ counter</div>
+      </div>
     </div>
 
     <!-- Widgets Row -->
@@ -134,6 +139,13 @@
           Ready to serve
           @if (readyOrders().length > 0) {
             <span class="tab-badge">{{ readyOrders().length }}</span>
+          }
+        </button>
+        <button class="sv-tab" [class.active]="activeTab() === 'cash'" (click)="switchTab('cash')">
+          <span class="material-symbols-outlined">payments</span>
+          Cash @ counter
+          @if (cashOrders().length > 0) {
+            <span class="tab-badge">{{ cashOrders().length }}</span>
           }
         </button>
       </div>
@@ -340,6 +352,70 @@
                       Confirm Pickup
                     </button>
                   }
+                  <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
+                    <span class="material-symbols-outlined">history</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- Cash @ Counter Queue -->
+      @if (activeTab() === 'cash') {
+        @if (isLoadingCash()) {
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        } @else if (cashOrders().length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">payments</span>
+            <h3>No Cash Payments Awaiting Confirmation</h3>
+            <p>Takeaway customers who choose cash will appear here for you to confirm at the counter.</p>
+          </div>
+        } @else {
+          <div class="order-list">
+            @for (group of cashOrders(); track group.tabId + group.createdAt) {
+              <div class="order-card cash-card" [class.processing]="isCashProcessing(group)">
+                <div class="order-head">
+                  <div class="order-table-label">
+                    <span class="material-symbols-outlined">table_restaurant</span>
+                    <span>Table {{ getTableLabel(group) }}</span>
+                    @if (group.tabType === 'takeaway') {
+                      <span class="type-badge takeaway">Takeaway</span>
+                    } @else {
+                      <span class="type-badge dine-in">Dine In</span>
+                    }
+                  </div>
+                  <span class="order-time">{{ formatTime(group.createdAt) }}</span>
+                  <span class="items-total">{{ formatKobo(group.billTotalKobo ?? group.totalKobo) }}</span>
+                </div>
+                <div class="order-body">
+                  <div class="order-waiter">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>{{ getWaiterLabel(group) }}</span>
+                  </div>
+                  <div class="cash-awaiting">
+                    <span class="material-symbols-outlined">schedule</span>
+                    Awaiting cash payment at the counter
+                  </div>
+                  <div class="order-items">
+                    <span class="items-label">{{ group.items.length }} item(s)</span>
+                    <div class="items-tags">
+                      @for (item of group.items.slice(0, 4); track item.id) {
+                        <span class="item-tag">{{ item.menuItemName }} <span class="item-qty">x{{ item.quantity }}</span></span>
+                      }
+                      @if (group.items.length > 4) {
+                        <span class="item-tag more">+{{ group.items.length - 4 }} more</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="order-actions">
+                  <button class="btn-cash" [disabled]="isProcessingAction() || isCashProcessing(group)" (click)="confirmCashPayment(group)">
+                    <span class="material-symbols-outlined">payments</span>
+                    {{ isCashProcessing(group) ? 'Confirming...' : 'Confirm Cash Payment' }}
+                  </button>
                   <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>
                   </button>

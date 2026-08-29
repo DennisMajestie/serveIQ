@@ -47,6 +47,11 @@
   --ready-subtle: rgba(173, 198, 255, 0.4);
   --ready-glow: rgba(173, 198, 255, 0.6);
 
+  --cash: #fbbf24;
+  --cash-bg: rgba(251, 191, 36, 0.1);
+  --cash-subtle: rgba(251, 191, 36, 0.22);
+  --cash-subtle-hover: rgba(251, 191, 36, 0.32);
+
   --error: #ffb4ab;
   --error-subtle: rgba(255, 180, 171, 0.12);
   --error-subtle-hover: rgba(255, 180, 171, 0.2);
@@ -111,6 +116,11 @@
   --ready-bg: rgba(37, 99, 235, 0.06);
   --ready-subtle: rgba(37, 99, 235, 0.3);
   --ready-glow: rgba(37, 99, 235, 0.4);
+
+  --cash: #b45309;
+  --cash-bg: rgba(212, 130, 4, 0.1);
+  --cash-subtle: rgba(212, 130, 4, 0.2);
+  --cash-subtle-hover: rgba(212, 130, 4, 0.3);
 
   --error: #dc2626;
   --error-subtle: rgba(220, 38, 38, 0.06);
@@ -263,6 +273,7 @@
 .preparing-stat .stat-value { color: var(--accent); }
 .ready-stat .stat-value { color: var(--ready); }
 .time-stat .stat-value { color: var(--accent); }
+.cash-stat .stat-value { color: var(--cash); }
 
 /* ========== WIDGETS ROW ========== */
 .sv-widgets {
@@ -465,6 +476,7 @@
 .pending-card { border-left: 3px solid var(--pending); }
 .preparing-card { border-left: 3px solid var(--accent); }
 .ready-card { border-left: 3px solid var(--ready); }
+.cash-card { border-left: 3px solid var(--cash); }
 
 .order-head {
   display: flex;
@@ -540,6 +552,28 @@
   color: var(--accent);
 }
 .btn-approve:hover { background: var(--accent-subtle-hover); }
+
+.cash-awaiting {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cash);
+  background: var(--cash-bg);
+  border: 1px dashed var(--cash-subtle);
+  border-radius: 999px;
+  padding: 4px 10px;
+  width: fit-content;
+}
+.cash-awaiting .material-symbols-outlined { font-size: 15px; }
+
+.btn-cash {
+  background: var(--cash-bg);
+  color: var(--cash);
+}
+.btn-cash:hover { background: var(--cash-subtle-hover); }
 
 .self-service-badge {
   flex: 1;

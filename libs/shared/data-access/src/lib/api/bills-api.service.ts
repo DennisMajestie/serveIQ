@@ -33,6 +33,11 @@ export class BillsApiService extends BaseApiService {
     return this.post<Bill>(buildUrl(API_CONFIG.endpoints.bills.pay, { tabId }), payment);
   }
 
+  /** Confirm a self-service cash payment at the counter, paying the bill and releasing the held order. */
+  confirmCash(tabId: string): Observable<Bill> {
+    return this.post<Bill>(buildUrl(API_CONFIG.endpoints.bills.confirmCash, { tabId }), {});
+  }
+
   /** Fetch the paid receipt for a tab. */
   getReceipt(tabId: string): Observable<Receipt> {
     return this.get<Receipt>(buildUrl(API_CONFIG.endpoints.bills.receipt, { tabId }));

@@ -98,6 +98,7 @@ export const API_CONFIG = {
       decline: '/api/v1/orders/:id/decline',
       preparing: '/api/v1/orders/preparing',
       readyForPickup: '/api/v1/orders/ready-for-pickup',
+      pendingCash: '/api/v1/orders/pending-cash',
       outForDelivery: '/api/v1/orders/out-for-delivery',
       deliver: '/api/v1/orders/:id/deliver',
       confirmPickup: '/api/v1/orders/:id/confirm-pickup',
@@ -107,6 +108,7 @@ export const API_CONFIG = {
       generate: '/api/v1/bills/tab/:tabId/generate',
       applyDiscount: '/api/v1/bills/tab/:tabId/apply-discount',
       pay: '/api/v1/bills/tab/:tabId/pay',
+      confirmCash: '/api/v1/bills/tab/:tabId/confirm-cash',
       receipt: '/api/v1/bills/tab/:tabId/receipt',
     },
     // Suppliers

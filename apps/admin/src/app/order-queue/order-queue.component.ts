@@ -2,14 +2,14 @@ import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { OrdersApiService, DepartmentsApiService, TablesApiService, ShiftsApiService, UserApiService, AuditApiService } from '@serveiq/shared/data-access';
+import { OrdersApiService, DepartmentsApiService, TablesApiService, ShiftsApiService, UserApiService, AuditApiService, BillsApiService } from '@serveiq/shared/data-access';
 import { OrderGroup, Department, Table, Shift, User, AuditLog } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { interval, Subscription } from 'rxjs';
 import { CurrencyContextService } from '../core/currency-context.service';
 import { ThemeService } from '../core/theme.service';
 
-type QueueTab = 'pending' | 'preparing' | 'ready';
+type QueueTab = 'pending' | 'preparing' | 'ready' | 'cash';
 
 @Component({
   selector: 'app-order-queue',
@@ -26,6 +26,7 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
   private shiftsApi = inject(ShiftsApiService);
   private userApi = inject(UserApiService);
   private auditApi = inject(AuditApiService);
+  private billsApi = inject(BillsApiService);
   private currency = inject(CurrencyContextService);
   private themeService = inject(ThemeService);
 
@@ -34,13 +35,17 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
   pendingOrders = signal<OrderGroup[]>([]);
   preparingOrders = signal<OrderGroup[]>([]);
   readyOrders = signal<OrderGroup[]>([]);
+  cashOrders = signal<OrderGroup[]>([]);
 
   isLoadingPending = signal(false);
   isLoadingPreparing = signal(false);
   isLoadingReady = signal(false);
+  isLoadingCash = signal(false);
   isProcessingAction = signal(false);
   isRefreshing = signal(false);
   isDarkMode = signal(this.themeService.theme() === 'dark');
+
+  private cashProcessingTabId = signal<string | null>(null);
 
   departments = signal<Department[]>([]);
   tables = signal<Table[]>([]);
@@ -76,6 +81,7 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
       this.loadPending();
       this.loadPreparing();
       this.loadReady();
+      this.loadCash();
       this.loadTables();
       this.loadShift();
       this.loadRecentActivity();
@@ -105,12 +111,14 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
     if (tab === 'pending') this.loadPending();
     else if (tab === 'preparing') this.loadPreparing();
     else if (tab === 'ready') this.loadReady();
+    else if (tab === 'cash') this.loadCash();
   }
 
   private loadAll() {
     this.loadPending();
     this.loadPreparing();
     this.loadReady();
+    this.loadCash();
     this.loadDepartments();
     this.loadTables();
     this.loadShift();
@@ -190,6 +198,14 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadCash() {
+    this.isLoadingCash.set(true);
+    this.ordersApi.getPendingCash().subscribe({
+      next: (orders) => { this.cashOrders.set(orders || []); this.isLoadingCash.set(false); },
+      error: () => this.isLoadingCash.set(false)
+    });
+  }
+
   getTableStatusClass(table: Table): string {
     const status = table.status || 'available';
 
@@ -197,6 +213,7 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
       ...this.pendingOrders(),
       ...this.preparingOrders(),
       ...this.readyOrders(),
+      ...this.cashOrders(),
     ];
     const match = groups.find(g =>
       g.tableId === table.id || g.tableNumber === table.tableNumber
@@ -210,6 +227,7 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
 
   private getOrderStatusClass(status: string): string {
     if (status === 'PENDING_SUPERVISOR_APPROVAL') return 'pending';
+    if (status === 'PENDING_PAYMENT_APPROVAL') return 'pending';
     if (status === 'PREPARING' || status === 'APPROVED' || status === 'ASSIGNED_TO_DEPARTMENT') return 'preparing';
     if (status === 'READY_FOR_PICKUP') return 'ready';
     return status.toLowerCase();
@@ -220,6 +238,7 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
       ...this.pendingOrders(),
       ...this.preparingOrders(),
       ...this.readyOrders(),
+      ...this.cashOrders(),
     ];
     const match = groups.find(g =>
       g.tableId === table.id || g.tableNumber === table.tableNumber
@@ -252,6 +271,7 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
       ...this.pendingOrders(),
       ...this.preparingOrders(),
       ...this.readyOrders(),
+      ...this.cashOrders(),
     ];
     const match = groups.find(g =>
       g.tableId === table.id || g.tableNumber === table.tableNumber
@@ -594,6 +614,59 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
         });
       });
     });
+  }
+
+  confirmCashPayment(group: OrderGroup) {
+    if (this.isProcessingAction() || this.isProcessingGroup(group) || this.isCashProcessing(group)) return;
+    const amount = group.billTotalKobo ?? group.totalKobo ?? 0;
+    Swal.fire({
+      title: 'Confirm Cash Payment?',
+      html: `<div style="text-align:left;font-size:14px;color:#ccc;">
+        <p style="margin:0 0 8px;">Table <strong>${this.getTableLabel(group)}</strong> has chosen to pay cash at the counter.</p>
+        <p style="margin:0;">Expected amount: <strong style="color:#22c55e;">${this.formatKobo(amount)}</strong></p>
+        <p style="margin:8px 0 0;font-size:12px;color:#888;">Confirming records the cash payment and sends the held order to the kitchen for approval.</p>
+      </div>`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Confirm Cash',
+      confirmButtonColor: '#22c55e',
+      cancelButtonText: 'Cancel',
+      background: '#1A1A1A',
+      color: '#fff',
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.cashProcessingTabId.set(group.tabId);
+      this.billsApi.confirmCash(group.tabId).subscribe({
+        next: () => {
+          this.cashProcessingTabId.set(null);
+          Swal.fire({
+            icon: 'success',
+            title: 'Payment Confirmed',
+            text: 'Cash received — the order has been sent to the kitchen.',
+            background: '#1A1A1A',
+            color: '#fff',
+            confirmButtonColor: '#22c55e',
+          });
+          this.cashOrders.update(list => list.filter(g => g.tabId !== group.tabId || g.createdAt !== group.createdAt));
+          this.loadPending();
+          this.loadPreparing();
+        },
+        error: (err) => {
+          this.cashProcessingTabId.set(null);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: err?.error?.message || 'Failed to confirm cash payment',
+            background: '#1A1A1A',
+            color: '#fff',
+          });
+        }
+      });
+    });
+  }
+
+  isCashProcessing(group: OrderGroup): boolean {
+    return this.cashProcessingTabId() === group.tabId;
   }
 
   viewOrderTimeline(group: OrderGroup) {

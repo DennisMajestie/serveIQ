@@ -630,6 +630,7 @@ export interface OrderGroup {
   waiterId: string;
   waiterName: string;
   totalKobo: number;
+  billTotalKobo?: number;
   timerEndsAt?: string;
   departmentId?: string;
   departmentName?: string;
