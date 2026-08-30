@@ -698,3 +698,23 @@ export interface AuditLogResponse {
     totalPages: number;
   };
 }
+
+// ===== Payment Plan / Split Billing =====
+export enum AllocationType {
+  ITEM = 'item',
+  REMAINING = 'remaining',
+  PERCENTAGE = 'percentage',
+  AMOUNT = 'amount',
+}
+
+export interface PaymentPlanAllocation {
+  type: AllocationType;
+  order_ids?: string[];
+  label?: string;
+  percentage?: number;
+  amount_kobo?: number;
+}
+
+export interface CreatePaymentPlanRequest {
+  allocations: PaymentPlanAllocation[];
+}

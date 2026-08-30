@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { Bill, Receipt, GenerateBillRequest, RecordPaymentRequest, ApplyDiscountRequest } from '@serveiq/shared/models';
+import { Bill, Receipt, GenerateBillRequest, RecordPaymentRequest, ApplyDiscountRequest, PaymentPlanAllocation, CreatePaymentPlanRequest } from '@serveiq/shared/models';
 import { snakeToCamel } from '@serveiq/shared/models';
 
 /** Manages bill generation, payment recording and receipts. */
@@ -36,6 +36,11 @@ export class BillsApiService extends BaseApiService {
   /** Confirm a self-service cash payment at the counter, paying the bill and releasing the held order. */
   confirmCash(tabId: string): Observable<Bill> {
     return this.post<Bill>(buildUrl(API_CONFIG.endpoints.bills.confirmCash, { tabId }), {});
+  }
+
+  /** Create a payment plan with ordered allocations for split billing. */
+  createPaymentPlan(tabId: string, allocations: CreatePaymentPlanRequest): Observable<Bill[]> {
+    return this.post<Bill[]>(buildUrl(API_CONFIG.endpoints.bills.paymentPlan, { tabId }), allocations);
   }
 
   /** Fetch the paid receipt for a tab. */

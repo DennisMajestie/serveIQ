@@ -110,6 +110,7 @@ export const API_CONFIG = {
       pay: '/api/v1/bills/tab/:tabId/pay',
       confirmCash: '/api/v1/bills/tab/:tabId/confirm-cash',
       receipt: '/api/v1/bills/tab/:tabId/receipt',
+      paymentPlan: '/api/v1/bills/tab/:tabId/payment-plan',
     },
     // Suppliers
     suppliers: {

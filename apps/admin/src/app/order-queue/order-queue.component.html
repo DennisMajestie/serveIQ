@@ -215,6 +215,10 @@
                     <span class="material-symbols-outlined">cancel</span>
                     {{ isProcessingGroup(group) ? 'Processing...' : 'Decline' }}
                   </button>
+                  <button class="btn-split" [disabled]="isProcessingAction()" (click)="createPaymentPlan(group)" title="Create split payment plan">
+                    <span class="material-symbols-outlined">account_tree</span>
+                    Split
+                  </button>
                   <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>
                   </button>
@@ -415,6 +419,10 @@
                   <button class="btn-cash" [disabled]="isProcessingAction() || isCashProcessing(group)" (click)="confirmCashPayment(group)">
                     <span class="material-symbols-outlined">payments</span>
                     {{ isCashProcessing(group) ? 'Confirming...' : 'Confirm Cash Payment' }}
+                  </button>
+                  <button class="btn-split" [disabled]="isProcessingAction()" (click)="createPaymentPlan(group)" title="Create split payment plan">
+                    <span class="material-symbols-outlined">account_tree</span>
+                    Split
                   </button>
                   <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>

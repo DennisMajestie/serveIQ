@@ -598,6 +598,12 @@
 }
 .btn-decline:hover { background: var(--error-subtle-hover); }
 
+.btn-split {
+  background: var(--primary-subtle);
+  color: var(--primary);
+}
+.btn-split:hover { background: var(--primary-subtle-hover); }
+
 .btn-deliver {
   background: var(--accent-subtle);
   color: var(--accent);
