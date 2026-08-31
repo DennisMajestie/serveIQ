@@ -4,6 +4,7 @@ import { WaiterCallsApiService, WaiterCallDto } from '@serveiq/shared/data-acces
 import { RealtimeSocketService, WaiterCallEvent } from '@serveiq/shared/data-access';
 import { AuthService } from '@serveiq/shared/data-access';
 import { Socket } from 'socket.io-client';
+import { WaiterCallAlertService } from './waiter-call-alert.service';
 
 @Component({
   selector: 'app-waiter-calls',
@@ -16,6 +17,7 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
   private api = inject(WaiterCallsApiService);
   private socketSvc = inject(RealtimeSocketService);
   private auth = inject(AuthService);
+  private callAlert = inject(WaiterCallAlertService);
 
   calls = signal<WaiterCallDto[]>([]);
   workload = signal<{ activeTables: number; maxTables: number; isAvailable: boolean } | null>(null);
@@ -72,7 +74,7 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
   }
 
   accept(id: string) {
-    this.api.accept(id).subscribe({ next: () => this.refresh(), error: () => this.refresh() });
+    this.api.accept(id).subscribe({ next: () => { this.callAlert.resetFor(id); this.refresh(); }, error: () => this.refresh() });
   }
 
   arrived(id: string) {

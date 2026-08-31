@@ -5,10 +5,12 @@ import { HttpClient } from '@angular/common/http';
 import { OfflineBannerComponent } from './shared/components/offline-banner/offline-banner.component';
 import { OfflineSyncEngine, OfflineCacheService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
 import { firstValueFrom } from 'rxjs';
+import { WaiterCallAlertComponent } from './waiter-calls/waiter-call-alert.component';
+import { WaiterCallAlertService } from './waiter-calls/waiter-call-alert.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule, OfflineBannerComponent],
+  imports: [CommonModule, RouterModule, OfflineBannerComponent, WaiterCallAlertComponent],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -18,6 +20,7 @@ export class App implements OnInit {
   private http = inject(HttpClient);
   private cache = inject(OfflineCacheService);
   private env = inject(ENVIRONMENT_CONFIG);
+  private callAlert = inject(WaiterCallAlertService);
 
   async ngOnInit() {
     if ('fonts' in document) {
@@ -29,6 +32,7 @@ export class App implements OnInit {
         document.body.classList.add('fonts-loaded');
       }, 300);
     }
+    this.callAlert.connect();
     await this.bootstrapOfflineCache();
   }
 

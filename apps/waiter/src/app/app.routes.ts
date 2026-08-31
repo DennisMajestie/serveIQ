@@ -44,7 +44,7 @@ export const appRoutes: Route[] = [
   { path: 'menu', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: MenuComponent },
   { path: 'tabs/create/:tableId', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: OpenTabComponent },
   { path: 'profile', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: ProfileComponent },
-  { path: 'waiter-calls', canActivate: [authGuard, waiterGuard], canMatch: [prefersCurrentTheme], component: WaiterCallsComponent },
+  { path: 'waiter-calls', canActivate: [authGuard, waiterGuard], component: WaiterCallsComponent },
 
   // ===== Legacy theme (pre-Luminous) =====
   { path: 'tables', canActivate: [authGuard, waiterGuard], canMatch: [prefersLegacyTheme], component: LegacyTablesComponent },
