@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { TabsApiService, TablesApiService, PosApiService, OfflineCacheService } from '@serveiq/shared/data-access';
-import { Bill, Tab, Table } from '@serveiq/shared/models';
+import { TabsApiService, TablesApiService, PosApiService, OfflineCacheService, BillsApiService } from '@serveiq/shared/data-access';
+import { Bill, Tab, Table, AllocationType, PaymentPlanAllocation, CreatePaymentPlanRequest } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../../services/currency-context.service';
 import { OfflineDataService } from '../../services/offline-data.service';
@@ -26,6 +26,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   private tableService = inject(TablesApiService);
   private http = inject(HttpClient);
   private posApi = inject(PosApiService);
+  private billsApi = inject(BillsApiService);
   private currency = inject(CurrencyContextService);
   private offlineData = inject(OfflineDataService);
   private cache = inject(OfflineCacheService);
@@ -450,6 +451,223 @@ export class PaymentComponent implements OnInit, OnDestroy {
         const msg = err?.error?.message || err?.message || 'Could not confirm the cash payment.';
         Swal.fire({ icon: 'error', title: 'Confirmation Failed', text: msg, background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       }
+    });
+  }
+
+  createPaymentPlan() {
+    const items = this.items().filter(i => {
+      const raw = i as any;
+      const s = (raw.orderStatus ?? raw.order_status ?? '').toString().toLowerCase();
+      return s === 'pending_supervisor_approval';
+    });
+    if (!items.length) {
+      Swal.fire({ icon: 'warning', title: 'No pending items', text: 'No items available to create a payment plan.' });
+      return;
+    }
+
+    const itemOptions = items.map(i => {
+      const raw = i as any;
+      const subtotal = (raw.priceKobo ?? raw.price_kobo ?? 0) * (raw.quantity ?? raw.qty ?? 1);
+      return {
+        value: i.id,
+        label: `${i.menuItemName} x${i.quantity} — ${this.formatKobo(subtotal)}`,
+      };
+    });
+
+    const stepsHtml = `
+      <div id="plan-builder" style="text-align:left;color:#ccc;">
+        <p style="font-size:12px;color:#888;margin-bottom:16px;">Add allocations in order. Each person pays, the remainder flows to the next.</p>
+        <div id="allocation-rows"></div>
+        <button type="button" id="add-row-btn" class="swal2-confirm swal2-styled" style="margin-top:12px;width:100%;background:#22c55e;border:none;color:#1A1A1A;font-weight:600;padding:10px;border-radius:8px;">+ Add Allocation</button>
+      </div>
+    `;
+
+    Swal.fire({
+      title: 'Create Payment Plan',
+      html: stepsHtml,
+      showCancelButton: true,
+      confirmButtonText: 'Create Plan',
+      confirmButtonColor: '#22c55e',
+      cancelButtonText: 'Cancel',
+      background: '#1e293b',
+      color: '#fff',
+      width: '500px',
+      didOpen: () => {
+        const container = document.getElementById('allocation-rows');
+        const addBtn = document.getElementById('add-row-btn');
+
+        const allocationTypes = [
+          { value: 'item', label: 'Specific Items' },
+          { value: 'remaining', label: 'Remaining Balance' },
+          { value: 'percentage', label: '% of Total' },
+          { value: 'amount', label: 'Fixed Amount' },
+        ];
+
+        const renderRow = (index: number) => {
+          const row = document.createElement('div');
+          row.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:12px;position:relative;';
+          row.innerHTML = `
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span style="font-weight:600;color:#22c55e;">${index + 1}.</span>
+              <select data-type-select style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
+                ${allocationTypes.map(t => `<option value="${t.value}">${t.label}</option>`).join('')}
+              </select>
+              <button type="button" data-remove style="padding:6px 10px;border-radius:6px;border:1px solid #ef4444;background:transparent;color:#ef4444;cursor:pointer;">Remove</button>
+            </div>
+            <div data-fields style="display:none;flex-direction:column;gap:8px;margin-top:8px;"></div>
+          `;
+          container?.appendChild(row);
+
+          const typeSelect = row.querySelector('select[data-type-select]') as HTMLSelectElement;
+          const fieldsDiv = row.querySelector('[data-fields]') as HTMLDivElement;
+
+          const updateFields = () => {
+            const type = typeSelect.value;
+            let html = '';
+            if (type === 'item') {
+              html = `
+                <label style="display:flex;flex-direction:column;gap:4px;">
+                  <span style="font-size:12px;color:#888;">Items</span>
+                  <select multiple data-items style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;min-height:100px;">
+                    ${itemOptions.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}
+                  </select>
+                </label>
+                <label style="display:flex;flex-direction:column;gap:4px;">
+                  <span style="font-size:12px;color:#888;">Label (e.g., Host)</span>
+                  <input type="text" data-label placeholder="Person name" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
+                </label>
+              `;
+            } else if (type === 'percentage') {
+              html = `
+                <label style="display:flex;flex-direction:column;gap:4px;">
+                  <span style="font-size:12px;color:#888;">Percentage (0-100)</span>
+                  <input type="number" data-percentage min="0" max="100" placeholder="50" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
+                </label>
+                <label style="display:flex;flex-direction:column;gap:4px;">
+                  <span style="font-size:12px;color:#888;">Label</span>
+                  <input type="text" data-label placeholder="Person name" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
+                </label>
+              `;
+            } else if (type === 'amount') {
+              html = `
+                <label style="display:flex;flex-direction:column;gap:4px;">
+                  <span style="font-size:12px;color:#888;">Amount (kobo)</span>
+                  <input type="number" data-amount min="0" placeholder="5000" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
+                </label>
+                <label style="display:flex;flex-direction:column;gap:4px;">
+                  <span style="font-size:12px;color:#888;">Label</span>
+                  <input type="text" data-label placeholder="Person name" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
+                </label>
+              `;
+            } else if (type === 'remaining') {
+              html = `
+                <label style="display:flex;flex-direction:column;gap:4px;">
+                  <span style="font-size:12px;color:#888;">Label (e.g., Rest of group)</span>
+                  <input type="text" data-label placeholder="Remaining" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
+                </label>
+              `;
+            }
+            fieldsDiv.innerHTML = html;
+            fieldsDiv.style.display = 'flex';
+          };
+
+          typeSelect.addEventListener('change', updateFields);
+          updateFields();
+
+          row.querySelector('[data-remove]')?.addEventListener('click', () => row.remove());
+
+          return row;
+        };
+
+        renderRow(0);
+
+        addBtn?.addEventListener('click', () => {
+          const rows = container?.querySelectorAll('[data-type-select]') || [];
+          renderRow(rows.length);
+        });
+      },
+      preConfirm: () => {
+        const rows = document.querySelectorAll('#allocation-rows > div');
+        const allocations: PaymentPlanAllocation[] = [];
+
+        for (const row of Array.from(rows)) {
+          const type = (row.querySelector('[data-type-select]') as HTMLSelectElement)?.value;
+          if (!type) continue;
+
+          const alloc: PaymentPlanAllocation = { type: type as AllocationType };
+
+          if (type === 'item') {
+            const selected = Array.from((row.querySelector('[data-items]') as HTMLSelectElement)?.selectedOptions || []);
+            alloc.order_ids = selected.map(o => o.value);
+            alloc.label = (row.querySelector('[data-label]') as HTMLInputElement)?.value || 'Items';
+          } else if (type === 'percentage') {
+            alloc.percentage = parseFloat((row.querySelector('[data-percentage]') as HTMLInputElement)?.value || '0');
+            alloc.label = (row.querySelector('[data-label]') as HTMLInputElement)?.value || 'Percentage';
+          } else if (type === 'amount') {
+            alloc.amount_kobo = parseInt((row.querySelector('[data-amount]') as HTMLInputElement)?.value || '0');
+            alloc.label = (row.querySelector('[data-label]') as HTMLInputElement)?.value || 'Amount';
+          } else if (type === 'remaining') {
+            alloc.label = (row.querySelector('[data-label]') as HTMLInputElement)?.value || 'Remaining';
+          }
+
+          if (alloc.type === 'item' && (!alloc.order_ids || !alloc.order_ids.length)) {
+            Swal.showValidationMessage('Please select at least one item for each item allocation.');
+            return false;
+          }
+          if (alloc.type === 'percentage' && (!alloc.percentage || alloc.percentage <= 0)) {
+            Swal.showValidationMessage('Percentage must be greater than 0.');
+            return false;
+          }
+          if (alloc.type === 'amount' && (!alloc.amount_kobo || alloc.amount_kobo <= 0)) {
+            Swal.showValidationMessage('Amount must be greater than 0.');
+            return false;
+          }
+
+          allocations.push(alloc);
+        }
+
+        if (!allocations.length) {
+          Swal.showValidationMessage('Add at least one allocation.');
+          return false;
+        }
+
+        return { tabId: this.tabId(), allocations };
+      }
+    }).then(result => {
+      if (!result.isConfirmed || !result.value) return;
+
+      const { tabId, allocations } = result.value as { tabId: string; allocations: PaymentPlanAllocation[] };
+      const dto: CreatePaymentPlanRequest = { allocations };
+
+      this.isProcessing.set(true);
+      this.billsApi.createPaymentPlan(tabId, dto).subscribe({
+        next: (bills) => {
+          this.isProcessing.set(false);
+          Swal.fire({
+            icon: 'success',
+            title: 'Payment Plan Created',
+            text: `${bills.length} splits created. Each person pays in order — remainder auto-adjusts.`,
+            background: '#1e293b',
+            color: '#fff',
+            confirmButtonColor: '#f97316',
+          });
+          this.isSplit.set(true);
+          const amounts = bills.map(b => b.totalKobo);
+          this.splitAmounts.set(amounts);
+          this.splitCount.set(amounts.length);
+        },
+        error: (err) => {
+          this.isProcessing.set(false);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: err?.error?.message || 'Failed to create payment plan',
+            background: '#1e293b',
+            color: '#fff',
+            confirmButtonColor: '#f97316',
+          });
+        }
+      });
     });
   }
 }
