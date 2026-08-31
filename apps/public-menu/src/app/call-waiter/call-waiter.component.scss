@@ -163,6 +163,16 @@
   border-color: rgba(22, 163, 74, 0.2);
 }
 
+.cw-card-error {
+  border: 1.5px solid #fecaca;
+  background: #fff5f5;
+  margin-top: 10px;
+}
+
+.cw-error-text {
+  color: #b91c1c;
+}
+
 .cw-status {
   font-weight: 600;
   font-size: 15px;

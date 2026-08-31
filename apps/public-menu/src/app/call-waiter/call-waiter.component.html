@@ -4,13 +4,18 @@
       <!-- Has table — normal call-waiter flow -->
       @if (status() === 'idle') {
         <button class="cw-btn" (click)="call()" [disabled]="busy()">
-          <span class="cw-icon">🔔</span> Call Waiter
+          <span class="cw-icon">🔔</span> {{ busy() ? 'Calling…' : 'Call Waiter' }}
         </button>
+        @if (error()) {
+          <div class="cw-card cw-card-error">
+            <div class="cw-status cw-error-text">⚠ {{ error() }}</div>
+          </div>
+        }
       } @else {
         <div class="cw-card" [class.resolved]="status() === 'resolved'">
           <div class="cw-status">
             @switch (status()) {
-              @case ('pending') { <span>🔔 Finding a waiter…</span> }
+              @case ('pending') { <span>✅ Your call went through — finding a waiter…</span> }
               @case ('queued') { <span>⏳ All waiters busy — you're in the queue</span> }
               @case ('accepted') { <span>🚶 Waiter is on the way</span> }
               @case ('arrived') { <span>✅ Waiter has arrived</span> }

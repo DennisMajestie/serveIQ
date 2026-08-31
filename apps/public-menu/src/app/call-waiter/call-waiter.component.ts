@@ -21,6 +21,7 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
   status = signal<CallStatus>('idle');
   callId = signal<string | null>(null);
   message = signal<string>('');
+  error = signal<string>('');
   hasTable = computed(() => !!this.cart.tableId());
   // A table implies dine-in; otherwise only show for an explicit dine-in order.
   // Treat an undecided order type as dine-in when a table is set (scanned QR).
@@ -97,16 +98,18 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
   }
 
   private doCall(tableId: string, branchId: string) {
+    this.busy.set(true);
+    this.error.set('');
     this.api.callWaiter(branchId, tableId).subscribe({
       next: (res: any) => {
         const data = res?.data ?? res;
         this.callId.set(data?.id ?? null);
-        this.applyStatus(data?.status ?? 'pending', data?.message);
+        this.applyStatus(data?.status ?? 'pending', data?.message ?? 'Your call has been sent to a waiter.');
         this.busy.set(false);
         this.startPolling();
       },
       error: (err: any) => {
-        this.message.set(err?.error?.message || 'Could not reach a waiter. Try again.');
+        this.error.set(err?.error?.message || 'Could not reach a waiter. Try again.');
         this.busy.set(false);
       },
     });
@@ -172,6 +175,7 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
     this.callId.set(null);
     this.status.set('idle');
     this.message.set('');
+    this.error.set('');
   }
 
   buttonLabel = computed(() => {
