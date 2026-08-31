@@ -60,14 +60,6 @@
           </button>
         }
 
-        @if (!isSplit()) {
-          <button (click)="createPaymentPlan()" class="w-full mt-3 p-3 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3 text-[#4be277] hover:bg-white/10 transition-colors">
-            <span class="material-symbols-outlined text-[#4be277]">account_tree</span>
-            <span class="text-[14px] leading-[1.5] font-semibold" style="font-family:'Inter',sans-serif">Create Payment Plan</span>
-            <span class="material-symbols-outlined text-[14px] text-[#bccbb9]/50 ml-auto">arrow_forward</span>
-          </button>
-        }
-
         @if (isSplit()) {
           <div class="mt-4 pt-4 border-t border-white/5 space-y-4">
             <div class="flex justify-between items-center">
@@ -84,7 +76,7 @@
                 <div (click)="customizeSplit($index)" class="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] active:bg-white/[0.06] transition-colors cursor-pointer">
                   <span class="text-[14px] leading-[1.4] font-medium text-[#dce1fb]" style="font-family:'Inter',sans-serif">Guest {{ $index + 1 }}</span>
                   <div class="flex items-center gap-2">
-                    <span class="text-[15px] leading-[1.4] font-semibold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ currencySymbol() }}{{ formatAmount(getSplitNaira($index)) }}</span>
+                    <span class="text-[15px] leading-[1.4] font-semibold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(getSplitKobo($index)) }}</span>
                     <span class="material-symbols-outlined text-[14px] text-[#bccbb9]">edit</span>
                   </div>
                 </div>
@@ -93,7 +85,7 @@
 
             <div class="flex items-center justify-between pt-3 border-t border-white/5">
               <span class="text-[13px] leading-none font-medium text-[#bccbb9]" style="font-family:'Inter',sans-serif">Allocated</span>
-              <span class="text-[13px] leading-none font-semibold text-[#4be277]" style="font-family:'JetBrains Mono',monospace">{{ currencySymbol() }}{{ formatAmount(paidNaira) }}</span>
+              <span class="text-[13px] leading-none font-semibold text-[#4be277]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(paidKobo) }}</span>
             </div>
 
             <div class="flex items-center justify-between"
@@ -104,7 +96,7 @@
                 @if (isSplitValid) {
                   <span class="material-symbols-outlined text-sm">check_circle</span>
                 }
-                {{ currencySymbol() }}{{ formatAmount(remainingNaira) }}
+                {{ formatKobo(remainingKobo) }}
               </span>
             </div>
           </div>
@@ -234,7 +226,7 @@
     <div class="max-w-2xl mx-auto">
       @if (isSplit() && !isSplitValid) {
         <div class="text-center mb-3">
-          <span class="text-[13px] leading-none font-medium text-[#ffb4ab]" style="font-family:'Inter',sans-serif">Allocate {{ currencySymbol() }}{{ remainingNaira }} remaining across guests to continue</span>
+          <span class="text-[13px] leading-none font-medium text-[#ffb4ab]" style="font-family:'Inter',sans-serif">Allocate {{ formatKobo(remainingKobo) }} remaining across guests to continue</span>
         </div>
       }
       @if (pendingCount() > 0) {

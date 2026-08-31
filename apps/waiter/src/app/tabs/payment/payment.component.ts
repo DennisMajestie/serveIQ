@@ -112,6 +112,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
         if (b) {
           this.bill.set(b);
           this.currentAmount.set((b.totalKobo / 100).toFixed(2));
+          if (this.isSplit()) this.distributeEqually();
         }
         this.isLoading.set(false);
         this.startPaymentPolling(tabId);
@@ -127,6 +128,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
           if (cached) {
             this.bill.set(cached);
             this.currentAmount.set((cached.totalKobo / 100).toFixed(2));
+            if (this.isSplit()) this.distributeEqually();
           }
           this.isLoading.set(false);
           this.startPaymentPolling(tabId);
@@ -253,8 +255,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.splitAmounts.set(amounts);
   }
 
-  getSplitNaira(index: number): string {
-    return ((this.splitAmounts()[index] ?? 0) / 100).toLocaleString(this.currency.getLocale(), { minimumFractionDigits: 2 });
+  getSplitKobo(index: number): number {
+    return this.splitAmounts()[index] ?? 0;
   }
 
   getRemainingKobo(): number {
@@ -272,12 +274,12 @@ export class PaymentComponent implements OnInit, OnDestroy {
     return total - this.getRemainingKobo();
   }
 
-  get remainingNaira(): string {
-    return (this.getRemainingKobo() / 100).toLocaleString(this.currency.getLocale(), { minimumFractionDigits: 2 });
+  get remainingKobo(): number {
+    return this.getRemainingKobo();
   }
 
-  get paidNaira(): string {
-    return (this.totalPaidKobo / 100).toLocaleString(this.currency.getLocale(), { minimumFractionDigits: 2 });
+  get paidKobo(): number {
+    return this.totalPaidKobo;
   }
 
   customizeSplit(index: number) {
