@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WaiterCallsApiService, WaiterCallDto } from '@serveiq/shared/data-access';
@@ -6,6 +6,7 @@ import { RealtimeSocketService, WaiterCallEvent } from '@serveiq/shared/data-acc
 import { AuthService, UserApiService } from '@serveiq/shared/data-access';
 import { User } from '@serveiq/shared/models';
 import { Socket } from 'socket.io-client';
+import { ThemeService } from '../../core/theme.service';
 
 @Component({
   selector: 'app-admin-waiter-calls',
@@ -19,6 +20,9 @@ export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
   private socketSvc = inject(RealtimeSocketService);
   private auth = inject(AuthService);
   private userApi = inject(UserApiService);
+  private themeService = inject(ThemeService);
+
+  isDarkMode = signal(this.themeService.theme() === 'dark');
 
   active = signal<WaiterCallDto[]>([]);
   queue = signal<WaiterCallDto[]>([]);
@@ -34,6 +38,12 @@ export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
   private socket: Socket | null = null;
   private pollTimer: any = null;
   private handlers: Partial<Record<WaiterCallEvent, () => void>> = {};
+
+  constructor() {
+    effect(() => {
+      this.isDarkMode.set(this.themeService.theme() === 'dark');
+    });
+  }
 
   ngOnInit() {
     const token = this.auth.getToken() ?? '';
