@@ -313,8 +313,23 @@ export class PaymentComponent implements OnInit, OnDestroy {
       }
     }).then(result => {
       if (result.isConfirmed) {
-        const amounts = [...this.splitAmounts()];
+        const total = this.bill()?.totalKobo ?? 0;
+        const count = this.splitCount();
+        const amounts = Array(count).fill(0);
         amounts[index] = result.value;
+        if (count > 1) {
+          const otherCount = count - 1;
+          const remaining = total - result.value;
+          const each = Math.floor(remaining / otherCount);
+          let distributed = 0;
+          for (let i = 0; i < count; i++) {
+            if (i === index) continue;
+            amounts[i] = each;
+            distributed += each;
+          }
+          const lastOther = [...Array(count).keys()].filter(i => i !== index).pop() as number;
+          amounts[lastOther] += remaining - distributed;
+        }
         this.splitAmounts.set(amounts);
       }
     });
