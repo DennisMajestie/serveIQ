@@ -27,7 +27,7 @@
     @for (call of activeCalls(); track call.id) {
       <li class="wc-item" [class]="'status-' + call.status">
         <div class="wc-row">
-          <span class="wc-table">Table {{ call.tableId }}</span>
+          <span class="wc-table">{{ tableLabel(call.tableId) }}</span>
           <span class="wc-badge">{{ call.status }}</span>
         </div>
         <div class="wc-actions">

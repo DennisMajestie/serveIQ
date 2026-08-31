@@ -5,6 +5,7 @@ import { RealtimeSocketService, WaiterCallEvent } from '@serveiq/shared/data-acc
 import { AuthService } from '@serveiq/shared/data-access';
 import { Socket } from 'socket.io-client';
 import { WaiterCallAlertService } from './waiter-call-alert.service';
+import { OfflineDataService } from '../services/offline-data.service';
 
 @Component({
   selector: 'app-waiter-calls',
@@ -18,11 +19,13 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
   private socketSvc = inject(RealtimeSocketService);
   private auth = inject(AuthService);
   private callAlert = inject(WaiterCallAlertService);
+  private offlineData = inject(OfflineDataService);
 
   calls = signal<WaiterCallDto[]>([]);
   workload = signal<{ activeTables: number; maxTables: number; isAvailable: boolean } | null>(null);
   loading = signal(true);
   errorMsg = signal('');
+  tableNumbers = signal<Record<string, string>>({});
 
   private socket: Socket | null = null;
   private pollTimer: any = null;
@@ -45,6 +48,7 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
       this.handlers[ev] = h;
       this.socket.on(ev, h);
     }
+    this.loadTableNumbers();
     this.refresh();
     this.pollTimer = setInterval(() => this.refresh(), 10000);
   }
@@ -54,6 +58,23 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
     for (const ev of Object.keys(this.handlers) as WaiterCallEvent[]) {
       this.socket?.off(ev, this.handlers[ev]);
     }
+  }
+
+  private loadTableNumbers() {
+    this.offlineData.getTables().subscribe({
+      next: (tables) => {
+        const map: Record<string, string> = {};
+        for (const t of tables || []) {
+          if (t.id) map[t.id] = t.label || `Table ${t.tableNumber}`;
+        }
+        this.tableNumbers.set(map);
+      },
+      error: () => {},
+    });
+  }
+
+  tableLabel(tableId: string): string {
+    return this.tableNumbers()[tableId] || `Table ${tableId.slice(0, 8)}`;
   }
 
   refresh() {

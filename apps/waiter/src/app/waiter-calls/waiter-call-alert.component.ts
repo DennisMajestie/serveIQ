@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { WaiterCallAlertService } from './waiter-call-alert.service';
+import { OfflineDataService } from '../services/offline-data.service';
 
 @Component({
   selector: 'app-waiter-call-alert',
@@ -13,7 +14,7 @@ import { WaiterCallAlertService } from './waiter-call-alert.service';
         <div class="wc-alert-icon">🔔</div>
         <div class="wc-alert-body">
           <div class="wc-alert-title">New waiter call</div>
-          <div class="wc-alert-sub">A guest needs a waiter</div>
+          <div class="wc-alert-sub">{{ tableLabel() }}</div>
         </div>
         <div class="wc-alert-actions">
           <button class="wc-alert-btn view" (click)="view()">View</button>
@@ -58,6 +59,32 @@ import { WaiterCallAlertService } from './waiter-call-alert.service';
 export class WaiterCallAlertComponent {
   protected alert = inject(WaiterCallAlertService);
   private router = inject(Router);
+  private offlineData = inject(OfflineDataService);
+  private labelCache = new Map<string, string>();
+  private label = signal<string>('A guest needs a waiter');
+
+  constructor() {
+    this.offlineData.getTables().subscribe({
+      next: (tables) => {
+        for (const t of tables || []) {
+          if (t.id) this.labelCache.set(t.id, t.label || `Table ${t.tableNumber}`);
+        }
+        this.refreshLabel();
+      },
+    });
+  }
+
+  private refreshLabel() {
+    const id = this.alert.incoming()?.tableId;
+    if (!id) return;
+    const cached = this.labelCache.get(id);
+    this.label.set(cached ? `${cached} needs a waiter` : 'A guest needs a waiter');
+  }
+
+  tableLabel(): string {
+    this.refreshLabel();
+    return this.label();
+  }
 
   view() {
     const id = this.alert.incoming()?.id;
@@ -66,3 +93,4 @@ export class WaiterCallAlertComponent {
     this.router.navigate(['/waiter-calls']);
   }
 }
+
