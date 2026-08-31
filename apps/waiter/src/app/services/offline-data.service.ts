@@ -93,7 +93,27 @@ export class OfflineDataService {
     );
     if (!this.network.isOnline()) return cache$;
     return this.billsApi.getReceipt(tabId).pipe(
-      map(receipt => receipt?.bill ?? null),
+      map(receipt => {
+        if (!receipt?.bill) return null;
+        const src = (receipt as any).orders ?? (receipt as any).orderItems ?? [];
+        const orderItems: OrderItem[] = (Array.isArray(src) ? src : []).map(o => {
+          const priceKobo = (o as any).priceKobo ?? (o as any).price_kobo ?? (o as any).unitPriceKobo ?? (o as any).unit_price_kobo ?? 0;
+          return {
+            id: (o as any).id,
+            tabId: (o as any).tabId ?? (o as any).tab_id,
+            menuItemId: (o as any).menuItemId ?? (o as any).menu_item_id,
+            menuItemName: (o as any).menuItemName ?? (o as any).menu_item_name ?? (o as any).name ?? 'Item',
+            priceKobo,
+            unitPriceKobo: (o as any).unitPriceKobo ?? (o as any).unit_price_kobo ?? priceKobo,
+            quantity: (o as any).quantity ?? (o as any).qty ?? 1,
+            subtotalKobo: (o as any).subtotalKobo ?? (o as any).subtotal_kobo ?? priceKobo * ((o as any).quantity ?? 1),
+            orderStatus: (o as any).orderStatus ?? (o as any).order_status,
+            order_status: (o as any).order_status ?? (o as any).orderStatus,
+            notes: (o as any).notes,
+          };
+        });
+        return { ...receipt.bill, orderItems };
+      }),
       tap(bill => { if (bill) this.cache.upsert('bills', { ...bill, tab_id: (bill as any).tab_id ?? (bill as any).tabId }); }),
       catchError(() => cache$),
     );
