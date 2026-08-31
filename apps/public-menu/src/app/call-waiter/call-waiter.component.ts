@@ -22,7 +22,11 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
   callId = signal<string | null>(null);
   message = signal<string>('');
   hasTable = computed(() => !!this.cart.tableId());
-  isDineIn = computed(() => this.cart.orderType() === 'dine_in');
+  // A table implies dine-in; otherwise only show for an explicit dine-in order.
+  // Treat an undecided order type as dine-in when a table is set (scanned QR).
+  isDineIn = computed(
+    () => this.hasTable() || this.cart.orderType() !== 'takeaway',
+  );
   busy = signal(false);
   showTableInput = signal(false);
   tableNumber = signal('');
