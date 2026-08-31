@@ -1,19 +1,23 @@
 .wc-page {
   padding: 16px;
   color: #e7efe9;
-  max-width: 720px;
+  max-width: 100%;
   margin: 0 auto;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .wc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .wc-header h1 {
-  font-size: 20px;
+  font-size: clamp(18px, 5vw, 24px);
   margin: 0;
 }
 
@@ -21,9 +25,11 @@
   background: #4be27722;
   color: #4be277;
   border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 13px;
+  padding: 8px 14px;
+  font-size: clamp(12px, 3vw, 14px);
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .wc-workload.full {
@@ -34,17 +40,28 @@
 .wc-loading,
 .wc-error {
   color: #bccbb9;
+  text-align: center;
+  padding: 24px;
+  font-size: clamp(14px, 4vw, 16px);
 }
 
 .wc-empty {
   text-align: center;
   color: #bccbb9;
-  margin-top: 40px;
+  margin-top: 48px;
+  padding: 24px 16px;
 }
 
 .wc-empty .material-symbols-outlined {
-  font-size: 48px;
+  font-size: clamp(40px, 10vw, 64px);
   color: #4be277;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.wc-empty p {
+  font-size: clamp(14px, 4vw, 16px);
+  margin: 0;
 }
 
 .wc-list {
@@ -53,35 +70,42 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .wc-item {
   background: #ffffff0d;
   border: 1px solid #ffffff14;
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: 16px;
 }
 
 .wc-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
 }
 
 .wc-table {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: clamp(16px, 4.5vw, 20px);
+  font-weight: 700;
+  flex: 1;
+  min-width: 0;
 }
 
 .wc-badge {
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: clamp(11px, 3vw, 13px);
   letter-spacing: 0.04em;
   background: #4be27722;
   color: #4be277;
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .wc-item.status-queued .wc-badge {
@@ -92,17 +116,37 @@
 .wc-actions {
   display: flex;
   gap: 8px;
-  margin-top: 12px;
   flex-wrap: wrap;
 }
 
 .wc-btn {
   border: none;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-size: 14px;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: clamp(14px, 4vw, 16px);
   font-weight: 600;
   cursor: pointer;
+  min-height: 48px;
+  min-width: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  max-width: 100%;
+}
+
+@media (max-width: 480px) {
+  .wc-btn {
+    flex: 1 1 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 481px) {
+  .wc-btn {
+    flex: 0 1 auto;
+  }
 }
 
 .wc-btn.primary {
@@ -114,4 +158,35 @@
   background: transparent;
   border: 1px solid #ffffff33;
   color: #e7efe9;
+}
+
+/* Touch-friendly active states */
+.wc-btn:active {
+  transform: scale(0.98);
+}
+
+.wc-btn:focus-visible {
+  outline: 2px solid #4be277;
+  outline-offset: 2px;
+}
+
+/* Status-specific badge colors */
+.wc-item.status-pending .wc-badge {
+  background: #f59e0b22;
+  color: #fbbf24;
+}
+
+.wc-item.status-accepted .wc-badge {
+  background: #3b82f622;
+  color: #60a5fa;
+}
+
+.wc-item.status-arrived .wc-badge {
+  background: #8b5cf622;
+  color: #a78bfa;
+}
+
+.wc-item.status-resolved .wc-badge {
+  background: #4be27722;
+  color: #4be277;
 }
