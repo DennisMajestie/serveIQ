@@ -475,10 +475,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
     const items = this.items().filter(i => {
       const raw = i as any;
       const s = (raw.orderStatus ?? raw.order_status ?? '').toString().toLowerCase();
-      return s === 'pending_supervisor_approval';
+      return s !== 'declined' && s !== 'cancelled';
     });
     if (!items.length) {
-      Swal.fire({ icon: 'warning', title: 'No pending items', text: 'No items available to create a payment plan.' });
+      Swal.fire({ icon: 'warning', title: 'No items', text: 'No billable items are available to create a payment plan.' });
       return;
     }
 
