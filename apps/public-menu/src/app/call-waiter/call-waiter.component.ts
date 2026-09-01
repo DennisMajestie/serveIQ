@@ -88,6 +88,10 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
       const res = await firstValueFrom(this.api.resolveTable(branchId, number));
       const tableId = res?.tableId;
       if (!tableId) throw new Error('No table ID returned');
+      // Persist the resolved table so hasTable() flips true and the status
+      // (confirmation) card renders after doCall — otherwise the template
+      // stays on the no-table branch and never shows the confirmation.
+      this.cart.setTableId(tableId);
       this.showTableInput.set(false);
       this.tableNumber.set('');
       this.doCall(tableId, branchId);
