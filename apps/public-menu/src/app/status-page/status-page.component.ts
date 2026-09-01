@@ -580,7 +580,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     // Vercel does not proxy /socket.io. Fall back to the backend when apiUrl is blank.
     const base =
       (this.env.apiUrl && this.env.apiUrl.trim()) ||
-      'https://serveiq-backend-5zy9.onrender.com';
+      'https://serveiq-backend.onrender.com';
     const socket: Socket = io(`${base}/public`, {
       transports: ['websocket'],
       reconnection: true,

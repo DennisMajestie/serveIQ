@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://serveiq-backend-5zy9.onrender.com',
+  apiUrl: 'https://serveiq-backend.onrender.com',
   nemotronUrl: 'https://integrate.api.nvidia.com',
   publicMenuBaseUrl: 'https://serve-iq-menu.vercel.app',
   waiterBaseUrl: 'https://serve-iq-one.vercel.app',
