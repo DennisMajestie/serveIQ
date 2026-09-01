@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { App } from './app';
 import { NxWelcome } from './nx-welcome';
 import { AuthService, ENVIRONMENT_CONFIG, OfflineCacheService, OfflineSyncEngine } from '@serveiq/shared/data-access';
+import { OfflineDataService } from './services/offline-data.service';
 
 describe('App', () => {
   beforeEach(async () => {
@@ -13,6 +14,10 @@ describe('App', () => {
         { provide: AuthService, useValue: { isAuthenticated: false, token$: null as any } },
         { provide: ENVIRONMENT_CONFIG, useValue: { apiUrl: 'http://test' } },
         { provide: HttpClient, useValue: { get: () => of({}) } },
+        {
+          provide: OfflineDataService,
+          useValue: { getTables: () => of([]) },
+        },
         {
           provide: OfflineCacheService,
           useValue: { cacheAll: () => {}, getPendingMutations: () => [] },

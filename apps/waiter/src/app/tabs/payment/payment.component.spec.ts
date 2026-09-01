@@ -55,8 +55,10 @@ describe('PaymentComponent', () => {
         tabId: 'tab-1',
         subtotalKobo: 15000,
         totalKobo: 17625,
-        orderItems: [{ id: 'order-1', menuItemName: 'Pizza', quantity: 2, unitPriceKobo: 5000 }],
       },
+      tab: { id: 'tab-1' } as any,
+      receiptNumber: 'R-1',
+      orderItems: [{ id: 'order-1', menuItemName: 'Pizza', quantity: 2, unitPriceKobo: 5000 }],
     }));
 
     await TestBed.configureTestingModule({
