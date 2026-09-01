@@ -30,6 +30,7 @@ export interface Business {
   taxRate?: number;
   vipSurchargePercent?: number;
   serviceChargePercent?: number;
+  discountMinOrderAmount?: number;
   timezone?: string;
   subscriptionPlan?: string;
   logoUrl?: string;

@@ -210,6 +210,11 @@
                   <span class="text-[12px] leading-none text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Added to every bill as a service charge.</span>
                 </div>
                 <div class="space-y-2">
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)] flex items-center gap-2" style="font-family:'Inter',sans-serif">Discount Minimum Order ({{ currency() }}) <span class="material-symbols-outlined text-[var(--primary)] text-[16px]">sell</span></label>
+                  <input type="number" step="0.01" min="0" [ngModel]="discountMinOrder()" (ngModelChange)="discountMinOrder.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 5000" style="font-family:'Inter',sans-serif" />
+                  <span class="text-[12px] leading-none text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Customers must spend at least this amount before a discount can be applied. Leave 0 to allow discounts on any order.</span>
+                </div>
+                <div class="space-y-2">
                   <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Base Currency</label>
                   <select [ngModel]="currency()" (ngModelChange)="currency.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
                     <option value="NGN" class="bg-[var(--background)]">NGN (₦)</option>

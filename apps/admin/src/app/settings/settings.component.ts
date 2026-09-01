@@ -134,6 +134,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
   taxRate = signal<number | null>(null);
   vipSurchargePercent = signal<number | null>(null);
   serviceChargePercent = signal<number | null>(null);
+  discountMinOrder = signal<number | null>(null);
   currency = signal('NGN');
   timezone = signal('Africa/Lagos');
   timezones = [
@@ -234,6 +235,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
         this.taxRate.set(b.taxRate == null ? null : Number(b.taxRate));
         this.vipSurchargePercent.set(b.vipSurchargePercent == null ? null : Number(b.vipSurchargePercent));
         this.serviceChargePercent.set(b.serviceChargePercent == null ? null : Number(b.serviceChargePercent));
+        this.discountMinOrder.set(b.discountMinOrderAmount == null ? null : Number(b.discountMinOrderAmount) / 100);
         this.currency.set(b.currency || 'NGN');
         this.timezone.set(b.timezone || 'Africa/Lagos');
         this.brandPrimaryColor.set(b.brandPrimaryColor || '#F97316');
@@ -244,13 +246,17 @@ navItems: { key: Section; label: string; icon: string }[] = [
 
   saveBusinessSettings() {
     this.isSavingSettings.set(true);
-    this.businessApi.updateBusiness({
+    const updatePayload: any = {
       taxRate: this.taxRate(),
       vipSurchargePercent: this.vipSurchargePercent(),
       serviceChargePercent: this.serviceChargePercent(),
       currency: this.currency(),
       timezone: this.timezone(),
-    } as any).subscribe({
+    };
+    if (this.discountMinOrder() != null) {
+      updatePayload.discountMinOrderAmount = Math.round(this.discountMinOrder()! * 100);
+    }
+    this.businessApi.updateBusiness(updatePayload).subscribe({
       next: () => {
         this.isSavingSettings.set(false);
         Swal.fire({ icon: 'success', title: 'Settings Saved', timer: 1500, showConfirmButton: false });

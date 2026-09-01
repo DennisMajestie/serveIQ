@@ -337,8 +337,14 @@ export class BillComponent implements OnInit {
           catchError(() => of(bill))
         )
       ),
-      catchError(() =>
-        from(this.offlineData.generateBill(this.tabId(), { discountKobo })).pipe(
+      catchError((err: any) => {
+        const status = err?.statusCode ?? err?.status;
+        const msg = err?.serverMessage || err?.message;
+        if (typeof status === 'number' && status >= 400 && status !== 0) {
+          this.error.set(msg || 'Could not apply discount. Please try again.');
+          return of(null);
+        }
+        return from(this.offlineData.generateBill(this.tabId(), { discountKobo })).pipe(
           switchMap((bill) =>
             this.offlineData.getOrdersByTab(this.tabId()).pipe(
               map((items) => {
@@ -360,11 +366,13 @@ export class BillComponent implements OnInit {
               catchError(() => of(null))
             )
           )
-        )
-      )
+        );
+      })
     ).subscribe((bill: Bill | null) => {
       if (!bill) {
-        this.error.set('Could not apply discount. Please try again.');
+        if (!this.error()) {
+          this.error.set('Could not apply discount. Please try again.');
+        }
         this.isLoading.set(false);
         return;
       }
