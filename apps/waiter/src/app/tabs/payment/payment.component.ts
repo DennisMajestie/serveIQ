@@ -5,11 +5,33 @@ import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { TabsApiService, TablesApiService, PosApiService, OfflineCacheService, BillsApiService } from '@serveiq/shared/data-access';
-import { Bill, Tab, Table, AllocationType, PaymentPlanAllocation, CreatePaymentPlanRequest } from '@serveiq/shared/models';
+import { Bill, Tab, Table, AllocationType, PaymentPlanAllocation } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../../services/currency-context.service';
 import { OfflineDataService } from '../../services/offline-data.service';
-import { map, interval, Subscription, switchMap } from 'rxjs';
+import { map, interval, Subscription, switchMap, firstValueFrom } from 'rxjs';
+
+type GuestMode = 'items' | AllocationType.AMOUNT | AllocationType.PERCENTAGE | AllocationType.REMAINING;
+
+interface GuestCard {
+  id: string;
+  label: string;
+  mode: GuestMode;
+  orderIds: string[];
+  percentage: number;
+  amountInput: string;
+  amountKobo: number;
+  billId?: string;
+  paid: boolean;
+}
+
+interface AllocatableItem {
+  id: string;
+  name: string;
+  qty: number;
+  subtotalKobo: number;
+  orderStatus: string;
+}
 
 @Component({
   selector: 'app-payment',
@@ -58,10 +80,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
     return this.terminals().find(t => t.id === id)?.label ?? '';
   });
 
+  // ── Split / Guest cards ──
   isSplit = signal(false);
-  splitCount = signal(2);
-  splitAmounts = signal<number[]>([]);
-  maxGuests = signal(0);
+  guests = signal<GuestCard[]>([]);
+  splitLocked = computed(() => this.guests().some(g => g.paid));
 
   private pollSubscription?: Subscription;
 
@@ -71,7 +93,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
       if (id) {
         this.tabId.set(id);
         this.loadTableInfo(id);
-        this.loadTab(id);
         this.loadBill(id);
       }
     });
@@ -93,29 +114,17 @@ export class PaymentComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadTab(tabId: string) {
-    this.offlineData.getTab(tabId).subscribe({
-      next: (tab: Tab | null) => {
-        if (tab) {
-          this.maxGuests.set(tab.partySize || 1);
-          if (tab.partySize && tab.partySize < this.splitCount()) {
-            this.splitCount.set(Math.max(1, tab.partySize));
-          }
-        }
-      }
-    });
-  }
-
   private loadBill(tabId: string) {
     this.offlineData.getBill(tabId).subscribe({
       next: (b) => {
         if (b) {
           this.bill.set(b);
           this.currentAmount.set((b.totalKobo / 100).toFixed(2));
-          if (this.isSplit()) this.distributeEqually();
+          if (this.isSplit() && this.guests().length === 0) this.seedEqualSplit();
         }
         this.isLoading.set(false);
         this.startPaymentPolling(tabId);
+        this.bootstrapFromSplits(tabId);
       },
       error: () => {
         this.cache.getByIndex<Bill>('bills', 'tab_id', tabId).pipe(
@@ -128,7 +137,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
           if (cached) {
             this.bill.set(cached);
             this.currentAmount.set((cached.totalKobo / 100).toFixed(2));
-            if (this.isSplit()) this.distributeEqually();
+            if (this.isSplit() && this.guests().length === 0) this.seedEqualSplit();
           }
           this.isLoading.set(false);
           this.startPaymentPolling(tabId);
@@ -137,25 +146,76 @@ export class PaymentComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * If the tab already has a split plan (e.g. the waiter reopened this page, or
+   * the plan was created on another device), restore the guest cards from the
+   * live splits so per-guest collection continues instead of silently settling
+   * the whole tab (which would double-count the paid split rows).
+   */
+  private bootstrapFromSplits(tabId: string) {
+    this.billsApi.getSplits(tabId).subscribe({
+      next: (bills) => {
+        const splits = (bills || [])
+          .filter((b: any) => b.splitGroup && !b.voidedAt)
+          .sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0));
+        if (splits.length === 0) return;
+
+        const modeMap: Record<string, GuestMode> = {
+          item: 'items',
+          items: 'items',
+          amount: AllocationType.AMOUNT,
+          percentage: AllocationType.PERCENTAGE,
+          remaining: AllocationType.REMAINING,
+        };
+
+        this.isSplit.set(true);
+        this.guests.set(splits.map((b: any, i: number) => ({
+          id: b.id,
+          label: b.allocationConfig?.label ?? `Guest ${i + 1}`,
+          mode: modeMap[b.allocationType] ?? AllocationType.AMOUNT,
+          orderIds: b.allocationConfig?.order_ids ?? [],
+          percentage: b.allocationConfig?.percentage ?? 0,
+          amountInput: (b.totalKobo / 100).toFixed(2),
+          amountKobo: b.totalKobo,
+          billId: b.id,
+          paid: !!b.paidAt,
+        })));
+      },
+      error: () => {},
+    });
+  }
+
   private startPaymentPolling(tabId: string) {
     this.stopPaymentPolling();
     this.pollSubscription = interval(5000).pipe(
-      switchMap(() => this.offlineData.getBill(tabId)),
+      switchMap(() => this.isSplit() ? this.billsApi.getSplits(tabId) : this.offlineData.getBill(tabId)),
     ).subscribe({
-      next: (b) => {
+      next: (data: any) => {
+        if (this.isSplit()) {
+          const splits: Bill[] = (Array.isArray(data) ? data : [])
+            .filter((b: any) => b.splitGroup);
+          this.syncSplitState(splits);
+          if (!this.allGuestsPaid()) return;
+          this.isSuccess.set(true);
+          this.isAutoConfirmed.set(true);
+          this.stopPaymentPolling();
+          setTimeout(() => this.navigateSuccess(), 1000);
+          return;
+        }
+        const b = data as Bill | null;
         if (b && b.paidAt) {
           this.bill.set(b);
           this.isSuccess.set(true);
           this.isAutoConfirmed.set(true);
           this.stopPaymentPolling();
-          const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
-          setTimeout(() => this.router.navigate(['/tabs/payment-success', this.tabId()], {
-            state: {
-              terminalLabel: this.selectedTerminalLabel(),
-              showConfetti: true,
-              splitAllocations: allocations,
-            }
-          }), 1000);
+          setTimeout(() => {
+            this.router.navigate(['/tabs/payment-success', this.tabId()], {
+              state: {
+                terminalLabel: this.selectedTerminalLabel(),
+                showConfetti: true,
+              }
+            });
+          }, 1000);
         }
       },
       error: () => {},
@@ -225,114 +285,298 @@ export class PaymentComponent implements OnInit, OnDestroy {
     if (!clean) this.isEditingAmount = false;
   }
 
+  // ── Split / Guest card logic ──
+
   toggleSplit() {
-    this.isSplit.set(!this.isSplit());
-    if (this.isSplit()) {
-      this.distributeEqually();
+    // Never allow turning split off once a share has been collected — a full
+    // settle afterwards would double-count the already-paid split rows.
+    if (this.isSplit() && this.splitLocked()) return;
+    const next = !this.isSplit();
+    this.isSplit.set(next);
+    if (next && this.guests().length === 0) {
+      this.seedEqualSplit();
     }
   }
 
-  changeSplitCount(delta: number) {
-    const max = this.maxGuests();
-    const current = this.splitCount();
-    const proposed = current + delta;
-    if (proposed > max) {
-      Swal.fire({ icon: 'warning', title: 'Maximum Participants Reached', text: `This table has ${max} guest${max > 1 ? 's' : ''}. You cannot split beyond that.`, background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+  private newGuest(label: string): GuestCard {
+    return {
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+      label,
+      mode: AllocationType.AMOUNT,
+      orderIds: [],
+      percentage: 0,
+      amountInput: '',
+      amountKobo: 0,
+      paid: false,
+    };
+  }
+
+  private seedEqualSplit() {
+    const total = this.bill()?.totalKobo ?? 0;
+    const each = Math.floor(total / 2);
+    const cards: GuestCard[] = [];
+    for (let i = 0; i < 2; i++) {
+      const amount = each + (i === 1 ? total - each * 2 : 0);
+      cards.push({
+        ...this.newGuest(`Guest ${i + 1}`),
+        amountKobo: amount,
+        amountInput: (amount / 100).toFixed(2),
+      });
+    }
+    this.guests.set(cards);
+  }
+
+  addGuestCard() {
+    if (this.splitLocked()) return;
+    this.guests.update(gs => [...gs, this.newGuest(`Guest ${gs.length + 1}`)]);
+  }
+
+  removeGuest(index: number) {
+    if (this.splitLocked()) return;
+    this.guests.update(gs => gs.filter((_, i) => i !== index));
+    if (this.guests().length === 0) {
+      this.isSplit.set(false);
+    }
+  }
+
+  updateGuestLabel(g: GuestCard, label: string) {
+    this.guests.update(gs => gs.map(x => x.id === g.id ? { ...x, label: label || x.label } : x));
+  }
+
+  setGuestMode(g: GuestCard, mode: GuestMode) {
+    if (mode === AllocationType.REMAINING && this.guests().some(x => x.id !== g.id && x.mode === AllocationType.REMAINING)) {
+      Swal.fire({ icon: 'warning', title: 'One Remainder Only', text: 'Only one guest can take the remaining balance.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       return;
     }
-    const newCount = Math.max(1, Math.min(max, proposed));
-    this.splitCount.set(newCount);
-    this.distributeEqually();
+    this.guests.update(gs => gs.map(x => x.id === g.id ? {
+      ...x,
+      mode,
+      orderIds: mode === 'items' ? x.orderIds : [],
+      percentage: mode === AllocationType.PERCENTAGE ? (x.percentage || 50) : x.percentage,
+      amountInput: mode === AllocationType.AMOUNT ? x.amountInput : x.amountInput,
+    } : x));
   }
 
-  private distributeEqually() {
+  setGuestAmount(g: GuestCard, value: string) {
+    this.guests.update(gs => gs.map(x => x.id === g.id ? { ...x, amountInput: value } : x));
+  }
+
+  setGuestPercentage(g: GuestCard, value: number) {
+    this.guests.update(gs => gs.map(x => x.id === g.id ? { ...x, percentage: Math.max(0, Math.min(100, value || 0)) } : x));
+  }
+
+  itemOptions = computed<AllocatableItem[]>(() => {
+    return (this.bill()?.orderItems ?? []).map(i => {
+      const raw = i as any;
+      const status = (raw.orderStatus ?? raw.order_status ?? '').toString().toLowerCase();
+      return {
+        id: i.id,
+        name: i.menuItemName ?? raw.menu_item_name ?? 'Item',
+        qty: i.quantity ?? raw.qty ?? 1,
+        subtotalKobo: this.itemSubtotal(raw),
+        orderStatus: status,
+      };
+    }).filter(it => it.subtotalKobo > 0 && it.orderStatus !== 'declined' && it.orderStatus !== 'cancelled');
+  });
+
+  itemSubtotal(raw: any): number {
+    return Math.round((raw.priceKobo ?? raw.price_kobo ?? 0) * (raw.quantity ?? raw.qty ?? 1));
+  }
+
+  availableItems(g: GuestCard): AllocatableItem[] {
+    const taken = new Set(
+      this.guests()
+        .filter(x => x.id !== g.id)
+        .flatMap(x => x.orderIds)
+    );
+    return this.itemOptions().filter(it => !taken.has(it.id));
+  }
+
+  toggleGuestItem(g: GuestCard, itemId: string) {
+    if (this.splitLocked()) return;
+    this.guests.update(gs => gs.map(x => x.id === g.id ? {
+      ...x,
+      orderIds: x.orderIds.includes(itemId)
+        ? x.orderIds.filter(id => id !== itemId)
+        : [...x.orderIds, itemId],
+    } : x));
+  }
+
+  guestAllocated(g: GuestCard): number {
     const total = this.bill()?.totalKobo ?? 0;
-    const count = this.splitCount();
-    const each = Math.floor(total / count);
-    const remainder = total - each * count;
-    const amounts = Array(count).fill(each);
-    amounts[amounts.length - 1] += remainder;
-    this.splitAmounts.set(amounts);
+    if (g.billId || g.paid) return g.amountKobo;
+
+    switch (g.mode) {
+      case 'items': {
+        const ids = new Set(g.orderIds);
+        return this.itemOptions().filter(it => ids.has(it.id))
+          .reduce((sum, it) => sum + it.subtotalKobo, 0);
+      }
+      case AllocationType.PERCENTAGE:
+        return Math.round((total * (g.percentage || 0)) / 100);
+      case AllocationType.AMOUNT:
+        return Math.round((parseFloat(g.amountInput || '0') || 0) * 100);
+      case AllocationType.REMAINING: {
+        const otherSum = this.guests()
+          .filter(x => x.id !== g.id && x.mode !== AllocationType.REMAINING)
+          .reduce((sum, x) => sum + this.guestAllocated(x), 0);
+        return Math.max(0, total - otherSum);
+      }
+      default:
+        return 0;
+    }
   }
 
-  getSplitKobo(index: number): number {
-    return this.splitAmounts()[index] ?? 0;
-  }
-
-  getRemainingKobo(): number {
-    const total = this.bill()?.totalKobo ?? 0;
-    const allocated = this.splitAmounts().reduce((sum, a) => sum + a, 0);
-    return total - allocated;
-  }
-
-  get isSplitValid(): boolean {
-    return this.splitAmounts().length === 0 || this.getRemainingKobo() === 0;
-  }
-
-  get totalPaidKobo(): number {
-    const total = this.bill()?.totalKobo ?? 0;
-    return total - this.getRemainingKobo();
+  get allocatedKobo(): number {
+    return this.guests().reduce((sum, g) => sum + this.guestAllocated(g), 0);
   }
 
   get remainingKobo(): number {
-    return this.getRemainingKobo();
+    const total = this.bill()?.totalKobo ?? 0;
+    return Math.max(0, total - this.allocatedKobo);
   }
 
-  get paidKobo(): number {
-    return this.totalPaidKobo;
+  get isSplitValid(): boolean {
+    const total = this.bill()?.totalKobo ?? 0;
+    if (this.guests().length === 0) return false;
+    return Math.abs(this.allocatedKobo - total) < 1;
   }
 
-  customizeSplit(index: number) {
-    const currentNaira = (this.splitAmounts()[index] ?? 0) / 100;
-    Swal.fire({
-      title: `Guest ${index + 1} Amount`,
-      html: `
-        <div style="margin-bottom: 12px; color: #a0a0a0; font-size: 14px;">Enter amount in ${this.currencySymbol()}</div>
-        <input id="split-amount" type="number" step="0.01" value="${currentNaira}"
-          style="width: 100%; padding: 14px; border-radius: 10px; border: 2px solid rgba(249,115,22,0.3); background: #1A1A1A; color: #fff; font-size: 24px; font-weight: 700; text-align: center; font-family: 'JetBrains Mono', monospace; outline: none; box-sizing: border-box;" />
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Set',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#f97316',
-      didOpen: () => {
-        const input = document.getElementById('split-amount') as HTMLInputElement;
-        if (input) { input.focus(); input.select(); }
-      },
-      preConfirm: () => {
-        const val = parseFloat((document.getElementById('split-amount') as HTMLInputElement)?.value);
-        if (isNaN(val) || val < 0) {
-          Swal.showValidationMessage('Enter a valid amount');
-          return false;
-        }
-        if (val * 100 > (this.bill()?.totalKobo ?? 0)) {
-          Swal.showValidationMessage('Amount cannot exceed total');
-          return false;
-        }
-        return Math.round(val * 100);
-      }
-    }).then(result => {
-      if (result.isConfirmed) {
-        const total = this.bill()?.totalKobo ?? 0;
-        const count = this.splitCount();
-        const amounts = Array(count).fill(0);
-        amounts[index] = result.value;
-        if (count > 1) {
-          const otherCount = count - 1;
-          const remaining = total - result.value;
-          const each = Math.floor(remaining / otherCount);
-          let distributed = 0;
-          for (let i = 0; i < count; i++) {
-            if (i === index) continue;
-            amounts[i] = each;
-            distributed += each;
-          }
-          const lastOther = [...Array(count).keys()].filter(i => i !== index).pop() as number;
-          amounts[lastOther] += remaining - distributed;
-        }
-        this.splitAmounts.set(amounts);
+  private buildAllocation(g: GuestCard): PaymentPlanAllocation {
+    const base: Partial<PaymentPlanAllocation> = { label: g.label };
+    switch (g.mode) {
+      case 'items':
+        return { ...base, type: AllocationType.ITEM, order_ids: g.orderIds } as PaymentPlanAllocation;
+      case AllocationType.PERCENTAGE:
+        return { ...base, type: AllocationType.PERCENTAGE, percentage: g.percentage } as PaymentPlanAllocation;
+      case AllocationType.AMOUNT:
+        return { ...base, type: AllocationType.AMOUNT, amount_kobo: Math.round((parseFloat(g.amountInput || '0') || 0) * 100) } as PaymentPlanAllocation;
+      case AllocationType.REMAINING:
+        return { ...base, type: AllocationType.REMAINING } as PaymentPlanAllocation;
+      default:
+        return { ...base, type: AllocationType.AMOUNT, amount_kobo: 0 } as PaymentPlanAllocation;
+    }
+  }
+
+  private buildEffectiveGuests(): { guest: GuestCard; amountKobo: number }[] {
+    return this.guests()
+      .map(g => ({ guest: g, amountKobo: this.guestAllocated(g) }))
+      .filter(e => e.amountKobo > 0);
+  }
+
+  private async createSplitPlan(): Promise<void> {
+    const effective = this.buildEffectiveGuests();
+    if (effective.length === 0) {
+      throw new Error('No guest has an amount to allocate.');
+    }
+    const bills = await firstValueFrom(this.billsApi.createPaymentPlan(this.tabId(), {
+      allocations: effective.map(e => this.buildAllocation(e.guest)),
+    }));
+    const sorted = [...(bills || [])].sort((a, b) =>
+      (a.sequence ?? +new Date(a.createdAt).getTime()) - (b.sequence ?? +new Date(b.createdAt).getTime())
+    );
+    this.guests.update(gs => gs.map(g => {
+      const idx = effective.findIndex(e => e.guest.id === g.id);
+      const b = idx >= 0 ? sorted[idx] : undefined;
+      return b ? { ...g, billId: b.id, amountKobo: b.totalKobo ?? g.amountKobo, paid: !!b.paidAt } : g;
+    }));
+  }
+
+  private syncSplitState(splits: Bill[]) {
+    const byId = new Map(splits.map(b => [b.id, b]));
+    this.guests.update(gs => gs.map(g => {
+      const b = g.billId ? byId.get(g.billId) : undefined;
+      return b ? { ...g, amountKobo: b.totalKobo ?? g.amountKobo, paid: !!b.paidAt } : g;
+    }));
+  }
+
+  private async refreshSplits(): Promise<void> {
+    if (!this.isSplit()) return;
+    const bills = await firstValueFrom(this.billsApi.getSplits(this.tabId()));
+    this.syncSplitState((bills || []).filter((b: any) => b.splitGroup));
+  }
+
+  allGuestsPaid(): boolean {
+    return this.guests().length > 0 && this.guests().every(g => g.paid);
+  }
+
+  private navigateSuccess() {
+    const allocations = this.guests().map((g, i) => ({ guest: i + 1, amountKobo: g.amountKobo }));
+    this.router.navigate(['/tabs/payment-success', this.tabId()], {
+      state: {
+        terminalLabel: this.selectedTerminalLabel(),
+        showConfetti: true,
+        splitAllocations: allocations,
       }
     });
+  }
+
+  async chargeGuest(target: GuestCard) {
+    if (this.isProcessing()) return;
+    const fresh = this.guests().find(x => x.id === target.id);
+    if (!fresh || fresh.paid) return;
+
+    if (!this.isSplitValid) {
+      Swal.fire({ icon: 'warning', title: 'Incomplete Allocation', text: 'Allocate the full bill amount across guests before charging.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      return;
+    }
+    if (this.selectedMethod !== 'cash' && !this.selectedTerminalId()) {
+      Swal.fire({ icon: 'warning', title: 'Terminal Required', text: 'Please select a POS terminal to process this payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+      return;
+    }
+
+    this.isProcessing.set(true);
+    try {
+      if (!fresh.billId) {
+        await this.createSplitPlan();
+      }
+      const current = this.guests().find(x => x.id === target.id);
+      if (!current?.billId) throw new Error('Could not prepare the split plan.');
+      const amountKobo = this.guestAllocated(current);
+      if (amountKobo <= 0) throw new Error('This guest has no amount to collect.');
+
+      const apiMethod = this.selectedMethod === 'ussd' ? 'transfer' : this.selectedMethod;
+      const payment = {
+        bill_id: current.billId,
+        amount: amountKobo,
+        method: apiMethod as 'cash' | 'card' | 'transfer' | 'ussd' | 'pos',
+        terminal_id: this.selectedMethod !== 'cash' ? this.selectedTerminalId() : undefined,
+        idempotency_key: `split-${current.billId}`,
+      };
+
+      const res = await this.offlineData.recordPayment(this.tabId(), payment);
+      const isOffline = !!(res as any)?.offline;
+
+      if (isOffline) {
+        // Optimistically mark this share settled; polling will reconcile.
+        this.guests.update(gs => gs.map(x => x.id === current.id ? { ...x, paid: true } : x));
+      } else {
+        await this.refreshSplits();
+      }
+
+      if (this.allGuestsPaid()) {
+        this.isSuccess.set(true);
+        this.isAutoConfirmed.set(true);
+        this.stopPaymentPolling();
+        setTimeout(() => this.navigateSuccess(), 1000);
+      }
+    } catch (err: any) {
+      const msg = err?.error?.message || err?.message || 'Could not process the payment. Please try again.';
+      Swal.fire({ icon: 'error', title: 'Payment Failed', text: msg, background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
+    } finally {
+      this.isProcessing.set(false);
+    }
+  }
+
+  async chargeAllGuests() {
+    if (this.isProcessing()) return;
+    const unpaidIds = this.guests().filter(g => !g.paid).map(g => g.id);
+    for (const id of unpaidIds) {
+      if (this.allGuestsPaid()) break;
+      const g = this.guests().find(x => x.id === id);
+      if (!g || g.paid) continue;
+      await this.chargeGuest(g);
+    }
   }
 
   confirmPayment() {
@@ -348,10 +592,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
       }).then(() => {
         this.router.navigate(['/tabs/detail', this.tabId()]);
       });
-      return;
-    }
-    if (this.isSplit() && !this.isSplitValid) {
-      Swal.fire({ icon: 'warning', title: 'Incomplete Allocation', text: 'Allocate the full bill amount across guests before completing payment.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       return;
     }
       if (this.selectedMethod !== 'cash' && !this.selectedTerminalId()) {
@@ -396,12 +636,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.isProcessing.set(false);
         this.isSuccess.set(true);
         this.startPaymentPolling(this.tabId());
-        const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
         setTimeout(() => this.router.navigate(['/tabs/payment-success', this.tabId()], {
           state: {
             terminalLabel: this.selectedTerminalLabel(),
             showConfetti: true,
-            splitAllocations: allocations,
           }
         }), 1000);
       }).catch(() => {
@@ -458,9 +696,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.isProcessing.set(false);
         this.isSuccess.set(true);
         this.isAutoConfirmed.set(true);
-        const allocations = this.isSplit() ? this.splitAmounts().map((k, i) => ({ guest: i + 1, amountKobo: k })) : [];
         setTimeout(() => this.router.navigate(['/tabs/payment-success', this.tabId()], {
-          state: { terminalLabel: 'Cash (Counter)', showConfetti: true, splitAllocations: allocations }
+          state: { terminalLabel: 'Cash (Counter)', showConfetti: true }
         }), 1000);
       },
       error: (err) => {
@@ -468,223 +705,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
         const msg = err?.error?.message || err?.message || 'Could not confirm the cash payment.';
         Swal.fire({ icon: 'error', title: 'Confirmation Failed', text: msg, background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
       }
-    });
-  }
-
-  createPaymentPlan() {
-    const items = this.items().filter(i => {
-      const raw = i as any;
-      const s = (raw.orderStatus ?? raw.order_status ?? '').toString().toLowerCase();
-      return s !== 'declined' && s !== 'cancelled';
-    });
-    if (!items.length) {
-      Swal.fire({ icon: 'warning', title: 'No items', text: 'No billable items are available to create a payment plan.' });
-      return;
-    }
-
-    const itemOptions = items.map(i => {
-      const raw = i as any;
-      const subtotal = (raw.priceKobo ?? raw.price_kobo ?? 0) * (raw.quantity ?? raw.qty ?? 1);
-      return {
-        value: i.id,
-        label: `${i.menuItemName} x${i.quantity} — ${this.formatKobo(subtotal)}`,
-      };
-    });
-
-    const stepsHtml = `
-      <div id="plan-builder" style="text-align:left;color:#ccc;">
-        <p style="font-size:12px;color:#888;margin-bottom:16px;">Add allocations in order. Each person pays, the remainder flows to the next.</p>
-        <div id="allocation-rows"></div>
-        <button type="button" id="add-row-btn" class="swal2-confirm swal2-styled" style="margin-top:12px;width:100%;background:#22c55e;border:none;color:#1A1A1A;font-weight:600;padding:10px;border-radius:8px;">+ Add Allocation</button>
-      </div>
-    `;
-
-    Swal.fire({
-      title: 'Create Payment Plan',
-      html: stepsHtml,
-      showCancelButton: true,
-      confirmButtonText: 'Create Plan',
-      confirmButtonColor: '#22c55e',
-      cancelButtonText: 'Cancel',
-      background: '#1e293b',
-      color: '#fff',
-      width: '500px',
-      didOpen: () => {
-        const container = document.getElementById('allocation-rows');
-        const addBtn = document.getElementById('add-row-btn');
-
-        const allocationTypes = [
-          { value: 'item', label: 'Specific Items' },
-          { value: 'remaining', label: 'Remaining Balance' },
-          { value: 'percentage', label: '% of Total' },
-          { value: 'amount', label: 'Fixed Amount' },
-        ];
-
-        const renderRow = (index: number) => {
-          const row = document.createElement('div');
-          row.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:12px;position:relative;';
-          row.innerHTML = `
-            <div style="display:flex;gap:8px;align-items:center;">
-              <span style="font-weight:600;color:#22c55e;">${index + 1}.</span>
-              <select data-type-select style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
-                ${allocationTypes.map(t => `<option value="${t.value}">${t.label}</option>`).join('')}
-              </select>
-              <button type="button" data-remove style="padding:6px 10px;border-radius:6px;border:1px solid #ef4444;background:transparent;color:#ef4444;cursor:pointer;">Remove</button>
-            </div>
-            <div data-fields style="display:none;flex-direction:column;gap:8px;margin-top:8px;"></div>
-          `;
-          container?.appendChild(row);
-
-          const typeSelect = row.querySelector('select[data-type-select]') as HTMLSelectElement;
-          const fieldsDiv = row.querySelector('[data-fields]') as HTMLDivElement;
-
-          const updateFields = () => {
-            const type = typeSelect.value;
-            let html = '';
-            if (type === 'item') {
-              html = `
-                <label style="display:flex;flex-direction:column;gap:4px;">
-                  <span style="font-size:12px;color:#888;">Items</span>
-                  <select multiple data-items style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;min-height:100px;">
-                    ${itemOptions.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}
-                  </select>
-                </label>
-                <label style="display:flex;flex-direction:column;gap:4px;">
-                  <span style="font-size:12px;color:#888;">Label (e.g., Host)</span>
-                  <input type="text" data-label placeholder="Person name" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
-                </label>
-              `;
-            } else if (type === 'percentage') {
-              html = `
-                <label style="display:flex;flex-direction:column;gap:4px;">
-                  <span style="font-size:12px;color:#888;">Percentage (0-100)</span>
-                  <input type="number" data-percentage min="0" max="100" placeholder="50" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
-                </label>
-                <label style="display:flex;flex-direction:column;gap:4px;">
-                  <span style="font-size:12px;color:#888;">Label</span>
-                  <input type="text" data-label placeholder="Person name" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
-                </label>
-              `;
-            } else if (type === 'amount') {
-              html = `
-                <label style="display:flex;flex-direction:column;gap:4px;">
-                  <span style="font-size:12px;color:#888;">Amount (kobo)</span>
-                  <input type="number" data-amount min="0" placeholder="5000" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
-                </label>
-                <label style="display:flex;flex-direction:column;gap:4px;">
-                  <span style="font-size:12px;color:#888;">Label</span>
-                  <input type="text" data-label placeholder="Person name" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
-                </label>
-              `;
-            } else if (type === 'remaining') {
-              html = `
-                <label style="display:flex;flex-direction:column;gap:4px;">
-                  <span style="font-size:12px;color:#888;">Label (e.g., Rest of group)</span>
-                  <input type="text" data-label placeholder="Remaining" style="padding:8px 12px;border-radius:6px;border:1px solid #333;background:#1A1A1A;color:#fff;">
-                </label>
-              `;
-            }
-            fieldsDiv.innerHTML = html;
-            fieldsDiv.style.display = 'flex';
-          };
-
-          typeSelect.addEventListener('change', updateFields);
-          updateFields();
-
-          row.querySelector('[data-remove]')?.addEventListener('click', () => row.remove());
-
-          return row;
-        };
-
-        renderRow(0);
-
-        addBtn?.addEventListener('click', () => {
-          const rows = container?.querySelectorAll('[data-type-select]') || [];
-          renderRow(rows.length);
-        });
-      },
-      preConfirm: () => {
-        const rows = document.querySelectorAll('#allocation-rows > div');
-        const allocations: PaymentPlanAllocation[] = [];
-
-        for (const row of Array.from(rows)) {
-          const type = (row.querySelector('[data-type-select]') as HTMLSelectElement)?.value;
-          if (!type) continue;
-
-          const alloc: PaymentPlanAllocation = { type: type as AllocationType };
-
-          if (type === 'item') {
-            const selected = Array.from((row.querySelector('[data-items]') as HTMLSelectElement)?.selectedOptions || []);
-            alloc.order_ids = selected.map(o => o.value);
-            alloc.label = (row.querySelector('[data-label]') as HTMLInputElement)?.value || 'Items';
-          } else if (type === 'percentage') {
-            alloc.percentage = parseFloat((row.querySelector('[data-percentage]') as HTMLInputElement)?.value || '0');
-            alloc.label = (row.querySelector('[data-label]') as HTMLInputElement)?.value || 'Percentage';
-          } else if (type === 'amount') {
-            alloc.amount_kobo = parseInt((row.querySelector('[data-amount]') as HTMLInputElement)?.value || '0');
-            alloc.label = (row.querySelector('[data-label]') as HTMLInputElement)?.value || 'Amount';
-          } else if (type === 'remaining') {
-            alloc.label = (row.querySelector('[data-label]') as HTMLInputElement)?.value || 'Remaining';
-          }
-
-          if (alloc.type === 'item' && (!alloc.order_ids || !alloc.order_ids.length)) {
-            Swal.showValidationMessage('Please select at least one item for each item allocation.');
-            return false;
-          }
-          if (alloc.type === 'percentage' && (!alloc.percentage || alloc.percentage <= 0)) {
-            Swal.showValidationMessage('Percentage must be greater than 0.');
-            return false;
-          }
-          if (alloc.type === 'amount' && (!alloc.amount_kobo || alloc.amount_kobo <= 0)) {
-            Swal.showValidationMessage('Amount must be greater than 0.');
-            return false;
-          }
-
-          allocations.push(alloc);
-        }
-
-        if (!allocations.length) {
-          Swal.showValidationMessage('Add at least one allocation.');
-          return false;
-        }
-
-        return { tabId: this.tabId(), allocations };
-      }
-    }).then(result => {
-      if (!result.isConfirmed || !result.value) return;
-
-      const { tabId, allocations } = result.value as { tabId: string; allocations: PaymentPlanAllocation[] };
-      const dto: CreatePaymentPlanRequest = { allocations };
-
-      this.isProcessing.set(true);
-      this.billsApi.createPaymentPlan(tabId, dto).subscribe({
-        next: (bills) => {
-          this.isProcessing.set(false);
-          Swal.fire({
-            icon: 'success',
-            title: 'Payment Plan Created',
-            text: `${bills.length} splits created. Each person pays in order — remainder auto-adjusts.`,
-            background: '#1e293b',
-            color: '#fff',
-            confirmButtonColor: '#f97316',
-          });
-          this.isSplit.set(true);
-          const amounts = bills.map(b => b.totalKobo);
-          this.splitAmounts.set(amounts);
-          this.splitCount.set(amounts.length);
-        },
-        error: (err) => {
-          this.isProcessing.set(false);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: err?.error?.message || 'Failed to create payment plan',
-            background: '#1e293b',
-            color: '#fff',
-            confirmButtonColor: '#f97316',
-          });
-        }
-      });
     });
   }
 }

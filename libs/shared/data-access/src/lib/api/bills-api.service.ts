@@ -43,6 +43,16 @@ export class BillsApiService extends BaseApiService {
     return this.post<Bill[]>(buildUrl(API_CONFIG.endpoints.bills.paymentPlan, { tabId }), allocations);
   }
 
+  /** Fetch all split bills for a tab (main + split rows, in creation order). */
+  getSplits(tabId: string): Observable<Bill[]> {
+    return this.get<Bill[]>(buildUrl(API_CONFIG.endpoints.bills.splits, { tabId }));
+  }
+
+  /** Pay one split bill on a tab, leaving the tab open until every split is paid. */
+  paySplit(tabId: string, billId: string, payment: RecordPaymentRequest): Observable<Bill> {
+    return this.post<Bill>(buildUrl(API_CONFIG.endpoints.bills.paySplit, { tabId, billId }), payment);
+  }
+
   /** Fetch the paid receipt for a tab. */
   getReceipt(tabId: string): Observable<Receipt> {
     return this.get<Receipt>(buildUrl(API_CONFIG.endpoints.bills.receipt, { tabId }));

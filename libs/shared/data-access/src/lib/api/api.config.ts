@@ -111,6 +111,8 @@ export const API_CONFIG = {
       confirmCash: '/api/v1/bills/tab/:tabId/confirm-cash',
       receipt: '/api/v1/bills/tab/:tabId/receipt',
       paymentPlan: '/api/v1/bills/tab/:tabId/payment-plan',
+      splits: '/api/v1/bills/tab/:tabId/splits',
+      paySplit: '/api/v1/bills/tab/:tabId/splits/:billId/pay',
     },
     // Suppliers
     suppliers: {

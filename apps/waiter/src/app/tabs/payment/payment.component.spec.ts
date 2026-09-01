@@ -20,7 +20,7 @@ describe('PaymentComponent', () => {
   beforeEach(async () => {
     paramMapSubject = new Subject();
 
-    const mockBillsApi = createMockService(['generate', 'getReceipt']);
+    const mockBillsApi = createMockService(['generate', 'getReceipt', 'getSplits', 'createPaymentPlan', 'paySplit', 'recordPayment']);
     const mockTabService = createMockService(['getTab', 'closeTab']);
     const mockTableService = createMockService(['getTable']);
     const mockPosApi = createMockService(['processPayment', 'getTerminals', 'getActive']);
@@ -49,6 +49,8 @@ describe('PaymentComponent', () => {
     mockPosApi.getTerminals.mockReturnValue(of([]));
     mockPosApi.processPayment.mockReturnValue(of({ success: true }));
     mockPosApi.getActive.mockReturnValue(of([]));
+    mockBillsApi.getSplits.mockReturnValue(of([]));
+    mockBillsApi.createPaymentPlan.mockReturnValue(of([]));
     mockBillsApi.getReceipt.mockReturnValue(of({
       bill: {
         id: 'bill-1',
@@ -124,10 +126,15 @@ describe('PaymentComponent', () => {
     expect(component.isSplit()).toBe(true);
   });
 
-  it('should not exceed max guests for split count', () => {
-    component.maxGuests.set(3);
-    component.splitCount.set(5);
-    expect(component.splitCount()).toBe(5);
+  it('should seed equal guest cards when split is toggled', () => {
+    fixture.detectChanges();
+    paramMapSubject.next(convertToParamMap({ id: 'tab-1' }));
+    fixture.detectChanges();
+
+    component.toggleSplit();
+    expect(component.isSplit()).toBe(true);
+    expect(component.guests().length).toBeGreaterThan(0);
+    expect(component.allocatedKobo).toBe(component.bill()?.totalKobo ?? 0);
   });
 
   it('should have items from bill', () => {

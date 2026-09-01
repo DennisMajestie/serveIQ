@@ -138,6 +138,11 @@ export interface Bill {
   paidAt?: Date;
   createdAt: Date;
   orderItems?: OrderItem[];
+  sequence?: number;
+  splitGroup?: string;
+  allocationType?: string;
+  allocationConfig?: unknown;
+  paymentStatus?: string;
 }
 
 export interface Receipt {
@@ -274,6 +279,8 @@ export interface RecordPaymentRequest {
   method: 'cash' | 'card' | 'transfer' | 'ussd' | 'pos';
   terminal_id?: string;
   reference?: string;
+  idempotency_key?: string;
+  bill_id?: string;
 }
 
 export interface PaginationMeta {
