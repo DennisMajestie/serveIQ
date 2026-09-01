@@ -33,9 +33,7 @@ export class WaiterCallAlertService {
   }
 
   private onCall(p: WaiterCallSocketPayload) {
-    const myId = localStorage.getItem('userId');
     if (!p || !p.id) return;
-    if (myId && p.assignedWaiterId && p.assignedWaiterId !== myId) return;
     if (this.consumedIds.has(p.id)) return;
     this.consumedIds.add(p.id);
     this.incoming.set({ id: p.id, tableId: p.tableId, assignedWaiterId: p.assignedWaiterId });
