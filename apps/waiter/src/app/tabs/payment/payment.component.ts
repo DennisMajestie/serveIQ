@@ -118,31 +118,49 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.offlineData.getBill(tabId).subscribe({
       next: (b) => {
         if (b) {
-          this.bill.set(b);
-          this.currentAmount.set((b.totalKobo / 100).toFixed(2));
-          if (this.isSplit() && this.guests().length === 0) this.seedEqualSplit();
+          this.setLoadedBill(b, tabId);
+          return;
         }
-        this.isLoading.set(false);
-        this.startPaymentPolling(tabId);
-        this.bootstrapFromSplits(tabId);
-      },
-      error: () => {
-        this.cache.getByIndex<Bill>('bills', 'tab_id', tabId).pipe(
-          map(bills => {
-            const sorted = [...(bills || [])].sort((a, b) =>
-              (new Date((b as any).createdAt ?? 0) as any) - (new Date((a as any).createdAt ?? 0) as any));
-            return sorted.length > 0 ? sorted[0] : null;
-          })
-        ).subscribe(cached => {
-          if (cached) {
-            this.bill.set(cached);
-            this.currentAmount.set((cached.totalKobo / 100).toFixed(2));
-            if (this.isSplit() && this.guests().length === 0) this.seedEqualSplit();
+        // No bill row exists yet (the waiter opened Payment straight after
+        // ordering) — generate one from the current orders, mirroring the Bill
+        // screen, so the total is never left at zero. Offline generations fall
+        // back to whatever is cached.
+        this.offlineData.generateBill(tabId).then((gen: any) => {
+          if (gen && !gen.offline && gen.id) {
+            this.setLoadedBill(gen, tabId);
+          } else {
+            this.loadCachedBill(tabId);
           }
-          this.isLoading.set(false);
-          this.startPaymentPolling(tabId);
-        });
+        }).catch(() => this.loadCachedBill(tabId));
       },
+      error: () => this.loadCachedBill(tabId),
+    });
+  }
+
+  private setLoadedBill(b: Bill, tabId: string) {
+    this.bill.set(b);
+    this.currentAmount.set((b.totalKobo / 100).toFixed(2));
+    if (this.isSplit() && this.guests().length === 0) this.seedEqualSplit();
+    this.isLoading.set(false);
+    this.startPaymentPolling(tabId);
+    this.bootstrapFromSplits(tabId);
+  }
+
+  private loadCachedBill(tabId: string) {
+    this.cache.getByIndex<Bill>('bills', 'tab_id', tabId).pipe(
+      map(bills => {
+        const sorted = [...(bills || [])].sort((a, b) =>
+          (new Date((b as any).createdAt ?? 0) as any) - (new Date((a as any).createdAt ?? 0) as any));
+        return sorted.length > 0 ? sorted[0] : null;
+      })
+    ).subscribe(cached => {
+      if (cached) {
+        this.bill.set(cached);
+        this.currentAmount.set((cached.totalKobo / 100).toFixed(2));
+        if (this.isSplit() && this.guests().length === 0) this.seedEqualSplit();
+      }
+      this.isLoading.set(false);
+      this.startPaymentPolling(tabId);
     });
   }
 
@@ -437,9 +455,15 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   get isSplitValid(): boolean {
-    const total = this.bill()?.totalKobo ?? 0;
+    const bill = this.bill();
+    const total = bill?.totalKobo ?? 0;
+    const subtotal = bill?.subtotalKobo ?? 0;
     if (this.guests().length === 0) return false;
-    return Math.abs(this.allocatedKobo - total) < 1;
+    // The plan may cover either the grand total (with service charge/VAT split
+    // across guests) or just the item subtotal (server scales up to the budget) —
+    // both are collectible, so permit either as long as the shares sum cleanly.
+    const allocated = this.allocatedKobo;
+    return Math.abs(allocated - total) < 1 || Math.abs(allocated - subtotal) < 1;
   }
 
   private buildAllocation(g: GuestCard): PaymentPlanAllocation {
