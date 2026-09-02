@@ -50,6 +50,13 @@ export class MenuManagementComponent implements OnInit {
     });
   }
 
+  /** Normalize a free-text category so case, surrounding whitespace and
+   *  hyphen/underscore-vs-space differences collapse to one grouping key.
+   *  e.g. "Starter " -> "starter", "Main-course" -> "main course". */
+  private static normalizeCategory(value: string): string {
+    return (value || '').trim().toLowerCase().replace(/[\s_\-]+/g, ' ');
+  }
+
   categoryOptions = computed(() => MenuManagementComponent.dedupeCaseInsensitive([...this.apiCategories(), ...this.DEFAULT_CATEGORIES]));
   unitOptions = computed(() => MenuManagementComponent.dedupeCaseInsensitive([...this.apiUnits(), ...this.DEFAULT_UNITS]));
 
@@ -71,21 +78,31 @@ export class MenuManagementComponent implements OnInit {
     if (!Array.isArray(items)) return [];
     return cat === 'All'
       ? items
-      : items.filter(i => i.category.toLowerCase() === cat.toLowerCase());
+      : items.filter(i => MenuManagementComponent.normalizeCategory(i.category) === MenuManagementComponent.normalizeCategory(cat));
   });
 
   categories = computed(() => {
     const items = this.items();
     if (!Array.isArray(items)) return [{ name: 'All', count: 0, imageUrl: '', imageUrls: [] as string[] }];
-    const cats = ['All', ...MenuManagementComponent.dedupeCaseInsensitive(items.map(i => i.category))];
-    return cats.map(c => {
-      const catItems = c === 'All' ? items : items.filter(i => i.category.toLowerCase() === c.toLowerCase());
+    const byKey = new Map<string, { name: string; items: MenuItem[] }>();
+    for (const item of items) {
+      const key = MenuManagementComponent.normalizeCategory(item.category);
+      if (!key) continue;
+      const label = item.category.trim().replace(/[\s_\-]+/g, ' ').replace(/ +/g, ' ');
+      if (!byKey.has(key)) {
+        byKey.set(key, { name: label, items: [] });
+      }
+      byKey.get(key)!.items.push(item);
+    }
+    const names = ['All', ...byKey.values().map(g => g.name)];
+    return names.map((c, idx) => {
+      const catItems = idx === 0 ? items : (byKey.get(MenuManagementComponent.normalizeCategory(c))?.items || []);
       const firstWithImage = catItems.find(i => i.imageUrl);
-      const imageUrls = c === 'All'
-        ? [...new Set(items.filter(i => i.imageUrl).map(i => i.category))]
+      const imageUrls = idx === 0
+        ? [...new Set(items.filter(i => i.imageUrl).map(i => MenuManagementComponent.normalizeCategory(i.category)))]
             .slice(0, 10)
-            .map(cat => {
-              const item = items.find(i => i.category === cat && i.imageUrl);
+            .map(key => {
+              const item = items.find(i => MenuManagementComponent.normalizeCategory(i.category) === key && i.imageUrl);
               return item ? resolveImageUrl(item.imageUrl!, this.env.apiUrl) : '';
             })
             .filter(Boolean)
