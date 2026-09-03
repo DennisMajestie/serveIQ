@@ -109,7 +109,7 @@
                       {{ i + 1 }}
                       <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-[#0c1324]"
                         [class.bg-[#bccbb9]]="guestStatus(guest) === 'pending'"
-                        [class.bg-[#f97316]="guestStatus(guest) === 'processing'"
+                        [class.bg-[#f97316]]="guestStatus(guest) === 'processing'"
                         [class.animate-pulse]="guestStatus(guest) === 'processing'"
                         [class.bg-[#22c55e]]="guestStatus(guest) === 'paid'">
                       </span>
