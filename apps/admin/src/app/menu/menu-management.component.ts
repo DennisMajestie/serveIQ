@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { MenuApiService, UploadApiService, BranchesApiService, MenuItem, ENVIRONMENT_CONFIG, EnvironmentConfig, showApiErrorToast } from '@serveiq/shared/data-access';
-import { resolveImageUrl } from '@serveiq/shared/models';
+import { resolveImageUrl, normalizeCategory, displayCategory } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -50,11 +50,8 @@ export class MenuManagementComponent implements OnInit {
     });
   }
 
-  /** Normalize a free-text category so case, surrounding whitespace and
-   *  hyphen/underscore-vs-space differences collapse to one grouping key.
-   *  e.g. "Starter " -> "starter", "Main-course" -> "main course". */
   private static normalizeCategory(value: string): string {
-    return (value || '').trim().toLowerCase().replace(/[\s_\-]+/g, ' ');
+    return normalizeCategory(value);
   }
 
   categoryOptions = computed(() => MenuManagementComponent.dedupeCaseInsensitive([...this.apiCategories(), ...this.DEFAULT_CATEGORIES]));
@@ -88,13 +85,13 @@ export class MenuManagementComponent implements OnInit {
     for (const item of items) {
       const key = MenuManagementComponent.normalizeCategory(item.category);
       if (!key) continue;
-      const label = item.category.trim().replace(/[\s_\-]+/g, ' ').replace(/ +/g, ' ');
+      const label = displayCategory(item.category);
       if (!byKey.has(key)) {
         byKey.set(key, { name: label, items: [] });
       }
       byKey.get(key)!.items.push(item);
     }
-    const names = ['All', ...byKey.values().map(g => g.name)];
+    const names = ['All', ...[...byKey.values()].map(g => g.name)];
     return names.map((c, idx) => {
       const catItems = idx === 0 ? items : (byKey.get(MenuManagementComponent.normalizeCategory(c))?.items || []);
       const firstWithImage = catItems.find(i => i.imageUrl);

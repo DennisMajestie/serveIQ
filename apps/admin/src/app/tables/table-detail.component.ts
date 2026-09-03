@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, BusinessApiService, showApiErrorToast } from '@serveiq/shared/data-access';
-import { Tab, OrderItem, Table, MenuItem } from '@serveiq/shared/models';
+import { Tab, OrderItem, Table, MenuItem, normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../core/currency-context.service';
 import { PermissionService } from '../core/permission.service';
@@ -586,7 +586,7 @@ export class TableDetailComponent implements OnInit {
   filteredMenuItems = computed(() => {
     let items = this.menuItems();
     const cat = this.selectedCategory();
-    if (cat !== 'All') items = items.filter(i => i.category === cat);
+    if (cat !== 'All') items = items.filter(i => normalizeCategory(i.category) === normalizeCategory(cat));
     const q = this.searchQuery().toLowerCase();
     if (q) items = items.filter(i => i.name.toLowerCase().includes(q));
     return items;
@@ -722,7 +722,7 @@ export class TableDetailComponent implements OnInit {
     this.menuApi.getAllItems().subscribe({
       next: (items) => {
         this.menuItems.set(items);
-        this.categories.set(['All', ...new Set(items.map(i => i.category))]);
+        this.categories.set(['All', ...groupCategoryNames(items.map(i => i.category))]);
         this.isLoadingMenu.set(false);
       },
       error: () => this.isLoadingMenu.set(false)

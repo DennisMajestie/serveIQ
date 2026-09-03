@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PublicMenuApiService, PublicMenuData } from '@serveiq/shared/data-access';
+import { normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 import { CartService, OrderType } from '../services/cart.service';
 import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
 import { finalize } from 'rxjs';
@@ -40,7 +41,7 @@ export class MenuPageComponent implements OnInit {
     const q = this.searchQuery().toLowerCase().trim();
     const cat = this.selectedCategory();
     return items.filter(i => {
-      const catOk = !cat || i.category === cat;
+      const catOk = !cat || normalizeCategory(i.category) === normalizeCategory(cat);
       const qOk = !q
         || i.name.toLowerCase().includes(q)
         || (i.description?.toLowerCase().includes(q) ?? false);
@@ -71,7 +72,7 @@ export class MenuPageComponent implements OnInit {
       next: (menu) => {
         this.data.set(menu);
         this.applyBrandColors(menu);
-        const cats = [...new Set(menu.items.map(i => i.category))];
+        const cats = groupCategoryNames(menu.items.map(i => i.category));
         this.categories.set(cats);
       },
       error: () => this.error.set(true),

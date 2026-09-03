@@ -3,7 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, BusinessApiService, showApiErrorToast } from '@serveiq/shared/data-access';
-import { Tab, OrderItem, Table, MenuItem, ApplyDiscountRequest } from '@serveiq/shared/models';
+import { Tab, OrderItem, Table, MenuItem, ApplyDiscountRequest, normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../core/currency-context.service';
 import { PermissionService } from '../core/permission.service';
@@ -41,7 +41,7 @@ export class TabDetailComponent implements OnInit {
   selectedCategory = signal('All');
   selectedCategoryItems = computed(() => {
     if (this.selectedCategory() === 'All') return this.menuItems();
-    return this.menuItems().filter(item => item.category === this.selectedCategory());
+    return this.menuItems().filter(item => normalizeCategory(item.category) === normalizeCategory(this.selectedCategory()));
   });
 
   menuItems = signal<MenuItem[]>([]);
@@ -123,7 +123,7 @@ export class TabDetailComponent implements OnInit {
     this.menuApi.getAllItems().subscribe({
       next: (items) => {
         this.menuItems.set(items);
-        const cats = ['All', ...new Set(items.map(i => i.category))];
+        const cats = ['All', ...groupCategoryNames(items.map(i => i.category))];
         this.categories.set(cats);
         this.isLoadingMenu.set(false);
       },

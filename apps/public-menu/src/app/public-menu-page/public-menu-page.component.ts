@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { PublicMenuApiService, PublicMenuData } from '@serveiq/shared/data-access';
+import { normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
 import { finalize } from 'rxjs';
 
@@ -33,7 +34,7 @@ export class PublicMenuPageComponent implements OnInit {
       next: (menu) => {
         this.data.set(menu);
         this.applyBrandColors(menu);
-        const cats = [...new Set(menu.items.map(i => i.category))];
+        const cats = groupCategoryNames(menu.items.map(i => i.category));
         this.categories.set(cats);
         this.selectedCategory.set(cats[0] ?? null);
       },
@@ -48,6 +49,6 @@ export class PublicMenuPageComponent implements OnInit {
   }
 
   groupItems(category: string) {
-    return this.data()?.items.filter(i => i.category === category) ?? [];
+    return this.data()?.items.filter(i => normalizeCategory(i.category) === normalizeCategory(category)) ?? [];
   }
 }

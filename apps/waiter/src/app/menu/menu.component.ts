@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG, OfflineCacheService } from '@serveiq/shared/data-access';
-import { MenuItem, Table, Tab, resolveImageUrl } from '@serveiq/shared/models';
+import { MenuItem, Table, Tab, resolveImageUrl, normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 import { CurrencyContextService } from '../services/currency-context.service';
 import { OfflineDataService } from '../services/offline-data.service';
 
@@ -102,13 +102,7 @@ export class MenuComponent implements OnInit {
         isAvailable: isManuallyAvailable && !outOfStock,
       };
     });
-    const seen = new Set<string>();
-    const cats = ['All', ...items.map(i => i.category).filter(c => {
-      const key = c.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })];
+    const cats = ['All', ...groupCategoryNames(items.map(i => i.category))];
     this.categories.set(cats);
     this.selectedCategory = cats[0] ?? 'All';
     this.isLoading.set(false);
@@ -132,7 +126,7 @@ export class MenuComponent implements OnInit {
   get filteredItems(): LocalMenuItem[] {
     return this.selectedCategory === 'All'
       ? this.menuItems
-      : this.menuItems.filter(i => i.category.toLowerCase() === this.selectedCategory.toLowerCase());
+      : this.menuItems.filter(i => normalizeCategory(i.category) === normalizeCategory(this.selectedCategory));
   }
 
   get selectionTotal(): number {

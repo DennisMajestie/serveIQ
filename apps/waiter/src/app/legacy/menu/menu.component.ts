@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
-import { MenuItem, Table, Tab, resolveImageUrl } from '@serveiq/shared/models';
+import { MenuItem, Table, Tab, resolveImageUrl, normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 
 interface Portion { id: string; name: string; price: number; }
 
@@ -72,7 +72,7 @@ export class LegacyMenuComponent implements OnInit {
           image: resolveImageUrl(i.imageUrl, this.env.apiUrl),
           price: (i.priceKobo ?? i.price_kobo ?? 0) / 100
         }));
-        const cats = ['All', ...new Set(items.map(i => i.category))];
+        const cats = ['All', ...groupCategoryNames(items.map(i => i.category))];
         this.categories.set(cats);
         this.selectedCategory = cats[0] ?? 'All';
         this.isLoading.set(false);
@@ -98,7 +98,7 @@ export class LegacyMenuComponent implements OnInit {
   get filteredItems(): LocalMenuItem[] {
     return this.selectedCategory === 'All'
       ? this.menuItems
-      : this.menuItems.filter(i => i.category === this.selectedCategory);
+      : this.menuItems.filter(i => normalizeCategory(i.category) === normalizeCategory(this.selectedCategory));
   }
 
   get selectionTotal(): number {

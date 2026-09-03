@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/shared/data-access';
+import { normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 import { CurrencyContextService } from '../core/currency-context.service';
 
 @Component({
@@ -431,7 +432,7 @@ export class PublicMenuComponent implements OnInit {
     const cat = this.selectedCategory();
     const q = this.searchQuery().toLowerCase().trim();
     if (cat) {
-      items = items.filter(i => i.category === cat);
+      items = items.filter(i => normalizeCategory(i.category) === normalizeCategory(cat));
     }
     if (q) {
       items = items.filter(i => i.name.toLowerCase().includes(q));
@@ -466,7 +467,7 @@ export class PublicMenuComponent implements OnInit {
       next: (data) => {
         this.menuData.set(data);
         this.allItems.set(data.items);
-        const cats = [...new Set(data.items.map(i => i.category))];
+        const cats = groupCategoryNames(data.items.map(i => i.category));
         this.categories.set(cats);
         this.isLoading.set(false);
       },
