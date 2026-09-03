@@ -300,31 +300,86 @@
         </section>
       }
 
-      <!-- Amount Input -->
-      <section class="glass-card rounded-2xl p-6 border border-white/5">
-        <div class="flex justify-between items-center mb-4">
-          <span class="text-[14px] leading-none font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">Paying Now</span>
-          @if (!isEditingAmount) {
-            <span class="text-[14px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">Full Amount</span>
-          }
-        </div>
-        <div class="flex items-center justify-between bg-[#070d1f]/50 p-4 rounded-xl border border-white/5 focus-within:ring-1 focus-within:ring-[#adc6ff] transition-all">
-          <span class="text-[24px] leading-[1.3] font-medium text-[#bccbb9]/40" style="font-family:'Space Grotesk',sans-serif">{{ currencySymbol() }}</span>
-          <input type="text" class="bg-transparent border-none text-right w-full text-[24px] leading-[1.3] font-medium text-[#dce1fb] focus:ring-0 outline-none" style="font-family:'Space Grotesk',sans-serif" [value]="formattedAmount" readonly />
-        </div>
-      </section>
+      @if (!isSplit()) {
+        <!-- Amount Input (non-split only) -->
+        <section class="glass-card rounded-2xl p-6 border border-white/5">
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-[14px] leading-none font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">Paying Now</span>
+            @if (!isEditingAmount) {
+              <span class="text-[14px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">Full Amount</span>
+            }
+          </div>
+          <div class="flex items-center justify-between bg-[#070d1f]/50 p-4 rounded-xl border border-white/5 focus-within:ring-1 focus-within:ring-[#adc6ff] transition-all">
+            <span class="text-[24px] leading-[1.3] font-medium text-[#bccbb9]/40" style="font-family:'Space Grotesk',sans-serif">{{ currencySymbol() }}</span>
+            <input type="text" class="bg-transparent border-none text-right w-full text-[24px] leading-[1.3] font-medium text-[#dce1fb] focus:ring-0 outline-none" style="font-family:'Space Grotesk',sans-serif" [value]="formattedAmount" readonly />
+          </div>
+        </section>
 
-      <!-- Numpad -->
-      <section>
-        <div class="grid grid-cols-3 gap-3">
-          @for (key of ['1','2','3','4','5','6','7','8','9','.', '0']; track key) {
-            <button (click)="appendNumber(key)" class="h-16 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[24px] leading-[1.3] font-bold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Inter',sans-serif">{{ key }}</button>
-          }
-          <button (click)="clearLast()" class="h-16 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[#bccbb9] active:scale-95 transition-all">
-            <span class="material-symbols-outlined">backspace</span>
-          </button>
-        </div>
-      </section>
+        <!-- Numpad (non-split only) -->
+        <section>
+          <div class="grid grid-cols-3 gap-3">
+            @for (key of ['1','2','3','4','5','6','7','8','9','.', '0']; track key) {
+              <button (click)="appendNumber(key)" class="h-16 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[24px] leading-[1.3] font-bold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Inter',sans-serif">{{ key }}</button>
+            }
+            <button (click)="clearLast()" class="h-16 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[#bccbb9] active:scale-95 transition-all">
+              <span class="material-symbols-outlined">backspace</span>
+            </button>
+          </div>
+        </section>
+      }
+
+      @if (isSplit()) {
+        <!-- Split Allocation Summary (split mode only) -->
+        <section class="glass-card rounded-2xl p-6 border border-white/5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-[#4be277] text-[20px]">balance</span>
+            <span class="text-[14px] leading-none font-semibold text-[#bccbb9] uppercase tracking-[0.08em]" style="font-family:'Inter',sans-serif">Allocation Summary</span>
+          </div>
+
+          <div class="space-y-3">
+            <!-- Total -->
+            <div class="flex items-center justify-between">
+              <span class="text-[13px] leading-none text-[#bccbb9]/70" style="font-family:'Inter',sans-serif">Total Bill</span>
+              <span class="text-[15px] leading-none font-bold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(bill()?.totalKobo ?? 0) }}</span>
+            </div>
+
+            <!-- Allocated -->
+            <div class="flex items-center justify-between">
+              <span class="text-[13px] leading-none text-[#bccbb9]/70" style="font-family:'Inter',sans-serif">Allocated</span>
+              <span class="text-[15px] leading-none font-bold text-[#4be277]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(allocatedKobo) }}</span>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-300"
+                [style.width.%]="bill()?.totalKobo ? (allocatedKobo / (bill()?.totalKobo ?? 1) * 100) : 0"
+                [class.bg-[#4be277]]="isSplitValid"
+                [class.bg-[#f97316]]="!isSplitValid && allocatedKobo > 0"
+                [class.bg-white/10]="allocatedKobo === 0">
+              </div>
+            </div>
+
+            <!-- Remaining -->
+            <div class="flex items-center justify-between"
+              [class.text-[#ffb4ab]]="!isSplitValid && remainingKobo > 0"
+              [class.text-[#22c55e]]="isSplitValid">
+              <span class="text-[13px] leading-none font-medium" style="font-family:'Inter',sans-serif">{{ isSplitValid ? 'Fully Allocated' : 'Remaining' }}</span>
+              <span class="flex items-center gap-1 text-[13px] leading-none font-semibold" style="font-family:'JetBrains Mono',monospace">
+                @if (isSplitValid) {
+                  <span class="material-symbols-outlined text-sm">check_circle</span>
+                }
+                {{ formatKobo(remainingKobo) }}
+              </span>
+            </div>
+
+            <!-- Guests count -->
+            <div class="flex items-center justify-between pt-2 border-t border-white/5">
+              <span class="text-[13px] leading-none text-[#bccbb9]/70" style="font-family:'Inter',sans-serif">Guests</span>
+              <span class="text-[13px] leading-none font-semibold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ guests().length }}</span>
+            </div>
+          </div>
+        </section>
+      }
 
       @if (isCashPending() && canConfirmCashAtCounter) {
         <section class="glass-card rounded-2xl p-5 border border-[#f97316]/30 bg-[#f97316]/5 flex items-center gap-3">
