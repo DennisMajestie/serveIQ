@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import FAQ from '../components/FAQ.astro';
 
 const canonical = 'https://serveiq.io/pricing';
-const description = 'ServeIQ pricing — transparent plans for restaurants, bars and hotels. No hidden fees, no per-terminal charges. Start free, upgrade when you are ready.';
+const description = 'Beta pricing for restaurants, bars and hotels — early partners lock in their first-year rate. No setup fees, no per-order cut. Plan for a single location up to multi-branch. Naira, VAT exclusive.';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -17,53 +17,50 @@ const jsonLd = {
 const plans = [
   {
     name: 'Starter',
-    price: '[PLACEHOLDER]',
+    price: '₦15,000',
     period: '/month',
-    description: 'For small cafés and single-location restaurants getting started with digital POS.',
+    description: 'Everything a single location needs to stop leaking revenue.',
     features: [
-      '1 branch, 3 user accounts',
-      'Table QR menu',
-      'Cash & card settlement',
-      'Basic order management',
-      'Email support',
+      'Point of sale & kitchen display',
+      'Live floor plan and QR menu',
+      'Up to 5 staff PINs',
+      'Paystack / transfer payments',
+      'Daily sales summary',
     ],
-    cta: 'Get Started',
-    ctaHref: 'https://app.serveiq.io/register',
+    cta: 'Start free trial',
+    ctaHref: 'https://serve-iq-one.vercel.app/register',
     highlighted: false,
   },
   {
     name: 'Growth',
-    price: '[PLACEHOLDER]',
+    price: '₦35,000',
     period: '/month',
-    description: 'For growing restaurants that need split payments, kitchen routing and offline reliability.',
+    description: 'Inventory, tabs and shift control for busy kitchens.',
     features: [
-      'Up to 5 branches, 15 user accounts',
-      'Per-guest split payments (item / amount / percent)',
-      'Offline mode with auto-sync',
-      'Kitchen display routing by department',
-      'Paystack + transfer + USSD integration',
-      'Stock & ingredient tracking',
-      'Priority support',
+      'Everything in Starter',
+      'Recipe-level inventory & suppliers',
+      'Open tabs — trusted customer credit',
+      'Shifts with cash handoff',
+      'Full analytics & staff performance',
+      'Up to 20 staff PINs',
     ],
-    cta: 'Start Free Trial',
-    ctaHref: 'https://app.serveiq.io/register',
+    cta: 'Start free trial',
+    ctaHref: 'https://serve-iq-one.vercel.app/register',
     highlighted: true,
   },
   {
-    name: 'Enterprise',
-    price: '[PLACEHOLDER]',
-    period: '/month',
-    description: 'For multi-branch chains and hotel F&B operations requiring full control and audit trails.',
+    name: 'Multi-branch',
+    price: 'Custom',
+    period: '',
+    description: 'One view across every branch, with enterprise controls.',
     features: [
-      'Unlimited branches & users',
-      'Custom role-based access control',
-      'Real-time multi-branch dashboard',
-      'Audit logs & advanced reporting',
-      'API access & custom integrations',
-      'Dedicated account manager',
-      'SLA & onboarding support',
+      'Everything in Growth',
+      'Cross-branch dashboard & reports',
+      'Device management & audit logs',
+      'Unlimited staff PINs',
+      'Dedicated onboarding & support',
     ],
-    cta: 'Contact Sales',
+    cta: 'Talk to us',
     ctaHref: 'mailto:hello@serveiq.io',
     highlighted: false,
   },
@@ -73,9 +70,9 @@ const plans = [
 
   <section style="padding:4rem 0 2rem; text-align:center;">
     <div class="container">
-      <h1 style="font-size:clamp(2rem,4vw,2.8rem);font-weight:800;margin-bottom:0.75rem;">Simple, transparent pricing</h1>
+      <h1 style="font-size:clamp(2rem,4vw,2.8rem);font-weight:800;margin-bottom:0.75rem;">Simple plans that grow with your floor</h1>
       <p style="font-size:1.1rem;color:var(--brand-gray);max-width:560px;margin:0 auto;">
-        No hidden fees. No per-terminal charges. Start free, upgrade when you are ready.
+        Early partners lock in beta pricing for their first year — no setup fees, no per-order cut. Your money stays yours.
       </p>
     </div>
   </section>
@@ -102,6 +99,13 @@ const plans = [
         </div>
       ))}
     </div>
+  </section>
+
+  <section style="text-align:center;padding-bottom:2rem;">
+    <p style="color:var(--brand-gray);font-size:0.9rem;max-width:640px;margin:0 auto;">
+      Prices in Naira, VAT exclusive. Need something custom — multiple branches or franchise terms?
+      <a href="mailto:hello@serveiq.io">Talk to us</a>.
+    </p>
   </section>
 
   <FAQ />
