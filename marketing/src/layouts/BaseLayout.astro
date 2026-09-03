@@ -1,0 +1,166 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  jsonLd?: object | object[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical = Astro.url.href,
+  ogImage = '/og-default.png',
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+
+const siteName = 'ServeIQ';
+const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])} />
+    )}
+
+    <style is:global>
+      :root {
+        --brand-orange: #F97316;
+        --brand-dark: #1a1a2e;
+        --brand-gray: #64748b;
+        --bg: #ffffff;
+        --surface: #f8fafc;
+        --border: #e2e8f0;
+        --max-w: 1140px;
+      }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--brand-dark);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--brand-orange); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      img { max-width: 100%; height: auto; }
+      .container { max-width: var(--max-w); margin: 0 auto; padding: 0 1.5rem; }
+
+      /* Nav */
+      .site-nav { border-bottom: 1px solid var(--border); padding: 1rem 0; }
+      .site-nav .container { display: flex; align-items: center; justify-content: space-between; }
+      .site-nav .logo { font-weight: 800; font-size: 1.35rem; color: var(--brand-dark); text-decoration: none; }
+      .site-nav .logo span { color: var(--brand-orange); }
+      .site-nav .nav-links { display: flex; gap: 1.75rem; align-items: center; }
+      .site-nav .nav-links a { color: var(--brand-dark); font-weight: 500; font-size: 0.95rem; text-decoration: none; }
+      .site-nav .nav-links a:hover { color: var(--brand-orange); }
+      .btn-primary {
+        display: inline-block; background: var(--brand-orange); color: #fff;
+        padding: 0.6rem 1.4rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem;
+        border: none; cursor: pointer; text-decoration: none;
+      }
+      .btn-primary:hover { background: #ea580c; text-decoration: none; }
+
+      /* Footer */
+      .site-footer { border-top: 1px solid var(--border); padding: 3rem 0 2rem; margin-top: 4rem; color: var(--brand-gray); font-size: 0.9rem; }
+      .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; }
+      .footer-col h4 { color: var(--brand-dark); margin-bottom: 0.75rem; font-size: 0.95rem; }
+      .footer-col ul { list-style: none; }
+      .footer-col li { margin-bottom: 0.4rem; }
+      .footer-col a { color: var(--brand-gray); }
+      .footer-col a:hover { color: var(--brand-orange); }
+      .footer-bottom { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center; }
+      @media (max-width: 768px) {
+        .footer-grid { grid-template-columns: 1fr 1fr; }
+        .site-nav .nav-links { gap: 1rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-nav">
+      <div class="container">
+        <a href="/" class="logo">Serve<span>IQ</span></a>
+        <div class="nav-links">
+          <a href="/features/split-payments">Split Payments</a>
+          <a href="/features/offline-mode">Offline Mode</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/compare/serveiq-vs-toast">Compare</a>
+          <a href="/about">About</a>
+          <a href="https://app.serveiq.io/login" class="btn-primary">Login</a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <a href="/" class="logo" style="font-size:1.25rem;color:var(--brand-dark);">Serve<span style="color:var(--brand-orange);">IQ</span></a>
+            <p style="margin-top:0.5rem;">Cloud restaurant POS and management platform with per-guest split payments, offline-first ordering, and real-time kitchen tracking.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Product</h4>
+            <ul>
+              <li><a href="/features/split-payments">Split Payments</a></li>
+              <li><a href="/features/offline-mode">Offline Mode</a></li>
+              <li><a href="/features/qr-menu">QR Menu & Ordering</a></li>
+              <li><a href="/features/pos">POS Terminal</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Compare</h4>
+            <ul>
+              <li><a href="/compare/serveiq-vs-toast">ServeIQ vs Toast</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="/about">About</a></li>
+              <li><a href="/pricing">Pricing</a></li>
+              <li><a href="mailto:hello@serveiq.io">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; {new Date().getFullYear()} ServeIQ. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

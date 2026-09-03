@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://serveiq.io/features/pos';
+const description = 'ServeIQ POS — accept cash, card, bank transfer, USSD and Paystack payments. Department-routed kitchen orders, real-time dashboard, multi-branch management, stock tracking, and role-based access. Cloud restaurant POS for Nigeria and West Africa.';
+---
+<BaseLayout title="Restaurant POS & Management" description={description} canonical={canonical}>
+
+  <section style="padding:5rem 0 3rem; text-align:center;">
+    <div class="container">
+      <p style="color:var(--brand-orange);font-weight:600;font-size:0.9rem;margin-bottom:0.5rem;">POS & Operations</p>
+      <h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;max-width:720px;margin:0 auto 1rem;">
+        A POS that runs your entire floor
+      </h1>
+      <p style="font-size:1.15rem;color:var(--brand-gray);max-width:600px;margin:0 auto;">
+        From taking orders to settling bills to reconciling the end of day — ServeIQ gives your team one fast, reliable system.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding:3rem 0;">
+    <div class="container" style="max-width:800px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;">
+      {[
+        { title: 'Multi-Method Payment', body: 'Cash, POS card terminal, bank transfer, USSD, and Paystack. Settlement options designed for Nigerian and West African restaurants.' },
+        { title: 'Kitchen Display Routing', body: 'Orders are automatically routed to the correct department — kitchen, bar, pastry — with real-time status tracking.' },
+        { title: 'Discount Engine', body: 'Minimum-order thresholds, item-level and bill-level discounts. Staff get a real-time warning if a discount would push the bill below cost.' },
+        { title: 'Stock & Ingredients', body: 'Track ingredient levels per item. Deduction happens automatically on order confirmation. Low-stock alerts in the dashboard.' },
+        { title: 'Real-Time Dashboard', body: 'Live sales, open tabs, pending payments, active orders, and branch performance — all updating in real time.' },
+        { title: 'Role-Based Access', body: 'Waiter, supervisor, manager, owner, super admin — each role sees exactly the screens and actions it needs.' },
+      ].map(item => (
+        <div style="background:var(--surface);border-radius:12px;padding:1.5rem;">
+          <h3 style="font-size:1rem;margin-bottom:0.4rem;color:var(--brand-orange);">{item.title}</h3>
+          <p style="color:var(--brand-gray);font-size:0.9rem;">{item.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section style="padding:4rem 0;text-align:center;">
+    <div class="container">
+      <h2 style="font-size:1.6rem;margin-bottom:0.75rem;">Ready to upgrade your POS?</h2>
+      <a href="/pricing" class="btn-primary" style="font-size:1.05rem;padding:0.8rem 2.5rem;">See Pricing</a>
+    </div>
+  </section>
+
+</BaseLayout>

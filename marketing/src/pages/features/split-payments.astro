@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://serveiq.io/features/split-payments';
+const description = 'ServeIQ splits one restaurant bill across multiple guests — per item, by fixed amount, by percentage, or as the remaining balance. Each guest pays their share independently; the tab closes only when the last payment settles.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Per-Guest Split Payments | ServeIQ',
+  description,
+  url: canonical,
+  isPartOf: { '@type': 'WebSite', name: 'ServeIQ', url: 'https://serveiq.io' },
+};
+
+const modes = [
+  { name: 'By Item', description: 'Tap the items each guest ate. ServeIQ calculates their share instantly, including proportional service charge and VAT.' },
+  { name: 'By Amount', description: 'Enter a fixed amount a guest wants to pay. ServeIQ allocates it against items and shows the remaining balance.' },
+  { name: 'By Percentage', description: 'Split the bill as a percentage of the total. Ideal for even-ish splits where one guest covered a few extras.' },
+  { name: 'Remaining Balance', description: 'The last guest picks up whatever is left — service charge, rounding, and all. The tab closes automatically.' },
+];
+---
+<BaseLayout title="Per-Guest Split Payments" description={description} canonical={canonical} jsonLd={jsonLd}>
+
+  <section style="padding:5rem 0 3rem; text-align:center;">
+    <div class="container">
+      <p style="color:var(--brand-orange);font-weight:600;font-size:0.9rem;margin-bottom:0.5rem;">Split Payments</p>
+      <h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;max-width:720px;margin:0 auto 1rem;">
+        Split the bill, not the night
+      </h1>
+      <p style="font-size:1.15rem;color:var(--brand-gray);max-width:600px;margin:0 auto;">
+        ServeIQ lets each guest pay for exactly what they ate — with four flexible allocation modes and independent per-guest settlement.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding:3rem 0;">
+    <div class="container" style="max-width:800px;">
+      <h2 style="font-size:1.6rem;margin-bottom:2rem;text-align:center;">Four ways to split</h2>
+      <div style="display:grid;gap:1.5rem;">
+        {modes.map((m, i) => (
+          <div style="display:flex;gap:1rem;align-items:start;background:var(--surface);border-radius:12px;padding:1.5rem;">
+            <span style="flex-shrink:0;width:2.2rem;height:2.2rem;background:var(--brand-orange);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;">{i + 1}</span>
+            <div>
+              <h3 style="font-size:1.05rem;margin-bottom:0.25rem;">{m.name}</h3>
+              <p style="color:var(--brand-gray);font-size:0.95rem;">{m.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:4rem 0;background:var(--surface);">
+    <div class="container" style="max-width:700px;text-align:center;">
+      <h2 style="font-size:1.6rem;margin-bottom:1rem;">How it works at the table</h2>
+      <ol style="text-align:left;color:var(--brand-gray);font-size:1rem;line-height:2;">
+        <li><strong>Open the bill</strong> — the waiter sees the full tab with all orders and running totals.</li>
+        <li><strong>Tap a guest card</strong> — choose items, enter an amount, or pick a percentage.</li>
+        <li><strong>Charge that guest</strong> — pay by cash, card, transfer, USSD, or Paystack. Each guest is settled independently.</li>
+        <li><strong>Tab stays open</strong> — the bill remains active until every share is paid. Split-lock prevents re-ordering after payment.</li>
+        <li><strong>Last guest pays</strong> — the tab closes automatically and the bill status updates to "Paid".</li>
+      </ol>
+    </div>
+  </section>
+
+  <section style="padding:4rem 0;text-align:center;">
+    <div class="container">
+      <h2 style="font-size:1.6rem;margin-bottom:0.75rem;">Ready to offer real split payments?</h2>
+      <a href="/pricing" class="btn-primary" style="font-size:1.05rem;padding:0.8rem 2.5rem;">See Pricing</a>
+    </div>
+  </section>
+
+</BaseLayout>

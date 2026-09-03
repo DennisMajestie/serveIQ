@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FAQ from '../components/FAQ.astro';
+
+const canonical = 'https://serveiq.io/about';
+const description = 'About ServeIQ — a cloud restaurant management and POS platform built for hospitality businesses in Nigeria and West Africa. Per-guest split payments, offline-first ordering, and real-time kitchen tracking.';
+---
+<BaseLayout title="About ServeIQ" description={description} canonical={canonical}>
+
+  <section style="padding:5rem 0 3rem; text-align:center;">
+    <div class="container" style="max-width:720px;">
+      <h1 style="font-size:clamp(2rem,4vw,2.8rem);font-weight:800;margin-bottom:1.25rem;">
+        Restaurant operations, simplified
+      </h1>
+      <p style="font-size:1.1rem;color:var(--brand-gray);line-height:1.75;">
+        ServeIQ is a cloud restaurant management and point-of-sale (POS) platform with per-guest split payments, offline-first ordering, table-QR menus, and real-time kitchen and guest tracking. We built it to solve the specific problems restaurants face daily — unreliable Internet, difficult bill splits, disconnected kitchen and floor teams, and POS systems that were not designed for the African market.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding:3rem 0;">
+    <div class="container" style="max-width:720px;">
+      <h2 style="font-size:1.4rem;margin-bottom:1.25rem;">Why ServeIQ exists</h2>
+      <p style="color:var(--brand-gray);font-size:1rem;line-height:1.8;margin-bottom:1rem;">
+        Most restaurant POS systems were built for stable broadband environments and US payment rails. They do not handle offline mode well, they charge per terminal, and they treat split payments as an afterthought — usually just "split in half."
+      </p>
+      <p style="color:var(--brand-gray);font-size:1rem;line-height:1.8;margin-bottom:1rem;">
+        ServeIQ was designed from the ground up for restaurants where the Internet may drop mid-service, where guests want to pay for exactly what they ate, and where bank transfer and USSD are common settlement methods alongside card and cash.
+      </p>
+      <p style="color:var(--brand-gray);font-size:1rem;line-height:1.8;">
+        Our goal is to give every restaurant — from a single-location café to a multi-branch chain — the tools to run a smooth, modern operation without the complexity or cost of legacy enterprise systems.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding:3rem 0;background:var(--surface);">
+    <div class="container" style="max-width:720px;">
+      <h2 style="font-size:1.4rem;margin-bottom:1.25rem;">What we believe</h2>
+      <div style="display:grid;gap:1.25rem;">
+        {[
+          { title: 'Split payments should be the default, not an upsell.', body: 'Every group bill is a negotiation. ServeIQ makes it a non-event — guests settle their share independently, at the table, without holding up the rest of the party.' },
+          { title: 'Offline should not mean broken.', body: 'Restaurants cannot afford to stop taking orders because the Wi-Fi dropped. ServeIQ queues everything locally and syncs with full idempotency when the connection returns.' },
+          { title: 'Your guests should be able to help themselves.', body: 'QR menus, live order tracking, and in-app waiter calls reduce wait times and let your staff focus on the floor instead of relaying orders.' },
+          { title: 'Pricing should be honest.', body: 'No per-terminal fees. No long-term contracts. No surprise charges. You should know exactly what you pay every month.' },
+        ].map(item => (
+          <div style="background:#fff;border-radius:12px;padding:1.5rem;">
+            <h3 style="font-size:1rem;margin-bottom:0.35rem;color:var(--brand-orange);">{item.title}</h3>
+            <p style="color:var(--brand-gray);font-size:0.95rem;">{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <FAQ />
+
+</BaseLayout>

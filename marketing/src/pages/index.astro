@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const canonical = 'https://serveiq.io/';
+const description = 'ServeIQ is a cloud restaurant POS and management platform with per-guest split payments, offline-first ordering, QR menu, and real-time kitchen tracking. Built for restaurants, bars and hotels in Nigeria and beyond.';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'ServeIQ',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    description,
+    url: canonical,
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'NGN',
+      lowPrice: '0',
+      offerCount: 3,
+    },
+    featureList: [
+      'Per-guest split payments with item-level allocation',
+      'Offline-first ordering and payment sync',
+      'Table QR code menus with live order tracking',
+      'Multi-branch POS with kitchen display routing',
+      'Paystack integration and cash/card/transfer/USSD settlement',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'ServeIQ',
+    url: 'https://serveiq.io',
+    contactPoint: { '@type': 'ContactPoint', email: 'hello@serveiq.io', contactType: 'sales' },
+  },
+];
+
+const features = [
+  {
+    title: 'Split the Bill, Not the Night',
+    description: 'Guests pay for exactly what they ate — by item, amount, percentage, or remainder. The tab stays open until every share is settled.',
+    href: '/features/split-payments',
+  },
+  {
+    title: 'Works Offline',
+    description: 'Orders and payments queue locally and sync with idempotency protection when connectivity returns. No orders lost, ever.',
+    href: '/features/offline-mode',
+  },
+  {
+    title: 'QR Menu & Live Tracking',
+    description: 'Table QR codes open a no-install PWA where guests browse, order, and watch their order move through the kitchen in real time.',
+    href: '/features/qr-menu',
+  },
+  {
+    title: 'Full POS Terminal',
+    description: 'Accept cash, card, transfer, USSD, and Paystack payments. Department-routed kitchen orders and real-time dashboard.',
+    href: '/features/pos',
+  },
+];
+---
+<BaseLayout title="ServeIQ" description={description} canonical={canonical} jsonLd={jsonLd}>
+
+  <!-- Hero -->
+  <section style="padding:5rem 0 4rem; text-align:center;">
+    <div class="container">
+      <p style="color:var(--brand-orange);font-weight:600;font-size:0.95rem;margin-bottom:0.5rem;">Restaurant POS & Management</p>
+      <h1 style="font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;line-height:1.15;max-width:800px;margin:0 auto 1.25rem;">
+        The restaurant platform that <span style="color:var(--brand-orange);">splits the bill</span>, not the experience
+      </h1>
+      <p style="font-size:1.15rem;color:var(--brand-gray);max-width:640px;margin:0 auto 2rem;">
+        ServeIQ is a cloud restaurant POS and management platform with per-guest split payments, offline-first ordering, QR menus, and real-time kitchen tracking.
+      </p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="/pricing" class="btn-primary" style="padding:0.85rem 2rem;font-size:1.05rem;">View Pricing</a>
+        <a href="https://app.serveiq.io/login" style="padding:0.85rem 2rem;font-size:1.05rem;font-weight:600;color:var(--brand-dark);border:2px solid var(--border);border-radius:8px;">Log In</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features grid -->
+  <section style="padding:4rem 0; background:var(--surface);">
+    <div class="container">
+      <h2 style="text-align:center;font-size:1.8rem;margin-bottom:2.5rem;">Everything your restaurant needs</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;">
+        {features.map(f => (
+          <a href={f.href} style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.75rem;text-decoration:none;color:inherit;transition:box-shadow 0.2s;">
+            <h3 style="font-size:1.15rem;margin-bottom:0.5rem;color:var(--brand-orange);">{f.title}</h3>
+            <p style="color:var(--brand-gray);font-size:0.95rem;">{f.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Who it's for -->
+  <section style="padding:4rem 0;">
+    <div class="container" style="text-align:center;max-width:700px;">
+      <h2 style="font-size:1.8rem;margin-bottom:1rem;">Built for real hospitality businesses</h2>
+      <p style="color:var(--brand-gray);font-size:1.05rem;">
+        Restaurants, bars, lounges, cafés, hotels and event spaces across Nigeria and West Africa trust ServeIQ to run their floor — from order to payment to reconciliation.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="padding:4rem 0;background:var(--brand-dark);color:#fff;text-align:center;">
+    <div class="container">
+      <h2 style="font-size:1.8rem;margin-bottom:0.75rem;">Ready to simplify your restaurant operations?</h2>
+      <p style="color:#94a3b8;margin-bottom:2rem;">Get started in minutes. No long-term contracts.</p>
+      <a href="/pricing" class="btn-primary" style="font-size:1.05rem;padding:0.85rem 2.5rem;">See Plans & Pricing</a>
+    </div>
+  </section>
+
+</BaseLayout>

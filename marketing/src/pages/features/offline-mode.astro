@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const canonical = 'https://serveiq.io/features/offline-mode';
+const description = 'ServeIQ works offline — orders, bills and payments queue locally and sync automatically with idempotency protection when connectivity returns. Built for restaurants in areas with unreliable Internet.';
+---
+<BaseLayout title="Offline-First Mode" description={description} canonical={canonical}>
+
+  <section style="padding:5rem 0 3rem; text-align:center;">
+    <div class="container">
+      <p style="color:var(--brand-orange);font-weight:600;font-size:0.9rem;margin-bottom:0.5rem;">Offline Mode</p>
+      <h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;max-width:720px;margin:0 auto 1rem;">
+        Your restaurant never stops — neither does ServeIQ
+      </h1>
+      <p style="font-size:1.15rem;color:var(--brand-gray);max-width:600px;margin:0 auto;">
+        Orders and payments queue on the device and sync automatically when the Internet returns. No data lost, no double charges, no interrupted service.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding:3rem 0;">
+    <div class="container" style="max-width:800px;display:grid;gap:1.5rem;">
+      {[
+        { title: 'Local queue, automatic sync', body: 'Every order, bill, and payment is stored locally first. When connectivity returns, ServeIQ replays the queue in order and applies idempotency keys — so no operation is duplicated.' },
+        { title: 'No double charges', body: 'Static idempotency keys per order and per split payment mean that even if a sync retries, the backend will not process the same payment twice.' },
+        { title: 'Real-time when online, reliable when offline', body: 'When the network is up, guests and kitchen see updates in real time via WebSocket. When it drops, the app keeps working — and picks up exactly where it left off.' },
+        { title: 'Built for emerging markets', body: 'ServeIQ was designed from day one for restaurants where connectivity is unpredictable. Power outages, network switches, rural areas — the workflow does not change.' },
+      ].map((item, i) => (
+        <div style="background:var(--surface);border-radius:12px;padding:1.75rem;">
+          <h3 style="font-size:1.1rem;margin-bottom:0.5rem;color:var(--brand-orange);">{item.title}</h3>
+          <p style="color:var(--brand-gray);font-size:0.95rem;">{item.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section style="padding:4rem 0;text-align:center;">
+    <div class="container">
+      <h2 style="font-size:1.6rem;margin-bottom:0.75rem;">Never lose an order to a bad connection</h2>
+      <a href="/pricing" class="btn-primary" style="font-size:1.05rem;padding:0.8rem 2.5rem;">See Pricing</a>
+    </div>
+  </section>
+
+</BaseLayout>
