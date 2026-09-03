@@ -346,6 +346,10 @@
                 }
                 <div class="order-actions">
                   @if (isSelfService(group)) {
+                    <button class="btn-let-go" [disabled]="isProcessingAction() || isProcessingGroup(group)" (click)="letItGo(group)" title="Mark this self-service order as served/delivered and clear it from the ready queue">
+                      <span class="material-symbols-outlined">done_all</span>
+                      {{ isProcessingGroup(group) ? 'Clearing...' : 'Let it go' }}
+                    </button>
                     <span class="self-service-badge">
                       <span class="material-symbols-outlined">qr_code</span>
                       Self-service
@@ -416,9 +420,13 @@
                   </div>
                 </div>
                 <div class="order-actions">
-                  <button class="btn-cash" [disabled]="isProcessingAction() || isCashProcessing(group)" (click)="confirmCashPayment(group)">
+                  <button class="btn-cash" [disabled]="isProcessingAction() || isCashProcessing(group) || isCashRemoving(group)" (click)="confirmCashPayment(group)">
                     <span class="material-symbols-outlined">payments</span>
                     {{ isCashProcessing(group) ? 'Confirming...' : 'Confirm Cash Payment' }}
+                  </button>
+                  <button class="btn-remove" [disabled]="isProcessingAction() || isCashProcessing(group) || isCashRemoving(group)" (click)="removeCashRequest(group)" title="Remove cash request (customer abandoned or spammed)">
+                    <span class="material-symbols-outlined">remove_circle</span>
+                    {{ isCashRemoving(group) ? 'Removing...' : 'Remove' }}
                   </button>
                   <button class="btn-split" [disabled]="isProcessingAction()" (click)="createPaymentPlan(group)" title="Create split payment plan">
                     <span class="material-symbols-outlined">account_tree</span>

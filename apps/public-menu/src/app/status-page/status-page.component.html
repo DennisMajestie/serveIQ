@@ -243,6 +243,7 @@
                   class="pay-term cash"
                   [class.selected]="selectedTerminalId() === 'cash'"
                   type="button"
+                  [disabled]="cashPending() || cashSubmitting()"
                   (click)="selectTerminal('cash')"
                 >
                   <span class="pay-terminal-label">💵 {{ method.label }}</span>
@@ -334,6 +335,30 @@
           <p class="review-sub">Your feedback helps us improve.</p>
           <button type="button" class="review-submit" (click)="closeReviewModal()">Done</button>
         }
+      </div>
+    </div>
+  }
+
+  @if (showCashModal()) {
+    <div class="review-overlay" (click)="cancelRequestCash()">
+      <div class="review-modal" (click)="$event.stopPropagation()">
+        <button type="button" class="review-close" (click)="cancelRequestCash()" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <span class="big-icon">💵</span>
+        <h3>Pay with cash at the counter?</h3>
+        <p class="review-sub">A staff member will confirm your payment at the counter. Your order will be held until then.</p>
+        <div class="cash-confirm-actions">
+          <button type="button" class="cash-cancel" (click)="cancelRequestCash()">Cancel</button>
+          <button
+            type="button"
+            class="review-submit"
+            [disabled]="cashSubmitting() || cashPending()"
+            (click)="confirmRequestCash()"
+          >
+            {{ cashSubmitting() ? 'Requesting…' : 'Yes, request approval' }}
+          </button>
+        </div>
       </div>
     </div>
   }

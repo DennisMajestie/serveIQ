@@ -112,6 +112,7 @@ export const API_CONFIG = {
       applyDiscount: '/api/v1/bills/tab/:tabId/apply-discount',
       pay: '/api/v1/bills/tab/:tabId/pay',
       confirmCash: '/api/v1/bills/tab/:tabId/confirm-cash',
+      removeCashRequest: '/api/v1/bills/tab/:tabId/remove-cash-request',
       receipt: '/api/v1/bills/tab/:tabId/receipt',
       paymentPlan: '/api/v1/bills/tab/:tabId/payment-plan',
       splits: '/api/v1/bills/tab/:tabId/splits',

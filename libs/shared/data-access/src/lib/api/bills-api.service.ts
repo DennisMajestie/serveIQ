@@ -38,6 +38,14 @@ export class BillsApiService extends BaseApiService {
     return this.post<Bill>(buildUrl(API_CONFIG.endpoints.bills.confirmCash, { tabId }), {});
   }
 
+  /** Supervisor removes/clears a pending-cash request (customer abandoned or spammed), voids the awaiting-cash bill and releases held orders back to pending. */
+  removeCashRequest(tabId: string): Observable<{ tab_id: string; removed: boolean; message: string }> {
+    return this.post<{ tab_id: string; removed: boolean; message: string }>(
+      buildUrl(API_CONFIG.endpoints.bills.removeCashRequest, { tabId }),
+      {},
+    );
+  }
+
   /** Create a payment plan with ordered allocations for split billing. */
   createPaymentPlan(tabId: string, allocations: CreatePaymentPlanRequest): Observable<Bill[]> {
     return this.post<Bill[]>(buildUrl(API_CONFIG.endpoints.bills.paymentPlan, { tabId }), allocations);

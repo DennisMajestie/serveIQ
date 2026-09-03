@@ -669,6 +669,80 @@ export class OrderQueueComponent implements OnInit, OnDestroy {
     return this.cashProcessingTabId() === group.tabId;
   }
 
+  private cashRemovingTabId = signal<string | null>(null);
+
+  isCashRemoving(group: OrderGroup): boolean {
+    return this.cashRemovingTabId() === group.tabId;
+  }
+
+  removeCashRequest(group: OrderGroup) {
+    if (this.isProcessingAction() || this.isCashProcessing(group) || this.isCashRemoving(group)) return;
+    const tabId = group.tabId;
+    Swal.fire({
+      title: 'Remove Cash Request?',
+      html: `<div style="text-align:left;font-size:14px;color:#ccc;">
+        <p style="margin:0;">Remove the pending cash request for <strong>${this.getTableLabel(group)}</strong>?</p>
+        <p style="margin:8px 0 0;font-size:12px;color:#888;">This clears the cash payment hold so the customer can re-pay another way. The order stays open.</p>
+      </div>`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, remove it',
+      confirmButtonColor: '#ef4444',
+      cancelButtonText: 'Cancel',
+      background: '#1A1A1A',
+      color: '#fff',
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.cashRemovingTabId.set(tabId);
+      this.billsApi.removeCashRequest(tabId).subscribe({
+        next: () => {
+          this.cashRemovingTabId.set(null);
+          Swal.fire({
+            icon: 'success',
+            title: 'Request Removed',
+            text: 'Cash request cleared. The order is back in the Pending queue.',
+            background: '#1A1A1A',
+            color: '#fff',
+            confirmButtonColor: '#22c55e',
+          });
+          this.cashOrders.update(list => list.filter(g => g.tabId !== tabId));
+          this.loadPending();
+        },
+        error: (err) => {
+          this.cashRemovingTabId.set(null);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: err?.error?.message || 'Failed to remove cash request',
+            background: '#1A1A1A',
+            color: '#fff',
+          });
+        }
+      });
+    });
+  }
+
+  letItGo(group: OrderGroup) {
+    if (this.isProcessingAction() || this.isProcessingGroup(group)) return;
+    const tableLabel = this.getTableLabel(group);
+    Swal.fire({
+      title: 'Let this order go?',
+      text: `Mark the self-service takeaway order for ${tableLabel} as served/delivered?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, clear it',
+      confirmButtonColor: '#22c55e',
+      cancelButtonText: 'Cancel',
+      background: '#1A1A1A',
+      color: '#fff',
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.executeSequentially(group, 'deliver').finally(() => {
+        this.loadReady();
+      });
+    });
+  }
+
   viewOrderTimeline(group: OrderGroup) {
     const tableNum = this.getTableLabel(group);
     const groupIds = group.items.map(i => i.id);

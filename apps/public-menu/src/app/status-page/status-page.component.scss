@@ -656,6 +656,11 @@
   }
 }
 
+.pay-term:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .payment-method {
   display: flex;
   flex-direction: column;
@@ -852,5 +857,32 @@
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+}
+
+.cash-confirm-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+
+  .review-submit {
+    flex: 1;
+  }
+}
+
+.cash-cancel {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: var(--border);
   }
 }

@@ -48,11 +48,14 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   errorMessage = signal('');
 
   // ── Cash-at-counter flow ───────────────────────────────────────────────────
-  // Customer taps cash → request is held pending supervisor confirmation at the
-  // counter. `cashPending` drives the "Waiting to confirm pay" loader until the
-  // supervisor confirms (payment status flips to 'paid' via polling).
+  // Customer taps cash → a confirmation modal opens; once confirmed the request
+  // is held pending supervisor confirmation at the counter. `cashPending` drives
+  // the "Waiting to confirm pay" loader until the supervisor confirms (payment
+  // status flips to 'paid' via polling/socket). `showCashModal` gates the tap
+  // so a customer can't spam the supervisor before confirming.
   cashSubmitting = signal(false);
   cashPending = signal(false);
+  showCashModal = signal(false);
 
   // ── Review modal (shown after payment success) ─────────────────────────────
   showReviewModal = signal(false);
@@ -286,7 +289,9 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   confirmCash() {
     const tabId = this.cartService.tabId();
     const trackingCode = this.cartService.trackingCode();
-    if (!tabId || !trackingCode || this.cashPending()) return;
+    // Guard against duplicate submissions while a request is already in flight
+    // or already pending supervisor confirmation.
+    if (!tabId || !trackingCode || this.cashPending() || this.cashSubmitting()) return;
 
     this.cashSubmitting.set(true);
     this.api.submitCashIntent(tabId, trackingCode).pipe(
@@ -543,8 +548,20 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   selectTerminal(id: string) {
     this.selectedTerminalId.set(this.selectedTerminalId() === id ? null : id);
     if (id === 'cash' && this.selectedTerminalId() === 'cash') {
-      this.confirmCash();
+      // Tapping cash opens a confirmation modal instead of submitting straight
+      // away, so a customer can't accidentally spam the supervisor. Submission
+      // only happens once the customer confirms.
+      this.showCashModal.set(true);
     }
+  }
+
+  confirmRequestCash() {
+    this.showCashModal.set(false);
+    this.confirmCash();
+  }
+
+  cancelRequestCash() {
+    this.showCashModal.set(false);
   }
 
   copiedAccount = signal<string | null>(null);
