@@ -1,0 +1,127 @@
+<div class="kds" [class.dark]="isDarkMode()">
+  <!-- Top bar -->
+  <header class="kds-topbar">
+    <button class="btn-ghost" (click)="goBack()">&#8592; Back</button>
+    <div class="kds-title">
+      <span class="kds-icon">&#128722;</span>
+      <div>
+        <h1>Kitchen Display</h1>
+        <div class="live-badge">Live</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="muted-chip" (click)="toggleMute()" [class.muted]="muted()">
+        {{ muted() ? '&#128263; Muted' : '&#128266; Sound On' }}
+      </span>
+    </div>
+  </header>
+
+  <ng-container *ngIf="!isKdsEnabled()">
+    <div class="disabled-banner">
+      <strong>KDS is not enabled for this branch.</strong>
+      <span>
+        Enable
+        <code>kds_enabled</code>
+        in the branch feature flags to use the Kitchen Display. Orders will
+        still flow through the standard supervisor-approval timer flow.
+      </span>
+    </div>
+  </ng-container>
+
+  <!-- Station boards: preparing / dispatched -->
+  <section class="boards" *ngIf="!isLoading()">
+    <article
+      class="station"
+      *ngFor="let station of stations()"
+      [class.urgent]="hasUrgent(station.orders)"
+    >
+      <header class="station-head">
+        <h2>{{ station.name }}</h2>
+        <span class="count">{{ itemCount(station.orders) }}</span>
+        <button
+          class="btn-accept-all"
+          *ngIf="anyAcceptable(station.orders)"
+          (click)="acceptAllStation(station.orders)"
+        >
+          Accept All
+        </button>
+        <button
+          class="btn-bump-all"
+          *ngIf="anyBumpable(station.orders)"
+          (click)="bumpAllStation(station.orders)"
+        >
+          Bump All
+        </button>
+      </header>
+
+      <div class="station-body">
+        <div class="order-card" *ngFor="let order of station.orders">
+          <div class="order-head">
+            <span class="table-no">Table {{ order.tableNumber }}</span>
+            <span class="order-time">{{ formatTime(order.createdAt) }}</span>
+          </div>
+          <div class="item" *ngFor="let item of order.items">
+            <span
+              class="status-chip"
+              [class]="statusClass(item)"
+              >{{ getStatusLabel(item) }}</span
+            >
+            <span class="item-qty">{{ item.quantity }}x</span>
+            <span class="item-name">{{ item.menuItemName }}</span>
+            <span
+              class="item-timer"
+              [class.urgent]="isUrgent(item)"
+              *ngIf="item.timerEndsAt"
+              >{{ formatCountdown(item.timerEndsAt) }}</span
+            >
+            <div class="item-actions">
+              <button class="btn-accept" *ngIf="canAccept(item)" (click)="acceptItem(order, item)">
+                Accept
+              </button>
+              <button class="btn-bump" *ngIf="canBump(item)" (click)="bumpItem(order, item)">
+                Bump
+              </button>
+            </div>
+            <div class="item-notes" *ngIf="item.notes">{{ item.notes }}</div>
+          </div>
+        </div>
+        <div class="empty-station" *ngIf="station.orders.length === 0">
+          No active orders
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <div class="loading" *ngIf="isLoading()">Loading board&hellip;</div>
+
+  <!-- Ready board -->
+  <section class="ready-board" *ngIf="!isLoading()">
+    <header class="ready-head">
+      <h2>Ready for Pickup</h2>
+      <span class="count">{{ readyCount() }}</span>
+    </header>
+    <div class="ready-items" *ngIf="readyCount() > 0">
+      <div class="ready-card" *ngFor="let order of ready()">
+        <span class="table-no">Table {{ order.tableNumber }}</span>
+        <span class="ready-items-list">
+          <ng-container *ngFor="let item of order.items; let last = last">
+            {{ item.quantity }}x {{ item.menuItemName
+            }}<ng-container *ngIf="!last">, </ng-container>
+          </ng-container>
+        </span>
+      </div>
+    </div>
+    <div class="empty-ready" *ngIf="readyCount() === 0">No items ready</div>
+  </section>
+
+  <!-- Recently done -->
+  <section class="done-strip" *ngIf="done().length > 0">
+    <header class="done-head">Recently Served</header>
+    <div class="done-items">
+      <span class="done-item" *ngFor="let d of done()">
+        {{ d.qty }}x {{ d.name }} &middot; T{{ d.table }} &middot;
+        {{ formatTime(d.finishedAt.toISOString()) }}
+      </span>
+    </div>
+  </section>
+</div>

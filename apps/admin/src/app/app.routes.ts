@@ -168,6 +168,11 @@ export const appRoutes: Route[] = [
             loadComponent: () => import('./order-queue/order-queue.component').then(m => m.OrderQueueComponent)
           },
           {
+            path: 'kds',
+            canActivate: [permissionGuard('approve_orders')],
+            loadComponent: () => import('./kds/kds.component').then(m => m.KdsComponent)
+          },
+          {
             path: 'pos',
             canActivate: [permissionGuard('view_pos')],
             loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)

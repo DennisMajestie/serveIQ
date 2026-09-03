@@ -102,6 +102,8 @@ export const API_CONFIG = {
       outForDelivery: '/api/v1/orders/out-for-delivery',
       deliver: '/api/v1/orders/:id/deliver',
       confirmPickup: '/api/v1/orders/:id/confirm-pickup',
+      accept: '/api/v1/orders/:id/accept',
+      bump: '/api/v1/orders/:id/bump',
     },
     // Bills
     bills: {

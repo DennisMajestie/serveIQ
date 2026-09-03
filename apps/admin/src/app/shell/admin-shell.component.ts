@@ -254,6 +254,12 @@ interface MobileTab {
                 <span>Orders Queue</span>
               </a>
             </li>
+            <li class="nav-item" *ngIf="permissionService.hasPermission('approve_orders')">
+              <a class="nav-link" routerLink="/app/kds" routerLinkActive="active">
+                <span class="material-symbols-outlined">restaurant_menu</span>
+                <span>Kitchen Display</span>
+              </a>
+            </li>
           </ul>
 
         </nav>
