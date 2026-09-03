@@ -93,7 +93,7 @@ export class KdsComponent implements OnInit, OnDestroy {
     if (!this.branchId) return;
     this.branchesApi.getFeatureFlags(this.branchId).subscribe({
       next: (flags) => {
-        this.isKdsEnabled.set(!!flags?.['kds_enabled']);
+        this.isKdsEnabled.set(!!(flags?.['kds_enabled'] || flags?.['kdsEnabled']));
       },
       error: () => this.isKdsEnabled.set(false),
     });
