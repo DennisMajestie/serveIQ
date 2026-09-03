@@ -22,6 +22,8 @@ export interface PublicMenuData {
   logoUrl?: string;
   brandPrimaryColor?: string;
   brandAccentColor?: string;
+  taxRate?: number;
+  serviceChargePercent?: number;
   items: PublicMenuItem[];
 }
 

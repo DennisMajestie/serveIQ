@@ -30,6 +30,10 @@ export class CartService {
   readonly tableId = signal<string | null>(sessionStorage.getItem(STORAGE_KEYS.tableId));
   readonly orderType = signal<OrderType | null>(this.loadOrderType());
 
+  /** Business-level pricing settings used for the pre-order review totals. */
+  readonly taxRate = signal<number>(7.5);
+  readonly serviceChargePercent = signal<number>(10);
+
   readonly itemCount = computed(() => this.items().reduce((sum, i) => sum + i.quantity, 0));
   readonly totalKobo = computed(() => this.items().reduce((sum, i) => sum + i.priceKobo * i.quantity, 0));
 
@@ -100,6 +104,13 @@ export class CartService {
   setOrderType(type: OrderType) {
     this.orderType.set(type);
     sessionStorage.setItem(STORAGE_KEYS.orderType, type);
+  }
+
+  setPricingSettings(taxRate: number, serviceChargePercent: number) {
+    this.taxRate.set(Number.isFinite(taxRate) ? taxRate : 7.5);
+    this.serviceChargePercent.set(
+      Number.isFinite(serviceChargePercent) ? serviceChargePercent : 10,
+    );
   }
 
   clearSession() {

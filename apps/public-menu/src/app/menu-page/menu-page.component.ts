@@ -72,6 +72,10 @@ export class MenuPageComponent implements OnInit {
       next: (menu) => {
         this.data.set(menu);
         this.applyBrandColors(menu);
+        this.cartService.setPricingSettings(
+          menu.taxRate ?? 7.5,
+          menu.serviceChargePercent ?? 10,
+        );
         const cats = groupCategoryNames(menu.items.map(i => i.category));
         this.categories.set(cats);
       },

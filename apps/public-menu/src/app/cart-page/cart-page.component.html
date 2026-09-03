@@ -57,10 +57,28 @@
 <app-call-waiter></app-call-waiter>
     </section>
 
-    <!-- Total -->
-    <div class="cart-total">
-      <span>Total</span>
-      <span class="total-amount">₦{{ (totalKobo / 100).toLocaleString() }}</span>
+    <!-- Totals -->
+    <div class="cart-totals">
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span>₦{{ (subtotalKobo / 100).toLocaleString() }}</span>
+      </div>
+      @if (serviceChargePercent) {
+        <div class="total-row">
+          <span>Service Charge ({{ serviceChargePercent }}%)</span>
+          <span>₦{{ (serviceChargeKobo / 100).toLocaleString() }}</span>
+        </div>
+      }
+      @if (taxRate) {
+        <div class="total-row">
+          <span>VAT ({{ taxRate }}%)</span>
+          <span>₦{{ (vatKobo / 100).toLocaleString() }}</span>
+        </div>
+      }
+      <div class="cart-total">
+        <span>Grand Total</span>
+        <span class="total-amount">₦{{ (totalKobo / 100).toLocaleString() }}</span>
+      </div>
     </div>
 
     <!-- Place Order -->
@@ -118,9 +136,27 @@
         }
       </div>
 
-      <div class="confirm-total">
-        <span>Total</span>
-        <span class="total-amount">₦{{ (totalKobo / 100).toLocaleString() }}</span>
+      <div class="confirm-summary">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span>₦{{ (subtotalKobo / 100).toLocaleString() }}</span>
+        </div>
+        @if (serviceChargePercent) {
+          <div class="total-row">
+            <span>Service Charge ({{ serviceChargePercent }}%)</span>
+            <span>₦{{ (serviceChargeKobo / 100).toLocaleString() }}</span>
+          </div>
+        }
+        @if (taxRate) {
+          <div class="total-row">
+            <span>VAT ({{ taxRate }}%)</span>
+            <span>₦{{ (vatKobo / 100).toLocaleString() }}</span>
+          </div>
+        }
+        <div class="confirm-total">
+          <span>Grand Total</span>
+          <span class="total-amount">₦{{ (totalKobo / 100).toLocaleString() }}</span>
+        </div>
       </div>
 
       <div class="confirm-actions">

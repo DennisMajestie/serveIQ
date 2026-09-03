@@ -166,6 +166,24 @@
   color: var(--primary);
 }
 
+.cart-totals {
+  margin-top: 4px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+
+  span:last-child {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
 .cart-total {
   display: flex;
   justify-content: space-between;
@@ -337,6 +355,10 @@
   font-weight: 600;
   color: var(--text);
   white-space: nowrap;
+}
+
+.confirm-summary {
+  margin-top: 6px;
 }
 
 .confirm-total {

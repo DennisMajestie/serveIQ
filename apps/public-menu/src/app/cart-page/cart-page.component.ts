@@ -27,8 +27,28 @@ export class CartPageComponent {
   showConfirmModal = signal(false);
   selectedType = signal<'dine_in' | 'takeaway'>(this.cartService.orderType() ?? 'dine_in');
 
-  get totalKobo() {
+  get subtotalKobo() {
     return this.cartService.items().reduce((sum, i) => sum + i.priceKobo * i.quantity, 0);
+  }
+
+  get vatKobo() {
+    return Math.round(this.subtotalKobo * this.cartService.taxRate() / 100);
+  }
+
+  get serviceChargeKobo() {
+    return Math.round(this.subtotalKobo * this.cartService.serviceChargePercent() / 100);
+  }
+
+  get totalKobo() {
+    return this.subtotalKobo + this.vatKobo + this.serviceChargeKobo;
+  }
+
+  get taxRate() {
+    return this.cartService.taxRate();
+  }
+
+  get serviceChargePercent() {
+    return this.cartService.serviceChargePercent();
   }
 
   openTypeModal() {
