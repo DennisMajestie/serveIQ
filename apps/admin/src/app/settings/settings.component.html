@@ -1,15 +1,15 @@
 <div class="min-h-screen bg-[var(--background)] text-[var(--on-background)] overflow-x-hidden">
-  <div class="grid grid-cols-[280px_1fr] p-8 gap-8">
+  <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8">
     <!-- Sidebar -->
-    <aside class="space-y-4">
-      <div class="mb-8">
+    <aside class="flex lg:flex-col items-center lg:items-stretch gap-2 lg:gap-4">
+      <div class="hidden lg:block mb-8">
         <h1 class="text-[24px] leading-[1.3] font-bold text-[var(--primary)]" style="font-family:'Space Grotesk',sans-serif">{{ businessSettings()?.name || 'ServeIQ' }}</h1>
         <p class="text-[var(--on-surface-variant)] text-[12px] leading-none font-semibold mt-1" style="font-family:'Inter',sans-serif">Executive Admin</p>
       </div>
-      <nav class="space-y-1">
+      <nav class="flex lg:flex-col lg:space-y-1 gap-1 overflow-x-auto pb-2 lg:pb-0">
         @for (item of navItems; track item.key) {
           <button (click)="setActiveSection(item.key)"
-            class="w-full flex items-center gap-3 py-3 pl-5 rounded-xl transition-all duration-300 hover-bg-primary-10 hover:translate-x-1 text-left"
+            class="w-full flex items-center gap-3 py-3 px-4 lg:pl-5 rounded-xl transition-all duration-300 hover-bg-primary-10 hover:translate-x-1 text-left shrink-0"
             [class.text-[var(--primary)]]="activeSection() === item.key"
             [class.font-bold]="activeSection() === item.key"
             [style.background]="activeSection() === item.key ? 'color-mix(in srgb, var(--primary) 5%, transparent)' : ''"
@@ -17,11 +17,11 @@
             [class.border-[var(--primary)]]="activeSection() === item.key"
             [class.text-[var(--on-surface-variant)]]="activeSection() !== item.key">
             <span class="material-symbols-outlined">{{ item.icon }}</span>
-            <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">{{ item.label }}</span>
+            <span class="text-[14px] leading-none font-semibold shrink-0" style="font-family:'Inter',sans-serif">{{ item.label }}</span>
           </button>
         }
       </nav>
-      <div class="mt-auto pt-8 space-y-2">
+      <div class="mt-auto pt-8 space-y-2 hidden lg:block">
         <button class="w-full text-left flex items-center gap-3 py-3 px-5 text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">
           <span class="material-symbols-outlined">help</span>
           Help
@@ -107,9 +107,9 @@
             <!-- Business Code -->
             @if (businessCode()) {
               <div class="col-span-12 glass-card p-6">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div class="flex items-center gap-3">
-                    <div class="p-2 bg-secondary-10 rounded-lg">
+                    <div class="p-2 bg-secondary-10 rounded-lg shrink-0">
                       <span class="material-symbols-outlined text-[var(--secondary)]">vpn_key</span>
                     </div>
                     <div>
@@ -119,7 +119,7 @@
                   </div>
                   <div class="flex items-center gap-3">
                     <code class="text-[28px] leading-none font-bold tracking-[0.15em] text-[var(--primary)] select-all" style="font-family:'Space Grotesk',sans-serif">{{ businessCode() }}</code>
-                    <button (click)="copyBusinessCode()" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all"
+                    <button (click)="copyBusinessCode()" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all shrink-0"
                       [class.bg-primary-20]="!copiedCode()"
                       [class.bg-[var(--primary)]]="copiedCode()"
                       [class.text-[var(--primary)]]="!copiedCode()"
@@ -194,7 +194,7 @@
                 </div>
                 <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Global Branch Configurations</h3>
               </div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="space-y-2">
                   <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Default Tax Rate (%)</label>
                   <input type="number" step="0.01" min="0" max="100" [ngModel]="taxRate()" (ngModelChange)="taxRate.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 7.5" style="font-family:'Inter',sans-serif" />
