@@ -114,9 +114,10 @@ export class MenuPageComponent implements OnInit {
   }
 
   private updateReadOnly() {
-    // Dine In (or undecided) without a table is a read-only menu preview.
-    // Takeaway and Dine In at a scanned table are self-service.
-    this.readOnly.set(this.cartService.orderType() !== 'takeaway' && !this.cartService.hasTable());
+    // Dine-in is waiter-served — only takeaway self-service adds items to the
+    // cart. Dine-in customers view the menu read-only and the waiter takes the
+    // order. A scanned table QR does not enable self-ordering for dine-in.
+    this.readOnly.set(this.cartService.orderType() !== 'takeaway');
   }
 
   private applyBrandColors(menu: PublicMenuData): void {
