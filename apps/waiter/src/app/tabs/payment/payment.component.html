@@ -82,20 +82,52 @@
                 </div>
                 <p class="mt-2 text-[12px] leading-[1.4] text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">Replaces guests with {{ autoSplitCount() }} equal shares of the total. You can tune each share afterwards.</p>
               </div>
+
+              <div class="rounded-xl bg-white/[0.03] border border-white/10 p-3">
+                <p class="text-[12px] leading-[1.4] font-semibold text-[#bccbb9]/70 mb-2" style="font-family:'Inter',sans-serif">Quick Split</p>
+                <div class="flex items-center gap-2">
+                  <button (click)="quickSplit5050()" class="flex-1 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] leading-none font-semibold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Space Grotesk',sans-serif">50 / 50</button>
+                  <button (click)="quickSplit6040()" class="flex-1 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] leading-none font-semibold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Space Grotesk',sans-serif">60 / 40</button>
+                  <button (click)="quickSplit7030()" class="flex-1 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] leading-none font-semibold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Space Grotesk',sans-serif">70 / 30</button>
+                </div>
+                <p class="mt-2 text-[12px] leading-[1.4] text-[#bccbb9]/50" style="font-family:'Inter',sans-serif">Two guests with a common split ratio.</p>
+              </div>
             }
 
             <div class="space-y-3">
               @for (guest of guests(); track guest.id; let i = $index) {
                 <div class="rounded-xl bg-white/[0.03] border border-white/10 p-3 space-y-3">
                   <div class="flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-full bg-[#4be277]/15 text-[#4be277] text-[13px] leading-none font-bold flex items-center justify-center" style="font-family:'Space Grotesk',sans-serif">{{ i + 1 }}</span>
+                    <span class="w-7 h-7 rounded-full text-[13px] leading-none font-bold flex items-center justify-center relative" style="font-family:'Space Grotesk',sans-serif"
+                      [class.bg-[#4be277]/15]="guestStatus(guest) === 'pending'"
+                      [class.text-[#4be277]]="guestStatus(guest) === 'pending'"
+                      [class.bg-[#f97316]/15]="guestStatus(guest) === 'processing'"
+                      [class.text-[#f97316]]="guestStatus(guest) === 'processing'"
+                      [class.bg-[#22c55e]/15]="guestStatus(guest) === 'paid'"
+                      [class.text-[#22c55e]]="guestStatus(guest) === 'paid'">
+                      {{ i + 1 }}
+                      <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-[#0c1324]"
+                        [class.bg-[#bccbb9]]="guestStatus(guest) === 'pending'"
+                        [class.bg-[#f97316]="guestStatus(guest) === 'processing'"
+                        [class.animate-pulse]="guestStatus(guest) === 'processing'"
+                        [class.bg-[#22c55e]]="guestStatus(guest) === 'paid'">
+                      </span>
+                    </span>
                     <input [value]="guest.label" (input)="updateGuestLabel(guest, $any($event.target).value)" [disabled]="splitLocked()"
                       placeholder="Guest name"
                       class="flex-1 bg-transparent text-[14px] leading-[1.4] font-semibold text-[#dce1fb] outline-none border-b border-white/10 focus:border-[#4be277]/50 pb-0.5 disabled:opacity-50" style="font-family:'Inter',sans-serif" />
                     @if (!splitLocked()) {
-                      <button (click)="removeGuest(i)" class="w-7 h-7 rounded-full border border-white/10 flex items-center justify-center text-[#bccbb9] active:scale-90 transition-transform">
-                        <span class="material-symbols-outlined text-[16px]">close</span>
-                      </button>
+                      <div class="flex items-center gap-1">
+                        <button (click)="moveGuestUp(i)" [disabled]="i === 0" class="w-6 h-6 rounded border border-white/10 flex items-center justify-center text-[#bccbb9] active:scale-90 transition-transform disabled:opacity-30">
+                          <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                        </button>
+                        <button (click)="moveGuestDown(i)" [disabled]="i === guests().length - 1" class="w-6 h-6 rounded border border-white/10 flex items-center justify-center text-[#bccbb9] active:scale-90 transition-transform disabled:opacity-30">
+                          <span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+                        </button>
+                        <button (click)="removeGuest(i)" class="w-6 h-6 rounded border border-white/10 flex items-center justify-center text-[#bccbb9] active:scale-90 transition-transform">
+                          <span class="material-symbols-outlined text-[14px]">close</span>
+                        </button>
+                      </div>
                     }
                   </div>
 
@@ -122,6 +154,8 @@
                             <span class="flex items-center gap-2 text-[13px] leading-[1.4] text-[#dce1fb]" style="font-family:'Inter',sans-serif">
                               @if (guest.orderIds.includes(item.id)) {
                                 <span class="material-symbols-outlined text-[16px] text-[#4be277]">check_circle</span>
+                              } @else if (getItemOwner(item.id); as owner) {
+                                <span class="w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center" [style.background]="owner.color + '33'" [style.color]="owner.color">{{ owner.guestLabel.charAt(0) }}</span>
                               }
                               {{ item.name }} <span class="text-[#bccbb9]/60">x{{ item.qty }}</span>
                             </span>
@@ -195,6 +229,17 @@
                 <span class="material-symbols-outlined text-[18px]">person_add</span>
                 <span class="text-[14px] leading-[1.5] font-semibold" style="font-family:'Inter',sans-serif">Add Guest</span>
               </button>
+            }
+
+            @if (validationWarnings().length > 0) {
+              <div class="space-y-2">
+                @for (warning of validationWarnings(); track warning) {
+                  <div class="flex items-start gap-2 p-2.5 rounded-lg bg-[#f97316]/10 border border-[#f97316]/20">
+                    <span class="material-symbols-outlined text-[16px] text-[#f97316] mt-0.5">warning</span>
+                    <span class="text-[12px] leading-[1.4] text-[#ffd9b3]" style="font-family:'Inter',sans-serif">{{ warning }}</span>
+                  </div>
+                }
+              </div>
             }
 
             <div class="flex items-center justify-between pt-3 border-t border-white/5">

@@ -339,6 +339,118 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.autoSplitCount.set(Math.min(20, this.autoSplitCount() + 1));
   }
 
+  // ── Quick split presets ──
+
+  quickSplit5050() {
+    if (this.splitLocked()) return;
+    const total = this.bill()?.totalKobo ?? 0;
+    const half = Math.floor(total / 2);
+    const other = total - half;
+    this.guests.set([
+      { ...this.newGuest('Guest 1'), mode: AllocationType.AMOUNT, amountKobo: half, amountInput: (half / 100).toFixed(2) },
+      { ...this.newGuest('Guest 2'), mode: AllocationType.AMOUNT, amountKobo: other, amountInput: (other / 100).toFixed(2) },
+    ]);
+    this.autoSplitCount.set(2);
+  }
+
+  quickSplit6040() {
+    if (this.splitLocked()) return;
+    const total = this.bill()?.totalKobo ?? 0;
+    const a = Math.floor(total * 0.6);
+    const b = total - a;
+    this.guests.set([
+      { ...this.newGuest('Guest 1'), mode: AllocationType.AMOUNT, amountKobo: a, amountInput: (a / 100).toFixed(2) },
+      { ...this.newGuest('Guest 2'), mode: AllocationType.AMOUNT, amountKobo: b, amountInput: (b / 100).toFixed(2) },
+    ]);
+    this.autoSplitCount.set(2);
+  }
+
+  quickSplit7030() {
+    if (this.splitLocked()) return;
+    const total = this.bill()?.totalKobo ?? 0;
+    const a = Math.floor(total * 0.7);
+    const b = total - a;
+    this.guests.set([
+      { ...this.newGuest('Guest 1'), mode: AllocationType.AMOUNT, amountKobo: a, amountInput: (a / 100).toFixed(2) },
+      { ...this.newGuest('Guest 2'), mode: AllocationType.AMOUNT, amountKobo: b, amountInput: (b / 100).toFixed(2) },
+    ]);
+    this.autoSplitCount.set(2);
+  }
+
+  // ── Reorder guests (payment priority affects 'remaining' calculation) ──
+
+  moveGuestUp(index: number) {
+    if (this.splitLocked() || index <= 0) return;
+    this.guests.update(gs => {
+      const arr = [...gs];
+      [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
+      return arr;
+    });
+  }
+
+  moveGuestDown(index: number) {
+    if (this.splitLocked() || index >= this.guests().length - 1) return;
+    this.guests.update(gs => {
+      const arr = [...gs];
+      [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+      return arr;
+    });
+  }
+
+  // ── Processing state per guest ──
+
+  processingGuestId = signal<string | null>(null);
+
+  isGuestProcessing(g: GuestCard): boolean {
+    return this.processingGuestId() === g.id;
+  }
+
+  guestStatus(g: GuestCard): 'pending' | 'processing' | 'paid' {
+    if (g.paid) return 'paid';
+    if (this.isGuestProcessing(g)) return 'processing';
+    return 'pending';
+  }
+
+  // ── Validation warnings ──
+
+  validationWarnings = computed<string[]>(() => {
+    const warnings: string[] = [];
+    const total = this.bill()?.totalKobo ?? 0;
+    if (total <= 0 || this.guests().length === 0) return warnings;
+
+    const allocated = this.allocatedKobo;
+    if (allocated > total + 1) {
+      warnings.push(`Allocated amount (${this.formatKobo(allocated)}) exceeds the total bill (${this.formatKobo(total)}).`);
+    }
+    if (this.guests().length > 0 && allocated < total - 1 && !this.guests().some(g => g.mode === AllocationType.REMAINING)) {
+      warnings.push(`${this.formatKobo(this.remainingKobo)} is not allocated. Add a "Remaining balance" guest or adjust amounts.`);
+    }
+    const zeroGuests = this.guests().filter(g => !g.paid && this.guestAllocated(g) <= 0);
+    if (zeroGuests.length > 0) {
+      warnings.push(`${zeroGuests.length} guest${zeroGuests.length === 1 ? ' has' : 's have'} no amount — they will be skipped.`);
+    }
+    return warnings;
+  });
+
+  // ── Item allocation tracking ──
+
+  itemOwnerMap = computed<Map<string, { guestId: string; guestLabel: string; color: string }>>(() => {
+    const map = new Map<string, { guestId: string; guestLabel: string; color: string }>();
+    const colors = ['#4be277', '#60a5fa', '#f97316', '#e879f9', '#facc15', '#34d399', '#f87171', '#a78bfa'];
+    this.guests().forEach((g, i) => {
+      g.orderIds.forEach(itemId => {
+        if (!map.has(itemId)) {
+          map.set(itemId, { guestId: g.id, guestLabel: g.label, color: colors[i % colors.length] });
+        }
+      });
+    });
+    return map;
+  });
+
+  getItemOwner(itemId: string): { guestLabel: string; color: string } | null {
+    return this.itemOwnerMap().get(itemId) ?? null;
+  }
+
   /** Split the whole bill into N equal shares and seed one guest card per share.
    *  Uses largest-remainder so the shares always sum exactly to the total (kobo-safe). */
   private seedEqualSplit(n: number = 2) {
@@ -574,6 +686,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     }
 
     this.isProcessing.set(true);
+    this.processingGuestId.set(target.id);
     try {
       if (!fresh.billId) {
         await this.createSplitPlan();
@@ -612,6 +725,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
       const msg = err?.error?.message || err?.message || 'Could not process the payment. Please try again.';
       Swal.fire({ icon: 'error', title: 'Payment Failed', text: msg, background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
     } finally {
+      this.processingGuestId.set(null);
       this.isProcessing.set(false);
     }
   }
