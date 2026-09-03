@@ -329,19 +329,43 @@ export class PaymentComponent implements OnInit, OnDestroy {
     };
   }
 
-  private seedEqualSplit() {
+  autoSplitCount = signal(2);
+
+  autoSplitDec() {
+    this.autoSplitCount.set(Math.max(2, this.autoSplitCount() - 1));
+  }
+
+  autoSplitInc() {
+    this.autoSplitCount.set(Math.min(20, this.autoSplitCount() + 1));
+  }
+
+  /** Split the whole bill into N equal shares and seed one guest card per share.
+   *  Uses largest-remainder so the shares always sum exactly to the total (kobo-safe). */
+  private seedEqualSplit(n: number = 2) {
     const total = this.bill()?.totalKobo ?? 0;
-    const each = Math.floor(total / 2);
+    const each = Math.floor(total / n);
+    let remainder = total - each * n;
     const cards: GuestCard[] = [];
-    for (let i = 0; i < 2; i++) {
-      const amount = each + (i === 1 ? total - each * 2 : 0);
+    for (let i = 0; i < n; i++) {
+      const amount = each + (i < remainder ? 1 : 0);
       cards.push({
         ...this.newGuest(`Guest ${i + 1}`),
+        mode: AllocationType.AMOUNT,
         amountKobo: amount,
         amountInput: (amount / 100).toFixed(2),
       });
     }
     this.guests.set(cards);
+    this.autoSplitCount.set(n);
+  }
+
+  /** Auto-split the bill evenly across a chosen number of guests, replacing the
+   *  current guest cards with N equal "Fixed amount" shares that can still be
+   *  tuned individually afterwards. */
+  autoSplitEvenly() {
+    if (this.splitLocked()) return;
+    const n = Math.max(2, Math.min(20, this.autoSplitCount()));
+    this.seedEqualSplit(n);
   }
 
   addGuestCard() {

@@ -137,6 +137,23 @@ describe('PaymentComponent', () => {
     expect(component.allocatedKobo).toBe(component.bill()?.totalKobo ?? 0);
   });
 
+  it('should auto-split evenly across N guests summing to the total', () => {
+    fixture.detectChanges();
+    paramMapSubject.next(convertToParamMap({ id: 'tab-1' }));
+    fixture.detectChanges();
+
+    component.toggleSplit();
+    component.autoSplitCount.set(3);
+    component.autoSplitEvenly();
+
+    expect(component.guests().length).toBe(3);
+    const total = component.bill()?.totalKobo ?? 0;
+    expect(component.allocatedKobo).toBe(total);
+    const shares = component.guests().map(g => g.amountKobo);
+    const diff = Math.max(...shares) - Math.min(...shares);
+    expect(diff).toBeLessThanOrEqual(1);
+  });
+
   it('should have items from bill', () => {
     fixture.detectChanges();
     paramMapSubject.next(convertToParamMap({ id: 'tab-1' }));
