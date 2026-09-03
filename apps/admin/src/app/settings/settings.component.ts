@@ -555,7 +555,12 @@ navItems: { key: Section; label: string; icon: string }[] = [
 
   /** Branch used for the KDS toggle — falls back to the active branch. */
   kdsBranch(): string {
-    return this.activeBranchId() || this.branches()[0]?.id || '';
+    return (
+      this.activeBranchId() ||
+      localStorage.getItem('branchId') ||
+      this.branches()[0]?.id ||
+      ''
+    );
   }
 
   /** Read a feature flag regardless of whether the response was camel-cased. */
