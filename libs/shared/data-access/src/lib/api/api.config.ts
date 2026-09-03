@@ -45,6 +45,7 @@ export const API_CONFIG = {
       businessKpis: '/api/v1/branches/business/kpis',
       generateQr: '/api/v1/branches/:id/generate-qr',
       paymentProviders: '/api/v1/branches/payment-providers',
+      featureFlags: '/api/v1/branches/:id/feature-flags',
     },
     // Menu
     menu: {

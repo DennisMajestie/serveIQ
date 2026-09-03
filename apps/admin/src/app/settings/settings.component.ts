@@ -66,6 +66,10 @@ navItems: { key: Section; label: string; icon: string }[] = [
   activeBranchId = signal(localStorage.getItem('activeBranchId') || '');
   businessSettings = signal<Business | null>(null);
 
+  // Kitchen Display (KDS) — per-branch feature flag
+  kdsEnabled = signal(false);
+  isKdsLoading = signal(false);
+
   // Payment settings
   platformProviders = signal<PlatformPaymentProviderSummary[]>([]);
   isLoadingPlatform = signal(false);
@@ -225,6 +229,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
     });
     this.loadBusinessSettings();
     this.loadWaiters();
+    this.loadKdsFlag();
   }
 
   loadBusinessSettings() {
@@ -533,6 +538,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
         localStorage.removeItem('branchId');
         localStorage.removeItem('branchName');
       }
+      this.loadKdsFlag();
       this.router.navigate(['/app/dashboard']);
     });
   }
@@ -545,6 +551,74 @@ navItems: { key: Section; label: string; icon: string }[] = [
 
   isCopied(branchId: string): boolean {
     return this.copiedBranchId() === branchId;
+  }
+
+  /** Branch used for the KDS toggle — falls back to the active branch. */
+  kdsBranch(): string {
+    return this.activeBranchId() || this.branches()[0]?.id || '';
+  }
+
+  /** Read a feature flag regardless of whether the response was camel-cased. */
+  private kdsFlag(flags: Record<string, boolean> | null | undefined): boolean {
+    return !!(
+      flags &&
+      (flags['kds_enabled'] || flags['kdsEnabled'])
+    );
+  }
+
+  /** Switch which branch the KDS toggle applies to and load its flag. */
+  setKdsBranch(branchId: string) {
+    if (!branchId) return;
+    this.activeBranchId.set(branchId);
+    localStorage.setItem('activeBranchId', branchId);
+    this.loadKdsFlag();
+  }
+
+  loadKdsFlag() {
+    const branchId = this.kdsBranch();
+    if (!branchId) {
+      this.kdsEnabled.set(false);
+      return;
+    }
+    this.isKdsLoading.set(true);
+    this.branchesApi.getFeatureFlags(branchId).subscribe({
+      next: (flags) => {
+        this.kdsEnabled.set(this.kdsFlag(flags));
+        this.isKdsLoading.set(false);
+      },
+      error: () => {
+        this.kdsEnabled.set(false);
+        this.isKdsLoading.set(false);
+      },
+    });
+  }
+
+  toggleKds() {
+    const branchId = this.kdsBranch();
+    if (!branchId) {
+      Swal.fire({ icon: 'error', title: 'No Branch Selected', text: 'Select a branch before enabling the Kitchen Display.' });
+      return;
+    }
+    this.isKdsLoading.set(true);
+    this.branchesApi.updateFeatureFlags(branchId, { kds_enabled: !this.kdsEnabled() }).subscribe({
+      next: (flags) => {
+        this.kdsEnabled.set(this.kdsFlag(flags));
+        this.isKdsLoading.set(false);
+        Swal.fire({
+          icon: 'success',
+          title: this.kdsEnabled() ? 'Kitchen Display Enabled' : 'Kitchen Display Disabled',
+          text: this.kdsEnabled()
+            ? 'Orders will now appear on the Kitchen Display board for this branch.'
+            : 'Orders will flow through the standard supervisor-approval flow.',
+          timer: 2500,
+          showConfirmButton: false,
+        });
+      },
+      error: () => {
+        this.isKdsLoading.set(false);
+        Swal.fire({ icon: 'error', title: 'Update Failed', text: 'Could not update the Kitchen Display flag.' });
+      },
+    });
   }
 
   getInitials(name: string | undefined | null): string {

@@ -135,6 +135,50 @@
               </div>
             }
 
+            <!-- Kitchen Display (KDS) -->
+            <div class="col-span-12 glass-card p-6">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="flex items-start gap-3">
+                  <div class="p-2 bg-primary-10 rounded-lg shrink-0">
+                    <span class="material-symbols-outlined text-[var(--primary)]">restaurant_menu</span>
+                  </div>
+                  <div>
+                    <h3 class="text-[24px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Kitchen Display</h3>
+                    <p class="text-[var(--on-surface-variant)] text-[14px] leading-[1.4] mt-1" style="font-family:'Inter',sans-serif">Show orders on the Kitchen Display board for a branch. When off, orders flow through the standard supervisor-approval flow.</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 shrink-0 flex-wrap">
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Branch</label>
+                  <select [ngModel]="kdsBranch()" (ngModelChange)="setKdsBranch($event)" class="h-11 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5] appearance-none min-w-[180px]" style="font-family:'Inter',sans-serif">
+                    @for (b of branches(); track b.id) {
+                      <option [value]="b.id" class="bg-[var(--background)]">{{ b.name }}</option>
+                    }
+                  </select>
+                  <button
+                    (click)="toggleKds()"
+                    [disabled]="isKdsLoading() || !branches().length"
+                    class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors active:scale-95"
+                    [class.bg-[var(--primary)]]="kdsEnabled()"
+                    [class.bg-[var(--surface-variant)]]="!kdsEnabled()"
+                    [class.opacity-60]="isKdsLoading()"
+                    [class.cursor-pointer]="!isKdsLoading() && branches().length"
+                    role="switch"
+                    [attr.aria-checked]="kdsEnabled()"
+                    [title]="kdsEnabled() ? 'Disable Kitchen Display' : 'Enable Kitchen Display'">
+                    <span
+                      class="inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform"
+                      [class.translate-x-6]="kdsEnabled()"
+                      [class.translate-x-1]="!kdsEnabled()"></span>
+                  </button>
+                  <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif"
+                    [class.text-[var(--primary)]]="kdsEnabled()"
+                    [class.text-[var(--on-surface-variant)]]="!kdsEnabled()">
+                    {{ isKdsLoading() ? '...' : (kdsEnabled() ? 'Enabled' : 'Disabled') }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <!-- Operational Pulse -->
             <div class="col-span-12 glass-card p-6">
               <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">

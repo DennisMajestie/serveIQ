@@ -51,6 +51,21 @@ export class BranchesApiService extends BaseApiService {
     return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }) + '/settings', data);
   }
 
+  /** Get per-branch feature flags (e.g. { kds_enabled: true }). */
+  getFeatureFlags(id: string): Observable<Record<string, boolean>> {
+    return this.get<Record<string, boolean>>(
+      buildUrl(API_CONFIG.endpoints.branches.featureFlags, { id }),
+    );
+  }
+
+  /** Set per-branch feature flags (e.g. { kds_enabled: true }). */
+  updateFeatureFlags(id: string, flags: Record<string, boolean>): Observable<Record<string, boolean>> {
+    return this.patch<Record<string, boolean>>(
+      buildUrl(API_CONFIG.endpoints.branches.featureFlags, { id }),
+      flags,
+    );
+  }
+
   /** Get dashboard summary stats (tables, open tabs, orders). */
   getStats(): Observable<DashboardStats> {
     return this.get<DashboardStats>(API_CONFIG.endpoints.branches.stats);
