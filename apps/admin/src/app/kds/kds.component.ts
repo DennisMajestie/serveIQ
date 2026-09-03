@@ -18,7 +18,6 @@ import {
 import { OrderGroup, OrderGroupItem } from '@serveiq/shared/models';
 import { Socket } from 'socket.io-client';
 import { interval, Subscription } from 'rxjs';
-import { ThemeService } from '../core/theme.service';
 
 interface DoneEntry {
   id: string;
@@ -41,9 +40,6 @@ export class KdsComponent implements OnInit, OnDestroy {
   private auth = inject(AuthService);
   private socketSvc = inject(RealtimeSocketService);
   private branchesApi = inject(BranchesApiService);
-  private themeService = inject(ThemeService);
-
-  isDarkMode = signal(this.themeService.theme() === 'dark');
 
   preparing = signal<OrderGroup[]>([]);
   ready = signal<OrderGroup[]>([]);
