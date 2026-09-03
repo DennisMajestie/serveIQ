@@ -41,7 +41,8 @@
         </div>
       </section>
 
-      <!-- Split / Guest Cards Section -->
+      <!-- Split / Guest Cards Section (dine-in only) -->
+      @if (!isTakeaway()) {
       <section class="glass-card rounded-2xl p-6 border border-white/5">
         <button (click)="toggleSplit()" class="w-full flex items-center gap-3 text-left">
           <span class="material-symbols-outlined text-[#4be277]">call_split</span>
@@ -261,6 +262,7 @@
           </div>
         }
       </section>
+      }
 
       <!-- Settle Methods -->
       <section class="grid grid-cols-2 gap-5">

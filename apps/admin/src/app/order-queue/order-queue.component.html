@@ -215,10 +215,12 @@
                     <span class="material-symbols-outlined">cancel</span>
                     {{ isProcessingGroup(group) ? 'Processing...' : 'Decline' }}
                   </button>
-                  <button class="btn-split" [disabled]="isProcessingAction()" (click)="createPaymentPlan(group)" title="Create split payment plan">
-                    <span class="material-symbols-outlined">account_tree</span>
-                    Split
-                  </button>
+                  @if (group.tabType !== 'takeaway') {
+                    <button class="btn-split" [disabled]="isProcessingAction()" (click)="createPaymentPlan(group)" title="Create split payment plan">
+                      <span class="material-symbols-outlined">account_tree</span>
+                      Split
+                    </button>
+                  }
                   <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>
                   </button>
@@ -428,10 +430,12 @@
                     <span class="material-symbols-outlined">remove_circle</span>
                     {{ isCashRemoving(group) ? 'Removing...' : 'Remove' }}
                   </button>
-                  <button class="btn-split" [disabled]="isProcessingAction()" (click)="createPaymentPlan(group)" title="Create split payment plan">
-                    <span class="material-symbols-outlined">account_tree</span>
-                    Split
-                  </button>
+                  @if (group.tabType !== 'takeaway') {
+                    <button class="btn-split" [disabled]="isProcessingAction()" (click)="createPaymentPlan(group)" title="Create split payment plan">
+                      <span class="material-symbols-outlined">account_tree</span>
+                      Split
+                    </button>
+                  }
                   <button class="btn-icon-only" title="View activity timeline" (click)="viewOrderTimeline(group)">
                     <span class="material-symbols-outlined">history</span>
                   </button>

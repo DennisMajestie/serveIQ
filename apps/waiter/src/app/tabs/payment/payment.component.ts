@@ -55,8 +55,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   tabId = signal('');
   table = signal<Table | null>(null);
+  tabType = signal<string>('');
   bill = signal<Bill | null>(null);
   items = computed(() => this.bill()?.orderItems ?? []);
+  isTakeaway = computed(() => this.tabType() === 'takeaway');
 
   pendingCount = computed(() => this.items().filter(i => {
     const raw = i as any;
@@ -105,10 +107,13 @@ export class PaymentComponent implements OnInit, OnDestroy {
   loadTableInfo(tabId: string) {
     this.offlineData.getTab(tabId).subscribe({
       next: (tab: Tab | null) => {
-        if (tab?.tableId) {
-          this.offlineData.getTable(tab.tableId).subscribe({
-            next: (table) => { if (table) this.table.set(table); }
-          });
+        if (tab) {
+          this.tabType.set((tab as any).tabType ?? (tab as any).tab_type ?? '');
+          if (tab.tableId) {
+            this.offlineData.getTable(tab.tableId).subscribe({
+              next: (table) => { if (table) this.table.set(table); }
+            });
+          }
         }
       }
     });
