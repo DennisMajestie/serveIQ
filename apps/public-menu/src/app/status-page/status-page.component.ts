@@ -86,6 +86,11 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     return tab.orders.some(x => (x.orderStatus || '').toLowerCase() === 'delivered');
   });
 
+  /** Split payment progress for a self-service dine-in tab, if a payment plan
+   *  exists. Lets a group see which guests have already paid and how much of the
+   *  bill remains while they wait. Takeaway never splits. */
+  readonly splitPayment = computed(() => this.tabData()?.splitPayment ?? null);
+
   private servedCelebrated = false;
   private servedWatcher = effect(() => {
     if (this.isServed() && !this.servedCelebrated) {
@@ -517,6 +522,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       trackingGeneratedAt: data.trackingGeneratedAt,
       openedAt: '',
       totalKobo: data.orders?.reduce?.((s: number, o: any) => s + (o.subtotalKobo || 0), 0) || 0,
+      splitPayment: data.splitPayment,
       orders: (data.orders || []).map((o: any) => ({
         id: o.id,
         menuItemId: o.menuItemId || '',
