@@ -222,8 +222,8 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   private launchConfetti() {
     const host = document.querySelector('.status-page') as HTMLElement | null;
     if (!host) return;
-    const w = window.innerWidth || host.clientWidth;
-    const h = window.innerHeight || host.clientHeight;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'confetti-canvas';
     this.canvas.width = w;
