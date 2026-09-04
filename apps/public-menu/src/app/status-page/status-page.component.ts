@@ -46,6 +46,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   polling = signal(false);
   initializingPayment = signal(false);
   errorMessage = signal('');
+  payBlockedMessage = signal('');
 
   // ── Cash-at-counter flow ───────────────────────────────────────────────────
   // Customer taps cash → a confirmation modal opens; once confirmed the request
@@ -547,7 +548,18 @@ export class StatusPageComponent implements OnInit, OnDestroy {
         this.selectedTerminalId.set(null);
         this.connectPaymentSocket(tabId, trackingCode);
       },
-      error: (err) => showApiErrorToast(err, 'Failed to initialize payment'),
+      error: (err) => {
+        const body = err?.error ?? err;
+        const msg =
+          (body && typeof body.message === 'string' && body.message) ||
+          (body && typeof body.serverMessage === 'string' && body.serverMessage) ||
+          '';
+        if (msg && /waiter|dine-in|dine in|collected|split/i.test(msg)) {
+          this.payBlockedMessage.set(msg);
+          return;
+        }
+        showApiErrorToast(err, 'Failed to initialize payment');
+      },
     });
   }
 

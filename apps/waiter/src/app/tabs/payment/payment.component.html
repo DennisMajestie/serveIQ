@@ -74,14 +74,14 @@
                   <div class="flex items-center gap-3">
                     <button (click)="autoSplitDec()" class="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#dce1fb] active:scale-90 transition-transform">−</button>
                     <span class="text-[18px] leading-[1.2] font-bold text-[#dce1fb] min-w-[24px] text-center" style="font-family:'Space Grotesk',sans-serif">{{ autoSplitCount() }}</span>
-                    <button (click)="autoSplitInc()" class="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#dce1fb] active:scale-90 transition-transform">+</button>
+                    <button (click)="autoSplitInc()" [disabled]="atMaxGuests()" class="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#dce1fb] active:scale-90 transition-transform disabled:opacity-30">+</button>
                     <button (click)="autoSplitEvenly()" class="px-4 py-2 rounded-xl font-bold text-[13px] leading-none uppercase tracking-wider bg-[#4be277] text-[#003915] active:scale-95 transition-all flex items-center gap-2" style="font-family:'Space Grotesk',sans-serif">
                       <span class="material-symbols-outlined text-[16px]">call_split</span>
                       Split
                     </button>
                   </div>
                 </div>
-                <p class="mt-2 text-[12px] leading-[1.4] text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">Replaces guests with {{ autoSplitCount() }} equal shares of the total. You can tune each share afterwards.</p>
+                <p class="mt-2 text-[12px] leading-[1.4] text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">Replaces guests with {{ autoSplitCount() }} equal shares of the total. You can tune each share afterwards. Maximum {{ splitGuestCap() }} guests for this tab.</p>
               </div>
 
               <div class="rounded-xl bg-white/[0.03] border border-white/10 p-3">
@@ -226,9 +226,9 @@
             </div>
 
             @if (!splitLocked()) {
-              <button (click)="addGuestCard()" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center gap-2 text-[#4be277] hover:bg-white/10 transition-colors">
+              <button (click)="addGuestCard()" [disabled]="atMaxGuests()" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center gap-2 text-[#4be277] hover:bg-white/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                 <span class="material-symbols-outlined text-[18px]">person_add</span>
-                <span class="text-[14px] leading-[1.5] font-semibold" style="font-family:'Inter',sans-serif">Add Guest</span>
+                <span class="text-[14px] leading-[1.5] font-semibold" style="font-family:'Inter',sans-serif">{{ atMaxGuests() ? 'Max ' + splitGuestCap() + ' guests' : 'Add Guest' }}</span>
               </button>
             }
 

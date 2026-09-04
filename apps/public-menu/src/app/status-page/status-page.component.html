@@ -190,6 +190,11 @@
             </p>
           </div>
         }
+        @if (payBlockedMessage()) {
+          <div class="pay-blocked-msg">
+            <p>{{ payBlockedMessage() }}</p>
+          </div>
+        }
         @if (!paymentInfo()) {
           <button
             class="pay-btn"

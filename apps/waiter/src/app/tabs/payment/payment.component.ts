@@ -86,6 +86,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
   isSplit = signal(false);
   guests = signal<GuestCard[]>([]);
   splitLocked = computed(() => this.guests().some(g => g.paid));
+  // Number of diners on the tab (from the opening tab), used to cap split guests.
+  maxGuests = signal(0);
+  splitGuestCap = computed(() => this.maxGuests() > 0 ? this.maxGuests() : 20);
+  atMaxGuests = computed(() => this.guests().length >= this.splitGuestCap());
 
   private pollSubscription?: Subscription;
 
@@ -109,6 +113,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
       next: (tab: Tab | null) => {
         if (tab) {
           this.tabType.set((tab as any).tabType ?? (tab as any).tab_type ?? '');
+          const party = (tab as any).partySize ?? (tab as any).party_size ?? 0;
+          if (party > 0) {
+            this.maxGuests.set(party);
+            if (this.autoSplitCount() > party) this.autoSplitCount.set(party);
+          }
           if (tab.tableId) {
             this.offlineData.getTable(tab.tableId).subscribe({
               next: (table) => { if (table) this.table.set(table); }
@@ -341,7 +350,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   autoSplitInc() {
-    this.autoSplitCount.set(Math.min(20, this.autoSplitCount() + 1));
+    this.autoSplitCount.set(Math.min(this.splitGuestCap(), this.autoSplitCount() + 1));
   }
 
   // ── Quick split presets ──
@@ -481,12 +490,13 @@ export class PaymentComponent implements OnInit, OnDestroy {
    *  tuned individually afterwards. */
   autoSplitEvenly() {
     if (this.splitLocked()) return;
-    const n = Math.max(2, Math.min(20, this.autoSplitCount()));
+    const n = Math.max(2, Math.min(this.splitGuestCap(), this.autoSplitCount()));
     this.seedEqualSplit(n);
   }
 
   addGuestCard() {
     if (this.splitLocked()) return;
+    if (this.atMaxGuests()) return;
     this.guests.update(gs => [...gs, this.newGuest(`Guest ${gs.length + 1}`)]);
   }
 
