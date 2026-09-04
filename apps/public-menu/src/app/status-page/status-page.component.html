@@ -168,33 +168,6 @@
     <!-- Payment section -->
     @if (step() === 'payment') {
       <section class="payment-section">
-        @if (splitPayment(); as sp) {
-          <div class="split-progress">
-            <h3>Group split</h3>
-            <div class="split-rows">
-              <span>Paid</span>
-              <strong>{{ sp.paidGuests }} / {{ sp.totalGuests }}</strong>
-            </div>
-            <div class="split-rows">
-              <span>Remaining</span>
-              <strong>₦{{ (sp.remainingKobo / 100).toLocaleString() }}</strong>
-            </div>
-            <div class="split-bar" role="progressbar"
-                 [attr.aria-valuenow]="sp.paidKobo" aria-valuemin="0"
-                 [attr.aria-valuemax]="sp.totalKobo">
-              <div class="split-bar-fill"
-                   [style.width.%]="sp.totalKobo > 0 ? (sp.paidKobo / sp.totalKobo) * 100 : 0"></div>
-            </div>
-            <p class="split-note">
-              Some guests have already paid. Your group's remaining balance is ₦{{ (sp.remainingKobo / 100).toLocaleString() }}.
-            </p>
-          </div>
-        }
-        @if (payBlockedMessage()) {
-          <div class="pay-blocked-msg">
-            <p>{{ payBlockedMessage() }}</p>
-          </div>
-        }
         @if (!paymentInfo()) {
           <button
             class="pay-btn"

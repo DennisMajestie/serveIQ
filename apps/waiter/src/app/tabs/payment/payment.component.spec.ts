@@ -20,7 +20,7 @@ describe('PaymentComponent', () => {
   beforeEach(async () => {
     paramMapSubject = new Subject();
 
-    const mockBillsApi = createMockService(['generate', 'getReceipt', 'getSplits', 'createPaymentPlan', 'paySplit', 'recordPayment']);
+    const mockBillsApi = createMockService(['generate', 'getReceipt', 'recordPayment']);
     const mockTabService = createMockService(['getTab', 'closeTab']);
     const mockTableService = createMockService(['getTable']);
     const mockPosApi = createMockService(['processPayment', 'getTerminals', 'getActive']);
@@ -49,8 +49,6 @@ describe('PaymentComponent', () => {
     mockPosApi.getTerminals.mockReturnValue(of([]));
     mockPosApi.processPayment.mockReturnValue(of({ success: true }));
     mockPosApi.getActive.mockReturnValue(of([]));
-    mockBillsApi.getSplits.mockReturnValue(of([]));
-    mockBillsApi.createPaymentPlan.mockReturnValue(of([]));
     mockBillsApi.getReceipt.mockReturnValue(of({
       bill: {
         id: 'bill-1',
@@ -108,50 +106,6 @@ describe('PaymentComponent', () => {
   it('should switch payment method', () => {
     component.selectMethod('card');
     expect(component.selectedMethod).toBe('card');
-  });
-
-  it('should toggle split payment', () => {
-    component.toggleSplit();
-    expect(component.isSplit()).toBe(true);
-    component.toggleSplit();
-    expect(component.isSplit()).toBe(false);
-  });
-
-  it('should compute split amounts when split is toggled', () => {
-    fixture.detectChanges();
-    paramMapSubject.next(convertToParamMap({ id: 'tab-1' }));
-    fixture.detectChanges();
-
-    component.toggleSplit();
-    expect(component.isSplit()).toBe(true);
-  });
-
-  it('should seed equal guest cards when split is toggled', () => {
-    fixture.detectChanges();
-    paramMapSubject.next(convertToParamMap({ id: 'tab-1' }));
-    fixture.detectChanges();
-
-    component.toggleSplit();
-    expect(component.isSplit()).toBe(true);
-    expect(component.guests().length).toBeGreaterThan(0);
-    expect(component.allocatedKobo).toBe(component.bill()?.totalKobo ?? 0);
-  });
-
-  it('should auto-split evenly across N guests summing to the total', () => {
-    fixture.detectChanges();
-    paramMapSubject.next(convertToParamMap({ id: 'tab-1' }));
-    fixture.detectChanges();
-
-    component.toggleSplit();
-    component.autoSplitCount.set(3);
-    component.autoSplitEvenly();
-
-    expect(component.guests().length).toBe(3);
-    const total = component.bill()?.totalKobo ?? 0;
-    expect(component.allocatedKobo).toBe(total);
-    const shares = component.guests().map(g => g.amountKobo);
-    const diff = Math.max(...shares) - Math.min(...shares);
-    expect(diff).toBeLessThanOrEqual(1);
   });
 
   it('should have items from bill', () => {

@@ -41,229 +41,6 @@
         </div>
       </section>
 
-      <!-- Split / Guest Cards Section (dine-in only) -->
-      @if (!isTakeaway()) {
-      <section class="glass-card rounded-2xl p-6 border border-white/5">
-        <button (click)="toggleSplit()" class="w-full flex items-center gap-3 text-left">
-          <span class="material-symbols-outlined text-[#4be277]">call_split</span>
-          <span class="flex-1 text-[16px] leading-[1.5] font-semibold text-[#dce1fb]" style="font-family:'Inter',sans-serif">Payment Allocation</span>
-          <span class="text-[11px] leading-none font-medium text-[#bccbb9]/60 px-2 py-1 rounded-full bg-white/5" style="font-family:'Inter',sans-serif">{{ guests().length }} guest{{ guests().length === 1 ? '' : 's' }}</span>
-          <span class="material-symbols-outlined text-[#bccbb9]">{{ isSplit() ? 'expand_less' : 'expand_more' }}</span>
-        </button>
-
-        @if (!isSplit()) {
-          <p class="mt-3 text-[13px] leading-[1.5] text-[#bccbb9]/70" style="font-family:'Inter',sans-serif">Split so each guest can pay their own share — by picked items, amount, percentage or the remaining balance.</p>
-        }
-
-        @if (isSplit()) {
-          <div class="mt-4 pt-4 border-t border-white/5 space-y-4">
-            @if (splitLocked()) {
-              <p class="flex items-center gap-1 text-[12px] leading-none font-medium text-amber-300" style="font-family:'Inter',sans-serif">
-                <span class="material-symbols-outlined text-[16px]">lock</span>
-                Payments started — guest setup is locked.
-              </p>
-            }
-
-            @if (!splitLocked()) {
-              <div class="rounded-xl bg-white/[0.03] border border-white/10 p-3">
-                <div class="flex items-center justify-between gap-3 flex-wrap">
-                  <span class="text-[13px] leading-[1.4] font-semibold text-[#dce1fb] flex items-center gap-2" style="font-family:'Inter',sans-serif">
-                    <span class="material-symbols-outlined text-[18px] text-[#4be277]">share</span>
-                    Auto-split evenly
-                  </span>
-                  <div class="flex items-center gap-3">
-                    <button (click)="autoSplitDec()" class="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#dce1fb] active:scale-90 transition-transform">−</button>
-                    <span class="text-[18px] leading-[1.2] font-bold text-[#dce1fb] min-w-[24px] text-center" style="font-family:'Space Grotesk',sans-serif">{{ autoSplitCount() }}</span>
-                    <button (click)="autoSplitInc()" [disabled]="atMaxGuests()" class="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-[#dce1fb] active:scale-90 transition-transform disabled:opacity-30">+</button>
-                    <button (click)="autoSplitEvenly()" class="px-4 py-2 rounded-xl font-bold text-[13px] leading-none uppercase tracking-wider bg-[#4be277] text-[#003915] active:scale-95 transition-all flex items-center gap-2" style="font-family:'Space Grotesk',sans-serif">
-                      <span class="material-symbols-outlined text-[16px]">call_split</span>
-                      Split
-                    </button>
-                  </div>
-                </div>
-                <p class="mt-2 text-[12px] leading-[1.4] text-[#bccbb9]/60" style="font-family:'Inter',sans-serif">Replaces guests with {{ autoSplitCount() }} equal shares of the total. You can tune each share afterwards. Maximum {{ splitGuestCap() }} guests for this tab.</p>
-              </div>
-
-              <div class="rounded-xl bg-white/[0.03] border border-white/10 p-3">
-                <p class="text-[12px] leading-[1.4] font-semibold text-[#bccbb9]/70 mb-2" style="font-family:'Inter',sans-serif">Quick Split</p>
-                <div class="flex items-center gap-2">
-                  <button (click)="quickSplit5050()" class="flex-1 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] leading-none font-semibold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Space Grotesk',sans-serif">50 / 50</button>
-                  <button (click)="quickSplit6040()" class="flex-1 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] leading-none font-semibold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Space Grotesk',sans-serif">60 / 40</button>
-                  <button (click)="quickSplit7030()" class="flex-1 py-2 rounded-lg bg-white/5 border border-white/10 text-[12px] leading-none font-semibold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Space Grotesk',sans-serif">70 / 30</button>
-                </div>
-                <p class="mt-2 text-[12px] leading-[1.4] text-[#bccbb9]/50" style="font-family:'Inter',sans-serif">Two guests with a common split ratio.</p>
-              </div>
-            }
-
-            <div class="space-y-3">
-              @for (guest of guests(); track guest.id; let i = $index) {
-                <div class="rounded-xl bg-white/[0.03] border border-white/10 p-3 space-y-3">
-                  <div class="flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-full text-[13px] leading-none font-bold flex items-center justify-center relative" style="font-family:'Space Grotesk',sans-serif"
-                      [class.bg-[#4be277]/15]="guestStatus(guest) === 'pending'"
-                      [class.text-[#4be277]]="guestStatus(guest) === 'pending'"
-                      [class.bg-[#f97316]/15]="guestStatus(guest) === 'processing'"
-                      [class.text-[#f97316]]="guestStatus(guest) === 'processing'"
-                      [class.bg-[#22c55e]/15]="guestStatus(guest) === 'paid'"
-                      [class.text-[#22c55e]]="guestStatus(guest) === 'paid'">
-                      {{ i + 1 }}
-                      <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-[#0c1324]"
-                        [class.bg-[#bccbb9]]="guestStatus(guest) === 'pending'"
-                        [class.bg-[#f97316]]="guestStatus(guest) === 'processing'"
-                        [class.animate-pulse]="guestStatus(guest) === 'processing'"
-                        [class.bg-[#22c55e]]="guestStatus(guest) === 'paid'">
-                      </span>
-                    </span>
-                    <input [value]="guest.label" (input)="updateGuestLabel(guest, $any($event.target).value)" [disabled]="splitLocked()"
-                      placeholder="Guest name"
-                      class="flex-1 bg-transparent text-[14px] leading-[1.4] font-semibold text-[#dce1fb] outline-none border-b border-white/10 focus:border-[#4be277]/50 pb-0.5 disabled:opacity-50" style="font-family:'Inter',sans-serif" />
-                    @if (!splitLocked()) {
-                      <div class="flex items-center gap-1">
-                        <button (click)="moveGuestUp(i)" [disabled]="i === 0" class="w-6 h-6 rounded border border-white/10 flex items-center justify-center text-[#bccbb9] active:scale-90 transition-transform disabled:opacity-30">
-                          <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
-                        </button>
-                        <button (click)="moveGuestDown(i)" [disabled]="i === guests().length - 1" class="w-6 h-6 rounded border border-white/10 flex items-center justify-center text-[#bccbb9] active:scale-90 transition-transform disabled:opacity-30">
-                          <span class="material-symbols-outlined text-[14px]">arrow_downward</span>
-                        </button>
-                        <button (click)="removeGuest(i)" class="w-6 h-6 rounded border border-white/10 flex items-center justify-center text-[#bccbb9] active:scale-90 transition-transform">
-                          <span class="material-symbols-outlined text-[14px]">close</span>
-                        </button>
-                      </div>
-                    }
-                  </div>
-
-                  <div class="flex items-center gap-2">
-                    <select [value]="guest.mode" (change)="setGuestMode(guest, $any($event.target).value)" [disabled]="splitLocked()"
-                      class="flex-1 bg-[#070d1f] border border-white/10 rounded-lg px-3 py-2 text-[13px] leading-none font-medium text-[#dce1fb] outline-none appearance-none focus:border-[#4be277]/50 disabled:opacity-50" style="font-family:'Inter',sans-serif">
-                      <option value="amount" class="bg-[#0c1324]">Fixed amount</option>
-                      <option value="items" class="bg-[#0c1324]">Picked items</option>
-                      <option value="percentage" class="bg-[#0c1324]">% of total</option>
-                      <option value="remaining" class="bg-[#0c1324]">Remaining balance</option>
-                    </select>
-                  </div>
-
-                  @switch (guest.mode) {
-                    @case ('items') {
-                      <div class="max-h-44 overflow-y-auto space-y-1">
-                        @for (item of availableItems(guest); track item.id) {
-                          <button (click)="toggleGuestItem(guest, item.id)" [disabled]="splitLocked()"
-                            class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-left active:scale-[0.99] transition-all disabled:opacity-60"
-                            [class.border-[#4be277]/40]="guest.orderIds.includes(item.id)"
-                            [class.bg-[#4be277]/10]="guest.orderIds.includes(item.id)"
-                            [class.border-white/10]="!guest.orderIds.includes(item.id)"
-                            [class.bg-white/[0.02]]="!guest.orderIds.includes(item.id)">
-                            <span class="flex items-center gap-2 text-[13px] leading-[1.4] text-[#dce1fb]" style="font-family:'Inter',sans-serif">
-                              @if (guest.orderIds.includes(item.id)) {
-                                <span class="material-symbols-outlined text-[16px] text-[#4be277]">check_circle</span>
-                              } @else if (getItemOwner(item.id); as owner) {
-                                <span class="w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center" [style.background]="owner.color + '33'" [style.color]="owner.color">{{ owner.guestLabel.charAt(0) }}</span>
-                              }
-                              {{ item.name }} <span class="text-[#bccbb9]/60">x{{ item.qty }}</span>
-                            </span>
-                            <span class="text-[13px] leading-none font-semibold text-[#bccbb9]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(item.subtotalKobo) }}</span>
-                          </button>
-                        }
-                        @if (availableItems(guest).length === 0) {
-                          <p class="text-[12px] leading-[1.4] text-[#bccbb9]/50 text-center py-2" style="font-family:'Inter',sans-serif">All items are already allocated to other guests.</p>
-                        }
-                      </div>
-                    }
-                    @case ('percentage') {
-                      <div class="flex items-center gap-3">
-                        <input type="number" min="0" max="100" [value]="guest.percentage" (input)="setGuestPercentage(guest, +$any($event.target).value)" [disabled]="splitLocked()"
-                          class="flex-1 bg-[#070d1f] border border-white/10 rounded-lg px-3 py-2 text-[14px] font-semibold text-[#dce1fb] outline-none focus:border-[#4be277]/50 disabled:opacity-50" style="font-family:'JetBrains Mono',monospace" />
-                        <span class="text-[14px] font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">%</span>
-                        <span class="text-[13px] font-semibold text-[#4be277]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(guestAllocated(guest)) }}</span>
-                      </div>
-                    }
-                    @case ('amount') {
-                      <div class="flex items-center gap-3">
-                        <span class="text-[18px] leading-[1.3] font-medium text-[#bccbb9]/40" style="font-family:'Space Grotesk',sans-serif">{{ currencySymbol() }}</span>
-                        <input type="number" min="0" step="0.01" [value]="guest.amountInput" (input)="setGuestAmount(guest, $any($event.target).value)" [disabled]="splitLocked()"
-                          placeholder="0.00"
-                          class="flex-1 bg-[#070d1f] border border-white/10 rounded-lg px-3 py-2 text-[16px] font-semibold text-[#dce1fb] outline-none focus:border-[#4be277]/50 disabled:opacity-50" style="font-family:'JetBrains Mono',monospace" />
-                      </div>
-                    }
-                    @case ('remaining') {
-                      <p class="text-[12px] leading-[1.5] text-[#bccbb9]/70" style="font-family:'Inter',sans-serif">Auto-covers whatever the other guests don't allocate. Updates as guests are charged.</p>
-                    }
-                  }
-
-                  <div class="flex items-center justify-between pt-2 border-t border-white/5">
-                    <div class="flex items-center gap-2">
-                      @if (guest.paid) {
-                        <span class="flex items-center gap-1 text-[12px] leading-none font-bold text-[#22c55e]" style="font-family:'Inter',sans-serif">
-                          <span class="material-symbols-outlined text-[16px]">check_circle</span>
-                          Paid
-                        </span>
-                      }
-                      <span class="text-[15px] leading-none font-bold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(guestAllocated(guest)) }}</span>
-                    </div>
-                    @if (!guest.paid) {
-                      <button (click)="chargeGuest(guest)"
-                        [disabled]="isProcessing() || pendingCount() > 0 || !isSplitValid || (selectedMethod !== 'cash' && !selectedTerminalId())"
-                        class="px-4 py-2 rounded-xl font-bold text-[13px] leading-none uppercase tracking-wider active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
-                        [class.bg-[#4be277]]="!isProcessing()"
-                        [class.text-[#003915]]="!isProcessing()"
-                        [class.bg-white/10]="isProcessing()"
-                        [class.text-[#bccbb9]]="isProcessing()"
-                        style="font-family:'Space Grotesk',sans-serif">
-                        @if (isProcessing()) {
-                          <span class="material-symbols-outlined animate-spin text-[16px]">sync</span>
-                          <span>Processing</span>
-                        } @else {
-                          <span class="material-symbols-outlined text-[16px]">point_of_sale</span>
-                          <span>Charge</span>
-                        }
-                      </button>
-                    }
-                  </div>
-                </div>
-              }
-              @if (guests().length === 0) {
-                <p class="text-[12px] leading-[1.4] text-[#bccbb9]/50 text-center py-3" style="font-family:'Inter',sans-serif">No guests yet. Add one to split the bill.</p>
-              }
-            </div>
-
-            @if (!splitLocked()) {
-              <button (click)="addGuestCard()" [disabled]="atMaxGuests()" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center gap-2 text-[#4be277] hover:bg-white/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-                <span class="material-symbols-outlined text-[18px]">person_add</span>
-                <span class="text-[14px] leading-[1.5] font-semibold" style="font-family:'Inter',sans-serif">{{ atMaxGuests() ? 'Max ' + splitGuestCap() + ' guests' : 'Add Guest' }}</span>
-              </button>
-            }
-
-            @if (validationWarnings().length > 0) {
-              <div class="space-y-2">
-                @for (warning of validationWarnings(); track warning) {
-                  <div class="flex items-start gap-2 p-2.5 rounded-lg bg-[#f97316]/10 border border-[#f97316]/20">
-                    <span class="material-symbols-outlined text-[16px] text-[#f97316] mt-0.5">warning</span>
-                    <span class="text-[12px] leading-[1.4] text-[#ffd9b3]" style="font-family:'Inter',sans-serif">{{ warning }}</span>
-                  </div>
-                }
-              </div>
-            }
-
-            <div class="flex items-center justify-between pt-3 border-t border-white/5">
-              <span class="text-[13px] leading-none font-medium text-[#bccbb9]" style="font-family:'Inter',sans-serif">Allocated</span>
-              <span class="text-[13px] leading-none font-semibold text-[#4be277]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(allocatedKobo) }}</span>
-            </div>
-
-            <div class="flex items-center justify-between"
-              [class.text-[#ffb4ab]]="!isSplitValid"
-              [class.text-[#22c55e]]="isSplitValid">
-              <span class="text-[13px] leading-none font-medium" style="font-family:'Inter',sans-serif">{{ isSplitValid ? 'Fully Allocated' : 'Remaining' }}</span>
-              <span class="flex items-center gap-1 text-[13px] leading-none font-semibold" style="font-family:'JetBrains Mono',monospace">
-                @if (isSplitValid) {
-                  <span class="material-symbols-outlined text-sm">check_circle</span>
-                }
-                {{ formatKobo(remainingKobo) }}
-              </span>
-            </div>
-          </div>
-        }
-      </section>
-      }
-
       <!-- Settle Methods -->
       <section class="grid grid-cols-2 gap-5">
         <button (click)="selectMethod('cash')" class="glass-card p-6 rounded-2xl flex flex-col items-center gap-4 border active:scale-95 transition-all group"
@@ -347,86 +124,31 @@
         </section>
       }
 
-      @if (!isSplit()) {
-        <!-- Amount Input (non-split only) -->
-        <section class="glass-card rounded-2xl p-6 border border-white/5">
-          <div class="flex justify-between items-center mb-4">
-            <span class="text-[14px] leading-none font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">Paying Now</span>
-            @if (!isEditingAmount) {
-              <span class="text-[14px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">Full Amount</span>
-            }
-          </div>
-          <div class="flex items-center justify-between bg-[#070d1f]/50 p-4 rounded-xl border border-white/5 focus-within:ring-1 focus-within:ring-[#adc6ff] transition-all">
-            <span class="text-[24px] leading-[1.3] font-medium text-[#bccbb9]/40" style="font-family:'Space Grotesk',sans-serif">{{ currencySymbol() }}</span>
-            <input type="text" class="bg-transparent border-none text-right w-full text-[24px] leading-[1.3] font-medium text-[#dce1fb] focus:ring-0 outline-none" style="font-family:'Space Grotesk',sans-serif" [value]="formattedAmount" readonly />
-          </div>
-        </section>
+      <!-- Amount Input -->
+      <section class="glass-card rounded-2xl p-6 border border-white/5">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-[14px] leading-none font-semibold text-[#bccbb9]" style="font-family:'Inter',sans-serif">Paying Now</span>
+          @if (!isEditingAmount) {
+            <span class="text-[14px] leading-none font-semibold text-[#4be277]" style="font-family:'Space Grotesk',sans-serif">Full Amount</span>
+          }
+        </div>
+        <div class="flex items-center justify-between bg-[#070d1f]/50 p-4 rounded-xl border border-white/5 focus-within:ring-1 focus-within:ring-[#adc6ff] transition-all">
+          <span class="text-[24px] leading-[1.3] font-medium text-[#bccbb9]/40" style="font-family:'Space Grotesk',sans-serif">{{ currencySymbol() }}</span>
+          <input type="text" class="bg-transparent border-none text-right w-full text-[24px] leading-[1.3] font-medium text-[#dce1fb] focus:ring-0 outline-none" style="font-family:'Space Grotesk',sans-serif" [value]="formattedAmount" readonly />
+        </div>
+      </section>
 
-        <!-- Numpad (non-split only) -->
-        <section>
-          <div class="grid grid-cols-3 gap-3">
-            @for (key of ['1','2','3','4','5','6','7','8','9','.', '0']; track key) {
-              <button (click)="appendNumber(key)" class="h-16 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[24px] leading-[1.3] font-bold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Inter',sans-serif">{{ key }}</button>
-            }
-            <button (click)="clearLast()" class="h-16 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[#bccbb9] active:scale-95 transition-all">
-              <span class="material-symbols-outlined">backspace</span>
-            </button>
-          </div>
-        </section>
-      }
-
-      @if (isSplit()) {
-        <!-- Split Allocation Summary (split mode only) -->
-        <section class="glass-card rounded-2xl p-6 border border-white/5">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="material-symbols-outlined text-[#4be277] text-[20px]">balance</span>
-            <span class="text-[14px] leading-none font-semibold text-[#bccbb9] uppercase tracking-[0.08em]" style="font-family:'Inter',sans-serif">Allocation Summary</span>
-          </div>
-
-          <div class="space-y-3">
-            <!-- Total -->
-            <div class="flex items-center justify-between">
-              <span class="text-[13px] leading-none text-[#bccbb9]/70" style="font-family:'Inter',sans-serif">Total Bill</span>
-              <span class="text-[15px] leading-none font-bold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(bill()?.totalKobo ?? 0) }}</span>
-            </div>
-
-            <!-- Allocated -->
-            <div class="flex items-center justify-between">
-              <span class="text-[13px] leading-none text-[#bccbb9]/70" style="font-family:'Inter',sans-serif">Allocated</span>
-              <span class="text-[15px] leading-none font-bold text-[#4be277]" style="font-family:'JetBrains Mono',monospace">{{ formatKobo(allocatedKobo) }}</span>
-            </div>
-
-            <!-- Progress bar -->
-            <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-300"
-                [style.width.%]="bill()?.totalKobo ? (allocatedKobo / (bill()?.totalKobo ?? 1) * 100) : 0"
-                [class.bg-[#4be277]]="isSplitValid"
-                [class.bg-[#f97316]]="!isSplitValid && allocatedKobo > 0"
-                [class.bg-white/10]="allocatedKobo === 0">
-              </div>
-            </div>
-
-            <!-- Remaining -->
-            <div class="flex items-center justify-between"
-              [class.text-[#ffb4ab]]="!isSplitValid && remainingKobo > 0"
-              [class.text-[#22c55e]]="isSplitValid">
-              <span class="text-[13px] leading-none font-medium" style="font-family:'Inter',sans-serif">{{ isSplitValid ? 'Fully Allocated' : 'Remaining' }}</span>
-              <span class="flex items-center gap-1 text-[13px] leading-none font-semibold" style="font-family:'JetBrains Mono',monospace">
-                @if (isSplitValid) {
-                  <span class="material-symbols-outlined text-sm">check_circle</span>
-                }
-                {{ formatKobo(remainingKobo) }}
-              </span>
-            </div>
-
-            <!-- Guests count -->
-            <div class="flex items-center justify-between pt-2 border-t border-white/5">
-              <span class="text-[13px] leading-none text-[#bccbb9]/70" style="font-family:'Inter',sans-serif">Guests</span>
-              <span class="text-[13px] leading-none font-semibold text-[#dce1fb]" style="font-family:'JetBrains Mono',monospace">{{ guests().length }}</span>
-            </div>
-          </div>
-        </section>
-      }
+      <!-- Numpad -->
+      <section>
+        <div class="grid grid-cols-3 gap-3">
+          @for (key of ['1','2','3','4','5','6','7','8','9','.', '0']; track key) {
+            <button (click)="appendNumber(key)" class="h-16 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[24px] leading-[1.3] font-bold text-[#dce1fb] active:scale-95 transition-all" style="font-family:'Inter',sans-serif">{{ key }}</button>
+          }
+          <button (click)="clearLast()" class="h-16 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[#bccbb9] active:scale-95 transition-all">
+            <span class="material-symbols-outlined">backspace</span>
+          </button>
+        </div>
+      </section>
 
       @if (isCashPending() && canConfirmCashAtCounter) {
         <section class="glass-card rounded-2xl p-5 border border-[#f97316]/30 bg-[#f97316]/5 flex items-center gap-3">
@@ -440,11 +162,6 @@
   <!-- Complete Payment Footer -->
   <footer class="fixed bottom-0 left-0 w-full p-6 glass-card bg-[#0c1324]/80 backdrop-blur-3xl border-t border-white/5 z-40">
     <div class="max-w-2xl mx-auto">
-      @if (isSplit() && guests().length > 0 && !isSplitValid) {
-        <div class="text-center mb-3">
-          <span class="text-[13px] leading-none font-medium text-[#ffb4ab]" style="font-family:'Inter',sans-serif">Allocate {{ formatKobo(remainingKobo) }} remaining across guests to continue</span>
-        </div>
-      }
       @if (pendingCount() > 0) {
         <div class="flex items-center gap-3 mb-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
           <span class="material-symbols-outlined text-amber-400 text-[18px]">hourglass_top</span>
@@ -465,25 +182,6 @@
           } @else {
             <span class="material-symbols-outlined">point_of_sale</span>
             <span>Confirm Cash Payment</span>
-          }
-        </button>
-      } @else if (isSplit() && guests().length > 0) {
-        <button (click)="chargeAllGuests()" [disabled]="isProcessing() || pendingCount() > 0 || (selectedMethod !== 'cash' && !selectedTerminalId()) || (isSplit() && !isSplitValid)"
-          class="w-full py-5 rounded-2xl font-bold uppercase tracking-widest shadow-[0_0_25px_rgba(75,226,119,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-3 flex-wrap text-[clamp(14px,1vw+8px,20px)] leading-[1.2] disabled:opacity-60"
-          style="font-family:'Space Grotesk',sans-serif"
-          [class.bg-[#4be277]]="!isProcessing() && !isSuccess()"
-          [class.text-[#003915]]="!isProcessing() && !isSuccess()"
-          [class.bg-[#16a34a]]="isProcessing() || isSuccess()"
-          [class.text-white]="isProcessing() || isSuccess()">
-          @if (isProcessing()) {
-            <span class="material-symbols-outlined animate-spin">sync</span>
-            <span>Processing...</span>
-          } @else if (allGuestsPaid()) {
-            <span class="material-symbols-outlined">task_alt</span>
-            <span>All Guests Paid</span>
-          } @else {
-            <span class="material-symbols-outlined">call_split</span>
-            <span>Charge All Guests</span>
           }
         </button>
       } @else {

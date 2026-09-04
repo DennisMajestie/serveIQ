@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { Bill, Receipt, GenerateBillRequest, RecordPaymentRequest, ApplyDiscountRequest, PaymentPlanAllocation, CreatePaymentPlanRequest } from '@serveiq/shared/models';
+import { Bill, Receipt, GenerateBillRequest, RecordPaymentRequest, ApplyDiscountRequest } from '@serveiq/shared/models';
 import { snakeToCamel } from '@serveiq/shared/models';
 
 /** Manages bill generation, payment recording and receipts. */
@@ -44,21 +44,6 @@ export class BillsApiService extends BaseApiService {
       buildUrl(API_CONFIG.endpoints.bills.removeCashRequest, { tabId }),
       {},
     );
-  }
-
-  /** Create a payment plan with ordered allocations for split billing. */
-  createPaymentPlan(tabId: string, allocations: CreatePaymentPlanRequest): Observable<Bill[]> {
-    return this.post<Bill[]>(buildUrl(API_CONFIG.endpoints.bills.paymentPlan, { tabId }), allocations);
-  }
-
-  /** Fetch all split bills for a tab (main + split rows, in creation order). */
-  getSplits(tabId: string): Observable<Bill[]> {
-    return this.get<Bill[]>(buildUrl(API_CONFIG.endpoints.bills.splits, { tabId }));
-  }
-
-  /** Pay one split bill on a tab, leaving the tab open until every split is paid. */
-  paySplit(tabId: string, billId: string, payment: RecordPaymentRequest): Observable<Bill> {
-    return this.post<Bill>(buildUrl(API_CONFIG.endpoints.bills.paySplit, { tabId, billId }), payment);
   }
 
   /** Fetch the paid receipt for a tab. */

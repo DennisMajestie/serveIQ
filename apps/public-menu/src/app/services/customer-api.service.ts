@@ -65,14 +65,6 @@ export interface TabStatusResponse {
   trackingGeneratedAt: string;
   openedAt: string;
   totalKobo: number;
-  splitPayment?: {
-    totalGuests: number;
-    paidGuests: number;
-    totalKobo: number;
-    paidKobo: number;
-    remainingKobo: number;
-    allPaid: boolean;
-  };
   orders: {
     id: string;
     menuItemId: string;

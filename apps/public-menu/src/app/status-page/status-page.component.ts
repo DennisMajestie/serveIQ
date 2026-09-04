@@ -46,7 +46,6 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   polling = signal(false);
   initializingPayment = signal(false);
   errorMessage = signal('');
-  payBlockedMessage = signal('');
 
   // ── Cash-at-counter flow ───────────────────────────────────────────────────
   // Customer taps cash → a confirmation modal opens; once confirmed the request
@@ -86,11 +85,6 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     if (!tab || tab.orders.length === 0) return false;
     return tab.orders.some(x => (x.orderStatus || '').toLowerCase() === 'delivered');
   });
-
-  /** Split payment progress for a self-service dine-in tab, if a payment plan
-   *  exists. Lets a group see which guests have already paid and how much of the
-   *  bill remains while they wait. Takeaway never splits. */
-  readonly splitPayment = computed(() => this.tabData()?.splitPayment ?? null);
 
   private servedCelebrated = false;
   private servedWatcher = effect(() => {
@@ -523,7 +517,6 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       trackingGeneratedAt: data.trackingGeneratedAt,
       openedAt: '',
       totalKobo: data.orders?.reduce?.((s: number, o: any) => s + (o.subtotalKobo || 0), 0) || 0,
-      splitPayment: data.splitPayment,
       orders: (data.orders || []).map((o: any) => ({
         id: o.id,
         menuItemId: o.menuItemId || '',
@@ -554,10 +547,6 @@ export class StatusPageComponent implements OnInit, OnDestroy {
           (body && typeof body.message === 'string' && body.message) ||
           (body && typeof body.serverMessage === 'string' && body.serverMessage) ||
           '';
-        if (msg && /waiter|dine-in|dine in|collected|split/i.test(msg)) {
-          this.payBlockedMessage.set(msg);
-          return;
-        }
         showApiErrorToast(err, 'Failed to initialize payment');
       },
     });

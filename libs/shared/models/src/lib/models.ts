@@ -138,10 +138,6 @@ export interface Bill {
   paidAt?: Date;
   createdAt: Date;
   orderItems?: OrderItem[];
-  sequence?: number;
-  splitGroup?: string;
-  allocationType?: string;
-  allocationConfig?: unknown;
   paymentStatus?: string;
 }
 
@@ -705,24 +701,4 @@ export interface AuditLogResponse {
     limit: number;
     totalPages: number;
   };
-}
-
-// ===== Payment Plan / Split Billing =====
-export enum AllocationType {
-  ITEM = 'item',
-  REMAINING = 'remaining',
-  PERCENTAGE = 'percentage',
-  AMOUNT = 'amount',
-}
-
-export interface PaymentPlanAllocation {
-  type: AllocationType;
-  order_ids?: string[];
-  label?: string;
-  percentage?: number;
-  amount_kobo?: number;
-}
-
-export interface CreatePaymentPlanRequest {
-  allocations: PaymentPlanAllocation[];
 }
