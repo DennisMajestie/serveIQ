@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { RealtimeSocketService, WaiterCallSocketPayload } from '@serveiq/shared/data-access';
+import { RealtimeSocketService, WaiterCallEvent, WaiterCallSocketPayload } from '@serveiq/shared/data-access';
 import { AuthService } from '@serveiq/shared/data-access';
 import { Socket } from 'socket.io-client';
 
@@ -22,14 +22,32 @@ export class WaiterCallAlertService {
 
   private socket: Socket | null = null;
   private consumedIds = new Set<string>();
+  private tokenSub?: { unsubscribe(): void };
 
   /** Connect the global socket and start listening for calls assigned to this waiter. */
   connect() {
-    const token = this.auth.getToken() ?? '';
-    if (!token) return;
+    // The app bootstraps before the waiter logs in, so the token may not exist
+    // yet. Reconnect as soon as a token becomes available (login / session
+    // rehydrate) so the always-on alert socket stays live on every page.
+    this.tokenSub?.unsubscribe();
+    this.tokenSub = this.auth.token$.subscribe((token) => {
+      if (token) this.connectWithToken(token);
+    });
+    const existing = this.auth.getToken();
+    if (existing) this.connectWithToken(existing);
+  }
+
+  private connectWithToken(token: string) {
+    if (this.socket && this.socket.connected) return;
     this.socket = this.socketSvc.connect(token);
-    this.socket.on('waiter.request.created', (p: WaiterCallSocketPayload) => this.onCall(p));
-    this.socket.on('waiter.request.assigned', (p: WaiterCallSocketPayload) => this.onCall(p));
+    const events: WaiterCallEvent[] = [
+      'waiter.request.created',
+      'waiter.request.queued',
+      'waiter.request.assigned',
+    ];
+    for (const ev of events) {
+      this.socket.on(ev, (p: WaiterCallSocketPayload) => this.onCall(p));
+    }
   }
 
   private onCall(p: WaiterCallSocketPayload) {

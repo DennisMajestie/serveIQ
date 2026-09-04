@@ -462,6 +462,25 @@
   color: var(--text-secondary);
 }
 
+.bill-summary {
+  margin-bottom: 24px;
+
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+
+    em {
+      font-style: normal;
+      color: var(--text-tertiary, #999);
+      font-size: 0.78rem;
+    }
+  }
+}
+
 .total-row {
   display: flex;
   justify-content: space-between;

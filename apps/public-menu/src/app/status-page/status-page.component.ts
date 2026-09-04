@@ -506,6 +506,8 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   private setTabFromTracking(data: any) {
+    const subtotalKobo =
+      data.orders?.reduce?.((s: number, o: any) => s + (o.subtotalKobo || 0), 0) || 0;
     const mapped: TabStatusResponse = {
       id: data.tabId,
       tableId: '',
@@ -516,10 +518,14 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       trackingCode: '',
       trackingGeneratedAt: data.trackingGeneratedAt,
       openedAt: '',
-      totalKobo: data.orders?.reduce?.((s: number, o: any) => s + (o.subtotalKobo || 0), 0) || 0,
+      totalKobo: Number(data.totalKobo ?? subtotalKobo),
+      subtotalKobo: Number(data.subtotalKobo ?? subtotalKobo),
+      serviceChargeKobo: Number(data.serviceChargeKobo ?? 0),
+      taxKobo: Number(data.taxKobo ?? 0),
       orders: (data.orders || []).map((o: any) => ({
         id: o.id,
         menuItemId: o.menuItemId || '',
+        menuItemName: o.menuItemName || null,
         quantity: o.quantity,
         subtotalKobo: o.subtotalKobo || 0,
         orderStatus: (o.orderStatus || '').toLowerCase(),

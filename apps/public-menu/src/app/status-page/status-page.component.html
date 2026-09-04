@@ -95,9 +95,29 @@
     </section>
 
     <!-- Total -->
-    <div class="total-row">
-      <span>Total</span>
-      <span class="total-amount">₦{{ (tab.totalKobo / 100).toLocaleString() }}</span>
+    <div class="bill-summary">
+      @if (tab.subtotalKobo != null) {
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span>₦{{ (tab.subtotalKobo / 100).toLocaleString() }}</span>
+        </div>
+      }
+      @if (tab.serviceChargeKobo != null && tab.serviceChargeKobo > 0) {
+        <div class="summary-line">
+          <span>Service Charge @if (tab.serviceChargePercent != null) { <em>({{ tab.serviceChargePercent }}%)</em> }</span>
+          <span>₦{{ (tab.serviceChargeKobo / 100).toLocaleString() }}</span>
+        </div>
+      }
+      @if (tab.taxKobo != null && tab.taxKobo > 0) {
+        <div class="summary-line">
+          <span>VAT @if (tab.taxRatePercent != null) { <em>({{ tab.taxRatePercent }}%)</em> }</span>
+          <span>₦{{ (tab.taxKobo / 100).toLocaleString() }}</span>
+        </div>
+      }
+      <div class="total-row">
+        <span>Total</span>
+        <span class="total-amount">₦{{ (tab.totalKobo / 100).toLocaleString() }}</span>
+      </div>
     </div>
 
     <!-- Pickup ready -->

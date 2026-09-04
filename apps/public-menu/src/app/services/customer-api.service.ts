@@ -65,9 +65,15 @@ export interface TabStatusResponse {
   trackingGeneratedAt: string;
   openedAt: string;
   totalKobo: number;
+  subtotalKobo?: number;
+  serviceChargeKobo?: number;
+  taxKobo?: number;
+  serviceChargePercent?: number;
+  taxRatePercent?: number;
   orders: {
     id: string;
     menuItemId: string;
+    menuItemName?: string | null;
     quantity: number;
     subtotalKobo: number;
     orderStatus: string;
