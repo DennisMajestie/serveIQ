@@ -235,7 +235,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const colors = ['#4be277', '#f59e0b', '#ef4444', '#3b82f6', '#a78bfa', '#fbbf24'];
     const parts = Array.from({ length: 140 }, () => ({
       x: Math.random() * this.canvas!.width,
-      y: -20 - Math.random() * 200,
+      y: Math.random() * h - h,
       w: 6 + Math.random() * 6,
       h: 10 + Math.random() * 8,
       vy: 2 + Math.random() * 3.5,
