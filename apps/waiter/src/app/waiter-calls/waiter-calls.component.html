@@ -1,6 +1,11 @@
 <div class="wc-page">
   <header class="wc-header">
-    <h1>Waiter Calls</h1>
+    <div class="wc-header-left">
+      <button class="wc-back" (click)="goBack()" aria-label="Back to Tables">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h1>Waiter Calls</h1>
+    </div>
     @if (workload(); as w) {
       <div class="wc-workload" [class.full]="!w.isAvailable">
         Tables: {{ w.activeTables }} / {{ w.maxTables }}

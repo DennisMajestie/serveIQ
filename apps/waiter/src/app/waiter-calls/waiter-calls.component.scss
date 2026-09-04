@@ -16,6 +16,41 @@
   flex-wrap: wrap;
 }
 
+.wc-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wc-back {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #4be27722;
+  border: 1px solid #4be27733;
+  color: #4be277;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.wc-back .material-symbols-outlined {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.wc-back:active {
+  transform: scale(0.95);
+}
+
+.wc-back:focus-visible {
+  outline: 2px solid #4be277;
+  outline-offset: 2px;
+}
+
 .wc-header h1 {
   font-size: clamp(18px, 5vw, 24px);
   margin: 0;

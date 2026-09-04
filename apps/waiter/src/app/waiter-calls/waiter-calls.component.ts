@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { WaiterCallsApiService, WaiterCallDto } from '@serveiq/shared/data-access';
 import { RealtimeSocketService, WaiterCallEvent } from '@serveiq/shared/data-access';
 import { AuthService } from '@serveiq/shared/data-access';
@@ -20,6 +21,7 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
   private auth = inject(AuthService);
   private callAlert = inject(WaiterCallAlertService);
   private offlineData = inject(OfflineDataService);
+  private router = inject(Router);
 
   calls = signal<WaiterCallDto[]>([]);
   workload = signal<{ activeTables: number; maxTables: number; isAvailable: boolean } | null>(null);
@@ -111,4 +113,8 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
   }
 
   activeCalls = computed(() => this.calls().filter((c) => c.status !== 'resolved' && c.status !== 'cancelled'));
+
+  goBack() {
+    this.router.navigate(['/tables']);
+  }
 }
