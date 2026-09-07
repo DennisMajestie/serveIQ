@@ -19,13 +19,17 @@
     <style>
 #sq-preloader { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; transition: opacity 0.4s ease, visibility 0.4s ease, background 0.3s ease; }
       #sq-preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-      .sq-preloader-logo { width: 140px; height: 140px; animation: sq-logo-pulse 2s ease-in-out infinite; }
-      .sq-preloader-logo img { width: 100%; height: 100%; object-fit: contain; }
+      .sq-preloader-logo { width: 140px; height: 140px; animation: sq-logo-pulse 2s ease-in-out infinite; position: relative; }
+      .sq-preloader-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+      .sq-preloader-logo .sq-logo-light { display: block; }
+      .sq-preloader-logo .sq-logo-dark { display: none; }
       .sq-preloader-text { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); }
       @keyframes sq-logo-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.03); opacity: 1; } }
       @media (prefers-color-scheme: light) {
         #sq-preloader { background: #ffffff; }
         .sq-preloader-text { color: #475569; }
+        .sq-preloader-logo .sq-logo-light { display: none; }
+        .sq-preloader-logo .sq-logo-dark { display: block; }
       }
       app-root:not([hidden]) ~ #sq-preloader,
       body.sq-loaded #sq-preloader { opacity: 0; visibility: hidden; pointer-events: none; }
@@ -34,10 +38,8 @@
   <body>
     <div id="sq-preloader" aria-hidden="true">
       <div class="sq-preloader-logo" role="img" aria-label="ServeIQ loading">
-        <picture>
-          <source media="(prefers-color-scheme: light)" srcset="assets/serveiq-dark-logo.png" />
-          <img src="assets/serveiq-logo.png" alt="ServeIQ" />
-        </picture>
+        <img class="sq-logo-light" src="assets/serveiq-logo.png" alt="ServeIQ" />
+        <img class="sq-logo-dark" src="assets/serveiq-dark-logo.png" alt="ServeIQ" />
       </div>
       <span class="sq-preloader-text">from ServeIQ</span>
     </div>
