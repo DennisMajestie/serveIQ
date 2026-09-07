@@ -20,6 +20,10 @@
           {
             "glob": "**/*",
             "input": "apps/admin/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/admin/src/assets"
           }
         ],
         "styles": ["apps/admin/src/styles.scss"],
