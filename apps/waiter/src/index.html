@@ -56,6 +56,19 @@
         observer.observe(document.body, { childList: true, subtree: true });
         setTimeout(function() { document.body.classList.add('sq-loaded'); }, 8000);
       });
+
+      // Force correct logo for preloader based on actual background
+      (function() {
+        var preloader = document.getElementById('sq-preloader');
+        var lightLogo = preloader?.querySelector('.sq-logo-light');
+        var darkLogo = preloader?.querySelector('.sq-logo-dark');
+        if (lightLogo && darkLogo) {
+          var bg = window.getComputedStyle(preloader).backgroundColor;
+          var isDark = bg && bg.includes('15, 23, 42');
+          lightLogo.style.display = isDark ? 'block' : 'none';
+          darkLogo.style.display = isDark ? 'none' : 'block';
+        }
+      })();
     </script>
   </body>
 </html>
