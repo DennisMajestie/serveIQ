@@ -44,7 +44,7 @@
       <span class="sq-preloader-text">from ServeIQ</span>
     </div>
     <app-root></app-root>
-    <script>
+<script>
       document.addEventListener('DOMContentLoaded', function() {
         var observer = new MutationObserver(function() {
           var app = document.querySelector('app-root');
@@ -64,10 +64,14 @@
         var darkLogo = preloader?.querySelector('.sq-logo-dark');
         if (!lightLogo || !darkLogo) return;
 
+        // Allow forcing light mode via ?preloader=light for testing
+        var forceLight = new URLSearchParams(window.location.search).get('preloader') === 'light';
+
         function setLogo() {
           var bg = window.getComputedStyle(preloader).backgroundColor;
           var isDark = false;
-          if (bg) {
+          if (forceLight) isDark = false;
+          else if (bg) {
             var lower = bg.toLowerCase();
             isDark = lower.includes('15, 23, 42') || 
                      lower.includes('#0f172a') || 
@@ -85,3 +89,5 @@
     </script>
   </body>
 </html>
+
+
