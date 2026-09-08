@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService, UserApiService } from '@serveiq/shared/data-access';
@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './profile.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./profile.component.scss']
 })
 export class LegacyProfileComponent implements OnInit {
@@ -52,7 +53,7 @@ export class LegacyProfileComponent implements OnInit {
     this.themePref.setPreference(newVariant);
     this.userService.updateMe({ uiThemeVariant: newVariant } as any).subscribe({
       next: (updated) => this.user.set(updated),
-      error: () => {}
+      error: () => undefined
     });
     Swal.fire({
       icon: 'success',

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FeedbackService, FeedbackPayload } from './feedback.service';
@@ -41,6 +41,7 @@ import { FeedbackService, FeedbackPayload } from './feedback.service';
       &#9998;
     </button>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .fb-fab {
       position: fixed; bottom: 24px; right: 24px; z-index: 9999;
@@ -80,15 +81,13 @@ import { FeedbackService, FeedbackPayload } from './feedback.service';
     .fb-msg--err { color: #dc2626; }
   `],
 })
-export class FeedbackComponent implements OnInit {
+export class FeedbackComponent {
   feedback = inject(FeedbackService);
   open = false;
   sending = false;
   sent = false;
   sendError = '';
   form: FeedbackPayload = { category: 'bug', message: '' };
-
-  ngOnInit() {}
 
   close() {
     this.open = false;

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -86,6 +86,7 @@ import { AuditLog, AuditLogResponse } from '@serveiq/shared/models';
       }
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .activity-page { padding: 16px; max-width: 960px; margin: 0 auto; color: #e0e0e0; }
     .activity-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, TablesApiService, MenuApiService, ENVIRONMENT_CONFIG, showApiErrorToast } from '@serveiq/shared/data-access';
@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './tab-detail.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tab-detail.component.scss']
 })
 export class LegacyTabDetailComponent implements OnInit {
@@ -65,7 +66,7 @@ export class LegacyTabDetailComponent implements OnInit {
   loadMenuItems() {
     this.menuService.getAllItems().subscribe({
       next: (items) => this.menuItems.set(items || []),
-      error: () => {}
+      error: () => undefined
     });
   }
 

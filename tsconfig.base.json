@@ -19,7 +19,12 @@
       "@serveiq/shared/data-access": ["./libs/shared/data-access/src/index.ts"],
       "@serveiq/models": ["./libs/shared/models/src/index.ts"],
       "@serveiq/data-access": ["./libs/shared/data-access/src/index.ts"]
-    }
+    },
+    "strict": false,
+    "noUncheckedSideEffectImports": false,
+    "types": ["*"],
+    "esModuleInterop": false,
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["node_modules", "tmp"]
 }

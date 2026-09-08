@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +12,7 @@ import { OfflineDataService } from '../../services/offline-data.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './open-tab.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./open-tab.component.scss']
 })
 export class OpenTabComponent implements OnInit {

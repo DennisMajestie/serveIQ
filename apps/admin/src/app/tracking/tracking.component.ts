@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TrackingApiService, TrackingData, PublicAdsApiService, Ad } from '@serveiq/shared/data-access';
@@ -54,7 +54,7 @@ interface Stage {
       } @else {
         <header class="header">
           @if (trackingData()?.logoUrl) {
-            <img [src]="trackingData()?.logoUrl" alt="Logo" class="logo" />
+            <img [src]="$safeNavigationMigration(trackingData()?.logoUrl)" alt="Logo" class="logo" />
           }
           <h1>{{ trackingData()?.businessName }}</h1>
           <p class="subtitle">{{ trackingData()?.branchName }}</p>
@@ -128,8 +128,8 @@ interface Stage {
         @if (ads().length > 0) {
           <div class="ads-strip">
             <div class="ads-banner">
-              <a [href]="currentAd()?.linkUrl" target="_blank" rel="noopener" class="ad-link">
-                <img [src]="currentAd()?.imageUrl" [alt]="currentAd()?.title" class="ad-image" />
+              <a [href]="$safeNavigationMigration(currentAd()?.linkUrl)" target="_blank" rel="noopener" class="ad-link">
+                <img [src]="$safeNavigationMigration(currentAd()?.imageUrl)" [alt]="$safeNavigationMigration(currentAd()?.title)" class="ad-image" />
                 <div class="ad-overlay">
                   <p class="ad-title">{{ currentAd()?.title }}</p>
                 </div>
@@ -149,6 +149,7 @@ interface Stage {
       }
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .page {
       height: 100dvh;
@@ -774,7 +775,7 @@ export class TrackingComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           this.tryLaunchConfetti();
         },
-        error: () => {}
+        error: () => undefined
       });
     });
   }
@@ -808,6 +809,6 @@ export class TrackingComponent implements OnInit, AfterViewInit, OnDestroy {
     navigator.clipboard.writeText(num).then(() => {
       this.copied.set(true);
       setTimeout(() => this.copied.set(false), 2000);
-    }).catch(() => {});
+    }).catch(() => undefined);
   }
 }

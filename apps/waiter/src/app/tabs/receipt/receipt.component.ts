@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillsApiService, TablesApiService } from '@serveiq/shared/data-access';
@@ -12,6 +12,7 @@ interface ConfettiParticle { x: number; y: number; r: number; color: string; d: 
   standalone: true,
   imports: [CommonModule],
   templateUrl: './receipt.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./receipt.component.scss']
 })
 export class ReceiptComponent implements OnInit, AfterViewInit, OnDestroy {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PosApiService } from '@serveiq/shared/data-access';
@@ -16,6 +16,7 @@ interface PosTerminal {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './pos-management.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pos-management.component.scss'],
 })
 export class PosManagementComponent implements OnInit {

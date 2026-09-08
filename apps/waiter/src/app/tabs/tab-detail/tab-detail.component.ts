@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, TablesApiService, BusinessApiService, ENVIRONMENT_CONFIG, showApiErrorToast, NotificationsApiService, OfflineCacheService } from '@serveiq/shared/data-access';
@@ -13,6 +13,7 @@ import { OfflineDataService } from '../../services/offline-data.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './tab-detail.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tab-detail.component.scss']
 })
 export class TabDetailComponent implements OnInit, OnDestroy {
@@ -257,7 +258,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   loadMenuItems() {
     this.offlineData.getMenu().subscribe({
       next: (items) => this.menuItems.set(items || []),
-      error: () => {}
+      error: () => undefined
     });
   }
 
@@ -390,7 +391,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
             setOrder(orders, up);
           }
         },
-        error: () => {},
+        error: () => undefined,
       });
     };
 
@@ -466,11 +467,11 @@ export class TabDetailComponent implements OnInit, OnDestroy {
           n.message?.includes(this.tabId())
         );
         if (relevant) {
-          this.notificationsApi.markRead(relevant.id).subscribe({ error: () => {} });
+          this.notificationsApi.markRead(relevant.id).subscribe({ error: () => undefined });
           this.pollOrderStatus();
         }
       },
-      error: () => {}
+      error: () => undefined
     });
   }
 
@@ -620,7 +621,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     return this.currency.formatKobo(kobo);
   }
 
-  padNumber(n: number | string | undefined | null, len: number = 2): string {
+  padNumber(n: number | string | undefined | null, len = 2): string {
     return String(n ?? '').padStart(len, '0');
   }
 }

@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { inject } from '@angular/core';
@@ -16,6 +16,7 @@ import { PermissionDirective } from '../core/permission.directive';
   standalone: true,
   imports: [CommonModule, FormsModule, PermissionDirective],
   templateUrl: './waiter-management.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./waiter-management.component.scss']
 })
 export class WaiterManagementComponent implements OnInit {

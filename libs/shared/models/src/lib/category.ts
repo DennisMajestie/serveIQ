@@ -7,12 +7,12 @@
 
 /** Stable grouping key for a category value. */
 export function normalizeCategory(value: string | null | undefined): string {
-  return (value || '').trim().toLowerCase().replace(/[\s_\-]+/g, ' ');
+  return (value || '').trim().toLowerCase().replace(/[\s_-]+/g, ' ');
 }
 
 /** Human-friendly single-space label for a category value. */
 export function displayCategory(value: string | null | undefined): string {
-  return (value || '').trim().replace(/[\s_\-]+/g, ' ').replace(/ +/g, ' ');
+  return (value || '').trim().replace(/[\s_-]+/g, ' ').replace(/ +/g, ' ');
 }
 
 /**

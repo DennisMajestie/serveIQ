@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, inject, signal, AfterViewInit, Inject, PLATFORM_ID, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BranchesApiService, ReportsApiService, TabsApiService, ShiftsApiService } from '@serveiq/shared/data-access';
@@ -25,6 +25,7 @@ interface StaffAvatar {
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './premium-dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./premium-dashboard.component.scss']
 })
 export class PremiumDashboardComponent implements OnInit, AfterViewInit {
@@ -330,7 +331,7 @@ void main() {
     const uTime = gl.getUniformLocation(prog, 'u_time');
     const uRes = gl.getUniformLocation(prog, 'u_resolution');
 
-    let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+    const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
     window.addEventListener('mousemove', (event) => {
       const rect = canvas.getBoundingClientRect();
       if (rect.width && rect.height) {

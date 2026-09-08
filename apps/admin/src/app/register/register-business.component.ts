@@ -1,4 +1,4 @@
-import { Component, signal, inject, HostBinding } from '@angular/core';
+import { Component, signal, inject, HostBinding, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './register-business.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./register-business.component.scss']
 })
 export class RegisterBusinessComponent {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { WaiterCallsApiService, WaiterCallDto } from '@serveiq/shared/data-access';
@@ -13,6 +13,7 @@ import { OfflineDataService } from '../services/offline-data.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './waiter-calls.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./waiter-calls.component.scss'],
 })
 export class WaiterCallsComponent implements OnInit, OnDestroy {
@@ -71,7 +72,7 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
         }
         this.tableNumbers.set(map);
       },
-      error: () => {},
+      error: () => undefined,
     });
   }
 
@@ -92,7 +93,7 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
     });
     this.api.getWorkload().subscribe({
       next: (w) => this.workload.set(w),
-      error: () => {},
+      error: () => undefined,
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService, AdminFeedback } from '@serveiq/shared/data-access';
@@ -120,6 +120,7 @@ const CATEGORY_LABELS: Record<string, string> = {
       </ng-template>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host { display: block; padding: 32px; }
     .page-header { margin-bottom: 24px; }

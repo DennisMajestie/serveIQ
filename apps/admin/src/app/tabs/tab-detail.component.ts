@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +13,7 @@ import { PermissionService } from '../core/permission.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './tab-detail.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tab-detail.component.scss']
 })
 export class TabDetailComponent implements OnInit {
@@ -72,7 +73,7 @@ export class TabDetailComponent implements OnInit {
           this.serviceChargePercent.set(business.serviceChargePercent);
         }
       },
-      error: () => {}
+      error: () => undefined
     });
   }
 

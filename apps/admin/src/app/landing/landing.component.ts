@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, Inject, PLATFORM_ID, Signal, signal } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, Inject, PLATFORM_ID, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeService, Theme } from '../core/theme.service';
@@ -65,6 +65,7 @@ interface FaqItem {
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './landing.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent implements AfterViewInit, OnDestroy {

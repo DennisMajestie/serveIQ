@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
@@ -12,6 +12,7 @@ type CallStatus = 'idle' | 'pending' | 'queued' | 'accepted' | 'arrived' | 'reso
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './call-waiter.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./call-waiter.component.scss'],
 })
 export class CallWaiterComponent implements OnInit, OnDestroy {
@@ -58,7 +59,7 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
           this.startPolling();
         }
       },
-      error: () => {},
+      error: () => undefined,
     });
   }
 

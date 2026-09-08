@@ -1,4 +1,4 @@
-﻿import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, signal, computed, inject, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -378,6 +378,7 @@ interface MobileTab {
 
     <app-feedback></app-feedback>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host {
       display: block;

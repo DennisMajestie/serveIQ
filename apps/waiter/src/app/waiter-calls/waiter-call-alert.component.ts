@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { WaiterCallAlertService } from './waiter-call-alert.service';
@@ -23,6 +23,7 @@ import { OfflineDataService } from '../services/offline-data.service';
       </div>
     }
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .wc-alert {
       position: fixed;

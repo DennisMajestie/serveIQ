@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SitePageComponent } from './site-page';
 import { SiteFooterComponent } from './site-footer.component';
@@ -44,6 +44,7 @@ import { PageHeaderComponent } from './page-header.component';
     </main>
     <app-site-footer />
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       .contact {

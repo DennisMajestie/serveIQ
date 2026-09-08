@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -15,6 +15,7 @@ type QueueTab = 'pending' | 'preparing' | 'ready';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './supervisor-orders.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './supervisor-orders.component.scss'
 })
 export class SupervisorOrdersComponent implements OnInit, OnDestroy {
@@ -452,7 +453,7 @@ export class SupervisorOrdersComponent implements OnInit, OnDestroy {
     let selectedTime = 5;
 
     const timeOptions = [5, 10, 15, 25];
-    let customTime = 5;
+    const customTime = 5;
 
     const html = `
       <div style="text-align:left;">

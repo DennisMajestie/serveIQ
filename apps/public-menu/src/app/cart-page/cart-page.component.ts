@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { showApiErrorToast } from '@serveiq/shared/data-access';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, CallWaiterComponent],
   templateUrl: './cart-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./cart-page.component.scss'],
 })
 export class CartPageComponent {

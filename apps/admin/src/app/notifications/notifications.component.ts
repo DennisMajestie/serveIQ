@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationsApiService } from '@serveiq/shared/data-access';
 import { Notification } from '@serveiq/shared/models';
@@ -42,6 +42,7 @@ import Swal from 'sweetalert2';
       </div>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .notifications-page { padding: 24px; max-width: 800px; }
     .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
@@ -107,7 +108,7 @@ export class NotificationsComponent implements OnInit {
           list.map(n => n.id === id ? { ...n, isRead: true } : n)
         );
       },
-      error: () => {}
+      error: () => undefined
     });
   }
 
@@ -124,7 +125,7 @@ export class NotificationsComponent implements OnInit {
         next: () => {
           this.notifications.update(list => list.map(n => ({ ...n, isRead: true })));
         },
-        error: () => {}
+        error: () => undefined
       });
     });
   }

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubscriptionService } from '../core/subscription.service';
 import { BusinessApiService } from '@serveiq/shared/data-access';
@@ -101,6 +101,7 @@ import Swal from 'sweetalert2';
       </ng-container>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .billing-page { padding: 24px 32px; margin: 0 auto; }
     .page-header { margin-bottom: 32px; }

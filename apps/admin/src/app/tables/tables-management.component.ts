@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, MatIconModule, RouterModule],
   templateUrl: './tables-management.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tables-management.component.scss']
 })
 export class TablesManagementComponent implements OnInit {

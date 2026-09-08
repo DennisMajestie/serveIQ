@@ -74,7 +74,7 @@ describe('CurrencyContextService', () => {
   it('should handle API error gracefully and keep default', () => {
     TestBed.resetTestingModule();
     const errMock = { getBusiness: vi.fn() };
-    errMock.getBusiness.mockReturnValue(new Promise(() => {})); // never resolves
+    errMock.getBusiness.mockReturnValue(new Promise<never>(() => undefined)); // never resolves
     TestBed.configureTestingModule({
       providers: [
         CurrencyContextService,

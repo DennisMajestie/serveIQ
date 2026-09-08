@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubscriptionService } from '../subscription.service';
 
@@ -17,6 +17,7 @@ import { SubscriptionService } from '../subscription.service';
     </ng-container>
     <ng-template #noSub></ng-template>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .sb-banner {
       display: flex;

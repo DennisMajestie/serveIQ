@@ -9,6 +9,7 @@ import {
   withInterceptorsFromDi,
   withInterceptors,
   HTTP_INTERCEPTORS,
+  withXhr
 } from '@angular/common/http';
 import { AuthInterceptor } from '@serveiq/shared/data-access';
 import { paymentRequiredInterceptor } from './core/payment-required.interceptor';
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes, withRouterConfig({ onSameUrlNavigation: 'reload' })),
     provideAnimations(),
-    provideHttpClient(withInterceptorsFromDi(), withInterceptors([paymentRequiredInterceptor])),
+    provideHttpClient(withXhr(), withInterceptorsFromDi(), withInterceptors([paymentRequiredInterceptor])),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

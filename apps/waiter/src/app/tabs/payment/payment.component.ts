@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -16,6 +16,7 @@ import { interval, Subscription, switchMap, map } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './payment.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./payment.component.scss']
 })
 export class PaymentComponent implements OnInit, OnDestroy {
@@ -160,7 +161,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
           }, 1000);
         }
       },
-      error: () => {},
+      error: () => undefined,
     });
   }
 
@@ -216,13 +217,13 @@ export class PaymentComponent implements OnInit, OnDestroy {
       this.currentAmount.set('');
       this.isEditingAmount = true;
     }
-    let clean = this.currentAmount().replace(/,/g, '');
+    const clean = this.currentAmount().replace(/,/g, '');
     if (num === '.' && clean.includes('.')) return;
     this.currentAmount.set(clean + num);
   }
 
   clearLast() {
-    let clean = this.currentAmount().replace(/,/g, '').slice(0, -1);
+    const clean = this.currentAmount().replace(/,/g, '').slice(0, -1);
     this.currentAmount.set(clean || '0');
     if (!clean) this.isEditingAmount = false;
   }

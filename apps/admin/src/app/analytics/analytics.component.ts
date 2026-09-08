@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
@@ -44,6 +44,7 @@ interface CategoryROI {
   standalone: true,
   imports: [CommonModule, MatIconModule, RouterModule, FormsModule],
   templateUrl: './analytics.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./analytics.component.scss']
 })
 export class AnalyticsComponent implements OnInit {

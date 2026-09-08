@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, OnDestroy, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { BranchesApiService, ReportsApiService, DashboardStats, UserApiService } from '@serveiq/shared/data-access';
@@ -11,6 +11,7 @@ import { Subscription, interval } from 'rxjs';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -110,7 +111,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.peakHours.set(entries || []);
         this.updateSparkline();
       },
-      error: () => {}
+      error: () => undefined
     });
   }
 
@@ -119,14 +120,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!branchId) return;
     this.reportsService.getTableVelocity(branchId).subscribe({
       next: (entries) => this.tableVelocity.set(entries || []),
-      error: () => {}
+      error: () => undefined
     });
   }
 
   loadPeakEfficiency() {
     this.reportsService.getPeakEfficiency().subscribe({
       next: (entries) => this.peakEfficiency.set(entries || []),
-      error: () => {}
+      error: () => undefined
     });
   }
 

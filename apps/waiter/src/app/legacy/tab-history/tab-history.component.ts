@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TabsApiService, ShiftsApiService } from '@serveiq/shared/data-access';
@@ -25,6 +25,7 @@ interface ShiftGroup {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './tab-history.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tab-history.component.scss']
 })
 export class LegacyTabHistoryComponent implements OnInit {

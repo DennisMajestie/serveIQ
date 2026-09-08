@@ -1,4 +1,4 @@
-﻿import { Component, signal, inject } from '@angular/core';
+﻿import { Component, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -62,6 +62,7 @@ import Swal from 'sweetalert2';
       </main>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .onboarding-layout {
       min-height: 100vh;

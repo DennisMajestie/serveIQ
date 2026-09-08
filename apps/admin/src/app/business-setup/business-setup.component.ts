@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -157,6 +157,7 @@ import Swal from 'sweetalert2';
       </div>
     </main>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .setup-container {
       min-height: 100vh;
@@ -389,7 +390,7 @@ export class BusinessSetupComponent implements OnInit {
         this.businessType.set(b.type || 'restaurant');
         this.currency.set(b.currency || 'NGN');
       },
-      error: () => {}
+      error: () => undefined
     });
     this.branchesApi.list().subscribe({
       next: (branches) => {
@@ -397,7 +398,7 @@ export class BusinessSetupComponent implements OnInit {
           this.currentStep.set(4);
         }
       },
-      error: () => {}
+      error: () => undefined
     });
   }
 

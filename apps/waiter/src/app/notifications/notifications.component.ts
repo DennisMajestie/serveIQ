@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationsApiService, OrdersApiService } from '@serveiq/shared/data-access';
@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
   selector: 'app-waiter-notifications',
   standalone: true,
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './notifications.component.html',
 })
 export class WaiterNotificationsComponent implements OnInit {

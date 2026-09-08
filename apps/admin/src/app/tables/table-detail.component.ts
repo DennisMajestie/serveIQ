@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { TabsApiService, OrdersApiService, BillsApiService, MenuApiService, TablesApiService, BusinessApiService, showApiErrorToast } from '@serveiq/shared/data-access';
@@ -210,6 +210,7 @@ import { ThemeService } from '../core/theme.service';
       </div>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host {
       display: block;
@@ -610,7 +611,7 @@ export class TableDetailComponent implements OnInit {
           this.serviceChargePercent.set(business.serviceChargePercent);
         }
       },
-      error: () => {}
+      error: () => undefined
     });
   }
 

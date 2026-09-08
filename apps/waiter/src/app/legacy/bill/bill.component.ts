@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService } from '@serveiq/shared/data-access';
@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './bill.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./bill.component.scss']
 })
 export class LegacyBillComponent implements OnInit {
@@ -49,7 +50,7 @@ export class LegacyBillComponent implements OnInit {
   ngOnInit() {
     this.menuService.getAllItems().subscribe({
       next: (items) => this.menuItems.set(items || []),
-      error: () => {}
+      error: () => undefined
     });
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');

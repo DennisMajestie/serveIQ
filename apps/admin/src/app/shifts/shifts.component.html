@@ -47,7 +47,7 @@
       <div class="stat-grid">
         <div class="stat">
           <span class="stat-label">Opened At</span>
-          <span class="stat-value">{{ currentShift()?.openedAt | date:'medium' }}</span>
+          <span class="stat-value">{{ $safeNavigationMigration(currentShift()?.openedAt) | date:'medium' }}</span>
         </div>
         <div class="stat">
           <span class="stat-label">Starting Cash</span>
@@ -203,7 +203,7 @@
         <label class="form-label">Assign Staff</label>
         <div class="staff-multiselect">
           <label class="staff-option" *ngFor="let s of staff()">
-            <input type="checkbox" [checked]="openShiftForm().assignedStaffIds?.includes(s.id)" (change)="toggleStaff(s.id, $event)">
+            <input type="checkbox" [checked]="$safeNavigationMigration(openShiftForm().assignedStaffIds?.includes(s.id))" (change)="toggleStaff(s.id, $event)">
             <span>{{ s.fullName }} <span class="text-muted">({{ s.role }})</span></span>
           </label>
         </div>

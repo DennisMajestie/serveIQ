@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { SubscriptionService } from '../core/subscription.service';
@@ -29,6 +29,7 @@ import { SubscriptionService } from '../core/subscription.service';
         <button class="btn btn-primary" (click)="goToDashboard()">Go to Dashboard</button>
       </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .payment-success-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--background); padding: 24px; }
     .success-card { background: var(--surface); border: 1px solid var(--outline-variant); border-radius: 16px; padding: 48px; text-align: center; max-width: 480px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.06); }

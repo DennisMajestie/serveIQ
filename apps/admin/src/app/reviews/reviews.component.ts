@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
@@ -74,6 +74,7 @@ import { Branch } from '@serveiq/shared/models';
       </div>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host { display: block; padding: 24px; font-family: 'Inter', sans-serif; }
     .reviews-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
@@ -124,7 +125,7 @@ export class ReviewsComponent implements OnInit {
   ngOnInit() {
     this.branchesApi.list().subscribe({
       next: (branches) => this.branches.set(branches),
-      error: () => {},
+      error: () => undefined,
     });
     this.load(1);
   }

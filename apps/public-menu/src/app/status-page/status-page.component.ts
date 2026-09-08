@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,6 +28,7 @@ interface Stage {
   standalone: true,
   imports: [CommonModule, FormsModule, CallWaiterComponent],
   templateUrl: './status-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./status-page.component.scss'],
 })
 export class StatusPageComponent implements OnInit, OnDestroy {

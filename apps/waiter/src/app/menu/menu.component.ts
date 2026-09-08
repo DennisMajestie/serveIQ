@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG, OfflineCacheService } from '@serveiq/shared/data-access';
@@ -31,6 +31,7 @@ interface CartItem extends LocalMenuItem {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './menu.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit, inject } from '@angular/core';
+import { Component, signal, computed, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,6 +23,7 @@ type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verificatio
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './settings.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
@@ -295,7 +296,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
         const migrated = this.migrateLegacyEnabled(settings, storedProviders);
         this.loadPlatformProviders(migrated);
       },
-      error: () => {},
+      error: () => undefined,
     });
   }
 

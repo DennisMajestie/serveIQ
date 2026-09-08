@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, Input, Output, EventEmitter, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MenuApiService } from '@serveiq/shared/data-access';
@@ -10,6 +10,7 @@ import { CurrencyContextService } from '../../../services/currency-context.servi
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './add-order-item-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./add-order-item-modal.component.scss']
 })
 export class AddOrderItemModalComponent implements OnInit {

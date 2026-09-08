@@ -357,7 +357,7 @@ export class AuthService {
     localStorage.removeItem('branchId');
     localStorage.removeItem('userId');
     this.tokenSubject.next(null);
-    this.serverLogout().subscribe({ error: () => {} });
+    this.serverLogout().subscribe({ error: () => undefined });
     window.location.href = '/login';
   }
 }

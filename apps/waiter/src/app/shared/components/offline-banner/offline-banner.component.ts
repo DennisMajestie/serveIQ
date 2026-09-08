@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NetworkService } from '@serveiq/shared/data-access';
 import { OfflineSyncEngine } from '@serveiq/shared/data-access';
@@ -24,6 +24,7 @@ import { OfflineSyncEngine } from '@serveiq/shared/data-access';
       </div>
     }
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .offline-banner { background: #f97316; color: white; text-align: center; padding: 8px 16px; font-size: 14px; font-weight: 500; }
     .sync-banner { background: #3b82f6; color: white; text-align: center; padding: 8px 16px; font-size: 14px; font-weight: 500; cursor: pointer; }

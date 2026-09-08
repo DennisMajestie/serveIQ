@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit, Inject } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './menu-management.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./menu-management.component.scss']
 })
 export class MenuManagementComponent implements OnInit {
@@ -121,11 +122,11 @@ export class MenuManagementComponent implements OnInit {
   loadCategoriesAndUnits() {
     this.menuService.getCategories().subscribe({
       next: (cats: any) => this.apiCategories.set((cats || []).map((c: any) => c.name)),
-      error: () => {},
+      error: () => undefined,
     });
     this.menuService.getUnits().subscribe({
       next: (units: any) => this.apiUnits.set((units || []).map((u: any) => u.name)),
-      error: () => {},
+      error: () => undefined,
     });
   }
 

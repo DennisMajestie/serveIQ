@@ -332,7 +332,7 @@ const ALIGNMENT_POS = [
   [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50],
 ];
 
-export function generateQRDataURL(text: string, moduleSize: number = 10): string {
+export function generateQRDataURL(text: string, moduleSize = 10): string {
   const version = getVersion(text);
   const size = getSymbolSize(version);
   const margin = 4;

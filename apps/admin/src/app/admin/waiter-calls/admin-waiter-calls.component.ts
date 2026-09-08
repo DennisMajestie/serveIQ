@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WaiterCallsApiService, WaiterCallDto } from '@serveiq/shared/data-access';
@@ -13,6 +13,7 @@ import { ThemeService } from '../../core/theme.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-waiter-calls.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./admin-waiter-calls.component.scss'],
 })
 export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
@@ -91,7 +92,7 @@ export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
     });
     this.api.getQueue().subscribe({
       next: (data) => this.queue.set(data ?? []),
-      error: () => {},
+      error: () => undefined,
     });
   }
 

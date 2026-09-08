@@ -20,11 +20,11 @@ describe('App', () => {
         },
         {
           provide: OfflineCacheService,
-          useValue: { cacheAll: () => {}, getPendingMutations: () => [] },
+          useValue: { cacheAll: () => undefined, getPendingMutations: () => [] },
         },
         {
           provide: OfflineSyncEngine,
-          useValue: { pendingCount: () => 0, lastSyncError: () => null, processSync: () => {} },
+          useValue: { pendingCount: () => 0, lastSyncError: () => null, processSync: () => undefined },
         },
       ],
     }).compileComponents();

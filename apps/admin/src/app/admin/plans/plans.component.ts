@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SubscriptionsApiService, AdminPlan, CreatePlanPayload, AdminBillingInterval } from '@serveiq/shared/data-access';
@@ -99,6 +99,7 @@ const CURRENCY_SYMBOLS: Record<string, string> = { NGN: 'â‚¦', USD: '$', GBP: 'Â
       </section>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host { display: block; padding: 32px; }
     .page-header { margin-bottom: 28px; }

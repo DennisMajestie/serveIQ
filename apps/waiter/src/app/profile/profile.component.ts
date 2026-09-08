@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService, UserApiService } from '@serveiq/shared/data-access';
 import { User, UiThemeVariant } from '@serveiq/shared/models';
@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './profile.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
@@ -52,7 +53,7 @@ export class ProfileComponent implements OnInit {
       next: (updated) => {
         this.user.set(updated);
       },
-      error: () => {}
+      error: () => undefined
     });
     Swal.fire({
       icon: 'success',

@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BillsApiService, TabsApiService, OrdersApiService, UserApiService, ReportsApiService, MenuApiService } from '@serveiq/shared/data-access';
@@ -173,6 +173,7 @@ interface BillWithTab {
       </section>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .bills-page { padding: 40px 48px; margin: 0 auto; font-family: 'Inter', sans-serif; }
     .page-header { margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; }
@@ -510,7 +511,7 @@ export class BillsComponent implements OnInit {
               ];
               const text = lines.join('\n');
               window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-            } catch {}
+            } catch { void 0 }
           });
         });
       }

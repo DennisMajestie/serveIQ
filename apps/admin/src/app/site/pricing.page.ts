@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SitePageComponent } from './site-page';
 import { SiteFooterComponent } from './site-footer.component';
@@ -58,6 +58,7 @@ interface Plan {
     </main>
     <app-site-footer />
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       .pricing {

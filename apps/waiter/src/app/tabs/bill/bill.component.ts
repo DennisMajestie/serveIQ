@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BillsApiService, TablesApiService, TabsApiService, OrdersApiService, MenuApiService, BusinessApiService, OfflineCacheService } from '@serveiq/shared/data-access';
@@ -13,6 +13,7 @@ import { OfflineDataService } from '../../services/offline-data.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './bill.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./bill.component.scss']
 })
 export class BillComponent implements OnInit {
@@ -76,11 +77,11 @@ export class BillComponent implements OnInit {
   ngOnInit() {
     this.menuService.getAllItems().subscribe({
       next: (items) => this.menuItems.set(items || []),
-      error: () => {}
+      error: () => undefined
     });
     this.businessApi.getBusiness().subscribe({
       next: (business) => this.businessSettings.set(business),
-      error: () => {}
+      error: () => undefined
     });
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');

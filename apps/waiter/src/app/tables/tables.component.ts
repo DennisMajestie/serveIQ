@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { TablesApiService, TabsApiService, UserApiService, AuthService, BusinessApiService, ShiftsApiService, NotificationsApiService, OfflineCacheService, NetworkService } from '@serveiq/shared/data-access';
@@ -14,6 +14,7 @@ import { OfflineDataService } from '../services/offline-data.service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './tables.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tables.component.scss']
 })
 export class TablesComponent implements OnInit, OnDestroy {
@@ -186,7 +187,7 @@ export class TablesComponent implements OnInit, OnDestroy {
         const tables = await firstValueFrom(this.offlineData.getTables());
         if (Array.isArray(tables)) this.tables.set(tables);
         this.isSynced.set(true);
-      } catch {}
+      } catch { void 0 }
       this.loadCurrentShift();
       this.loadNotifications();
     });
@@ -203,7 +204,7 @@ export class TablesComponent implements OnInit, OnDestroy {
         this.tables.set(tables);
         this.isSynced.set(true);
       },
-      error: () => {},
+      error: () => undefined,
     });
   }
 
@@ -213,7 +214,7 @@ export class TablesComponent implements OnInit, OnDestroy {
       next: (tabs) => {
         this.openTabs.set(Array.isArray(tabs) ? tabs : []);
       },
-      error: () => {}  // poll will retry; errors are non-critical
+      error: () => undefined  // poll will retry; errors are non-critical
     });
   }
 
@@ -422,10 +423,10 @@ export class TablesComponent implements OnInit, OnDestroy {
             background: '#1e293b',
             color: '#fff'
           });
-          this.notificationsApi.markRead(n.id).subscribe({ error: () => {} });
+          this.notificationsApi.markRead(n.id).subscribe({ error: () => undefined });
         });
       },
-      error: () => {}
+      error: () => undefined
     });
   }
 

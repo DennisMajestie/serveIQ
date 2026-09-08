@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService, AdminAuditLog } from '@serveiq/shared/data-access';
@@ -109,6 +109,7 @@ import Swal from 'sweetalert2';
       </ng-template>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host { display: block; padding: 32px; }
     .page-header { margin-bottom: 24px; }

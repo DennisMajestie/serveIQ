@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit, computed } from '@angular/core';
+import { Component, signal, inject, OnInit, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ShiftsApiService } from '@serveiq/shared/data-access';
@@ -32,6 +32,7 @@ interface TemplateForm {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './shifts.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./shifts.component.scss']
 })
 export class ShiftsComponent implements OnInit {

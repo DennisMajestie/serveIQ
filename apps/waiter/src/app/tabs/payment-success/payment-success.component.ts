@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyContextService } from '../../services/currency-context.service';
@@ -11,6 +11,7 @@ interface ConfettiParticle { x: number; y: number; r: number; color: string; d: 
   standalone: true,
   imports: [CommonModule],
   templateUrl: './payment-success.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./payment-success.component.scss']
 })
 export class PaymentSuccessComponent implements OnInit, AfterViewInit, OnDestroy {

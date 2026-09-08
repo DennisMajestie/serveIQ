@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ThemeService } from '../core/theme.service';
 
@@ -15,6 +15,7 @@ interface OrderItem {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './tab-detail-view.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tab-detail-view.component.scss']
 })
 export class TabDetailViewComponent {

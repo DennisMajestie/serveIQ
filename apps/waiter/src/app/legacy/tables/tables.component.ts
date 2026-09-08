@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { TablesApiService, TabsApiService, AuthService, ShiftsApiService, isNetworkError } from '@serveiq/shared/data-access';
@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './tables.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tables.component.scss']
 })
 export class LegacyTablesComponent implements OnInit, OnDestroy {
@@ -98,7 +99,7 @@ export class LegacyTablesComponent implements OnInit, OnDestroy {
       next: (tabs) => {
         this.openTabs.set(Array.isArray(tabs) ? tabs : []);
       },
-      error: () => {}
+      error: () => undefined
     });
   }
 

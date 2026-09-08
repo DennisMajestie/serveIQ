@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, Signal, inject } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, Signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { ThemeService, Theme } from '../core/theme.service';
@@ -16,6 +16,7 @@ import { ThemeService, Theme } from '../core/theme.service';
       </a>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [
     `
       :host {

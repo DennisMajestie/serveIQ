@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminApiService, AdminStats, AdminRevenue, AdminRevenueSeries } from '@serveiq/shared/data-access';
 import Swal from 'sweetalert2';
@@ -136,6 +136,7 @@ const CURRENCIES: Record<string, { symbol: string; locale: string }> = {
       </ng-container>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host { display: block; padding: 32px; }
     .page-header { margin-bottom: 28px; }

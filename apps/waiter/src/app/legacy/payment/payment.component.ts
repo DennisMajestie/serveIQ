@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './payment.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./payment.component.scss']
 })
 export class LegacyPaymentComponent implements OnInit {
@@ -62,7 +63,7 @@ export class LegacyPaymentComponent implements OnInit {
   private loadTerminals() {
     this.posApi.getAll().subscribe({
       next: (terminals) => this.terminals.set(Array.isArray(terminals) ? terminals : []),
-      error: () => {}
+      error: () => undefined
     });
   }
 
@@ -111,13 +112,13 @@ export class LegacyPaymentComponent implements OnInit {
       this.currentAmount.set('');
       this.isEditingAmount = true;
     }
-    let clean = this.currentAmount().replace(/,/g, '');
+    const clean = this.currentAmount().replace(/,/g, '');
     if (num === '.' && clean.includes('.')) return;
     this.currentAmount.set(clean + num);
   }
 
   clearLast() {
-    let clean = this.currentAmount().replace(/,/g, '').slice(0, -1);
+    const clean = this.currentAmount().replace(/,/g, '').slice(0, -1);
     this.currentAmount.set(clean || '0');
     if (!clean) this.isEditingAmount = false;
   }

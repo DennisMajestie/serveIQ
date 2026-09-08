@@ -5,6 +5,7 @@ import {
   inject,
   signal,
   computed,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,6 +33,7 @@ interface DoneEntry {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './kds.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./kds.component.scss'],
 })
 export class KdsComponent implements OnInit, OnDestroy {

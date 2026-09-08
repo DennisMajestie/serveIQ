@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import { finalize } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, CallWaiterComponent],
   templateUrl: './menu-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./menu-page.component.scss'],
 })
 export class MenuPageComponent implements OnInit {

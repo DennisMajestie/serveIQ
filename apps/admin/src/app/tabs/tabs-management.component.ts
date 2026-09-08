@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -12,6 +12,7 @@ import { CurrencyContextService } from '../core/currency-context.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './tabs-management.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tabs-management.component.scss']
 })
 export class TabsManagementComponent implements OnInit {

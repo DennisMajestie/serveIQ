@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TabsApiService, TablesApiService, ShiftsApiService, OfflineCacheService } from '@serveiq/shared/data-access';
@@ -37,6 +37,7 @@ interface TabRow {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './tab-history.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tab-history.component.scss']
 })
 export class TabHistoryComponent implements OnInit {

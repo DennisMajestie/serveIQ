@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -25,7 +25,7 @@ import { CurrencyContextService } from '../core/currency-context.service';
       } @else {
         <header class="header">
           @if (menuData()?.logoUrl) {
-            <img [src]="menuData()?.logoUrl" alt="Logo" class="logo" />
+            <img [src]="$safeNavigationMigration(menuData()?.logoUrl)" alt="Logo" class="logo" />
           }
           <h1>{{ menuData()?.businessName }}</h1>
           <p class="subtitle">{{ menuData()?.branchName }}</p>
@@ -131,6 +131,7 @@ import { CurrencyContextService } from '../core/currency-context.service';
       }
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .public-menu {
       min-height: 100vh;

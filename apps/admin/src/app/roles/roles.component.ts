@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RolesApiService, Role, Permission } from '@serveiq/shared/data-access';
@@ -16,6 +16,7 @@ interface CategoryGroup {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './roles.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./roles.component.scss']
 })
 export class RolesComponent implements OnInit {

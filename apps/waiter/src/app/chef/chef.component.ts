@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { OrdersApiService, AuthService } from '@serveiq/shared/data-access';
@@ -12,6 +12,7 @@ type KitchenTab = 'preparing' | 'ready';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './chef.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./chef.component.scss']
 })
 export class ChefComponent implements OnInit, OnDestroy {

@@ -7,6 +7,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
   HTTP_INTERCEPTORS,
+  withXhr
 } from '@angular/common/http';
 import { AuthInterceptor, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
 import { appRoutes } from './app.routes';
@@ -16,7 +17,7 @@ import { ChunkErrorHandler } from './core/chunk-error-handler.class';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
