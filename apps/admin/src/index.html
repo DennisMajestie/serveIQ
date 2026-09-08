@@ -47,7 +47,7 @@
       <span class="sq-preloader-text">from ServeIQ</span>
     </div>
     <app-root></app-root>
-    <script>
+<script>
       document.addEventListener('DOMContentLoaded', function() {
         var observer = new MutationObserver(function() {
           var app = document.querySelector('app-root');
@@ -65,13 +65,27 @@
         var preloader = document.getElementById('sq-preloader');
         var lightLogo = preloader?.querySelector('.sq-logo-light');
         var darkLogo = preloader?.querySelector('.sq-logo-dark');
-        if (lightLogo && darkLogo) {
+        if (!lightLogo || !darkLogo) return;
+
+        function setLogo() {
           var bg = window.getComputedStyle(preloader).backgroundColor;
-          // rgb(15, 23, 42) = #0f172a (dark), rgb(255, 255, 255) = white (light)
-          var isDark = bg && bg.includes('15, 23, 42');
+          // Handle various formats: rgb(15, 23, 42), rgba(15, 23, 42, 1), #0f172a, #0f172aff
+          var isDark = false;
+          if (bg) {
+            var lower = bg.toLowerCase();
+            isDark = lower.includes('15, 23, 42') || 
+                     lower.includes('#0f172a') || 
+                     lower === 'rgb(15, 23, 42)' ||
+                     lower === 'rgba(15, 23, 42, 1)';
+          }
           lightLogo.style.display = isDark ? 'block' : 'none';
           darkLogo.style.display = isDark ? 'none' : 'block';
         }
+
+        // Run immediately and after a brief delay to catch CSS application
+        setLogo();
+        setTimeout(setLogo, 50);
+        setTimeout(setLogo, 200);
       })();
     </script>
   </body>
