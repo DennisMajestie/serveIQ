@@ -411,20 +411,54 @@ export class TablesComponent implements OnInit, OnDestroy {
         const list = Array.isArray(notifications) ? notifications : [];
         this.notifications.set(list);
 
-        const orderReady = list.filter((n: Notification) => !n.isRead && (n.type as any) === 'order_ready' && !this.seenOrderReadyIds.has(n.id));
-        orderReady.forEach((n: Notification) => {
-          this.seenOrderReadyIds.add(n.id);
-          Swal.fire({
-            icon: 'success',
-            title: 'Order Ready',
-            text: n.message || 'Your order is ready for pickup.',
-            timer: 3000,
-            showConfirmButton: false,
-            background: '#1e293b',
-            color: '#fff'
-          });
-          this.notificationsApi.markRead(n.id).subscribe({ error: () => undefined });
-        });
+        // Group order_ready notifications by tab_id to avoid notification spam
+        const orderReady = list.filter((n: Notification) =>
+          !n.isRead && (n.type as any) === 'order_ready' && !this.seenOrderReadyIds.has(n.id)
+        );
+
+        if (orderReady.length > 0) {
+          // Group by tab_id from notification data
+          const byTab = new Map<string, Notification[]>();
+          for (const n of orderReady) {
+            const tabId = (n.data as any)?.tab_id ?? (n.data as any)?.tabId;
+            if (!tabId) continue;
+            const arr = byTab.get(tabId) ?? [];
+            arr.push(n);
+            byTab.set(tabId, arr);
+          }
+
+          // Show one toast per table with count
+          for (const [tabId, items] of byTab) {
+            const first = items[0];
+            const tableId = (first.data as any)?.tab_id ?? (first.data as any)?.tabId;
+            const trackingCode = (first.data as any)?.tracking_code ?? (first.data as any)?.trackingCode;
+            const itemCount = items.length;
+
+            this.seenOrderReadyIds.add(first.id);
+            // Mark all as read
+            for (const n of items) {
+              this.seenOrderReadyIds.add(n.id);
+              this.notificationsApi.markRead(n.id).subscribe({ error: () => undefined });
+            }
+
+            const table = this.tables().find(t => t.id === tableId);
+            const tableLabel = table?.label || table?.tableNumber || 'Table';
+
+            const message = itemCount === 1
+              ? `Order ready for pickup at ${tableLabel}.`
+              : `${itemCount} orders ready for pickup at ${tableLabel}.`;
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Order Ready',
+              text: trackingCode ? `${message} Code: ${trackingCode}` : message,
+              timer: 3000,
+              showConfirmButton: false,
+              background: '#1e293b',
+              color: '#fff'
+            });
+          }
+        }
       },
       error: () => undefined
     });
