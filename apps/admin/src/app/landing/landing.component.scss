@@ -347,13 +347,16 @@
 
 .hero-proof {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  text-align: center;
   .stars {
-    display: inline-flex;
-    gap: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     .material-symbols-outlined {
-      font-size: 18px;
+      font-size: 20px;
       color: #ffd27a;
     }
   }
