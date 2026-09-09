@@ -47,7 +47,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   });
   declineReason = computed(() => this.activeOrder()?.items[0]?.declineReason ?? null);
   timerEndsAt = computed(() => this.activeOrder()?.timerEndsAt ?? null);
-  trackingCode = computed(() => (this.tab() as any)?.trackingCode ?? this.activeOrder()?.items[0]?.trackingCode ?? null);
+  trackingCode = computed(() => this.activeOrder()?.trackingCode ?? this.activeOrder()?.items[0]?.trackingCode ?? (this.tab() as any)?.trackingCode ?? null);
   canViewBill = computed(() => this.billableItems().length > 0);
 
   getOrderStatus(item: any): string {
@@ -351,10 +351,17 @@ export class TabDetailComponent implements OnInit, OnDestroy {
       quantity: item.quantity ?? item.qty ?? 1
     }));
     console.debug('loadOrders normalized:', normalized);
+    // Filter out cancelled/declined orders from API response — they should not
+    // reappear after the waiter has removed them locally.
+    const filtered = normalized.filter((item: any) => {
+      const status = (item.orderStatus ?? item.order_status ?? '').toLowerCase();
+      return status !== 'cancelled' && status !== 'declined';
+    });
+    console.debug('loadOrders filtered:', filtered);
     // Merge instead of replace: when items were just added from the menu, a
     // racing order-fetch (cache or network) can still return the pre-add list
     // and must not wipe the freshly added lines.
-    const merged = [...normalized];
+    const merged = [...filtered];
     const mergedIds = new Set(merged.map(i => i.id).filter(Boolean));
     for (const item of this.items()) {
       if (!mergedIds.has(item.id)) merged.push(item);
@@ -370,8 +377,8 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     const findMatch = (orders: OrderGroup[] | null) =>
       (orders || []).find(o => o.tabId === tid) || null;
 
-    const setOrder = (items: any[], status: string) => {
-      this.activeOrder.set({ tabId: tid, createdAt: new Date().toISOString(), tableId: '', tableNumber: '', waiterId: '', waiterName: '', totalKobo: 0, items: items.map((o: any) => ({ ...o, orderStatus: status })) } as any);
+    const setOrder = (items: any[], status: string, trackingCode?: string | null) => {
+      this.activeOrder.set({ tabId: tid, createdAt: new Date().toISOString(), tableId: '', tableNumber: '', waiterId: '', waiterName: '', totalKobo: 0, items: items.map((o: any) => ({ ...o, orderStatus: status })), trackingCode } as any);
     };
 
     const checkTabFallback = () => {
@@ -380,15 +387,17 @@ export class TabDetailComponent implements OnInit, OnDestroy {
           if (!orders || orders.length === 0) return;
           const s = ((orders[0] as any).orderStatus || (orders[0] as any).order_status || '') as string;
           const up = s.toUpperCase();
+          // Preserve trackingCode from the first order item
+          const trackingCode = (orders[0] as any).trackingCode ?? (orders[0] as any).tracking_code ?? null;
           if (up === 'DELIVERED') {
             this.confirmedPickup.set(false);
             this.readyOrderRef.set(null);
-            setOrder(orders, 'DELIVERED');
+            setOrder(orders, 'DELIVERED', trackingCode);
           } else if (up === 'OUT_FOR_DELIVERY') {
             this.confirmedPickup.set(true);
-            setOrder(orders, 'OUT_FOR_DELIVERY');
+            setOrder(orders, 'OUT_FOR_DELIVERY', trackingCode);
           } else if (s) {
-            setOrder(orders, up);
+            setOrder(orders, up, trackingCode);
           }
         },
         error: () => undefined,
