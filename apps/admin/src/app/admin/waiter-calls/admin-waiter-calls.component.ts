@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WaiterCallsApiService, WaiterCallDto } from '@serveiq/shared/data-access';
 import { RealtimeSocketService, WaiterCallEvent } from '@serveiq/shared/data-access';
-import { AuthService, UserApiService } from '@serveiq/shared/data-access';
+import { AuthService, UserApiService, TablesApiService } from '@serveiq/shared/data-access';
 import { User } from '@serveiq/shared/models';
 import { Socket } from 'socket.io-client';
 import { ThemeService } from '../../core/theme.service';
@@ -21,6 +21,7 @@ export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
   private socketSvc = inject(RealtimeSocketService);
   private auth = inject(AuthService);
   private userApi = inject(UserApiService);
+  private tablesApi = inject(TablesApiService);
   private themeService = inject(ThemeService);
 
   isDarkMode = signal(this.themeService.theme() === 'dark');
@@ -28,6 +29,7 @@ export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
   active = signal<WaiterCallDto[]>([]);
   queue = signal<WaiterCallDto[]>([]);
   waiters = signal<User[]>([]);
+  tableLabels = signal<Record<string, string>>({});
   loading = signal(true);
 
   /** id of the call currently being reassigned (drives the inline picker). */
@@ -63,6 +65,7 @@ export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
       this.handlers[ev] = h;
       this.socket.on(ev, h);
     }
+    this.loadTableLabels();
     this.loadWaiters();
     this.refresh();
     this.pollTimer = setInterval(() => this.refresh(), 10000);
@@ -75,11 +78,28 @@ export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
     }
   }
 
+  private loadTableLabels() {
+    this.tablesApi.getAllTables().subscribe({
+      next: (tables) => {
+        const map: Record<string, string> = {};
+        for (const t of tables || []) {
+          if (t.id) map[t.id] = t.label || t.tableNumber || `Table ${t.id.slice(0, 8)}`;
+        }
+        this.tableLabels.set(map);
+      },
+      error: () => undefined,
+    });
+  }
+
   loadWaiters() {
     this.userApi.listWaiters().subscribe({
       next: (data) => this.waiters.set(data ?? []),
       error: () => this.waiters.set([]),
     });
+  }
+
+  tableLabel(tableId: string): string {
+    return this.tableLabels()[tableId] || `Table ${tableId.slice(0, 8)}`;
   }
 
   refresh() {

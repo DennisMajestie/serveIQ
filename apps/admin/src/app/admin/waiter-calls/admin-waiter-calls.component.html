@@ -57,7 +57,7 @@
               <span class="material-symbols-outlined awc-table-icon">table_restaurant</span>
               <div class="awc-table-info">
                 <span class="awc-table-label">Table</span>
-                <span class="awc-table-id">{{ call.tableId }}</span>
+                <span class="awc-table-id">{{ tableLabel(call.tableId) }}</span>
               </div>
             </div>
             <span class="awc-status-badge" [class]="'status-' + call.status.toLowerCase()">
@@ -126,7 +126,7 @@
               <span class="material-symbols-outlined awc-table-icon">table_restaurant</span>
               <div class="awc-table-info">
                 <span class="awc-table-label">Table</span>
-                <span class="awc-table-id">{{ call.tableId }}</span>
+                <span class="awc-table-id">{{ tableLabel(call.tableId) }}</span>
               </div>
             </div>
             <span class="awc-status-badge queued">Queued</span>
