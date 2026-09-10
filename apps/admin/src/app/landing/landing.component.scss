@@ -347,10 +347,11 @@
 
 .hero-proof {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 8px;
-  text-align: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
   .stars {
     display: flex;
     flex-direction: row;
@@ -384,12 +385,12 @@
       color: rgba(255, 255, 255, 0.85);
     }
   }
+  .proof-text {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
 }
 
-.proof-text {
-  font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.85);
-}
 
 .hero-visual {
   width: 100%;
