@@ -12,6 +12,7 @@ interface ModuleItem {
   metric: string;
   metricLabel: string;
   tag: string;
+  image: string;
 }
 
 interface FeatureItem {
@@ -58,6 +59,11 @@ interface StepItem {
 interface FaqItem {
   question: string;
   answer: string;
+}
+
+interface GalleryItem {
+  url: string;
+  caption: string;
 }
 
 @Component({
@@ -187,6 +193,15 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     }
   ];
 
+  galleryImages: GalleryItem[] = [
+    { url: '/assets/images/gallery-4.jpeg', caption: 'Order taken at the till' },
+    { url: '/assets/images/gallery-5.jpeg', caption: 'Kitchen display routing' },
+    { url: '/assets/images/gallery-6.jpeg', caption: 'Live floor view' },
+    { url: '/assets/images/gallery-7.jpeg', caption: 'Shift close summary' },
+    { url: '/assets/images/gallery-8.jpeg', caption: 'Staff on the line' },
+    { url: '/assets/images/gallery-9.jpeg', caption: 'Sales and analytics' }
+  ];
+
   navLinks = [
     { label: 'Home', href: '#home' },
     { label: 'Modules', href: '#modules' },
@@ -215,7 +230,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       desc: 'Fast, reliable checkout at the till — on any device your team already uses.',
       metric: '99.9%',
       metricLabel: 'uptime',
-      tag: 'Core module'
+      tag: 'Core module',
+      image: '/assets/images/gallery-1.jpeg'
     },
     {
       icon: 'restaurant',
@@ -223,7 +239,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       desc: 'Orders land on the kitchen screen the second they hit the pass, with timers and routing.',
       metric: '2.4s',
       metricLabel: 'avg ticket time',
-      tag: 'Kitchen'
+      tag: 'Kitchen',
+      image: '/assets/images/gallery-2.jpeg'
     },
     {
       icon: 'analytics',
@@ -231,7 +248,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       desc: 'Live sales, efficiency, and staff performance for every shift — in a single view.',
       metric: 'Live',
       metricLabel: 'revenue',
-      tag: 'Analytics'
+      tag: 'Analytics',
+      image: '/assets/images/gallery-3.jpeg'
     }
   ];
 

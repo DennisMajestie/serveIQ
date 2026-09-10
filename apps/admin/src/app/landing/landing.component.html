@@ -159,17 +159,10 @@
       @for (module of modules; track module.name) {
         <article class="module-card">
           <div class="module-visual">
+            <img class="module-img" [src]="module.image" [alt]="module.name + ' screenshot'" loading="lazy" />
             <div class="module-icon-tile">
               <span class="material-symbols-outlined">{{ module.icon }}</span>
             </div>
-            <div class="module-visual-bars" aria-hidden="true">
-              <span class="bar bar-1"></span>
-              <span class="bar bar-2"></span>
-              <span class="bar bar-3"></span>
-            </div>
-            <button class="module-more" [attr.aria-label]="'Learn more about ' + module.name">
-              <span class="material-symbols-outlined">arrow_forward</span>
-            </button>
           </div>
           <div class="module-body">
             <div class="module-metric">
@@ -284,33 +277,7 @@
   <!-- Feature -->
   <section class="feature" id="platform">
     <div class="feature-visual">
-      <svg viewBox="0 0 400 300" fill="none" role="img" aria-label="Restaurant floor plan with tables connected to the kitchen">
-        <rect class="fp-room" x="6" y="6" width="388" height="288" rx="16"/>
-        <rect class="fp-kitchen" x="292" y="24" width="86" height="252" rx="12"/>
-        <rect class="fp-kitchen-bar" x="300" y="44" width="70" height="8" rx="4"/>
-        <rect class="fp-kitchen-bar" x="300" y="64" width="70" height="8" rx="4"/>
-        <rect class="fp-kitchen-bar" x="300" y="84" width="70" height="8" rx="4"/>
-        <rect class="fp-pos" x="24" y="24" width="56" height="34" rx="8"/>
-        <text class="fp-label" x="36" y="45">POS</text>
-        <g class="fp-tables">
-          <rect class="fp-table" x="44" y="110" width="34" height="24" rx="6"/>
-          <rect class="fp-table" x="92" y="110" width="34" height="24" rx="6"/>
-          <rect class="fp-table active" x="44" y="170" width="34" height="24" rx="6"/>
-          <rect class="fp-table" x="92" y="170" width="34" height="24" rx="6"/>
-          <rect class="fp-table active" x="140" y="140" width="34" height="24" rx="6"/>
-          <rect class="fp-table" x="188" y="140" width="34" height="24" rx="6"/>
-          <rect class="fp-table active" x="140" y="210" width="34" height="24" rx="6"/>
-          <rect class="fp-table" x="188" y="210" width="34" height="24" rx="6"/>
-        </g>
-        <g class="fp-links">
-          <path d="M61 110 L235 60" />
-          <path d="M61 170 L235 60" />
-          <path d="M157 140 L235 60" />
-          <path d="M157 210 L235 60" />
-        </g>
-        <rect class="fp-legend-chip" x="140" y="258" width="120" height="26" rx="13"/>
-        <text class="fp-label" x="152" y="275">12 tables online</text>
-      </svg>
+      <img src="/assets/images/venue-status.png" alt="ServeIQ venue status dashboard" class="feature-img" loading="lazy" />
     </div>
     <div class="feature-copy">
       <span class="section-eyebrow">{{ feature.eyebrow }}</span>
@@ -364,6 +331,23 @@
               <p>{{ item.answer }}</p>
             </div>
           }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="gallery">
+    <div class="section-head">
+      <span class="section-eyebrow">In action</span>
+      <h2 class="section-title">From the floor, in real time</h2>
+      <p class="section-desc">Point of sale, kitchen display, and floor management — running live in partner restaurants.</p>
+    </div>
+    <div class="gallery-grid">
+      @for (img of galleryImages; track img.url) {
+        <div class="gallery-item">
+          <img [src]="img.url" [alt]="img.caption" loading="lazy" />
+          <span class="gallery-caption">{{ img.caption }}</span>
         </div>
       }
     </div>
