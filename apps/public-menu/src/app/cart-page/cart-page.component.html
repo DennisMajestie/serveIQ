@@ -43,13 +43,13 @@
         <div class="cart-item">
           <div class="item-details">
             <span class="item-name">{{ item.name }}</span>
-            <span class="item-price">₦{{ (item.priceKobo / 100).toLocaleString() }}</span>
+            <span class="item-price">{{ cartService.formatKobo(item.priceKobo) }}</span>
           </div>
           <div class="item-controls">
             <button (click)="cartService.updateQuantity(item.menuItemId, item.quantity - 1)" class="qty-btn">−</button>
             <span class="qty-value">{{ item.quantity }}</span>
             <button (click)="cartService.updateQuantity(item.menuItemId, item.quantity + 1)" class="qty-btn">+</button>
-            <span class="line-total">₦{{ ((item.priceKobo * item.quantity) / 100).toLocaleString() }}</span>
+            <span class="line-total">{{ cartService.formatKobo(item.priceKobo * item.quantity) }}</span>
             <button (click)="cartService.removeItem(item.menuItemId)" class="remove-btn" title="Remove item">✕</button>
     </div>
   </div>
@@ -61,23 +61,23 @@
     <div class="cart-totals">
       <div class="total-row">
         <span>Subtotal</span>
-        <span>₦{{ (subtotalKobo / 100).toLocaleString() }}</span>
+        <span>{{ cartService.formatKobo(subtotalKobo) }}</span>
       </div>
       @if (serviceChargePercent) {
         <div class="total-row">
           <span>Service Charge ({{ serviceChargePercent }}%)</span>
-          <span>₦{{ (serviceChargeKobo / 100).toLocaleString() }}</span>
+          <span>{{ cartService.formatKobo(serviceChargeKobo) }}</span>
         </div>
       }
       @if (taxRate) {
         <div class="total-row">
           <span>VAT ({{ taxRate }}%)</span>
-          <span>₦{{ (vatKobo / 100).toLocaleString() }}</span>
+          <span>{{ cartService.formatKobo(vatKobo) }}</span>
         </div>
       }
       <div class="cart-total">
         <span>Grand Total</span>
-        <span class="total-amount">₦{{ (totalKobo / 100).toLocaleString() }}</span>
+        <span class="total-amount">{{ cartService.formatKobo(totalKobo) }}</span>
       </div>
     </div>
 
@@ -131,7 +131,7 @@
         @for (item of cartService.items(); track item.menuItemId) {
           <div class="confirm-item">
             <span class="confirm-name">{{ item.name }} <em>×{{ item.quantity }}</em></span>
-            <span class="confirm-price">₦{{ ((item.priceKobo * item.quantity) / 100).toLocaleString() }}</span>
+            <span class="confirm-price">{{ cartService.formatKobo(item.priceKobo * item.quantity) }}</span>
           </div>
         }
       </div>
@@ -139,23 +139,23 @@
       <div class="confirm-summary">
         <div class="total-row">
           <span>Subtotal</span>
-          <span>₦{{ (subtotalKobo / 100).toLocaleString() }}</span>
+          <span>{{ cartService.formatKobo(subtotalKobo) }}</span>
         </div>
         @if (serviceChargePercent) {
           <div class="total-row">
             <span>Service Charge ({{ serviceChargePercent }}%)</span>
-            <span>₦{{ (serviceChargeKobo / 100).toLocaleString() }}</span>
+            <span>{{ cartService.formatKobo(serviceChargeKobo) }}</span>
           </div>
         }
         @if (taxRate) {
           <div class="total-row">
             <span>VAT ({{ taxRate }}%)</span>
-            <span>₦{{ (vatKobo / 100).toLocaleString() }}</span>
+            <span>{{ cartService.formatKobo(vatKobo) }}</span>
           </div>
         }
         <div class="confirm-total">
           <span>Grand Total</span>
-          <span class="total-amount">₦{{ (totalKobo / 100).toLocaleString() }}</span>
+          <span class="total-amount">{{ cartService.formatKobo(totalKobo) }}</span>
         </div>
       </div>
 

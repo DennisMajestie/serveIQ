@@ -125,7 +125,7 @@
                   <p class="item-desc">{{ item.description }}</p>
                 }
                 <div class="card-footer">
-                  <span class="item-price">₦{{ (item.priceKobo / 100).toLocaleString() }}</span>
+                  <span class="item-price">{{ cartService.formatKobo(item.priceKobo) }}</span>
                   @if (!item.isSoldOut && !readOnly()) {
                     <button
                       class="add-btn"
@@ -151,7 +151,7 @@
   <button class="cart-fab" [routerLink]="['/public/menu', cartService.branchId(), 'cart']">
     <span class="fab-icon">🛒</span>
     <span class="fab-badge">{{ cartService.itemCount() }}</span>
-    <span class="fab-total">₦{{ (cartService.totalKobo() / 100).toLocaleString() }}</span>
+    <span class="fab-total">{{ cartService.formatKobo(cartService.totalKobo()) }}</span>
   </button>
 }
 

@@ -42,6 +42,7 @@ export interface PaymentInitResponse {
   tabId: string;
   amountKobo: number;
   amountFormatted: string;
+  currency?: string;
   paymentReference?: string;
   paymentMethods: PaymentMethod[];
 }
@@ -64,6 +65,7 @@ export interface TabStatusResponse {
   trackingCode: string;
   trackingGeneratedAt: string;
   openedAt: string;
+  currency?: string;
   totalKobo: number;
   subtotalKobo?: number;
   serviceChargeKobo?: number;
@@ -88,6 +90,7 @@ export interface TrackingData {
   branchName: string;
   logoUrl?: string;
   branchId: string;
+  currency?: string;
   paymentAccountNumber?: string;
   tabStatus: string;
   tabId: string;

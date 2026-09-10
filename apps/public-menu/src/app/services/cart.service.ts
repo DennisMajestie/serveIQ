@@ -21,6 +21,25 @@ export type OrderType = 'dine_in' | 'takeaway';
 
 const ORDER_TYPES: OrderType[] = ['dine_in', 'takeaway'];
 
+interface CurrencyInfo {
+  code: string;
+  symbol: string;
+  locale: string;
+  decimals: number;
+}
+
+const CURRENCY_METADATA: Record<string, CurrencyInfo> = {
+  NGN: { code: 'NGN', symbol: '₦', locale: 'en-NG', decimals: 2 },
+  USD: { code: 'USD', symbol: '$', locale: 'en-US', decimals: 2 },
+  GBP: { code: 'GBP', symbol: '£', locale: 'en-GB', decimals: 2 },
+  EUR: { code: 'EUR', symbol: '€', locale: 'de-DE', decimals: 2 },
+  KES: { code: 'KES', symbol: 'KSh', locale: 'en-KE', decimals: 2 },
+  GHS: { code: 'GHS', symbol: 'GH₵', locale: 'en-GH', decimals: 2 },
+  ZAR: { code: 'ZAR', symbol: 'R', locale: 'en-ZA', decimals: 2 },
+};
+
+const DEFAULT_CURRENCY_INFO = CURRENCY_METADATA['NGN'];
+
 @Injectable({ providedIn: 'root' })
 export class CartService {
   readonly items = signal<CartItem[]>(this.loadCart());
@@ -33,6 +52,12 @@ export class CartService {
   /** Business-level pricing settings used for the pre-order review totals. */
   readonly taxRate = signal<number>(7.5);
   readonly serviceChargePercent = signal<number>(10);
+
+  /** Business currency (from the public menu / tab responses). */
+  readonly currencyCode = signal<string>('NGN');
+  readonly currencyInfo = computed<CurrencyInfo>(
+    () => CURRENCY_METADATA[this.currencyCode()] ?? DEFAULT_CURRENCY_INFO,
+  );
 
   readonly itemCount = computed(() => this.items().reduce((sum, i) => sum + i.quantity, 0));
   readonly totalKobo = computed(() => this.items().reduce((sum, i) => sum + i.priceKobo * i.quantity, 0));
@@ -111,6 +136,23 @@ export class CartService {
     this.serviceChargePercent.set(
       Number.isFinite(serviceChargePercent) ? serviceChargePercent : 10,
     );
+  }
+
+  setCurrency(code: string | undefined | null) {
+    const normalized = (code || 'NGN').toUpperCase();
+    if (CURRENCY_METADATA[normalized]) {
+      this.currencyCode.set(normalized);
+    }
+  }
+
+  formatKobo(kobo: number): string {
+    const info = this.currencyInfo();
+    return `${info.symbol}${(kobo / 100).toLocaleString(info.locale)}`;
+  }
+
+  formatPlain(amount: number): string {
+    const info = this.currencyInfo();
+    return amount.toLocaleString(info.locale);
   }
 
   clearSession() {

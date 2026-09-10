@@ -484,7 +484,10 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.pollSub = interval(8000).pipe(
       switchMap(() => this.api.getTabStatus(tabId, trackingCode))
     ).subscribe({
-      next: (data) => this.tabData.set(data),
+      next: (data) => {
+        this.tabData.set(data);
+        this.cartService.setCurrency(data.currency);
+      },
       error: (err) => {
         const msg = err?.serverMessage || err?.message || '';
         if (msg.toLowerCase().includes('not found') || err?.statusCode === 404) {
@@ -495,7 +498,10 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       },
     });
     this.api.getTabStatus(tabId, trackingCode).subscribe({
-      next: (data) => this.tabData.set(data),
+      next: (data) => {
+        this.tabData.set(data);
+        this.cartService.setCurrency(data.currency);
+      },
     });
     this.connectPaymentSocket(tabId, trackingCode);
   }
@@ -507,6 +513,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   private setTabFromTracking(data: any) {
+    this.cartService.setCurrency(data.currency);
     const subtotalKobo =
       data.orders?.reduce?.((s: number, o: any) => s + (o.subtotalKobo || 0), 0) || 0;
     const mapped: TabStatusResponse = {
@@ -519,6 +526,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       trackingCode: '',
       trackingGeneratedAt: data.trackingGeneratedAt,
       openedAt: '',
+      currency: data.currency,
       totalKobo: Number(data.totalKobo ?? subtotalKobo),
       subtotalKobo: Number(data.subtotalKobo ?? subtotalKobo),
       serviceChargeKobo: Number(data.serviceChargeKobo ?? 0),
@@ -545,6 +553,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.api.initializePayment(tabId, trackingCode).pipe(finalize(() => this.initializingPayment.set(false))).subscribe({
       next: (res) => {
         this.paymentInfo.set(res);
+        this.cartService.setCurrency(res.currency);
         this.selectedTerminalId.set(null);
         this.connectPaymentSocket(tabId, trackingCode);
       },

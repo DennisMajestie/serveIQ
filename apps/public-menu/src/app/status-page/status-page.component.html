@@ -99,24 +99,24 @@
       @if (tab.subtotalKobo != null) {
         <div class="summary-line">
           <span>Subtotal</span>
-          <span>₦{{ (tab.subtotalKobo / 100).toLocaleString() }}</span>
+          <span>{{ cartService.formatKobo(tab.subtotalKobo) }}</span>
         </div>
       }
       @if (tab.serviceChargeKobo != null && tab.serviceChargeKobo > 0) {
         <div class="summary-line">
           <span>Service Charge @if (tab.serviceChargePercent != null) { <em>({{ tab.serviceChargePercent }}%)</em> }</span>
-          <span>₦{{ (tab.serviceChargeKobo / 100).toLocaleString() }}</span>
+          <span>{{ cartService.formatKobo(tab.serviceChargeKobo) }}</span>
         </div>
       }
       @if (tab.taxKobo != null && tab.taxKobo > 0) {
         <div class="summary-line">
           <span>VAT @if (tab.taxRatePercent != null) { <em>({{ tab.taxRatePercent }}%)</em> }</span>
-          <span>₦{{ (tab.taxKobo / 100).toLocaleString() }}</span>
+          <span>{{ cartService.formatKobo(tab.taxKobo) }}</span>
         </div>
       }
       <div class="total-row">
         <span>Total</span>
-        <span class="total-amount">₦{{ (tab.totalKobo / 100).toLocaleString() }}</span>
+        <span class="total-amount">{{ cartService.formatKobo(tab.totalKobo) }}</span>
       </div>
     </div>
 
@@ -200,7 +200,7 @@
 
         @if (paymentInfo(); as pay) {
           <div class="payment-details">
-            <h3>Pay ₦{{ (pay.amountKobo / 100).toLocaleString() }}</h3>
+            <h3>Pay {{ cartService.formatKobo(pay.amountKobo) }}</h3>
             <p class="payment-hint">Choose where you'll pay, or use a bank transfer.</p>
 
             @for (method of pay.paymentMethods; track method.id ?? method.type) {
