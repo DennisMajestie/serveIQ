@@ -200,7 +200,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   heroDesc = 'ServeIQ connects the point of sale, the kitchen display, the floor plan, and the inventory — so orders, stock, and cash never slip between them.';
 
-  heroProof = 'Now onboarding pilot restaurants across Nigeria';
+  heroProof = 'Now onboarding pilot restaurants across Africa';
 
   floorTiles = [
     true, false, true, false,

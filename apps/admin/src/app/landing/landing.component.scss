@@ -348,12 +348,13 @@
 .hero-proof {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   .proof-row {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
     gap: 12px;
   }
   .stars {
