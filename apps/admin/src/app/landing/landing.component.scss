@@ -1256,7 +1256,9 @@
 
 /* ===== Gallery ===== */
 .gallery {
-  padding: 0 0 8px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 8px;
 }
 
 .gallery-grid {
