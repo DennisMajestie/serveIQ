@@ -117,9 +117,15 @@ export class LegacyTabDetailComponent implements OnInit {
           priceKobo: item.priceKobo ?? item.price_kobo ?? item.unitPriceKobo ?? item.unit_price_kobo ?? 0,
           quantity: item.quantity ?? item.qty ?? 1
         }));
+        // Filter out cancelled/declined orders from API response — they should not
+        // reappear after the waiter has removed them locally.
+        const filtered = normalized.filter((item: any) => {
+          const status = (item.orderStatus ?? item.order_status ?? '').toLowerCase();
+          return status !== 'cancelled' && status !== 'declined';
+        });
         // Merge instead of replace: items added from the menu must not be
         // wiped when a racing order-fetch returns the pre-add list.
-        const merged = [...normalized];
+        const merged = [...filtered];
         const mergedIds = new Set(merged.map(i => i.id).filter(Boolean));
         for (const item of this.items()) {
           if (!mergedIds.has(item.id)) merged.push(item);
