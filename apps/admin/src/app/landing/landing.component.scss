@@ -359,8 +359,29 @@
       font-size: 20px;
       color: #ffd27a;
     }
-    @media (max-width: 640px) {
-      flex-direction: column;
+  }
+  .avatar-stack {
+    display: flex;
+    align-items: center;
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      margin-left: -8px;
+      background-size: cover;
+      background-position: center;
+      &:first-child { margin-left: 0; }
+      &.av-1 { background-image: url('https://i.pravatar.cc/56?img=1'); }
+      &.av-2 { background-image: url('https://i.pravatar.cc/56?img=5'); }
+      &.av-3 { background-image: url('https://i.pravatar.cc/56?img=8'); }
+      &.av-4 { background-image: url('https://i.pravatar.cc/56?img=12'); }
+    }
+    .avatar-count {
+      margin-left: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.85);
     }
   }
 }
