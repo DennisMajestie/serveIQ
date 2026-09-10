@@ -94,6 +94,7 @@
   "overrides": {
     "qs": "^6.16.0",
     "uuid": "^11.1.1",
+    "smol-toml": "1.8.0",
     "@exodus/bytes": {
       "@noble/hashes": "1.8.0"
     }
