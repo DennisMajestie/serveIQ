@@ -639,6 +639,7 @@ export interface OrderGroup {
   departmentId?: string;
   departmentName?: string;
   tabType?: string;
+  trackingCode?: string;
   items: OrderGroupItem[];
 }
 
