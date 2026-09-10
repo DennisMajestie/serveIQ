@@ -613,7 +613,7 @@
 .partners {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 84px 24px 0;
+  padding: 84px 24px;
 }
 
 .partners-head {
@@ -1039,78 +1039,99 @@
 
 .restaurant-card {
   flex: 0 0 calc((100% - 0px) / 1);
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  justify-content: space-between;
   padding: 24px;
   border-radius: 20px;
-  background: color-mix(in srgb, var(--surface-container) 55%, transparent);
-  border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
+  min-height: 220px;
+  background-color: var(--card-accent, var(--primary));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-sizing: border-box;
+  overflow: hidden;
   transition: transform 0.25s, box-shadow 0.25s;
+  color: #fff;
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 20px 40px color-mix(in srgb, var(--primary) 12%, transparent);
+    box-shadow: 0 20px 40px color-mix(in srgb, var(--card-accent, var(--primary)) 25%, transparent);
   }
 }
 
-.restaurant-metric {
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.25) 40%,
+    rgba(0, 0, 0, 0.6) 80%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+  border-radius: inherit;
+}
+
+.card-top {
+  position: relative;
+  z-index: 1;
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
-.restaurant-metric-value {
+.card-chip {
+  width: 40px;
+  height: 30px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #e8d5a3 0%, #f5e6b8 30%, #d4b96a 60%, #f0dfa0 100%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(212, 185, 106, 0.4);
+  &::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 6px;
+    right: 6px;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1), 0 10px 0 rgba(0, 0, 0, 0.1);
+  }
+}
+
+.card-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.card-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.card-name {
+  margin: 0 0 4px;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--primary);
-}
-
-.restaurant-metric-label {
-  font-size: 0.8125rem;
-  color: var(--secondary);
-}
-
-.restaurant-identity {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.restaurant-logo {
-  width: 48px;
-  height: 48px;
-  flex: none;
-  border-radius: 12px;
-  object-fit: cover;
-  background: var(--surface-container-lowest);
-  border: 1px solid color-mix(in srgb, var(--on-background) 8%, transparent);
-}
-
-.restaurant-name-lg {
-  margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--on-background);
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-.restaurant-meta {
+.card-meta {
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  font-size: 0.8125rem;
-  color: var(--secondary);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
   text-transform: capitalize;
-}
-
-.restaurant-sep {
-  color: color-mix(in srgb, var(--on-background) 30%, transparent);
 }
 
 .avatar {
