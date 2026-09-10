@@ -15,14 +15,16 @@
 
 .glass-input {
   background: color-mix(in srgb, var(--surface) 40%, transparent);
-  border: none;
+  border: 1px solid color-mix(in srgb, var(--on-background) 10%, transparent);
   backdrop-filter: blur(8px);
   transition: all 0.3s ease;
   outline: none;
+  color: var(--on-background);
 }
 .glass-input:focus {
   box-shadow: 0 4px 20px color-mix(in srgb, var(--primary) 15%, transparent);
   background: color-mix(in srgb, var(--surface) 60%, transparent);
+  border-color: var(--primary);
 }
 
 .glow-button {
@@ -76,4 +78,9 @@ input[type=range]::-webkit-slider-runnable-track {
 select option {
   background-color: var(--background);
   color: var(--on-background);
+  padding: 8px;
+}
+
+select {
+  color: var(--on-background) !important;
 }
