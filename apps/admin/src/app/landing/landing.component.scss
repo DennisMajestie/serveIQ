@@ -353,11 +353,14 @@
   text-align: center;
   .stars {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 4px;
     .material-symbols-outlined {
       font-size: 20px;
       color: #ffd27a;
+    }
+    @media (max-width: 640px) {
+      flex-direction: column;
     }
   }
 }
