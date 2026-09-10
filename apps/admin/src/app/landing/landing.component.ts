@@ -116,7 +116,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   }
 
   stats: StatItem[] = [
-    { value: '3', label: 'core modules, one connected system' },
+    { value: '3', label: 'modules, one platform' },
     { value: '2.4s', label: 'avg order-to-kitchen-screen time' },
     { value: '100%', label: 'of orders accounted for at shift close' }
   ];
