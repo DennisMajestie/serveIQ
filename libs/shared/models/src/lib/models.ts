@@ -26,6 +26,7 @@ export interface Business {
   email?: string;
   phone?: string;
   address?: string;
+  country?: string;
   currency: string;
   taxRate?: number;
   vipSurchargePercent?: number;
@@ -702,4 +703,45 @@ export interface AuditLogResponse {
     limit: number;
     totalPages: number;
   };
+}
+
+// ==========================================
+// Country → Currency + Timezone mapping
+// ==========================================
+
+export interface CountryInfo {
+  code: string;
+  name: string;
+  currency: string;
+  currencySymbol: string;
+  timezone: string;
+}
+
+export const COUNTRIES: CountryInfo[] = [
+  { code: 'NG', name: 'Nigeria', currency: 'NGN', currencySymbol: '₦', timezone: 'Africa/Lagos' },
+  { code: 'GH', name: 'Ghana', currency: 'GHS', currencySymbol: 'GH₵', timezone: 'Africa/Accra' },
+  { code: 'KE', name: 'Kenya', currency: 'KES', currencySymbol: 'KSh', timezone: 'Africa/Nairobi' },
+  { code: 'ZA', name: 'South Africa', currency: 'ZAR', currencySymbol: 'R', timezone: 'Africa/Johannesburg' },
+  { code: 'EG', name: 'Egypt', currency: 'EGP', currencySymbol: 'E£', timezone: 'Africa/Cairo' },
+  { code: 'MA', name: 'Morocco', currency: 'MAD', currencySymbol: 'MAD', timezone: 'Africa/Casablanca' },
+  { code: 'TZ', name: 'Tanzania', currency: 'TZS', currencySymbol: 'TSh', timezone: 'Africa/Dar_es_Salaam' },
+  { code: 'UG', name: 'Uganda', currency: 'UGX', currencySymbol: 'USh', timezone: 'Africa/Kampala' },
+  { code: 'US', name: 'United States', currency: 'USD', currencySymbol: '$', timezone: 'America/New_York' },
+  { code: 'GB', name: 'United Kingdom', currency: 'GBP', currencySymbol: '£', timezone: 'Europe/London' },
+  { code: 'DE', name: 'Germany', currency: 'EUR', currencySymbol: '€', timezone: 'Europe/Berlin' },
+  { code: 'FR', name: 'France', currency: 'EUR', currencySymbol: '€', timezone: 'Europe/Paris' },
+  { code: 'CA', name: 'Canada', currency: 'CAD', currencySymbol: 'C$', timezone: 'America/Toronto' },
+  { code: 'AE', name: 'UAE', currency: 'AED', currencySymbol: 'AED', timezone: 'Asia/Dubai' },
+  { code: 'SA', name: 'Saudi Arabia', currency: 'SAR', currencySymbol: 'SR', timezone: 'Asia/Riyadh' },
+  { code: 'IN', name: 'India', currency: 'INR', currencySymbol: '₹', timezone: 'Asia/Kolkata' },
+  { code: 'BR', name: 'Brazil', currency: 'BRL', currencySymbol: 'R$', timezone: 'America/Sao_Paulo' },
+  { code: 'MX', name: 'Mexico', currency: 'MXN', currencySymbol: 'MX$', timezone: 'America/Mexico_City' },
+];
+
+export function getCountryByCode(code: string): CountryInfo | undefined {
+  return COUNTRIES.find(c => c.code === code);
+}
+
+export function getCountryByCurrency(currency: string): CountryInfo | undefined {
+  return COUNTRIES.find(c => c.currency === currency);
 }

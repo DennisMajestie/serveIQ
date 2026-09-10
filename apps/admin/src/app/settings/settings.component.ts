@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, ENVIRONMENT_CONFIG, EnvironmentConfig, PlatformPaymentProviderSummary } from '@serveiq/shared/data-access';
-import { Branch, User, Business } from '@serveiq/shared/models';
+import { Branch, User, Business, COUNTRIES, getCountryByCode, getCountryByCurrency } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { toDataURL } from '../../lib/qrcode/index';
@@ -142,6 +142,8 @@ navItems: { key: Section; label: string; icon: string }[] = [
   discountMinOrder = signal<number | null>(null);
   currency = signal('NGN');
   timezone = signal('Africa/Lagos');
+  countryCode = signal('');
+  readonly countries = COUNTRIES;
   timezones = [
     // Africa
     { label: 'GMT+1 (West Africa - Nigeria, Ghana)', value: 'Africa/Lagos' },
@@ -244,10 +246,25 @@ navItems: { key: Section; label: string; icon: string }[] = [
         this.discountMinOrder.set(b.discountMinOrderAmount == null ? null : Number(b.discountMinOrderAmount) / 100);
         this.currency.set(b.currency || 'NGN');
         this.timezone.set(b.timezone || 'Africa/Lagos');
+        if (b.country) {
+          this.countryCode.set(b.country);
+        } else {
+          const match = getCountryByCurrency(b.currency || 'NGN');
+          if (match) this.countryCode.set(match.code);
+        }
         this.brandPrimaryColor.set(b.brandPrimaryColor || '#F97316');
         this.brandAccentColor.set(b.brandAccentColor || '#d97706');
       }
     });
+  }
+
+  onCountryChange(code: string) {
+    this.countryCode.set(code);
+    const info = getCountryByCode(code);
+    if (info) {
+      this.currency.set(info.currency);
+      this.timezone.set(info.timezone);
+    }
   }
 
   saveBusinessSettings() {
@@ -256,6 +273,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
       taxRate: this.taxRate(),
       vipSurchargePercent: this.vipSurchargePercent(),
       serviceChargePercent: this.serviceChargePercent(),
+      country: this.countryCode(),
       currency: this.currency(),
       timezone: this.timezone(),
     };

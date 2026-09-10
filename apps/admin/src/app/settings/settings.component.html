@@ -259,15 +259,20 @@
                   <span class="text-[12px] leading-none text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Customers must spend at least this amount before a discount can be applied. Leave 0 to allow discounts on any order.</span>
                 </div>
                 <div class="space-y-2">
+                  <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Country</label>
+                  <select [ngModel]="countryCode()" (ngModelChange)="onCountryChange($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
+                    <option value="" class="bg-[var(--background)]">Select country</option>
+                    @for (c of countries; track c.code) {
+                      <option [value]="c.code" class="bg-[var(--background)]">{{ c.name }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="space-y-2">
                   <label class="text-[14px] leading-none font-semibold text-[var(--on-surface-variant)]" style="font-family:'Inter',sans-serif">Base Currency</label>
                   <select [ngModel]="currency()" (ngModelChange)="currency.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
-                    <option value="NGN" class="bg-[var(--background)]">NGN (₦)</option>
-                    <option value="USD" class="bg-[var(--background)]">USD ($)</option>
-                    <option value="GBP" class="bg-[var(--background)]">GBP (£)</option>
-                    <option value="EUR" class="bg-[var(--background)]">EUR (€)</option>
-                    <option value="KES" class="bg-[var(--background)]">KES (KSh)</option>
-                    <option value="GHS" class="bg-[var(--background)]">GHS (GH₵)</option>
-                    <option value="ZAR" class="bg-[var(--background)]">ZAR (R)</option>
+                    @for (c of countries; track c.code) {
+                      <option [value]="c.currency" class="bg-[var(--background)]">{{ c.currency }} ({{ c.currencySymbol }})</option>
+                    }
                   </select>
                 </div>
                 <div class="space-y-2">

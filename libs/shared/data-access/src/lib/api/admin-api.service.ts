@@ -14,6 +14,7 @@ export interface AdminBusiness {
   email: string;
   phone?: string;
   address?: string;
+  country?: string;
   currency: string;
   // snake_case (from API)
   subscription_plan: string;

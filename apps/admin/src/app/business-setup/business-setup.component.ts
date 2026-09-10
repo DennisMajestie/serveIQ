@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BranchesApiService, BusinessApiService, UserApiService } from '@serveiq/shared/data-access';
-import { Business, Branch, CreateWaiterRequest } from '@serveiq/shared/models';
+import { Business, Branch, CreateWaiterRequest, COUNTRIES, getCountryByCode, getCountryByCurrency } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -64,15 +64,20 @@ import Swal from 'sweetalert2';
             </select>
           </div>
           <div class="form-group">
+            <label>Country</label>
+            <select class="form-input" [value]="countryCode()" (change)="onCountryChange($any($event.target).value)">
+              <option value="" disabled>Select your country</option>
+              @for (c of countries; track c.code) {
+                <option [value]="c.code">{{ c.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
             <label>Currency</label>
             <select class="form-input" [value]="currency()" (change)="currency.set($any($event.target).value)">
-              <option value="NGN">NGN (₦) — Nigerian Naira</option>
-              <option value="KES">KES (KSh) — Kenyan Shilling</option>
-              <option value="GHS">GHS (GH₵) — Ghanaian Cedi</option>
-              <option value="ZAR">ZAR (R) — South African Rand</option>
-              <option value="USD">USD ($) — US Dollar</option>
-              <option value="GBP">GBP (£) — British Pound</option>
-              <option value="EUR">EUR (€) — Euro</option>
+              @for (c of countries; track c.code) {
+                <option [value]="c.currency">{{ c.currency }} ({{ c.currencySymbol }}) — {{ c.name }}</option>
+              }
             </select>
           </div>
           <div class="form-actions">
@@ -372,7 +377,9 @@ export class BusinessSetupComponent implements OnInit {
 
   businessName = signal('');
   businessType = signal('restaurant');
+  countryCode = signal('');
   currency = signal('NGN');
+  readonly countries = COUNTRIES;
 
   branchName = signal('');
   branchAddress = signal('');
@@ -389,6 +396,12 @@ export class BusinessSetupComponent implements OnInit {
         this.businessName.set(b.name || '');
         this.businessType.set(b.type || 'restaurant');
         this.currency.set(b.currency || 'NGN');
+        if (b.country) {
+          this.countryCode.set(b.country);
+        } else {
+          const match = getCountryByCurrency(b.currency || 'NGN');
+          if (match) this.countryCode.set(match.code);
+        }
       },
       error: () => undefined
     });
@@ -402,12 +415,21 @@ export class BusinessSetupComponent implements OnInit {
     });
   }
 
+  onCountryChange(code: string) {
+    this.countryCode.set(code);
+    const info = getCountryByCode(code);
+    if (info) {
+      this.currency.set(info.currency);
+    }
+  }
+
   saveBusiness() {
     if (!this.businessName().trim()) return;
     this.savingBusiness.set(true);
     this.businessApi.updateBusiness({
       name: this.businessName().trim(),
       type: this.businessType(),
+      country: this.countryCode(),
       currency: this.currency(),
     } as any).subscribe({
       next: () => {
