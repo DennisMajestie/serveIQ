@@ -20,13 +20,13 @@
   <!-- Menu -->
   @if (data(); as menu) {
     @if (!showTypeChooser()) {
-    <!-- Header -->
-    <header class="header">
-      @if (menu.logoUrl) {
-        <img [src]="menu.logoUrl" alt="Logo" class="logo" />
-      }
-      <h1 class="business-name">{{ menu.businessName }}</h1>
-      <p class="branch-name">{{ menu.branchName }}</p>
+    <!-- Header with logo as cover background -->
+    <header class="header" [ngStyle]="{ 'background-image': menu.logoUrl ? 'url(' + menu.logoUrl + ')' : null }">
+      <div class="header-overlay"></div>
+      <div class="header-content">
+        <h1 class="business-name">{{ menu.businessName }}</h1>
+        <p class="branch-name">{{ menu.branchName }}</p>
+      </div>
     </header>
 
     <!-- Tracking -->
