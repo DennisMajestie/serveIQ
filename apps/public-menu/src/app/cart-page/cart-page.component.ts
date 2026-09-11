@@ -71,10 +71,6 @@ export class CartPageComponent {
     return this.subtotalKobo + this.vatKobo + this.serviceChargeKobo + this.deliveryFeeKobo;
   }
 
-  choosePickup(mode: 'self' | 'dispatch') {
-    this.pickupMode.set(mode);
-  }
-
   get taxRate() {
     return this.cartService.taxRate();
   }

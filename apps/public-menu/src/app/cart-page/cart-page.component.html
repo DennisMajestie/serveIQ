@@ -37,62 +37,47 @@
       </div>
     </section>
 
-    <!-- Fulfillment (takeaway / undecided only) -->
-    @if (showFulfillment) {
-      <section class="fulfillment-section">
-        <h3>How would you like to get your order?</h3>
-        <div class="fulfillment-options">
-          <button
-            type="button"
-            class="fulfill-card"
-            [class.active]="pickupMode() === 'self'"
-            (click)="choosePickup('self')"
-          >
-            <span class="fulfill-icon">🥡</span>
-            <span class="fulfill-label">Self Pickup</span>
-            <span class="fulfill-cost">Free</span>
-          </button>
-          <button
-            type="button"
-            class="fulfill-card"
-            [class.active]="pickupMode() === 'dispatch'"
-            (click)="choosePickup('dispatch')"
-          >
-            <span class="fulfill-icon">🛵</span>
-            <span class="fulfill-label">Home Delivery</span>
-            <span class="fulfill-cost">{{ cartService.formatKobo(deliveryFeeKobo) }}</span>
-          </button>
-        </div>
-
-        @if (pickupMode() === 'dispatch') {
-          <div class="delivery-form">
-            <p class="delivery-note">A rider will deliver your order to you.</p>
-            <input
-              type="text"
-              [(ngModel)]="deliveryName"
-              placeholder="Full name (optional)"
-              class="input-field"
-            />
-            <input
-              type="tel"
-              [(ngModel)]="deliveryPhone"
-              placeholder="Phone number *"
-              class="input-field"
-            />
-            <textarea
-              [(ngModel)]="deliveryAddress"
-              placeholder="Delivery address * — street, landmark, description"
-              class="input-field"
-              rows="2"
-            ></textarea>
-            <input
-              type="text"
-              [(ngModel)]="deliveryNotes"
-              placeholder="Note for the rider (optional)"
-              class="input-field"
-            />
+    <!-- Home delivery details (dispatch takeaway only) -->
+    @if (showFulfillment && pickupMode() === 'dispatch') {
+      <section class="delivery-section">
+        <div class="delivery-header">
+          <span class="delivery-icon">🛵</span>
+          <div class="delivery-title">
+            <h3>Home Delivery</h3>
+            <p>Delivered straight to your door</p>
           </div>
-        }
+          <span class="delivery-fee">{{ cartService.formatKobo(deliveryFeeKobo) }}</span>
+        </div>
+        <div class="delivery-form">
+          <label class="field-label">Full name <span class="optional">(optional)</span></label>
+          <input
+            type="text"
+            [(ngModel)]="deliveryName"
+            placeholder="Your full name"
+            class="input-field"
+          />
+          <label class="field-label">Phone number *</label>
+          <input
+            type="tel"
+            [(ngModel)]="deliveryPhone"
+            placeholder="e.g. 0801 234 5678"
+            class="input-field"
+          />
+          <label class="field-label">Delivery address *</label>
+          <textarea
+            [(ngModel)]="deliveryAddress"
+            placeholder="Street, landmark, description"
+            class="input-field"
+            rows="2"
+          ></textarea>
+          <label class="field-label">Note for the rider <span class="optional">(optional)</span></label>
+          <input
+            type="text"
+            [(ngModel)]="deliveryNotes"
+            placeholder="e.g. Ring the bell on arrival"
+            class="input-field"
+          />
+        </div>
       </section>
     }
 

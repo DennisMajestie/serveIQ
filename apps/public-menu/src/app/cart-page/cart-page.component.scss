@@ -83,6 +83,74 @@
   }
 }
 
+.delivery-section {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.delivery-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+
+  .delivery-icon {
+    font-size: 1.6rem;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    border-radius: 10px;
+  }
+
+  .delivery-title {
+    flex: 1;
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    p {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .delivery-fee {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+}
+
+.delivery-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .field-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: -6px;
+
+    .optional {
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+  }
+}
+
 .party-row {
   display: flex;
   align-items: center;
