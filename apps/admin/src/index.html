@@ -44,8 +44,17 @@
         <img class="sq-logo-light" src="assets/brand/serveiq-dark-logo.png" alt="ServeIQ" />
         <img class="sq-logo-dark" src="assets/brand/serveiq-logo.png" alt="ServeIQ" />
       </div>
-      <span class="sq-preloader-text">from ServeIQ</span>
+<span class="sq-preloader-text">from ServeIQ</span>
     </div>
+    <script>
+      // Show the boot splash ONLY on the very first load of this tab. If the app
+      // already booted once here (e.g. a chunk-failure reload fired mid-session),
+      // hide the splash before first paint so it never flashes on navigation.
+      if (sessionStorage.getItem('serveiq:admin:booted')) {
+        var sqp = document.getElementById('sq-preloader');
+        if (sqp) sqp.style.display = 'none';
+      }
+    </script>
     <app-root></app-root>
 <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -53,6 +62,7 @@
           var app = document.querySelector('app-root');
           if (app && app.children.length > 0) {
             document.body.classList.add('sq-loaded');
+            sessionStorage.setItem('serveiq:admin:booted', '1');
             observer.disconnect();
           }
         });
