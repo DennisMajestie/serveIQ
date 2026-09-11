@@ -58,6 +58,12 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   cashPending = signal(false);
   showCashModal = signal(false);
 
+  // ── Dispatch delivery confirmation (rider handed over, awaiting customer) ──
+  deliveryConfirming = signal(false);
+  readonly needsDeliveryConfirm = computed(
+    () => this.tabData()?.delivery?.status === 'handed_over',
+  );
+
   // ── Review modal (shown after payment success) ─────────────────────────────
   showReviewModal = signal(false);
   reviewRating = signal(0);
@@ -217,6 +223,39 @@ export class StatusPageComponent implements OnInit, OnDestroy {
         if (msg.toLowerCase().includes('not open')) {
           this.error.set(true);
           this.errorMessage.set(msg);
+        }
+      },
+    });
+  }
+
+  /** Dispatch delivery: the customer confirms they received the order. This is
+   *  the final step the backend needs before the delivery is marked delivered. */
+  confirmDelivery() {
+    const tab = this.tabData();
+    const tabId = this.cartService.tabId();
+    const trackingCode = this.cartService.trackingCode();
+    const deliveryId = tab?.delivery?.id;
+    if (!tabId || !trackingCode || !deliveryId || this.deliveryConfirming()) return;
+
+    this.deliveryConfirming.set(true);
+    this.api.confirmDelivery(tabId, trackingCode, deliveryId).subscribe({
+      next: (updated) => {
+        this.deliveryConfirming.set(false);
+        if (updated) this.tabData.set(updated);
+      },
+      error: (err) => {
+        this.deliveryConfirming.set(false);
+        const msg =
+          err?.serverMessage ||
+          err?.error?.message ||
+          err?.message ||
+          'Could not confirm your delivery';
+        showApiErrorToast(err, 'Confirm delivery failed');
+        if (msg.toLowerCase().includes('not awaiting')) {
+          // Stale prompt — the delivery may already be confirmed elsewhere.
+          this.api.getTabStatus(tabId, trackingCode).subscribe({
+            next: (fresh) => this.tabData.set(fresh),
+          });
         }
       },
     });
@@ -656,6 +695,22 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       this.disconnectPaymentSocket();
       this.onPaymentPaid();
     });
+    socket.on('delivery:status', (data: { status?: string; delivery_id?: string }) => {
+      // Show the customer's confirm prompt the instant the rider hands the order
+      // over, without waiting for the next 8s poll.
+      this.patchDeliveryStatus(data?.status, data?.delivery_id);
+    });
+  }
+
+  private patchDeliveryStatus(status?: string, deliveryId?: string) {
+    const tab = this.tabData();
+    if (!tab || !tab.delivery) return;
+    if (deliveryId && tab.delivery.id !== deliveryId) return;
+    if (!status) return;
+    this.tabData.set({
+      ...tab,
+      delivery: { ...tab.delivery, status },
+    });
   }
 
   private disconnectPaymentSocket() {
@@ -725,6 +780,8 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const labels: Record<string, string> = {
       pending: 'Looking for a rider',
       accepted: 'Rider assigned',
+      out_for_delivery: 'On its way',
+      handed_over: 'Confirm delivery',
       delivered: 'Delivered',
       cancelled: 'Cancelled',
     };
@@ -734,6 +791,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   deliveryStatusClass(status?: string): string {
     const s = (status || '').toLowerCase();
     if (s === 'delivered') return 'delivered';
+    if (s === 'handed_over') return 'handed-over';
     if (s === 'accepted' || s === 'out_for_delivery') return 'accepted';
     if (s === 'cancelled') return 'cancelled';
     return 'pending';
@@ -743,6 +801,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const s = (status || '').toLowerCase();
     if (s === 'accepted') return 'Your rider has been assigned';
     if (s === 'out_for_delivery') return 'Your rider is on the way';
+    if (s === 'handed_over') return 'Your rider has arrived — confirm you got it';
     if (s === 'delivered') return 'Delivered — enjoy your meal!';
     if (s === 'cancelled') return 'Delivery cancelled';
     return 'We are finding a rider for you';

@@ -72,8 +72,10 @@
                 <span class="job-fee">{{ formatKobo(job.feeKobo) }}</span>
                 @if (job.status === 'accepted' || job.status === 'out_for_delivery') {
                   <button type="button" class="deliver-btn" [disabled]="delivering() === job.id" (click)="markDelivered(job)">
-                    {{ delivering() === job.id ? 'Confirming...' : 'Mark as Delivered' }}
+                    {{ delivering() === job.id ? 'Confirming...' : 'Mark as Handed Over' }}
                   </button>
+                } @else if (job.status === 'handed_over') {
+                  <span class="awaiting-note">Waiting for customer to confirm</span>
                 }
               </div>
             </div>

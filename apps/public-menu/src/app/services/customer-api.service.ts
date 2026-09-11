@@ -198,6 +198,19 @@ export class CustomerApiService {
     );
   }
 
+  /** Dispatch: the customer confirms they received the order from the rider.
+   *  This is the final step that marks the delivery + orders DELIVERED. */
+  confirmDelivery(tabId: string, trackingCode: string, deliveryId: string): Observable<TabStatusResponse> {
+    const url = `${this.apiUrl}/api/v1/public/tabs/${tabId}/confirm-delivery`;
+    return this.http.post<any>(url, { delivery_id: deliveryId }, { headers: { 'x-tracking-code': trackingCode, 'Content-Type': 'application/json' } }).pipe(
+      map(res => {
+        let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
+        while (data && typeof data === 'object' && 'data' in data) data = data.data;
+        return snakeToCamel<TabStatusResponse>(data);
+      })
+    );
+  }
+
   initializePayment(tabId: string, trackingCode: string): Observable<PaymentInitResponse> {
     const url = `${this.apiUrl}/api/v1/public/payments/initialize`;
     return this.http.post<any>(url, { tab_id: tabId, tracking_code: trackingCode }).pipe(

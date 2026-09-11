@@ -558,8 +558,59 @@
 
   &.pending { background: #fef3c7; color: #92400e; }
   &.accepted { background: #dbeafe; color: #1e40af; }
+  &.handed-over { background: #ede9fe; color: #6d28d9; }
   &.delivered { background: #d1fae5; color: #065f46; }
   &.cancelled { background: #fee2e2; color: #dc2626; }
+}
+
+.confirm-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  border: 2px dashed #a78bfa;
+  background: rgba(167, 139, 250, 0.12);
+  text-align: center;
+  animation: confirm-pop 0.3s ease;
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+.confirm-delivery-btn {
+  margin-top: 6px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: none;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.9; }
+  &:active { opacity: 0.8; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+@keyframes confirm-pop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .delivery-address {

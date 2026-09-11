@@ -102,12 +102,12 @@ export class DeliveryBoardComponent implements OnInit, OnDestroy {
     this.deliveriesApi.deliver(job.id).subscribe({
       next: () => {
         this.delivering.set(null);
-        Swal.fire({ icon: 'success', title: 'Delivery Completed', text: 'Thanks for delivering!', timer: 1500, showConfirmButton: false });
+        Swal.fire({ icon: 'success', title: 'Handed Over', text: 'Waiting for the customer to confirm receipt before it is marked delivered.', timer: 2000, showConfirmButton: false });
         this.loadJobs();
       },
       error: (err) => {
         this.delivering.set(null);
-        const msg = err?.serverMessage || err?.error?.message || 'Could not complete the delivery';
+        const msg = err?.serverMessage || err?.error?.message || 'Could not hand over the delivery';
         Swal.fire({ icon: 'error', title: 'Failed', text: msg });
       },
     });
@@ -121,6 +121,7 @@ export class DeliveryBoardComponent implements OnInit, OnDestroy {
     const labels: Record<string, string> = {
       accepted: 'Collecting order',
       out_for_delivery: 'Out for delivery',
+      handed_over: 'Awaiting confirmation',
       delivered: 'Delivered',
     };
     return labels[status] || status.replace(/_/g, ' ');

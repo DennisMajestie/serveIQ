@@ -131,6 +131,16 @@
     <!-- Dispatch (home delivery) info -->
     @if (isDispatchTab()) {
       <section class="delivery-section">
+        @if (needsDeliveryConfirm()) {
+          <div class="confirm-card">
+            <span class="big-icon">📦</span>
+            <h2>Confirm you received your order</h2>
+            <p>Your rider has arrived. Let us know you got your order so it's marked as delivered.</p>
+            <button type="button" class="confirm-delivery-btn" [disabled]="deliveryConfirming()" (click)="confirmDelivery()">
+              {{ deliveryConfirming() ? 'Confirming…' : '✓ I received my order' }}
+            </button>
+          </div>
+        }
         <div class="delivery-card">
           <div class="delivery-head">
             <span class="delivery-head-icon">🛵</span>

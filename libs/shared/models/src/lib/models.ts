@@ -104,6 +104,7 @@ export type DeliveryStatus =
   | 'pending'
   | 'accepted'
   | 'out_for_delivery'
+  | 'handed_over'
   | 'delivered'
   | 'cancelled';
 

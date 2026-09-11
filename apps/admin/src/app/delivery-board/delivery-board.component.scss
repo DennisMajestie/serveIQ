@@ -201,6 +201,14 @@
   color: #fff;
 }
 
+.awaiting-note {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tertiary, #b45309);
+  text-align: right;
+}
+
 .empty {
   padding: 24px;
   text-align: center;
