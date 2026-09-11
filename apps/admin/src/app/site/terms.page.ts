@@ -9,8 +9,8 @@ import { PageHeaderComponent } from './page-header.component';
   template: `
     <app-page-header
       title="Terms of Service"
-      subtitle="Last updated: August 2026"
-      [breadcrumbs]="[{ label: 'Home', url: '/' }, { label: 'Terms' }]"
+      subtitle="Last updated: September 2026"
+      [breadcrumbs]="[{ label: 'Home', url: 'https://serveiqhq.com' }, { label: 'Terms' }]"
     />
     <main class="legal">
 
@@ -19,7 +19,8 @@ import { PageHeaderComponent } from './page-header.component';
         <p>
           These terms govern your use of the ServeIQ platform — including the admin web
           app, waiter mobile app, public QR menu, and related APIs (together, the
-          "Service"). By creating an account or using the Service you agree to these
+          "Service"). The Service is operated by ServeIQ (<a href="https://serveiqhq.com" target="_blank" rel="noopener">https://serveiqhq.com</a>).
+          By creating an account or using the Service you agree to these
           terms on behalf of yourself and the business you represent, and confirm you
           are authorised to bind that business.
         </p>

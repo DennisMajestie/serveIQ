@@ -9,8 +9,8 @@ import { PageHeaderComponent } from './page-header.component';
   template: `
     <app-page-header
       title="Privacy Policy"
-      subtitle="Last updated: August 2026"
-      [breadcrumbs]="[{ label: 'Home', url: '/' }, { label: 'Privacy' }]"
+      subtitle="Last updated: September 2026"
+      [breadcrumbs]="[{ label: 'Home', url: 'https://serveiqhq.com' }, { label: 'Privacy' }]"
     />
     <main class="legal">
 
@@ -19,10 +19,11 @@ import { PageHeaderComponent } from './page-header.component';
         <p>
           ServeIQ ("we", "us") provides restaurant operations software — point of sale,
           kitchen display, table and tab management, inventory, staff management, analytics
-          and payments — to restaurants across Nigeria. This policy explains how we handle
-          personal data of (a) restaurant owners, managers and staff who use our platform
-          ("Platform Users") and (b) end customers who interact with menus, orders or
-          payments processed through our platform ("End Customers").
+          and payments — to restaurants across Nigeria. Our official website is
+          <a href="https://serveiqhq.com" target="_blank" rel="noopener">https://serveiqhq.com</a>.
+          This policy explains how we handle personal data of (a) restaurant owners, managers
+          and staff who use our platform ("Platform Users") and (b) end customers who interact
+          with menus, orders or payments processed through our platform ("End Customers").
         </p>
       </section>
 
