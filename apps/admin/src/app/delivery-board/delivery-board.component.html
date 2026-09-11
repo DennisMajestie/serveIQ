@@ -1,11 +1,12 @@
 <div class="board-page">
   <header class="board-header">
-    <div>
+    <div class="header-title">
       <h1>Delivery Board</h1>
       <p class="subtitle">Live dispatch jobs for your branch.</p>
     </div>
     <button type="button" class="availability-btn" [class.online]="isOnline()" (click)="toggleOnline()">
-      <span class="dot"></span>{{ isOnline() ? 'Online — accepting deliveries' : 'Go Online' }}
+      <span class="dot" [attr.aria-hidden]="true"></span>
+      <span class="btn-text">{{ isOnline() ? 'Online — accepting deliveries' : 'Go Online' }}</span>
     </button>
   </header>
 
@@ -22,33 +23,44 @@
       } @else {
         <div class="job-list">
           @for (job of availableJobs(); track job.id) {
-            <div class="job-card">
+            <article class="job-card available">
               <div class="job-main">
-                <span class="job-customer">{{ job.customerName || 'Customer' }}</span>
-                <span class="job-address">📍 {{ job.deliveryDetails?.address || '—' }}</span>
-                @if (job.deliveryDetails?.phone) {
-                  <span class="job-phone">📞 {{ job.deliveryDetails?.phone }}</span>
-                }
+                <div class="job-header-row">
+                  <span class="job-customer">{{ job.customerName || 'Customer' }}</span>
+                  <span class="job-fee-badge">{{ formatKobo(job.feeKobo) }}</span>
+                </div>
+                <div class="job-meta">
+                  <span class="job-address" title="{{ job.deliveryDetails?.address || '—' }}">
+                    <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                    {{ job.deliveryDetails?.address || '—' }}
+                  </span>
+                  @if (job.deliveryDetails?.phone) {
+                    <a class="job-phone" [href]="'tel:' + job.deliveryDetails!.phone" aria-label="Call customer">
+                      <span class="material-symbols-outlined" aria-hidden="true">call</span>
+                      {{ job.deliveryDetails?.phone }}
+                    </a>
+                  }
+                </div>
               </div>
-              <div class="job-side">
-                <span class="job-fee">{{ formatKobo(job.feeKobo) }}</span>
+              <div class="job-actions">
                 <span class="job-payout">You earn {{ formatKobo(job.payoutKobo) }}</span>
                 <button type="button" class="accept-btn" [disabled]="accepting() === job.id" (click)="accept(job)">
-                  {{ accepting() === job.id ? 'Accepting...' : 'Accept Delivery' }}
+                  {{ accepting() === job.id ? 'Accepting…' : 'Accept' }}
                 </button>
               </div>
-            </div>
+            </article>
           }
         </div>
       }
     </section>
 
-    <section class="panel">
+    <section class="panel my-deliveries">
       <header class="panel-header">
         <h2>My Deliveries <span class="chip">{{ myJobs().length }}</span></h2>
-        @if (earnings() > 0) {
-          <span class="earnings">Total earned: <strong>{{ formatKobo(earnings()) }}</strong></span>
-        }
+        <div class="earnings-summary">
+          <span class="earnings-label">Total earned</span>
+          <span class="earnings-value">{{ formatKobo(earnings()) }}</span>
+        </div>
       </header>
 
       @if (myJobs().length === 0) {
@@ -56,29 +68,55 @@
       } @else {
         <div class="job-list">
           @for (job of myJobs(); track job.id) {
-            <div class="job-card">
+            <article class="job-card" [class.status-pending]="job.status === 'pending'" [class.status-active]="job.status === 'accepted' || job.status === 'out_for_delivery'" [class.status-handed]="job.status === 'handed_over'" [class.status-delivered]="job.status === 'delivered'">
               <div class="job-main">
-                <span class="job-customer">{{ job.customerName || 'Customer' }}</span>
-                <span class="job-address">📍 {{ job.deliveryDetails?.address || '—' }}</span>
-                @if (job.deliveryDetails?.phone) {
-                  <span class="job-phone">📞 {{ job.deliveryDetails?.phone }}</span>
-                }
-                @if (job.deliveryDetails?.notes) {
-                  <span class="job-notes">📝 {{ job.deliveryDetails?.notes }}</span>
-                }
-                <span class="job-status" [class.done]="job.status === 'delivered'">{{ statusLabel(job.status) }}</span>
+                <div class="job-header-row">
+                  <span class="job-customer">{{ job.customerName || 'Customer' }}</span>
+                  <span class="job-status-chip" [class]="job.status">
+                    {{ statusLabel(job.status) }}
+                  </span>
+                </div>
+                <div class="job-meta">
+                  <span class="job-address" title="{{ job.deliveryDetails?.address || '—' }}">
+                    <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                    {{ job.deliveryDetails?.address || '—' }}
+                  </span>
+                  @if (job.deliveryDetails?.phone) {
+                    <a class="job-phone" [href]="'tel:' + job.deliveryDetails!.phone" aria-label="Call customer">
+                      <span class="material-symbols-outlined" aria-hidden="true">call</span>
+                      {{ job.deliveryDetails?.phone }}
+                    </a>
+                  }
+                  @if (job.deliveryDetails?.notes) {
+                    <span class="job-notes">
+                      <span class="material-symbols-outlined" aria-hidden="true">sticky_note_2</span>
+                      {{ job.deliveryDetails?.notes }}
+                    </span>
+                  }
+                  @if (job.riderPhone) {
+                    <a class="job-rider-phone" [href]="'tel:' + job.riderPhone" aria-label="Call rider">
+                      <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                      Rider: {{ job.riderPhone }}
+                    </a>
+                  }
+                </div>
+                <div class="job-fee-row">
+                  <span class="job-fee">{{ formatKobo(job.feeKobo) }}</span>
+                  <span class="job-payout">{{ formatKobo(job.payoutKobo) }}</span>
+                </div>
               </div>
-              <div class="job-side">
-                <span class="job-fee">{{ formatKobo(job.feeKobo) }}</span>
+              <div class="job-actions">
                 @if (job.status === 'accepted' || job.status === 'out_for_delivery') {
                   <button type="button" class="deliver-btn" [disabled]="delivering() === job.id" (click)="markDelivered(job)">
-                    {{ delivering() === job.id ? 'Confirming...' : 'Mark as Handed Over' }}
+                    {{ delivering() === job.id ? 'Confirming…' : 'Mark Handed Over' }}
                   </button>
                 } @else if (job.status === 'handed_over') {
-                  <span class="awaiting-note">Waiting for customer to confirm</span>
+                  <span class="awaiting-badge">Waiting for customer confirmation</span>
+                } @else if (job.status === 'delivered') {
+                  <span class="completed-badge">Completed</span>
                 }
               </div>
-            </div>
+            </article>
           }
         </div>
       }
