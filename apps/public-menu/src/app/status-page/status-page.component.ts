@@ -231,6 +231,17 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     const h = window.innerHeight;
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'confetti-canvas';
+    // Inline styles: component SCSS is view-encapsulated and the canvas lives
+    // on <body>, so scoped `.confetti-canvas` rules would never apply.
+    Object.assign(this.canvas.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100vw',
+      height: '100vh',
+      zIndex: '9999',
+      pointerEvents: 'none',
+    });
     this.canvas.width = w;
     this.canvas.height = h;
     document.body.appendChild(this.canvas);
