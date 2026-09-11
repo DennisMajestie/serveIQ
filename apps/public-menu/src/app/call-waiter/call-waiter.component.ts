@@ -24,10 +24,13 @@ export class CallWaiterComponent implements OnInit, OnDestroy {
   message = signal<string>('');
   error = signal<string>('');
   hasTable = computed(() => !!this.cart.tableId());
-  // A table implies dine-in; otherwise only show for an explicit dine-in order.
-  // Hide entirely for takeaway (or an undecided order type without a table).
+  // Only show for dine-in. Explicit takeaway always hides, even if a table_id
+  // lingers in the session from an earlier QR scan. An undecided order type
+  // shows only when a table is set (scanned QR).
   isDineIn = computed(
-    () => this.hasTable() || this.cart.orderType() === 'dine_in',
+    () =>
+      this.cart.orderType() !== 'takeaway' &&
+      (this.hasTable() || this.cart.orderType() === 'dine_in'),
   );
   busy = signal(false);
   showTableInput = signal(false);
