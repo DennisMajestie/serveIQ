@@ -317,8 +317,9 @@ navItems: { key: Section; label: string; icon: string }[] = [
       next: (branch) => {
         const delivery = branch.settings?.delivery || {};
         this.deliveryEnabled.set(!!delivery.enabled);
-        this.deliveryFee.set(Number(delivery.fee_kobo) || 0);
-        this.riderPayout.set(Number(delivery.rider_payout_kobo) || 0);
+        // Store in kobo on the API but edit in naira in the form.
+        this.deliveryFee.set(Math.round((Number(delivery.fee_kobo) || 0) / 100));
+        this.riderPayout.set(Math.round((Number(delivery.rider_payout_kobo) || 0) / 100));
       },
       error: () => undefined,
     });
@@ -331,8 +332,8 @@ navItems: { key: Section; label: string; icon: string }[] = [
     this.branchesApi.updateSettings(branchId, {
       delivery: {
         enabled: this.deliveryEnabled(),
-        fee_kobo: Math.max(0, Math.round(Number(this.deliveryFee()) || 0)),
-        rider_payout_kobo: Math.max(0, Math.round(Number(this.riderPayout()) || 0)),
+        fee_kobo: Math.max(0, Math.round((Number(this.deliveryFee()) || 0) * 100)),
+        rider_payout_kobo: Math.max(0, Math.round((Number(this.riderPayout()) || 0) * 100)),
       },
     }).subscribe({
       next: () => {

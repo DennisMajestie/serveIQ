@@ -446,14 +446,14 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div class="space-y-2">
-                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">DELIVERY FEE (KOBO)</label>
-                    <input type="number" min="0" step="1000" [ngModel]="deliveryFee()" (ngModelChange)="deliveryFee.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 150000" style="font-family:'Inter',sans-serif" />
-                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">Flat fee customers pay for every delivery. E.g. 150000 kobo = ₦1,500.</span>
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">DELIVERY FEE</label>
+                    <input type="number" min="0" step="100" [ngModel]="deliveryFee()" (ngModelChange)="deliveryFee.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 1500" style="font-family:'Inter',sans-serif" />
+                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">Flat fee customers pay for every delivery. E.g. ₦1,500.</span>
                   </div>
                   <div class="space-y-2">
-                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">RIDER PAYOUT (KOBO)</label>
-                    <input type="number" min="0" step="1000" [ngModel]="riderPayout()" (ngModelChange)="riderPayout.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 100000" style="font-family:'Inter',sans-serif" />
-                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">What each rider earns per completed delivery. E.g. 100000 kobo = ₦1,000.</span>
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">RIDER PAYOUT</label>
+                    <input type="number" min="0" step="100" [ngModel]="riderPayout()" (ngModelChange)="riderPayout.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 1000" style="font-family:'Inter',sans-serif" />
+                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">What each rider earns per completed delivery. E.g. ₦1,000.</span>
                   </div>
                 </div>
               </div>
