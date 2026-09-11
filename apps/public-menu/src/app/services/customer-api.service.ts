@@ -55,6 +55,23 @@ export interface PaymentStatusResponse {
   paidAt: string | null;
 }
 
+export interface DeliveryAddressDetails {
+  full_name?: string;
+  phone?: string;
+  address?: string;
+  notes?: string;
+}
+
+export interface TabDeliveryInfo {
+  id: string;
+  status: string;
+  feeKobo?: number;
+  riderName?: string | null;
+  riderPhone?: string | null;
+  acceptedAt?: string | null;
+  deliveredAt?: string | null;
+}
+
 export interface TabStatusResponse {
   id: string;
   tableId: string;
@@ -62,6 +79,10 @@ export interface TabStatusResponse {
   customerName: string;
   partySize: number;
   tabType: string;
+  pickupMode?: string;
+  deliveryFeeKobo?: number;
+  deliveryDetails?: DeliveryAddressDetails | null;
+  delivery?: TabDeliveryInfo | null;
   trackingCode: string;
   trackingGeneratedAt: string;
   openedAt: string;
@@ -125,12 +146,14 @@ export class CustomerApiService {
     return this.env.apiUrl;
   }
 
-  openTab(branchId: string, tableId?: string, customerName?: string, partySize?: number, tabType?: string): Observable<OpenTabResponse> {
+  openTab(branchId: string, tableId?: string, customerName?: string, partySize?: number, tabType?: string, pickupMode?: string, deliveryDetails?: DeliveryAddressDetails): Observable<OpenTabResponse> {
     const url = `${this.apiUrl}/api/v1/public/tabs`;
     const body: any = { branch_id: branchId, tab_type: tabType || 'dine_in' };
     if (tableId) body.table_id = tableId;
     if (customerName) body.customer_name = customerName;
     if (partySize) body.party_size = partySize;
+    if (pickupMode) body.pickup_mode = pickupMode;
+    if (deliveryDetails) body.delivery_details = deliveryDetails;
     return this.http.post<any>(url, body).pipe(
       map(res => {
         let data = res && typeof res === 'object' && 'data' in res ? res.data : res;

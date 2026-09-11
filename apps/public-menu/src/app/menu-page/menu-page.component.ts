@@ -77,6 +77,10 @@ export class MenuPageComponent implements OnInit {
           menu.taxRate ?? 7.5,
           menu.serviceChargePercent ?? 10,
         );
+        this.cartService.setDeliveryConfig(
+          menu.delivery?.enabled ?? false,
+          menu.delivery?.fee_kobo ?? 0,
+        );
         this.cartService.setCurrency(menu.currency);
         const cats = groupCategoryNames(menu.items.map(i => i.category));
         this.categories.set(cats);

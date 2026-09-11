@@ -44,10 +44,10 @@
         <!-- Header -->
         <div class="mb-10">
           <h2 class="text-[24px] leading-[1.2] sm:text-[32px] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">
-            {{ activeSection() === 'branch-setup' ? 'Branch Settings' : activeSection() === 'payment' ? 'Payment & Webhooks' : activeSection() === 'branding' ? 'Branding' : activeSection() === 'staff' ? 'Staff Management' : activeSection() === 'security' ? 'Security' : 'Email Verification' }}
+            {{ activeSection() === 'branch-setup' ? 'Branch Settings' : activeSection() === 'payment' ? 'Payment & Webhooks' : activeSection() === 'delivery' ? 'Delivery Settings' : activeSection() === 'branding' ? 'Branding' : activeSection() === 'staff' ? 'Staff Management' : activeSection() === 'security' ? 'Security' : 'Email Verification' }}
           </h2>
           <p class="text-[var(--on-surface-variant)] text-[18px] leading-[1.6] mt-1" style="font-family:'Inter',sans-serif">
-            {{ activeSection() === 'branch-setup' ? 'Configure your digital workspace, to maintain your business theme and brand essense.' : activeSection() === 'payment' ? 'Configure payment providers, webhook keys, and takeaway policy.' : activeSection() === 'branding' ? 'Customize your business appearance, logo, and brand colors.' : activeSection() === 'staff' ? 'Manage waiters, reset PINs, and control staff access.' : activeSection() === 'security' ? 'Update your account password.' : 'Verify your email address to enable all features.' }}
+            {{ activeSection() === 'branch-setup' ? 'Configure your digital workspace, to maintain your business theme and brand essense.' : activeSection() === 'payment' ? 'Configure payment providers, webhook keys, and takeaway policy.' : activeSection() === 'delivery' ? 'Enable home delivery, set the delivery fee, and configure rider payouts.' : activeSection() === 'branding' ? 'Customize your business appearance, logo, and brand colors.' : activeSection() === 'staff' ? 'Manage waiters, reset PINs, and control staff access.' : activeSection() === 'security' ? 'Update your account password.' : 'Verify your email address to enable all features.' }}
           </p>
         </div>
 
@@ -415,6 +415,51 @@
             </div>
             <button (click)="savePaymentSettings()" [disabled]="isSavingPayment()" class="mt-2 px-8 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
               {{ isSavingPayment() ? 'Saving...' : 'Save Payment Settings' }}
+            </button>
+          </div>
+        }
+
+        <!-- Delivery Section -->
+        @if (activeSection() === 'delivery') {
+          <div class="space-y-6">
+            <div class="glass-card p-6">
+              <h3 class="text-[18px] leading-[1.6] font-medium text-[var(--on-background)] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
+                <span class="material-symbols-outlined text-[var(--primary)]">delivery_dining</span>
+                Home Delivery
+              </h3>
+              <p class="text-[var(--on-surface-variant)] text-[14px] leading-[1.4] mb-6" style="font-family:'Inter',sans-serif">Let customers order for home delivery on the public menu. Dispatch orders are prepaid by the customer on the public menu, and riders assigned from the Delivery Board accept and complete each run.</p>
+              <div class="space-y-6">
+                <div class="flex items-center gap-4">
+                  <button (click)="deliveryEnabled.set(!deliveryEnabled())" class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors active:scale-95"
+                    [class.bg-[var(--primary)]]="deliveryEnabled()"
+                    [class.bg-[var(--surface-variant)]]="!deliveryEnabled()"
+                    role="switch" [attr.aria-checked]="deliveryEnabled()">
+                    <span class="inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform"
+                      [class.translate-x-6]="deliveryEnabled()"
+                      [class.translate-x-1]="!deliveryEnabled()"></span>
+                  </button>
+                  <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif"
+                    [class.text-[var(--primary)]]="deliveryEnabled()"
+                    [class.text-[var(--on-surface-variant)]]="!deliveryEnabled()">
+                    {{ deliveryEnabled() ? 'Home delivery enabled' : 'Home delivery disabled' }}
+                  </span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">DELIVERY FEE (KOBO)</label>
+                    <input type="number" min="0" step="1000" [ngModel]="deliveryFee()" (ngModelChange)="deliveryFee.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 150000" style="font-family:'Inter',sans-serif" />
+                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">Flat fee customers pay for every delivery. E.g. 150000 kobo = ₦1,500.</span>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">RIDER PAYOUT (KOBO)</label>
+                    <input type="number" min="0" step="1000" [ngModel]="riderPayout()" (ngModelChange)="riderPayout.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 100000" style="font-family:'Inter',sans-serif" />
+                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">What each rider earns per completed delivery. E.g. 100000 kobo = ₦1,000.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button (click)="saveDeliverySettings()" [disabled]="isSavingDelivery()" class="mt-2 px-8 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+              {{ isSavingDelivery() ? 'Saving...' : 'Save Delivery Settings' }}
             </button>
           </div>
         }

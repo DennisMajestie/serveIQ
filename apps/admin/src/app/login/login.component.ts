@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
       if (userRole) {
         localStorage.setItem('userRole', userRole);
       }
-      const target = userRole === 'super_admin' ? '/app/admin/dashboard' : '/app/dashboard';
+      const target = userRole === 'super_admin' ? '/app/admin/dashboard' : (userRole === 'rider' ? '/app/delivery' : '/app/dashboard');
       this.permissionService.loadPermissions().subscribe({
         next: () => this.router.navigate([target], { replaceUrl: true }),
         error: () => this.router.navigate([target], { replaceUrl: true })
@@ -104,6 +104,8 @@ export class LoginComponent implements OnInit {
             const userRole = localStorage.getItem('userRole');
             if (userRole === 'super_admin') {
               this.router.navigate(['/app/admin/dashboard']);
+            } else if (userRole === 'rider') {
+              this.router.navigate(['/app/delivery']);
             } else {
               this.router.navigate(['/app/dashboard']);
             }
@@ -113,6 +115,8 @@ export class LoginComponent implements OnInit {
             const userRole = localStorage.getItem('userRole');
             if (userRole === 'super_admin') {
               this.router.navigate(['/app/admin/dashboard']);
+            } else if (userRole === 'rider') {
+              this.router.navigate(['/app/delivery']);
             } else {
               this.router.navigate(['/app/dashboard']);
             }

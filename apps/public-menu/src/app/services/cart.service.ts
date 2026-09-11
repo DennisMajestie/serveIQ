@@ -15,9 +15,22 @@ const STORAGE_KEYS = {
   tableId: 'serveiq_table_id',
   orderType: 'serveiq_order_type',
   cartItems: 'serveiq_cart_items',
+  pickupMode: 'serveiq_pickup_mode',
+  deliveryDetails: 'serveiq_delivery_details',
+  deliveryFeeKobo: 'serveiq_delivery_fee_kobo',
+  deliveryEnabled: 'serveiq_delivery_enabled',
 };
 
 export type OrderType = 'dine_in' | 'takeaway';
+
+export type PickupMode = 'self' | 'dispatch';
+
+export interface DeliveryDetails {
+  fullName?: string;
+  phone?: string;
+  address?: string;
+  notes?: string;
+}
 
 const ORDER_TYPES: OrderType[] = ['dine_in', 'takeaway'];
 
@@ -48,6 +61,19 @@ export class CartService {
   readonly branchId = signal<string | null>(sessionStorage.getItem(STORAGE_KEYS.branchId));
   readonly tableId = signal<string | null>(sessionStorage.getItem(STORAGE_KEYS.tableId));
   readonly orderType = signal<OrderType | null>(this.loadOrderType());
+  /** Self pickup vs home delivery — only meaningful for takeaway orders. */
+  readonly pickupMode = signal<PickupMode | null>(
+    this.loadPickupMode(),
+  );
+  readonly deliveryDetails = signal<DeliveryDetails | null>(
+    this.loadDeliveryDetails(),
+  );
+  readonly deliveryEnabled = signal<boolean>(
+    sessionStorage.getItem(STORAGE_KEYS.deliveryEnabled) === '1',
+  );
+  readonly deliveryFeeKobo = signal<number>(
+    Number(sessionStorage.getItem(STORAGE_KEYS.deliveryFeeKobo)) || 0,
+  );
 
   /** Business-level pricing settings used for the pre-order review totals. */
   readonly taxRate = signal<number>(7.5);
@@ -131,6 +157,27 @@ export class CartService {
     sessionStorage.setItem(STORAGE_KEYS.orderType, type);
   }
 
+  setPickupMode(mode: PickupMode) {
+    this.pickupMode.set(mode);
+    sessionStorage.setItem(STORAGE_KEYS.pickupMode, mode);
+  }
+
+  setDeliveryDetails(details: DeliveryDetails | null) {
+    this.deliveryDetails.set(details);
+    if (details) {
+      sessionStorage.setItem(STORAGE_KEYS.deliveryDetails, JSON.stringify(details));
+    } else {
+      sessionStorage.removeItem(STORAGE_KEYS.deliveryDetails);
+    }
+  }
+
+  setDeliveryConfig(enabled: boolean, feeKobo: number) {
+    this.deliveryEnabled.set(!!enabled);
+    this.deliveryFeeKobo.set(feeKobo || 0);
+    sessionStorage.setItem(STORAGE_KEYS.deliveryEnabled, enabled ? '1' : '0');
+    sessionStorage.setItem(STORAGE_KEYS.deliveryFeeKobo, String(feeKobo || 0));
+  }
+
   setPricingSettings(taxRate: number, serviceChargePercent: number) {
     this.taxRate.set(Number.isFinite(taxRate) ? taxRate : 7.5);
     this.serviceChargePercent.set(
@@ -161,12 +208,30 @@ export class CartService {
     this.branchId.set(null);
     this.tableId.set(null);
     this.orderType.set(null);
+    this.pickupMode.set(null);
+    this.deliveryDetails.set(null);
     sessionStorage.removeItem(STORAGE_KEYS.tabId);
     sessionStorage.removeItem(STORAGE_KEYS.trackingCode);
     sessionStorage.removeItem(STORAGE_KEYS.branchId);
     sessionStorage.removeItem(STORAGE_KEYS.tableId);
     sessionStorage.removeItem(STORAGE_KEYS.orderType);
+    sessionStorage.removeItem(STORAGE_KEYS.pickupMode);
+    sessionStorage.removeItem(STORAGE_KEYS.deliveryDetails);
     this.clearCart();
+  }
+
+  private loadPickupMode(): PickupMode | null {
+    const raw = sessionStorage.getItem(STORAGE_KEYS.pickupMode);
+    return raw === 'dispatch' || raw === 'self' ? raw : null;
+  }
+
+  private loadDeliveryDetails(): DeliveryDetails | null {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEYS.deliveryDetails);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
   }
 
   private loadOrderType(): OrderType | null {

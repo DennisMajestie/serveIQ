@@ -25,6 +25,10 @@ export interface PublicMenuData {
   currency?: string;
   taxRate?: number;
   serviceChargePercent?: number;
+  delivery?: {
+    enabled: boolean;
+    fee_kobo: number;
+  };
   items: PublicMenuItem[];
 }
 

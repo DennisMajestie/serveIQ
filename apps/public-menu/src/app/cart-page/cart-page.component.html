@@ -37,6 +37,65 @@
       </div>
     </section>
 
+    <!-- Fulfillment (takeaway / undecided only) -->
+    @if (showFulfillment) {
+      <section class="fulfillment-section">
+        <h3>How would you like to get your order?</h3>
+        <div class="fulfillment-options">
+          <button
+            type="button"
+            class="fulfill-card"
+            [class.active]="pickupMode() === 'self'"
+            (click)="choosePickup('self')"
+          >
+            <span class="fulfill-icon">🥡</span>
+            <span class="fulfill-label">Self Pickup</span>
+            <span class="fulfill-cost">Free</span>
+          </button>
+          <button
+            type="button"
+            class="fulfill-card"
+            [class.active]="pickupMode() === 'dispatch'"
+            (click)="choosePickup('dispatch')"
+          >
+            <span class="fulfill-icon">🛵</span>
+            <span class="fulfill-label">Home Delivery</span>
+            <span class="fulfill-cost">{{ cartService.formatKobo(deliveryFeeKobo) }}</span>
+          </button>
+        </div>
+
+        @if (pickupMode() === 'dispatch') {
+          <div class="delivery-form">
+            <p class="delivery-note">A rider will deliver your order to you.</p>
+            <input
+              type="text"
+              [(ngModel)]="deliveryName"
+              placeholder="Full name (optional)"
+              class="input-field"
+            />
+            <input
+              type="tel"
+              [(ngModel)]="deliveryPhone"
+              placeholder="Phone number *"
+              class="input-field"
+            />
+            <textarea
+              [(ngModel)]="deliveryAddress"
+              placeholder="Delivery address * — street, landmark, description"
+              class="input-field"
+              rows="2"
+            ></textarea>
+            <input
+              type="text"
+              [(ngModel)]="deliveryNotes"
+              placeholder="Note for the rider (optional)"
+              class="input-field"
+            />
+          </div>
+        }
+      </section>
+    }
+
     <!-- Items -->
     <section class="cart-items">
       @for (item of cartService.items(); track item.menuItemId) {
@@ -73,6 +132,12 @@
         <div class="total-row">
           <span>VAT ({{ taxRate }}%)</span>
           <span>{{ cartService.formatKobo(vatKobo) }}</span>
+        </div>
+      }
+      @if (deliveryFeeKobo > 0) {
+        <div class="total-row">
+          <span>Delivery Fee</span>
+          <span>{{ cartService.formatKobo(deliveryFeeKobo) }}</span>
         </div>
       }
       <div class="cart-total">
@@ -124,7 +189,13 @@
       <span class="modal-icon">🧾</span>
       <h2>Confirm your order</h2>
       <p class="confirm-type">
-        {{ selectedType() === 'takeaway' ? '🥡 Takeaway' : '🍽️ Dine In' }}
+        @if (selectedType() === 'takeaway' && pickupMode() === 'dispatch') {
+          🛵 Home Delivery
+        } @else if (selectedType() === 'takeaway') {
+          🥡 Takeaway
+        } @else {
+          🍽️ Dine In
+        }
       </p>
 
       <div class="confirm-items">
@@ -151,6 +222,15 @@
           <div class="total-row">
             <span>VAT ({{ taxRate }}%)</span>
             <span>{{ cartService.formatKobo(vatKobo) }}</span>
+          </div>
+        }
+        @if (deliveryFeeKobo > 0) {
+          <div class="total-row">
+            <span>Delivery Fee</span>
+            <span>{{ cartService.formatKobo(deliveryFeeKobo) }}</span>
+          </div>
+          <div class="delivery-address-confirm">
+            <span class="delivery-address">📍 {{ deliveryAddress }}</span>
           </div>
         }
         <div class="confirm-total">

@@ -28,6 +28,32 @@ export class CartPageComponent {
   showConfirmModal = signal(false);
   selectedType = signal<'dine_in' | 'takeaway'>(this.cartService.orderType() ?? 'dine_in');
 
+  // ── Dispatch (home delivery) ──────────────────────────────────────────────
+  pickupMode = signal<'self' | 'dispatch'>(this.cartService.pickupMode() ?? 'self');
+  deliveryName = '';
+  deliveryPhone = '';
+  deliveryAddress = '';
+  deliveryNotes = '';
+
+  get orderType() {
+    return this.cartService.orderType();
+  }
+
+  get deliveryEnabled() {
+    return this.cartService.deliveryEnabled();
+  }
+
+  get showFulfillment() {
+    return this.deliveryEnabled &&
+      (this.selectedType() === 'takeaway' || !this.cartService.orderType());
+  }
+
+  get deliveryFeeKobo() {
+    return this.pickupMode() === 'dispatch' && this.selectedType() === 'takeaway'
+      ? this.cartService.deliveryFeeKobo()
+      : 0;
+  }
+
   get subtotalKobo() {
     return this.cartService.items().reduce((sum, i) => sum + i.priceKobo * i.quantity, 0);
   }
@@ -41,7 +67,11 @@ export class CartPageComponent {
   }
 
   get totalKobo() {
-    return this.subtotalKobo + this.vatKobo + this.serviceChargeKobo;
+    return this.subtotalKobo + this.vatKobo + this.serviceChargeKobo + this.deliveryFeeKobo;
+  }
+
+  choosePickup(mode: 'self' | 'dispatch') {
+    this.pickupMode.set(mode);
   }
 
   get taxRate() {
@@ -75,6 +105,25 @@ export class CartPageComponent {
   }
 
   confirmPlaceOrder() {
+    if (this.pickupMode() === 'dispatch') {
+      if (!this.deliveryPhone.trim() || !this.deliveryAddress.trim()) {
+        showApiErrorToast(
+          { message: 'Phone number and delivery address are required for home delivery' },
+          'Delivery details missing',
+        );
+        return;
+      }
+      this.cartService.setPickupMode('dispatch');
+      this.cartService.setDeliveryDetails({
+        fullName: this.deliveryName.trim() || undefined,
+        phone: this.deliveryPhone.trim(),
+        address: this.deliveryAddress.trim(),
+        notes: this.deliveryNotes.trim() || undefined,
+      });
+    } else {
+      this.cartService.setPickupMode('self');
+      this.cartService.setDeliveryDetails(null);
+    }
     this.showConfirmModal.set(false);
     this.placeOrder();
   }
@@ -142,7 +191,16 @@ export class CartPageComponent {
     doPlaceOrders: (tabId: string, trackingCode: string) => void,
   ) {
     const tableId = effectiveType === 'dine_in' ? (this.cartService.tableId() || undefined) : undefined;
-    this.api.openTab(branchId, tableId, this.customerName || undefined, this.partySize, effectiveType).subscribe({
+    const pickupMode = effectiveType === 'takeaway' ? this.pickupMode() : 'self';
+    const deliveryDetails = pickupMode === 'dispatch'
+      ? {
+          full_name: this.deliveryName.trim() || undefined,
+          phone: this.deliveryPhone.trim(),
+          address: this.deliveryAddress.trim(),
+          notes: this.deliveryNotes.trim() || undefined,
+        }
+      : undefined;
+    this.api.openTab(branchId, tableId, this.customerName || undefined, this.partySize, effectiveType, pickupMode, deliveryDetails).subscribe({
       next: (tab) => {
         this.cartService.setSession(tab.id, tab.trackingCode, branchId);
         doPlaceOrders(tab.id, tab.trackingCode);

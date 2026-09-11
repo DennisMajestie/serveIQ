@@ -16,7 +16,7 @@ interface PaymentProviderConfig {
   config: Record<string, string>;
 }
 
-type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification' | 'payment';
+type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification' | 'payment' | 'delivery';
 
 @Component({
   selector: 'app-settings',
@@ -46,6 +46,7 @@ export class SettingsComponent implements OnInit {
 navItems: { key: Section; label: string; icon: string }[] = [
     { key: 'branch-setup', label: 'Branch Setup', icon: 'settings' },
     { key: 'payment', label: 'Payment & Webhooks', icon: 'payment' },
+    { key: 'delivery', label: 'Delivery', icon: 'delivery_dining' },
     { key: 'branding', label: 'Branding', icon: 'palette' },
     { key: 'staff', label: 'Staff Management', icon: 'group' },
     { key: 'security', label: 'Security', icon: 'lock' },
@@ -192,6 +193,12 @@ navItems: { key: Section; label: string; icon: string }[] = [
     { label: 'GMT+8 (Australia - Perth)', value: 'Australia/Perth' },
     { label: 'GMT+12 (New Zealand - Auckland)', value: 'Pacific/Auckland' },
   ];
+  /** Enable dispatch (home delivery) on the public menu + delivery fee/rider payout. */
+  deliveryEnabled = signal(false);
+  deliveryFee = signal(0);
+  riderPayout = signal(0);
+  isSavingDelivery = signal(false);
+
   isSavingSettings = signal(false);
   brandPrimaryColor = signal('#F97316');
   brandAccentColor = signal('#d97706');
@@ -297,6 +304,46 @@ navItems: { key: Section; label: string; icon: string }[] = [
     if (section === 'payment') {
       this.loadPaymentSettings();
     }
+    if (section === 'delivery') {
+      this.loadDeliverySettings();
+    }
+  }
+
+  loadDeliverySettings() {
+    const branchId = this.activeBranchId() || this.branches()[0]?.id || '';
+    if (!branchId) return;
+    this.activeBranchId.set(branchId);
+    this.branchesApi.getById(branchId).subscribe({
+      next: (branch) => {
+        const delivery = branch.settings?.delivery || {};
+        this.deliveryEnabled.set(!!delivery.enabled);
+        this.deliveryFee.set(Number(delivery.fee_kobo) || 0);
+        this.riderPayout.set(Number(delivery.rider_payout_kobo) || 0);
+      },
+      error: () => undefined,
+    });
+  }
+
+  saveDeliverySettings() {
+    const branchId = this.activeBranchId();
+    if (!branchId) return;
+    this.isSavingDelivery.set(true);
+    this.branchesApi.updateSettings(branchId, {
+      delivery: {
+        enabled: this.deliveryEnabled(),
+        fee_kobo: Math.max(0, Math.round(Number(this.deliveryFee()) || 0)),
+        rider_payout_kobo: Math.max(0, Math.round(Number(this.riderPayout()) || 0)),
+      },
+    }).subscribe({
+      next: () => {
+        this.isSavingDelivery.set(false);
+        Swal.fire({ icon: 'success', title: 'Delivery Settings Saved', timer: 1500, showConfirmButton: false });
+      },
+      error: () => {
+        this.isSavingDelivery.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to save delivery settings' });
+      }
+    });
   }
 
   loadPaymentSettings() {

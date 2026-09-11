@@ -36,12 +36,14 @@
     @if (isServed()) {
       <section class="served-section">
         <div class="served-visual">
-          <span class="served-meal">{{ orderTypeLabel === 'Takeaway' ? '🥡' : '🍽️' }}</span>
+          <span class="served-meal">{{ isDispatchTab() ? '🛵' : (isTakeawayOrder ? '🥡' : '🍽️') }}</span>
           <span class="served-tick material-symbols-outlined">check_circle</span>
         </div>
         <h2>Enjoy Your Meal!</h2>
         <p class="served-message">
-          @if (orderTypeLabel === 'Takeaway') {
+          @if (isDispatchTab()) {
+            Your food has been delivered! We hope it tastes as wonderful as you look today. Enjoy every bite — and thank you for choosing us. See you again soon! 🎉
+          } @else if (isTakeawayOrder) {
             Your food has arrived! We hope it tastes as wonderful as you look today. Enjoy every bite — and thank you for choosing us. See you again soon! 🎉
           } @else {
             Your meal has been served to your table. Bon appétit — we hope it's as wonderful as you are! If you need anything else, your server is just a wave away. 🎉
@@ -114,14 +116,52 @@
           <span>{{ cartService.formatKobo(tab.taxKobo) }}</span>
         </div>
       }
+      @if (tab.deliveryFeeKobo != null && tab.deliveryFeeKobo > 0) {
+        <div class="summary-line">
+          <span>Delivery Fee</span>
+          <span>{{ cartService.formatKobo(tab.deliveryFeeKobo) }}</span>
+        </div>
+      }
       <div class="total-row">
         <span>Total</span>
         <span class="total-amount">{{ cartService.formatKobo(tab.totalKobo) }}</span>
       </div>
     </div>
 
+    <!-- Dispatch (home delivery) info -->
+    @if (isDispatchTab()) {
+      <section class="delivery-section">
+        <h2>Delivery Details</h2>
+        <div class="delivery-card">
+          <div class="delivery-row">
+            <span>Deliver to</span>
+            <span class="delivery-value">{{ tab.deliveryDetails?.address || '—' }}</span>
+          </div>
+          @if (tab.deliveryDetails?.phone) {
+            <div class="delivery-row">
+              <span>Phone</span>
+              <span class="delivery-value">{{ tab.deliveryDetails?.phone }}</span>
+            </div>
+          }
+          <div class="delivery-row">
+            <span>Status</span>
+            <span class="delivery-status">{{ deliveryStatusLabel(tab.delivery?.status) }}</span>
+          </div>
+          @if (tab.delivery?.riderName) {
+            <div class="delivery-row">
+              <span>Rider</span>
+              <span class="delivery-value">
+                {{ tab.delivery?.riderName }}
+                @if (tab.delivery?.riderPhone) { <em>· {{ tab.delivery?.riderPhone }}</em> }
+              </span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
     <!-- Pickup ready -->
-    @if (step() === 'ready' && orderTypeLabel === 'Takeaway') {
+    @if (step() === 'ready' && isTakeawayOrder && !isDispatchTab()) {
       <section class="pickup-section">
         @if (pickupReady()) {
           <div class="pickup-card">
@@ -142,7 +182,17 @@
       </section>
     }
 
-    @if (step() === 'ready' && orderTypeLabel !== 'Takeaway') {
+    @if (step() === 'ready' && isTakeawayOrder && isDispatchTab()) {
+      <section class="pickup-section">
+        <div class="pickup-card">
+          <span class="big-icon">🛵</span>
+          <h2>Getting your order ready</h2>
+          <p>Our dispatch team is preparing your delivery — a rider is being assigned.</p>
+        </div>
+      </section>
+    }
+
+    @if (step() === 'ready' && !isTakeawayOrder) {
       <section class="pickup-section">
         <div class="pickup-card confirmed">
           <span class="big-icon">🍽️</span>

@@ -4,12 +4,21 @@
 
 export type UiThemeVariant = 'current' | 'legacy';
 
+export type UserRole =
+  | 'owner'
+  | 'waiter'
+  | 'supervisor'
+  | 'chef'
+  | 'manager'
+  | 'super_admin'
+  | 'rider';
+
 export interface User {
   id: string;
   businessId?: string;
   fullName: string;
   email: string;
-  role: 'owner' | 'waiter' | 'supervisor' | 'chef' | 'manager' | 'super_admin';
+  role: UserRole;
   pin?: string;
   avatarUrl?: string;
   isActive?: boolean;
@@ -89,6 +98,64 @@ export interface Table {
 
 export type TabStatus = 'open' | 'billed' | 'paid' | 'voided';
 
+export type PickupMode = 'self' | 'dispatch';
+
+export type DeliveryStatus =
+  | 'pending'
+  | 'accepted'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'cancelled';
+
+export interface DeliveryDetails {
+  full_name?: string;
+  phone: string;
+  address: string;
+  notes?: string;
+}
+
+export interface DeliveryData {
+  id: string;
+  status: DeliveryStatus;
+  fee_kobo: number;
+  rider_name?: string | null;
+  rider_phone?: string | null;
+  accepted_at?: string | null;
+  delivered_at?: string | null;
+}
+
+export interface Rider {
+  id: string;
+  userId: string;
+  branchId: string;
+  businessId: string;
+  isOnline: boolean;
+  vehicle: string | null;
+  fullName: string | null;
+  email: string | null;
+  phone: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface DeliveryJob {
+  id: string;
+  tabId: string;
+  branchId: string;
+  status: DeliveryStatus;
+  feeKobo: number;
+  payoutKobo: number;
+  createdAt: string;
+  acceptedAt?: string | null;
+  deliveredAt?: string | null;
+  customerName?: string | null;
+  deliveryDetails?: DeliveryDetails | null;
+  riderUserId?: string | null;
+  riderName?: string | null;
+  riderPhone?: string | null;
+  orderIds?: string[];
+}
+
 export interface Tab {
   id: string;
   branchId: string;
@@ -102,6 +169,10 @@ export interface Tab {
   waiterId?: string;
   shiftId?: string;
   tabType?: string;
+  pickupMode?: PickupMode;
+  deliveryFeeKobo?: number;
+  deliveryDetails?: DeliveryDetails;
+  delivery?: DeliveryData | null;
   orderItems?: OrderItem[];
 }
 
@@ -132,6 +203,7 @@ export interface Bill {
   serviceChargeKobo: number;
   serviceChargePercent: number;
   discountKobo: number;
+  deliveryFeeKobo?: number;
   totalKobo: number;
   paymentAmountKobo?: number;
   paymentMethod?: string;

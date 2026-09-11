@@ -16,6 +16,17 @@ export interface PlatformPaymentProviderSummary {
   verificationMethod?: 'hmac-sha512' | 'rsa' | 'none';
 }
 
+export interface BranchDeliverySettings {
+  enabled: boolean;
+  fee_kobo: number;
+  rider_payout_kobo: number;
+}
+
+export interface UpdateBranchSettings {
+  settings?: Record<string, any>;
+  delivery?: BranchDeliverySettings;
+}
+
 /** Manages CRUD operations for restaurant branches. */
 @Injectable({ providedIn: 'root' })
 export class BranchesApiService extends BaseApiService {
@@ -46,8 +57,8 @@ export class BranchesApiService extends BaseApiService {
     return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }), data);
   }
 
-  /** Update branch settings (payment provider, webhook keys, takeaway policy). */
-  updateSettings(id: string, data: { settings: Record<string, any> }): Observable<Branch> {
+  /** Update branch settings (payment provider, webhook keys, takeaway policy, delivery). */
+  updateSettings(id: string, data: UpdateBranchSettings): Observable<Branch> {
     return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }) + '/settings', data);
   }
 

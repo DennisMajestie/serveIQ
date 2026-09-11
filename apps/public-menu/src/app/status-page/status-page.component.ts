@@ -77,7 +77,9 @@ export class StatusPageComponent implements OnInit, OnDestroy {
 
   // ── Pickup alert (client-side only) ───────────────────────────────────────
   readonly pickupConfirmed = signal(false);
-  readonly pickupReady = computed(() => this.step() === 'ready' && !this.pickupConfirmed());
+  readonly pickupReady = computed(() =>
+    !this.isDispatchTab() && this.step() === 'ready' && !this.pickupConfirmed(),
+  );
 
   /** True once any order has been delivered (dine-in meal served / takeaway boxed).
    *  Replaces the progress stepper with the served celebration. */
@@ -357,12 +359,13 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       { key: 'approved', label: 'Approved', icon: 'thumb_up', done: any(inProgress) },
       { key: 'preparing', label: 'Preparing', icon: 'cooking', done: preparing },
       { key: 'ready', label: 'Ready', icon: 'route', done: ready },
-      // Dine-in adds an "On Its Way" leg before the served meal; takeaway ends on the boxed order.
-      ...(isTakeaway
+      // Dispatch (home delivery) adds Out for Delivery + Delivered legs;
+      // self-takeaway ends on the boxed order; dine-in ends on the served meal.
+      ...(isTakeaway && !this.isDispatchTab()
         ? [{ key: 'delivered', label: 'Boxed', icon: 'takeout_dining', done: delivered }]
         : [
-            { key: 'on_the_way', label: 'On Its Way', icon: 'delivery_dining', done: onTheWay },
-            { key: 'delivered', label: 'Delivered', icon: 'restaurant', done: delivered },
+            { key: 'on_the_way', label: this.isDispatchTab() ? 'Out for Delivery' : 'On Its Way', icon: 'delivery_dining', done: onTheWay },
+            { key: 'delivered', label: 'Delivered', icon: this.isDispatchTab() ? 'package_2' : 'restaurant', done: delivered },
           ]),
     ];
   });
@@ -374,6 +377,13 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     }
     return s[0]?.key ?? 'received';
   });
+
+  /** Home-delivery order: the customer asked for dispatch, or the backend has
+   *  already created a delivery record for this tab. */
+  isDispatchTab(): boolean {
+    const tab = this.tabData();
+    return tab?.pickupMode === 'dispatch' || tab?.delivery != null;
+  }
 
   readonly step = computed((): StatusStep => {
     const tab = this.tabData();
@@ -689,7 +699,23 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   get orderTypeLabel(): string {
+    if (this.isDispatchTab()) return 'Home Delivery';
     return this.tabData()?.tabType === 'takeaway' ? 'Takeaway' : 'Dine In';
+  }
+
+  get isTakeawayOrder(): boolean {
+    return this.tabData()?.tabType === 'takeaway';
+  }
+
+  deliveryStatusLabel(status?: string): string {
+    const s = (status || '').toLowerCase();
+    const labels: Record<string, string> = {
+      pending: 'Looking for a rider',
+      accepted: 'Rider assigned',
+      delivered: 'Delivered',
+      cancelled: 'Cancelled',
+    };
+    return labels[s] || s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
   get orderStatusIcon(): string {

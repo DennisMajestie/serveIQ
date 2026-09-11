@@ -1,0 +1,112 @@
+<div class="riders-page">
+  <header class="page-header">
+    <div>
+      <h1>Delivery Riders</h1>
+      <p class="subtitle">Manage dispatch riders who deliver takeaway orders.</p>
+    </div>
+    <div class="header-actions">
+      <div class="stats">
+        <span class="stat"><strong>{{ riders().length }}</strong> riders</span>
+        <span class="stat online"><span class="dot"></span><strong>{{ onlineCount() }}</strong> online</span>
+      </div>
+      <button type="button" class="btn-primary" [disabled]="isLoading()" (click)="openAddModal()">
+        <span class="material-symbols-outlined">add</span> Add Rider
+      </button>
+    </div>
+  </header>
+
+  <div class="search-row">
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input type="text" placeholder="Search riders by name or email..." [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" />
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state"><div class="spinner"></div><p>Loading riders...</p></div>
+  } @else if (filteredRiders().length === 0) {
+    <div class="state empty">
+      <span class="big-icon">🛵</span>
+      <h3>No riders yet</h3>
+      <p>Add riders so dispatch orders can be delivered to your customers.</p>
+      <button type="button" class="btn-primary" (click)="openAddModal()">Add your first rider</button>
+    </div>
+  } @else {
+    <div class="riders-grid">
+      @for (rider of filteredRiders(); track rider.id) {
+        <div class="rider-card" [class.inactive]="!rider.isActive">
+          <div class="rider-top">
+            <div class="avatar">{{ getInitials(rider.fullName) }}</div>
+            <div class="rider-meta">
+              <span class="rider-name">{{ rider.fullName || 'Unnamed Rider' }}</span>
+              <span class="rider-email">{{ rider.email || '—' }}</span>
+            </div>
+            <span class="toggle" [class.on]="rider.isOnline" (click)="toggleOnline(rider)"
+              title="{{ rider.isOnline ? 'Go offline' : 'Go online' }}">
+              <span class="dot"></span>{{ rider.isOnline ? 'Online' : 'Offline' }}
+            </span>
+          </div>
+          @if (rider.phone || rider.vehicle) {
+            <div class="rider-details">
+              @if (rider.phone) { <span>📞 {{ rider.phone }}</span> }
+              @if (rider.vehicle) { <span>🛵 {{ rider.vehicle }}</span> }
+            </div>
+          }
+          <div class="rider-footer">
+            <span class="branch">🏬 {{ branchName(rider.branchId) }}</span>
+            <div class="actions">
+              <button type="button" class="icon-btn" title="Edit" (click)="editRider(rider)">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button type="button" class="icon-btn" title="{{ rider.isActive ? 'Deactivate' : 'Activate' }}" (click)="toggleActive(rider)">
+                <span class="material-symbols-outlined">{{ rider.isActive ? 'block' : 'check_circle' }}</span>
+              </button>
+              <button type="button" class="icon-btn danger" title="Delete" (click)="deleteRider(rider)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (showAddModal()) {
+  <div class="modal-overlay" (click)="closeAddModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>Add Delivery Rider</h2>
+      <p class="modal-sub">The rider logs into the deliveries board with this email and password.</p>
+      <div class="form">
+        <label>Full name *</label>
+        <input type="text" [ngModel]="formFullName()" (ngModelChange)="formFullName.set($event)" placeholder="e.g. Tunde Okafor" />
+        <label>Email *</label>
+        <input type="email" [ngModel]="formEmail()" (ngModelChange)="formEmail.set($event)" placeholder="rider@example.com" />
+        <label>Password *</label>
+        <input type="text" [ngModel]="formPassword()" (ngModelChange)="formPassword.set($event)" placeholder="Temporary login password" />
+        <div class="form-row">
+          <div>
+            <label>Phone</label>
+            <input type="tel" [ngModel]="formPhone()" (ngModelChange)="formPhone.set($event)" placeholder="0801 234 5678" />
+          </div>
+          <div>
+            <label>Vehicle</label>
+            <input type="text" [ngModel]="formVehicle()" (ngModelChange)="formVehicle.set($event)" placeholder="Motorcycle, Car..." />
+          </div>
+        </div>
+        <label>Branch *</label>
+        <select [ngModel]="formBranchId()" (ngModelChange)="formBranchId.set($event)">
+          @for (branch of branches(); track branch.id) {
+            <option [value]="branch.id">{{ branch.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeAddModal()">Cancel</button>
+        <button type="button" class="btn-primary" [disabled]="isSubmitting()" (click)="submitRider()">
+          {{ isSubmitting() ? 'Creating...' : 'Add Rider' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

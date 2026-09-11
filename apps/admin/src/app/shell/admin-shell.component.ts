@@ -119,7 +119,17 @@ interface MobileTab {
             </li>
           </ul>
 
-<ul class="nav-list" *ngIf="permissionService.hasPermission('view_dashboard') && profile().role !== 'super_admin'">
+<ul class="nav-list" *ngIf="profile().role === 'rider'">
+            <li class="nav-section-label">Rider</li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/app/delivery" routerLinkActive="active">
+                <span class="material-symbols-outlined">delivery_dining</span>
+                <span>Delivery Board</span>
+              </a>
+            </li>
+          </ul>
+
+          <ul class="nav-list" *ngIf="permissionService.hasPermission('view_dashboard') && profile().role !== 'super_admin'">
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/dashboard" routerLinkActive="active">
                 <span class="material-symbols-outlined">dashboard</span>
@@ -319,7 +329,7 @@ interface MobileTab {
             <div class="user-profile">
               <div class="user-info">
                 <p class="user-name">{{ profile().fullName || 'Admin' }}</p>
-                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : (profile().role === 'super_admin' ? 'Super Admin' : (permissionService.hasPermission('create_staff') ? 'Manager' : (profile().role === 'supervisor' ? 'Supervisor' : (profile().role === 'chef' ? 'Chef' : 'Staff')))) }}</p>
+                <p class="user-role">{{ profile().role === 'owner' ? 'Owner' : profile().role === 'super_admin' ? 'Super Admin' : profile().role === 'rider' ? 'Rider' : permissionService.hasPermission('create_staff') ? 'Manager' : profile().role === 'supervisor' ? 'Supervisor' : profile().role === 'chef' ? 'Chef' : 'Staff' }}</p>
               </div>
               <img [src]="profile().avatarUrl || 'https://ui-avatars.com/api/?name=' + (profile().fullName || 'A') + '&background=9d4300&color=fff'" alt="Profile">
             </div>
@@ -944,6 +954,12 @@ export class AdminShellComponent implements OnInit, OnDestroy {
     }
     const p = this.permissionService;
     const tabs: MobileTab[] = [];
+    if (role === 'rider') {
+      return [
+        { label: 'Deliveries', icon: 'delivery_dining', route: '/app/delivery' },
+        { label: 'More', icon: 'more_horiz', route: null, opensDrawer: true },
+      ];
+    }
     if (p.hasPermission('view_dashboard')) {
       tabs.push({ label: 'Dashboard', icon: 'home', route: '/app/dashboard' });
     }

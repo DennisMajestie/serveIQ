@@ -87,7 +87,7 @@ export const API_CONFIG = {
       delete: '/api/v1/tabs/:id',
       waiterList: '/api/v1/tabs/waiter-list',
     },
-    // Orders
+    // Publication / Order lifecycle
     orders: {
       byTab: '/api/v1/orders/tab/:tabId',
       get: '/api/v1/orders/:id',
@@ -105,6 +105,23 @@ export const API_CONFIG = {
       confirmPickup: '/api/v1/orders/:id/confirm-pickup',
       accept: '/api/v1/orders/:id/accept',
       bump: '/api/v1/orders/:id/bump',
+    },
+    // Delivery riders
+    riders: {
+      list: '/api/v1/riders',
+      create: '/api/v1/riders',
+      update: '/api/v1/riders/:id',
+      delete: '/api/v1/riders/:id',
+      toggleOnline: '/api/v1/riders/me/toggle-online',
+    },
+    // Dispatch deliveries
+    deliveries: {
+      list: '/api/v1/deliveries',
+      available: '/api/v1/deliveries/available',
+      mine: '/api/v1/deliveries/mine',
+      accept: '/api/v1/deliveries/:id/accept',
+      delivered: '/api/v1/deliveries/:id/delivered',
+      reassign: '/api/v1/deliveries/:id/reassign',
     },
     // Bills
     bills: {

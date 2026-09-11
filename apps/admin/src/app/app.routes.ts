@@ -108,6 +108,16 @@ export const appRoutes: Route[] = [
             loadComponent: () => import('./staff/waiter-management.component').then(m => m.WaiterManagementComponent)
           },
           {
+            path: 'riders',
+            canActivate: [permissionGuard('manage_riders')],
+            loadComponent: () => import('./riders/riders-management.component').then(m => m.RidersManagementComponent)
+          },
+          {
+            path: 'delivery',
+            canActivate: [permissionGuard('accept_delivery')],
+            loadComponent: () => import('./delivery-board/delivery-board.component').then(m => m.DeliveryBoardComponent)
+          },
+          {
             path: 'tabs',
             children: [
               {

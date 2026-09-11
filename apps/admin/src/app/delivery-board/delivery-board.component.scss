@@ -1,0 +1,230 @@
+.board-page {
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0 0 4px;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+    color: var(--on-surface);
+  }
+
+  .subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--on-surface-variant);
+  }
+}
+
+.availability-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container-low);
+  color: var(--on-surface-variant);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--on-surface-variant);
+  }
+
+  &.online {
+    color: var(--success, #15803d);
+    border-color: color-mix(in srgb, var(--success, #4be277) 50%, transparent);
+    background: color-mix(in srgb, var(--success, #4be277) 12%, var(--surface-container-low));
+
+    .dot { background: var(--success, #4be277); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success, #4be277) 25%, transparent); }
+  }
+}
+
+.panel {
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--on-surface);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chip {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+  }
+
+  .earnings {
+    font-size: 13px;
+    color: var(--on-surface-variant);
+
+    strong { color: var(--success, #15803d); }
+  }
+}
+
+.job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.job-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: 12px;
+  padding: 16px;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.job-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  .job-customer {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--on-surface);
+  }
+
+  .job-address,
+  .job-phone,
+  .job-notes {
+    font-size: 13px;
+    color: var(--on-surface-variant);
+  }
+
+  .job-status {
+    align-self: flex-start;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tertiary, #b45309);
+    background: color-mix(in srgb, var(--tertiary, #f59e0b) 15%, transparent);
+    padding: 3px 10px;
+    border-radius: 999px;
+
+    &.done { color: var(--success, #15803d); background: color-mix(in srgb, var(--success, #4be277) 15%, transparent); }
+  }
+}
+
+.job-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+
+  .job-fee {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--on-surface);
+  }
+
+  .job-payout {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+  }
+
+  @media (max-width: 640px) {
+    align-items: stretch;
+    .job-payout { text-align: right; }
+  }
+}
+
+.accept-btn,
+.deliver-btn {
+  margin-top: 8px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.accept-btn {
+  background: var(--primary);
+  color: #fff;
+}
+
+.deliver-btn {
+  background: var(--success, #4be277);
+  color: #fff;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--on-surface-variant);
+  border: 1px dashed var(--outline-variant);
+  border-radius: 12px;
+}
+
+.state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--on-surface-variant);
+  font-size: 14px;
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 12px;
+    border: 3px solid var(--outline-variant);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: db-spin 0.7s linear infinite;
+  }
+}
+
+@keyframes db-spin { to { transform: rotate(360deg); } }
