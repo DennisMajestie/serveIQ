@@ -319,7 +319,7 @@ export class TabDetailComponent implements OnInit {
               ? `Tab Voided — stock restored for ${orderCount} item${orderCount > 1 ? 's' : ''}`
               : 'Tab Voided';
             Swal.fire({ icon: 'success', title: successText, timer: 2000, showConfirmButton: false });
-            this.router.navigate(['/tables']);
+            this.router.navigate(['/app/tables']);
           },
           error: () => Swal.fire({ icon: 'error', title: 'Void Failed' })
         });
