@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PublicMenuApiService, PublicMenuData } from '@serveiq/shared/data-access';
 import { normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
-import { CartService, OrderType } from '../services/cart.service';
+import { CartService, OrderType, PickupMode } from '../services/cart.service';
 import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
 import { finalize } from 'rxjs';
 
@@ -30,6 +30,7 @@ export class MenuPageComponent implements OnInit {
   searchQuery = signal('');
   addedItemId = signal<string | null>(null);
   showTypeChooser = signal(false);
+  showPickupStep = signal(false);
   readOnly = signal(false);
 
   trackingCode = '';
@@ -109,16 +110,35 @@ export class MenuPageComponent implements OnInit {
   }
 
   openTypeChooser() {
+    this.showPickupStep.set(false);
     this.showTypeChooser.set(true);
   }
 
   chooseType(type: OrderType) {
+    // Takeaway with delivery enabled: ask Self Pickup vs Home Delivery first.
+    if (type === 'takeaway' && this.cartService.deliveryEnabled()) {
+      this.showPickupStep.set(true);
+      return;
+    }
+    this.commitType(type, null);
+  }
+
+  choosePickup(mode: PickupMode) {
+    this.commitType('takeaway', mode);
+  }
+
+  private commitType(type: OrderType, pickup: PickupMode | null) {
     this.cartService.setOrderType(type);
+    if (pickup) {
+      this.cartService.setPickupMode(pickup);
+    }
+    this.showPickupStep.set(false);
     this.showTypeChooser.set(false);
     this.updateReadOnly();
   }
 
   continueWithoutType() {
+    this.showPickupStep.set(false);
     this.showTypeChooser.set(false);
     this.updateReadOnly();
   }

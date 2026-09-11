@@ -159,24 +159,44 @@
 @if (showTypeChooser()) {
   <div class="modal-overlay" (click)="continueWithoutType()">
     <div class="modal" (click)="$event.stopPropagation()">
-      <span class="modal-icon">🍽️</span>
-      <h2>How would you like to order?</h2>
-      <div class="type-options">
-        <button class="type-card dine-in" (click)="chooseType('dine_in')">
-          <span class="type-icon">🍽️</span>
-          <span class="type-label">Dine In</span>
-          <span class="type-desc">Eat at the table</span>
-          @if (!cartService.hasTable()) {
-            <span class="type-hint">Browse the menu — scan your table's QR to order</span>
-          }
-        </button>
-        <button class="type-card takeaway" (click)="chooseType('takeaway')">
-          <span class="type-icon">🥡</span>
-          <span class="type-label">Takeaway</span>
-          <span class="type-desc">Pack and go</span>
-        </button>
-      </div>
-      <button class="cancel-btn" (click)="continueWithoutType()">Continue anyway</button>
+      @if (showPickupStep()) {
+        <span class="modal-icon">🥡</span>
+        <h2>How do you want your takeaway?</h2>
+        <div class="type-options">
+          <button class="type-card takeaway" (click)="choosePickup('self')">
+            <span class="type-icon">🥡</span>
+            <span class="type-label">Self Pickup</span>
+            <span class="type-desc">Collect at the counter</span>
+            <span class="type-hint">Free</span>
+          </button>
+          <button class="type-card takeaway" (click)="choosePickup('dispatch')">
+            <span class="type-icon">🛵</span>
+            <span class="type-label">Home Delivery</span>
+            <span class="type-desc">Delivered by a rider</span>
+            <span class="type-hint">{{ cartService.formatKobo(cartService.deliveryFeeKobo()) }}</span>
+          </button>
+        </div>
+        <button class="back-btn" (click)="showPickupStep.set(false)">← Back to order type</button>
+      } @else {
+        <span class="modal-icon">🍽️</span>
+        <h2>How would you like to order?</h2>
+        <div class="type-options">
+          <button class="type-card dine-in" (click)="chooseType('dine_in')">
+            <span class="type-icon">🍽️</span>
+            <span class="type-label">Dine In</span>
+            <span class="type-desc">Eat at the table</span>
+            @if (!cartService.hasTable()) {
+              <span class="type-hint">Browse the menu — scan your table's QR to order</span>
+            }
+          </button>
+          <button class="type-card takeaway" (click)="chooseType('takeaway')">
+            <span class="type-icon">🥡</span>
+            <span class="type-label">Takeaway</span>
+            <span class="type-desc">Pack and go</span>
+          </button>
+        </div>
+        <button class="cancel-btn" (click)="continueWithoutType()">Continue anyway</button>
+      }
     </div>
   </div>
 }

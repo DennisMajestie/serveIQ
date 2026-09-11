@@ -25,6 +25,7 @@ export class CartPageComponent {
   customerName = '';
   partySize = 1;
   showTypeModal = signal(false);
+  showPickupModal = signal(false);
   showConfirmModal = signal(false);
   selectedType = signal<'dine_in' | 'takeaway'>(this.cartService.orderType() ?? 'dine_in');
 
@@ -83,6 +84,7 @@ export class CartPageComponent {
   }
 
   openTypeModal() {
+    this.showPickupModal.set(false);
     this.showTypeModal.set(true);
   }
 
@@ -90,13 +92,33 @@ export class CartPageComponent {
     if (this.cartService.orderType()) {
       this.showConfirmModal.set(true);
     } else {
+      this.showPickupModal.set(false);
       this.showTypeModal.set(true);
     }
   }
 
   confirmType(type: 'dine_in' | 'takeaway') {
+    // Takeaway with delivery enabled: ask Self Pickup vs Home Delivery first.
+    if (type === 'takeaway' && this.deliveryEnabled) {
+      this.showPickupModal.set(true);
+      return;
+    }
+    this.finishType(type, null);
+  }
+
+  confirmPickup(mode: 'self' | 'dispatch') {
+    this.finishType('takeaway', mode);
+  }
+
+  private finishType(type: 'dine_in' | 'takeaway', pickup: 'self' | 'dispatch' | null) {
+    this.showPickupModal.set(false);
     this.showTypeModal.set(false);
+    this.selectedType.set(type);
     this.cartService.setOrderType(type);
+    if (pickup) {
+      this.pickupMode.set(pickup);
+      this.cartService.setPickupMode(pickup);
+    }
     if (type === 'dine_in' && !this.cartService.tableId() && !this.cartService.tabId()) {
       showApiErrorToast({ message: 'No table selected. Please scan the QR code at your table.' }, 'Table not found');
       return;
