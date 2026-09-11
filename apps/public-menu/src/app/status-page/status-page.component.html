@@ -316,7 +316,7 @@
                   [disabled]="cashPending() || cashSubmitting()"
                   (click)="selectTerminal('cash')"
                 >
-                  <span class="term-label">💵 {{ method.label }}</span>
+                  <span class="term-label">💵 {{ method.label || 'Cash' }}</span>
                   @if (selectedTerminalId() === 'cash') {
                     <span class="term-detail">Pay at the counter with cash.</span>
                   }
