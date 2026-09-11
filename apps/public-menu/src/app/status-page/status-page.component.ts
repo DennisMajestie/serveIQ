@@ -731,6 +731,33 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     return labels[s] || s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
+  deliveryStatusClass(status?: string): string {
+    const s = (status || '').toLowerCase();
+    if (s === 'delivered') return 'delivered';
+    if (s === 'accepted' || s === 'out_for_delivery') return 'accepted';
+    if (s === 'cancelled') return 'cancelled';
+    return 'pending';
+  }
+
+  deliverySubtitle(status?: string): string {
+    const s = (status || '').toLowerCase();
+    if (s === 'accepted') return 'Your rider has been assigned';
+    if (s === 'out_for_delivery') return 'Your rider is on the way';
+    if (s === 'delivered') return 'Delivered — enjoy your meal!';
+    if (s === 'cancelled') return 'Delivery cancelled';
+    return 'We are finding a rider for you';
+  }
+
+  initialsOf(name: string): string {
+    return (name || '')
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(p => p.charAt(0))
+      .join('')
+      .toUpperCase();
+  }
+
   get orderStatusIcon(): string {
     if (this.isServed()) return '🎉';
     const s = this.step();

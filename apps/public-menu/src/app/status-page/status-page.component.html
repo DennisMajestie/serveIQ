@@ -131,29 +131,43 @@
     <!-- Dispatch (home delivery) info -->
     @if (isDispatchTab()) {
       <section class="delivery-section">
-        <h2>Delivery Details</h2>
         <div class="delivery-card">
-          <div class="delivery-row">
-            <span>Deliver to</span>
-            <span class="delivery-value">{{ tab.deliveryDetails?.address || '—' }}</span>
-          </div>
-          @if (tab.deliveryDetails?.phone) {
-            <div class="delivery-row">
-              <span>Phone</span>
-              <span class="delivery-value">{{ tab.deliveryDetails?.phone }}</span>
+          <div class="delivery-head">
+            <span class="delivery-head-icon">🛵</span>
+            <div class="delivery-head-text">
+              <h2>Delivery Details</h2>
+              <p>{{ deliverySubtitle(tab.delivery?.status) }}</p>
             </div>
-          }
-          <div class="delivery-row">
-            <span>Status</span>
-            <span class="delivery-status">{{ deliveryStatusLabel(tab.delivery?.status) }}</span>
+            <span class="delivery-status-chip" [class]="deliveryStatusClass(tab.delivery?.status)">
+              {{ deliveryStatusLabel(tab.delivery?.status) }}
+            </span>
           </div>
+
+          <div class="delivery-address">
+            <span class="delivery-addr-icon material-symbols-outlined">location_on</span>
+            <div class="delivery-addr-body">
+              <span class="delivery-addr-label">Deliver to</span>
+              <span class="delivery-addr-value">{{ tab.deliveryDetails?.address || '—' }}</span>
+            </div>
+            @if (tab.deliveryDetails?.phone) {
+              <a class="delivery-addr-phone" [href]="'tel:' + tab.deliveryDetails?.phone">
+                {{ tab.deliveryDetails?.phone }}
+              </a>
+            }
+          </div>
+
           @if (tab.delivery?.riderName) {
-            <div class="delivery-row">
-              <span>Rider</span>
-              <span class="delivery-value">
-                {{ tab.delivery?.riderName }}
-                @if (tab.delivery?.riderPhone) { <em>· {{ tab.delivery?.riderPhone }}</em> }
-              </span>
+            <div class="delivery-rider">
+              <div class="rider-avatar">{{ initialsOf(tab.delivery!.riderName) }}</div>
+              <div class="rider-info">
+                <span class="rider-name">{{ tab.delivery?.riderName }}</span>
+                <span class="rider-role">Your rider</span>
+              </div>
+              @if (tab.delivery?.riderPhone) {
+                <a class="rider-call" [href]="'tel:' + tab.delivery?.riderPhone" aria-label="Call your rider">
+                  <span class="material-symbols-outlined">call</span>
+                </a>
+              }
             </div>
           }
         </div>

@@ -503,6 +503,167 @@
   margin-bottom: 24px;
 }
 
+.delivery-section {
+  margin-bottom: 24px;
+}
+
+.delivery-card {
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.delivery-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--primary) 7%, transparent);
+
+  .delivery-head-icon {
+    font-size: 1.35rem;
+    flex-shrink: 0;
+  }
+
+  .delivery-head-text {
+    flex: 1;
+    min-width: 0;
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+    }
+
+    p {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      margin: 2px 0 0;
+    }
+  }
+}
+
+.delivery-status-chip {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+
+  &.pending { background: #fef3c7; color: #92400e; }
+  &.accepted { background: #dbeafe; color: #1e40af; }
+  &.delivered { background: #d1fae5; color: #065f46; }
+  &.cancelled { background: #fee2e2; color: #dc2626; }
+}
+
+.delivery-address {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+
+  .delivery-addr-icon {
+    font-size: 1.25rem;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .delivery-addr-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .delivery-addr-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+  }
+
+  .delivery-addr-value {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  .delivery-addr-phone {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--primary);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+.delivery-rider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+
+  .rider-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--primary) 14%, var(--surface));
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+
+  .rider-info {
+    flex: 1;
+    min-width: 0;
+
+    .rider-name {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .rider-role {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .rider-call {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+}
+
 .pickup-card {
   display: flex;
   flex-direction: column;
