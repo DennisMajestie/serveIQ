@@ -27,7 +27,7 @@ export interface PublicMenuData {
   serviceChargePercent?: number;
   delivery?: {
     enabled: boolean;
-    fee_kobo: number;
+    feeKobo: number;
   };
   items: PublicMenuItem[];
 }
