@@ -169,7 +169,7 @@ export class KdsComponent implements OnInit, OnDestroy {
 
   // ── actions ──
   hasUrgent(orders: OrderGroup[]): boolean {
-    return orders.some((o) => o.items.some((i) => this.isUrgent(i)));
+    return orders.some((o) => this.isUrgent(o.timerEndsAt));
   }
 
   itemCount(orders: OrderGroup[]): number {
@@ -292,9 +292,9 @@ export class KdsComponent implements OnInit, OnDestroy {
   }
 
   // ── helpers ──
-  isUrgent(item: OrderGroupItem): boolean {
-    if (!item.timerEndsAt) return false;
-    const secs = this.getRemainingSeconds(item.timerEndsAt);
+  isUrgent(timerEndsAt?: string): boolean {
+    if (!timerEndsAt) return false;
+    const secs = this.getRemainingSeconds(timerEndsAt);
     return secs <= 120;
   }
 

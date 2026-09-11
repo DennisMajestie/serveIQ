@@ -70,9 +70,9 @@
             <span class="item-name">{{ item.menuItemName }}</span>
             <span
               class="item-timer"
-              [class.urgent]="isUrgent(item)"
-              *ngIf="item.timerEndsAt"
-              >{{ formatCountdown(item.timerEndsAt) }}</span
+              [class.urgent]="isUrgent(order.timerEndsAt)"
+              *ngIf="order.timerEndsAt"
+              >{{ formatCountdown(order.timerEndsAt) }}</span
             >
             <div class="item-actions">
               <button class="btn-accept" *ngIf="canAccept(item)" (click)="acceptItem(order, item)">
