@@ -74,6 +74,11 @@ export class LoginComponent {
             return;
           }
           this.router.navigate(['/supervisor/orders']);
+        } else if (role === 'rider') {
+          const adminUrl = (this.env.adminBaseUrl || this.env.publicMenuBaseUrl).replace(/\/+$/, '');
+          const staffToken = this.authService.getToken();
+          this.isRedirecting.set(true);
+          window.location.assign(`${adminUrl}/login?token=${encodeURIComponent(staffToken || '')}&role=${encodeURIComponent(role)}`);
         } else {
           this.pinError.set(true);
           Swal.fire({

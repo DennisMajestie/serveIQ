@@ -44,6 +44,7 @@ export class WaiterManagementComponent implements OnInit {
     { value: 'supervisor', label: 'Supervisor (Business Manager)' },
     { value: 'manager', label: 'Manager' },
     { value: 'chef', label: 'Chef / Cook' },
+    { value: 'rider', label: 'Rider (Delivery)' },
   ];
   editWaiter = signal<Waiter | null>(null);
   editFullName = signal('');

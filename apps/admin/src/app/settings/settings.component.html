@@ -717,6 +717,10 @@
             <select [ngModel]="waiterFormRole()" (ngModelChange)="waiterFormRole.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5] appearance-none" style="font-family:'Inter',sans-serif">
               <option value="waiter" class="bg-[var(--background)]">Waiter</option>
               <option value="supervisor" class="bg-[var(--background)]">Supervisor</option>
+              <option value="manager" class="bg-[var(--background)]">Manager</option>
+              <option value="chef" class="bg-[var(--background)]">Chef / Cook</option>
+              <option value="cashier" class="bg-[var(--background)]">Cashier</option>
+              <option value="rider" class="bg-[var(--background)]">Rider (Delivery)</option>
             </select>
           </div>
           <div class="space-y-2">

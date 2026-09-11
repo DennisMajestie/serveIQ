@@ -746,7 +746,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
         this.showCreateWaiterModal.set(false);
         const createdRole = (waiter as User | any)?.role || this.waiterFormRole();
         const pin = (waiter as User | any)?.pin;
-        const roleLabel = createdRole === 'supervisor' ? 'Supervisor' : 'Waiter';
+        const roleLabel = createdRole === 'supervisor' ? 'Supervisor' : createdRole === 'rider' ? 'Rider' : 'Waiter';
         Swal.fire({
           icon: 'success',
           title: `${roleLabel} Created`,
