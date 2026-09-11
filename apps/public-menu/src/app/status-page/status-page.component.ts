@@ -223,8 +223,10 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   private launchConfetti() {
-    const host = document.querySelector('.status-page') as HTMLElement | null;
-    if (!host) return;
+    // Cancel any in-flight confetti animation before starting a new one
+    if (this.anim !== undefined) cancelAnimationFrame(this.anim);
+    if (this.canvas) { this.canvas.remove(); this.canvas = null; }
+
     const w = window.innerWidth;
     const h = window.innerHeight;
     this.canvas = document.createElement('canvas');
