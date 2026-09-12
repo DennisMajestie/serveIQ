@@ -53,7 +53,7 @@ interface Plan {
 
       <p class="note">
         Prices in Naira, VAT exclusive. Need something custom — multiple branches or
-        franchise terms? <a href="https://wa.me/2348000000000" target="_blank" rel="noopener">Message us on WhatsApp</a>.
+        franchise terms? <a href="https://wa.me/2347010361332" target="_blank" rel="noopener">Message us on WhatsApp</a>.
       </p>
     </main>
     <app-site-footer />

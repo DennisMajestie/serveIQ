@@ -10,15 +10,15 @@ import { PageHeaderComponent } from './page-header.component';
   template: `
     <app-page-header
       title="Talk to a human"
-      subtitle="Demo requests, onboarding help, or just questions — the fastest way to reach us is WhatsApp. We reply within business hours (Mon–Sat, 8am–6pm WAT)."
-      [breadcrumbs]="[{ label: 'Home', url: '/' }, { label: 'Contact' }]"
+      subtitle="Free trial, onboarding help, or just questions — the fastest way to reach us is WhatsApp. We reply within business hours (Mon–Sat, 8am–6pm WAT)."
+      [breadcrumbs]="[{ label: 'Home', url: 'https://serveiqhq.com' }, { label: 'Contact' }]"
     />
     <main class="contact">
       <div class="cards">
-        <a class="card primary" href="https://wa.me/2348000000000?text=Hello%20ServeIQ%2C%20I%27d%20like%20to%20know%20more" target="_blank" rel="noopener">
+        <a class="card primary" href="https://wa.me/2347010361332?text=Hello%20ServeIQ%2C%20I%27d%20like%20to%20know%20more" target="_blank" rel="noopener">
           <span class="material-symbols-outlined">chat</span>
           <h2>WhatsApp</h2>
-          <p>+234 800 000 0000</p>
+          <p>0701 036 1332</p>
           <span class="cta">Start chat</span>
         </a>
 
@@ -31,15 +31,15 @@ import { PageHeaderComponent } from './page-header.component';
 
         <a class="card" routerLink="/register">
           <span class="material-symbols-outlined">rocket_launch</span>
-          <h2>Book a demo</h2>
+          <h2>Free Trial</h2>
           <p>See ServeIQ running your floor, live.</p>
-          <span class="cta">Register interest</span>
+          <span class="cta">Start free trial</span>
         </a>
       </div>
 
       <section class="where">
         <h2>Serving restaurants across Nigeria</h2>
-        <p>Lagos · Abuja · Port Harcourt — and everywhere with a kitchen worth protecting.</p>
+        <p>Based in Abuja — serving kitchens in Lagos, Abuja, Port Harcourt, and everywhere with a kitchen worth protecting.</p>
       </section>
     </main>
     <app-site-footer />

@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, OnDestroy, Inject, PLATFORM_ID, Signal, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ThemeService, Theme } from '../core/theme.service';
 import { PublicMenuApiService, PublicBusiness } from '@serveiq/shared/data-access';
 import gsap from 'gsap';
@@ -96,9 +96,14 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private themeService: ThemeService,
-    private publicApi: PublicMenuApiService
+    private publicApi: PublicMenuApiService,
+    private router: Router
   ) {
     this.theme = themeService.theme;
+  }
+
+  isActive(href: string): boolean {
+    return this.router.url === href || this.router.url.startsWith(href + '/');
   }
 
   get year(): number {
@@ -203,9 +208,10 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   ];
 
   navLinks = [
-    { label: 'Home', href: '#home' },
-    { label: 'Modules', href: '#modules' },
-    { label: 'Platform', href: '#platform' }
+    { label: 'About ServeIQ', href: '/about' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Free Trial', href: '/register' }
   ];
 
   heroBadge = 'Powered by ServeIQ';
