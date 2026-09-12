@@ -29,6 +29,14 @@ export class CartPageComponent {
   showConfirmModal = signal(false);
   selectedType = signal<'dine_in' | 'takeaway'>(this.cartService.orderType() ?? 'dine_in');
 
+  incrementPartySize(): void {
+    this.partySize = Math.min(20, this.partySize + 1);
+  }
+
+  decrementPartySize(): void {
+    this.partySize = Math.max(1, this.partySize - 1);
+  }
+
   // ── Dispatch (home delivery) ──────────────────────────────────────────────
   pickupMode = signal<'self' | 'dispatch'>(this.cartService.pickupMode() ?? 'self');
   deliveryName = '';

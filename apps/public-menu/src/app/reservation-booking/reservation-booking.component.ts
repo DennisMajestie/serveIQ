@@ -110,6 +110,14 @@ export class ReservationBookingComponent implements OnInit {
     this.partySize.set(Number.isFinite(value) ? value : 1);
   }
 
+  incrementPartySize(): void {
+    this.partySize.update(v => Math.min(20, v + 1));
+  }
+
+  decrementPartySize(): void {
+    this.partySize.update(v => Math.max(1, v - 1));
+  }
+
   selectSlot(slot: AvailabilitySlot) {
     this.selectedSlot.set(slot);
     this.form.update(f => ({ ...f, reservationTime: slot.start }));

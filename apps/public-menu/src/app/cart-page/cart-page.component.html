@@ -30,9 +30,9 @@
       <div class="party-row">
         <label>Party size:</label>
         <div class="party-controls">
-          <button (click)="partySize = Math.max(1, partySize - 1)" class="qty-btn">−</button>
+          <button (click)="decrementPartySize()" class="qty-btn">−</button>
           <span class="qty-value">{{ partySize }}</span>
-          <button (click)="partySize = Math.min(20, partySize + 1)" class="qty-btn">+</button>
+          <button (click)="incrementPartySize()" class="qty-btn">+</button>
         </div>
       </div>
     </section>

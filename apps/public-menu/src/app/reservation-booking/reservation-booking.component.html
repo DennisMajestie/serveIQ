@@ -41,9 +41,9 @@
         <div class="party-size-selector">
           <label>Party Size</label>
           <div class="number-input">
-            <button type="button" (click)="partySize.update(v => Math.max(1, v - 1))" aria-label="Decrease">−</button>
+            <button type="button" (click)="decrementPartySize()" aria-label="Decrease">−</button>
             <input type="number" [value]="partySize()" (input)="onPartyInput($event)" min="1" max="20" />
-            <button type="button" (click)="partySize.update(v => Math.min(20, v + 1))" aria-label="Increase">+</button>
+            <button type="button" (click)="incrementPartySize()" aria-label="Increase">+</button>
           </div>
         </div>
         @if (isLoading()) {
