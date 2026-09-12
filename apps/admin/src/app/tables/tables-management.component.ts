@@ -1,9 +1,9 @@
-import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
-import { TablesApiService, TabsApiService, UserApiService } from '@serveiq/shared/data-access';
-import { Table, Tab, User } from '@serveiq/shared/models';
+import { TablesApiService, TabsApiService, UserApiService, ReservationsApiService } from '@serveiq/shared/data-access';
+import { Table, Tab, User, Reservation } from '@serveiq/shared/models';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -18,10 +18,11 @@ import Swal from 'sweetalert2';
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./tables-management.component.scss']
 })
-export class TablesManagementComponent implements OnInit {
+export class TablesManagementComponent implements OnInit, OnDestroy {
   private tableService = inject(TablesApiService);
   private tabsApi = inject(TabsApiService);
   private userApi = inject(UserApiService);
+  private reservationsApi = inject(ReservationsApiService);
   private router = inject(Router);
   isFloorPlan = signal(false);
   isLoading = signal(true);
@@ -31,6 +32,66 @@ export class TablesManagementComponent implements OnInit {
   readonly waiterMap = signal<Record<string, string>>({});
   readonly waitersList = signal<User[]>([]);
   statusFilter = signal<string>('all');
+
+  readonly activeReservations = signal<Reservation[]>([]);
+  nowTick = signal(Date.now());
+
+  /** Minutes before the booking time the table starts showing as reserved. */
+  readonly reservationHoldMinutes = 15;
+
+  private refreshTimer: ReturnType<typeof setInterval> | null = null;
+
+  readonly reservedByTableId = computed<Map<string, Reservation>>(() => {
+    const now = this.nowTick();
+    const holdMs = this.reservationHoldMinutes * 60 * 1000;
+    const map = new Map<string, Reservation>();
+    for (const r of this.activeReservations()) {
+      if (r.status !== 'pending' && r.status !== 'confirmed') continue;
+      if (!r.tableId) continue;
+      const start = new Date(r.reservationTime).getTime();
+      if (Number.isNaN(start)) continue;
+      const end = start + (r.durationMinutes || 90) * 60 * 1000;
+      if (now >= start - holdMs && now <= end) {
+        map.set(r.tableId, r);
+      }
+    }
+    return map;
+  });
+
+  isReservedNow(table: Table): boolean {
+    return !!this.reservedByTableId().get(table.id);
+  }
+
+  reservationForTable(table: Table): Reservation | null {
+    return this.reservedByTableId().get(table.id) || null;
+  }
+
+  /** Effective status shown on the floor plan: derived 'reserved' overrides available. */
+  displayStatus(table: Table): string {
+    if (table.status === 'available' && this.isReservedNow(table)) return 'reserved';
+    return table.status;
+  }
+
+  formatReservationTime(iso: string): string {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+
+  private loadReservations() {
+    const branchId = localStorage.getItem('branchId') || undefined;
+    const from = new Date();
+    from.setHours(0, 0, 0, 0);
+    const to = new Date();
+    to.setHours(23, 59, 59, 999);
+    this.reservationsApi.list({ branchId, from: from.toISOString(), to: to.toISOString(), limit: 200 })
+      .pipe(catchError(() => of([])))
+      .subscribe((res) => this.activeReservations.set(Array.isArray(res) ? res : []));
+  }
+
+  ngOnDestroy() {
+    if (this.refreshTimer) clearInterval(this.refreshTimer);
+  }
 
   readonly summaryStats = computed(() => {
     const t = this.tables();
@@ -45,8 +106,8 @@ export class TablesManagementComponent implements OnInit {
       ];
     }
     const occupied = t.filter(x => x.status === 'occupied').length;
-    const available = t.filter(x => x.status === 'available').length;
-    const reserved = t.filter(x => x.status === 'reserved').length;
+    const available = t.filter(x => x.status === 'available' && !this.isReservedNow(x)).length;
+    const reserved = t.filter(x => this.displayStatus(x) === 'reserved').length;
     const inactive = t.filter(x => x.status === 'inactive').length;
     const vip = t.filter(x => x.isVip).length;
     const totalSeats = t.reduce((acc, curr) => acc + (curr.capacity || 0), 0);
@@ -64,6 +125,8 @@ export class TablesManagementComponent implements OnInit {
     const f = this.statusFilter();
     if (f === 'all') return this.tables();
     if (f === 'vip') return this.tables().filter(t => t.isVip);
+    if (f === 'reserved') return this.tables().filter(t => this.displayStatus(t) === 'reserved');
+    if (f === 'available') return this.tables().filter(t => t.status === 'available' && !this.isReservedNow(t));
     return this.tables().filter(t => t.status === f);
   });
 
@@ -93,6 +156,11 @@ export class TablesManagementComponent implements OnInit {
 
       this.isLoading.set(false);
     });
+    this.loadReservations();
+    this.refreshTimer = setInterval(() => {
+      this.nowTick.set(Date.now());
+      this.loadReservations();
+    }, 60 * 1000);
   }
 
   toggleView() { this.isFloorPlan.update(v => !v); }

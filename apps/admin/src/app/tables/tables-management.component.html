@@ -91,11 +91,19 @@
                 <span class="material-symbols-outlined text-[12px]">workspace_premium</span> VIP
               </span>
             }
-            <span class="px-3 py-1 text-[12px] leading-none font-medium rounded-full" [ngClass]="statusBadgeClass(table.status)">
-              {{ table.status | titlecase }}
+            <span class="px-3 py-1 text-[12px] leading-none font-medium rounded-full" [ngClass]="statusBadgeClass(displayStatus(table))">
+              {{ displayStatus(table) | titlecase }}
             </span>
           </div>
         </div>
+        @if (isReservedNow(table)) {
+          <div class="flex items-center gap-2 mb-4 p-3 rounded-xl bg-[#ffb4ab]/10 text-[#ffb4ab]">
+            <span class="material-symbols-outlined text-[16px]">event</span>
+            <span class="text-[12px] leading-none font-semibold" style="font-family:'Inter',sans-serif">
+              Reserved · {{ formatReservationTime(reservationForTable(table)?.reservationTime ?? '') }} · {{ reservationForTable(table)?.customerName }}
+            </span>
+          </div>
+        }
         <div class="space-y-4">
           <div class="flex justify-between text-[var(--secondary)]">
             <span class="text-[12px] leading-none font-medium flex items-center gap-1" style="font-family:'Inter',sans-serif">
