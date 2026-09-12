@@ -291,6 +291,38 @@ export class TabDetailComponent implements OnInit {
     });
   }
 
+  markAsDelivered(item: OrderItem) {
+    Swal.fire({
+      title: 'Mark as Delivered?',
+      text: `Mark "${item.menuItemName}" as delivered?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delivered',
+      cancelButtonText: 'Cancel',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.ordersApi.deliverOrder(item.id).subscribe({
+          next: (updated) => {
+            // Map Order response to OrderItem
+            const deliveredItem: OrderItem = {
+              ...item,
+              orderStatus: 'DELIVERED',
+              order_status: 'DELIVERED',
+            };
+            this.orders.update(os => os.map(o => o.id === item.id ? deliveredItem : o));
+            Swal.fire({ icon: 'success', title: 'Marked Delivered', timer: 1500, showConfirmButton: false });
+          },
+          error: () => Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not mark as delivered.' }),
+        });
+      }
+    });
+  }
+
+  canMarkDelivered(item: OrderItem): boolean {
+    const status = item.orderStatus || item.order_status;
+    return status === 'READY_FOR_PICKUP' || status === 'OUT_FOR_DELIVERY';
+  }
+
   printBill() {
     this.router.navigate(['/bills']);
   }
