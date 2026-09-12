@@ -11,9 +11,25 @@ import { PageHeaderComponent } from './page-header.component';
     <app-page-header
       eyebrow="About ServeIQ"
       title="Restaurants lose money in the gaps between their tools. We close them."
-      [breadcrumbs]="[{ label: 'Home', url: '/' }, { label: 'About' }]"
+      [breadcrumbs]="[{ label: 'Home', url: 'https://serveiqhq.com' }, { label: 'About' }]"
     />
     <main class="about">
+
+      <!-- Brand Disambiguation Notice -->
+      <section class="disambiguation" aria-labelledby="disambiguation-heading">
+        <h2 id="disambiguation-heading">Brand Clarification</h2>
+        <div class="disclaimer">
+          <p><strong>ServeIQ (<a href="https://serveiqhq.com" target="_blank" rel="noopener">serveiqhq.com</a>) is the restaurant operating system from Nigeria.</strong></p>
+          <p>We are <strong>not affiliated</strong> with:</p>
+          <ul>
+            <li><strong>ServeIQ Global</strong> (<a href="https://serveiqglobal.com" target="_blank" rel="noopener noreferrer">serveiqglobal.com</a>) — QSR technology orchestration & infrastructure deployment</li>
+            <li><strong>ServeHQ</strong> — Church & volunteer training platform (TrainedUp / HuddleUp)</li>
+            <li><strong>ServiceIQ</strong> — Workplace training (NZ), small-business AI consultancy, or UK custom AI tools</li>
+          </ul>
+          <p>If you're looking for a restaurant POS, KDS, inventory, staff management, and analytics platform — you're in the right place.</p>
+        </div>
+      </section>
+
       <section class="story">
         <p>
           Most Nigerian restaurants run on a patchwork: a till here, a notebook there, a
@@ -57,7 +73,7 @@ import { PageHeaderComponent } from './page-header.component';
       <section class="cta-band">
         <h2>Come run your restaurant on it</h2>
         <p>See the whole system live on your own menu and floor plan.</p>
-        <a class="btn" routerLink="/register">Book a demo</a>
+        <a class="btn" routerLink="/register">Free Trial</a>
       </section>
     </main>
     <app-site-footer />
@@ -141,6 +157,44 @@ import { PageHeaderComponent } from './page-header.component';
         .values {
           grid-template-columns: repeat(3, 1fr);
         }
+      }
+
+      .disambiguation {
+        margin-bottom: 40px;
+        padding: 24px;
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--surface-container) 60%, transparent);
+        border: 1px solid color-mix(in srgb, var(--on-background) 12%, transparent);
+      }
+      .disambiguation h2 {
+        margin: 0 0 16px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.125rem;
+        color: var(--on-background);
+      }
+      .disclaimer p {
+        margin: 0 0 12px;
+        line-height: 1.7;
+        color: var(--secondary);
+      }
+      .disclaimer strong {
+        color: var(--on-background);
+      }
+      .disclaimer ul {
+        margin: 8px 0 16px;
+        padding-left: 22px;
+      }
+      .disclaimer li {
+        margin: 6px 0;
+        line-height: 1.7;
+        color: var(--secondary);
+      }
+      .disclaimer a {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+      .disclaimer a:hover {
+        text-decoration: none;
       }
     `,
   ],
