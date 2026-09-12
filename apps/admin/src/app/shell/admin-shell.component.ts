@@ -166,6 +166,12 @@ interface MobileTab {
                 <span>Riders</span>
               </a>
             </li>
+            <li class="nav-item" *ngIf="permissionService.hasPermission('manage_riders')">
+              <a class="nav-link" routerLink="/app/rider-payouts" routerLinkActive="active">
+                <span class="material-symbols-outlined">payments</span>
+                <span>Rider Payouts</span>
+              </a>
+            </li>
             <li class="nav-section-label">Operations</li>
             <li class="nav-item" *ngIf="permissionService.hasPermission('accept_payment')">
               <a class="nav-link" routerLink="/app/bills" routerLinkActive="active">

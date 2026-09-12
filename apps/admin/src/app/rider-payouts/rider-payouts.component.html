@@ -1,0 +1,193 @@
+<div class="payouts-page">
+  <header class="page-header">
+    <div>
+      <h1>Rider Payouts</h1>
+      <p class="subtitle">Track earnings, process payouts, and view payout history for delivery riders.</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-secondary" [disabled]="isLoading()" (click)="loadPendingPayouts()">
+        <span class="material-symbols-outlined">refresh</span> Refresh
+      </button>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state"><div class="spinner"></div><p>Loading payouts...</p></div>
+  } @else if (pendingPayouts().length === 0) {
+    <div class="state empty">
+      <span class="big-icon">💰</span>
+      <h3>No pending payouts</h3>
+      <p>All riders are up to date. Completed deliveries with pending payouts will appear here.</p>
+    </div>
+  } @else {
+    <div class="payouts-grid">
+      @for (rider of pendingPayouts(); track rider.riderId) {
+        <div class="payout-card">
+          <div class="rider-header">
+            <div class="rider-info">
+              <span class="rider-name">{{ rider.riderName }}</span>
+              <span class="rider-id">{{ rider.riderId.slice(0, 8) }}…</span>
+            </div>
+            <span class="total-badge">{{ formatKobo(rider.totalPayoutKobo) }}</span>
+          </div>
+          <div class="payout-meta">
+            <div class="meta-item">
+              <span class="meta-label">Pending deliveries</span>
+              <span class="meta-value">{{ rider.pendingDeliveries }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Avg per delivery</span>
+              <span class="meta-value">{{ rider.pendingDeliveries ? formatKobo(Math.round(rider.totalPayoutKobo / rider.pendingDeliveries)) : '₦0.00' }}</span>
+            </div>
+          </div>
+          <div class="payout-actions">
+            <button type="button" class="btn-primary" [disabled]="isProcessing()" (click)="processPayout(rider)">
+              <span class="material-symbols-outlined">payments</span> Process Payout
+            </button>
+            <button type="button" class="btn-secondary" (click)="openRiderDetail(rider)">
+              <span class="material-symbols-outlined">visibility</span> View Details
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Detail Modal -->
+  @if (showDetailModal() && selectedRiderDetail()) {
+    <div class="modal-overlay" (click)="closeDetailModal()">
+      <div class="modal modal-wide" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Rider Details</h2>
+          <button type="button" class="icon-btn" (click)="closeDetailModal()" aria-label="Close">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="modal-tabs">
+          <button type="button" class="tab-btn" [class.active]="activeTab() === 'ledger'" (click)="activeTab.set('ledger')">
+            <span class="material-symbols-outlined">receipt_long</span> Ledger
+          </button>
+          <button type="button" class="tab-btn" [class.active]="activeTab() === 'batches'" (click)="activeTab.set('batches')">
+            <span class="material-symbols-outlined">account_balance</span> Payout Batches
+          </button>
+          <button type="button" class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="activeTab.set('pending')">
+            <span class="material-symbols-outlined">pending_actions</span> Pending Deliveries
+          </button>
+        </div>
+        <div class="modal-content">
+          @if (activeTab() === 'ledger') {
+            <div class="ledger-table-container">
+              <table class="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Reference</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (entry of riderLedger(); track entry.id) {
+                    <tr [class]="getLedgerTypeClass(entry.type)">
+                      <td>{{ formatDate(entry.createdAt) }}</td>
+                      <td>
+                        <span class="type-badge" [class]="getLedgerTypeClass(entry.type)">
+                          {{ getLedgerTypeLabel(entry.type) }}
+                        </span>
+                      </td>
+                      <td [class.positive]="entry.amountKobo > 0" [class.negative]="entry.amountKobo < 0">
+                        {{ entry.amountKobo > 0 ? '+' : '' }}{{ formatKobo(entry.amountKobo) }}
+                      </td>
+                      <td>
+                        @if (entry.refType) {
+                          <span class="ref-badge">{{ entry.refType }}</span>
+                          @if (entry.refId) {
+                            <code>{{ entry.refId.slice(0, 8) }}…</code>
+                          }
+                        }
+                      </td>
+                      <td>{{ entry.description || '—' }}</td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="5" class="empty-row">No ledger entries</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+          @if (activeTab() === 'batches') {
+            <div class="batches-list">
+              @for (batch of riderBatches(); track batch.id) {
+                <div class="batch-card" [class]="'batch-' + batch.status">
+                  <div class="batch-header">
+                    <div>
+                      <span class="batch-id">{{ batch.id.slice(0, 8) }}…</span>
+                      <span class="batch-provider">{{ getProviderLabel(batch.provider) }}</span>
+                    </div>
+                    <span class="batch-status" [class]="getStatusClass(batch.status)">{{ batch.status }}</span>
+                  </div>
+                  <div class="batch-details">
+                    <div class="batch-amount">{{ formatKobo(batch.totalKobo) }}</div>
+                    <div class="batch-meta">
+                      <span>{{ formatDate(batch.createdAt) }}</span>
+                      @if (batch.completedAt) {
+                        <span>• Completed: {{ formatDate(batch.completedAt) }}</span>
+                      }
+                      @if (batch.providerBatchId) {
+                        <span>• Ref: {{ batch.providerBatchId }}</span>
+                      }
+                    </div>
+                  </div>
+                  @if (batch.status === 'pending') {
+                    <div class="batch-actions">
+                      <button type="button" class="btn-primary btn-sm" (click)="completeBatch(batch)">
+                        <span class="material-symbols-outlined">check_circle</span> Mark Completed
+                      </button>
+                    </div>
+                  }
+                  @if (batch.failureReason) {
+                    <div class="batch-failure">
+                      <span class="material-symbols-outlined">error</span>
+                      <span>{{ batch.failureReason }}</span>
+                    </div>
+                  }
+                </div>
+              } @empty {
+                <div class="state empty" style="padding: 24px;">
+                  <span class="big-icon">📦</span>
+                  <h3>No payout batches yet</h3>
+                  <p>Process a payout to create the first batch.</p>
+                </div>
+              }
+            </div>
+          }
+
+          @if (activeTab() === 'pending') {
+            <div class="pending-deliveries">
+              @for (delivery of selectedRiderDetail()!.deliveries; track delivery.id) {
+                <div class="pending-item">
+                  <div class="pending-info">
+                    <span class="pending-id">{{ delivery.id.slice(0, 8) }}…</span>
+                    <span class="pending-date">{{ formatDate(delivery.createdAt) }}</span>
+                  </div>
+                  <div class="pending-amount">{{ formatKobo(delivery.payoutKobo) }}</div>
+                </div>
+              } @empty {
+                <div class="state empty" style="padding: 24px;">
+                  <span class="big-icon">📦</span>
+                  <h3>No pending deliveries</h3>
+                </div>
+              }
+              <div class="pending-total">
+                <span>Total</span>
+                <strong>{{ formatKobo(selectedRiderDetail()!.totalPayoutKobo) }}</strong>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

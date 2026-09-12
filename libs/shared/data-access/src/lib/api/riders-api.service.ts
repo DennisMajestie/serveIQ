@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { Rider } from '@serveiq/shared/models';
+import { Rider, RiderPendingPayout, RiderPayoutDetail, RiderLedgerEntry, PayoutBatch, PayoutProvider } from '@serveiq/shared/models';
 
 export interface CreateRiderRequest {
   fullName: string;
@@ -18,6 +18,19 @@ export interface CreateRiderRequest {
 export interface RiderOnlineToggle {
   riderId: string;
   isOnline: boolean;
+}
+
+export interface ProcessPayoutRequest {
+  provider?: PayoutProvider;
+  providerBatchId?: string;
+}
+
+export interface CompletePayoutBatchRequest {
+  providerBatchId: string;
+}
+
+export interface FailPayoutBatchRequest {
+  reason: string;
 }
 
 /** Manages delivery riders (manager/owner) and rider online availability. */
@@ -54,5 +67,35 @@ export class RidersApiService extends BaseApiService {
   /** Toggle the authenticated rider's online availability. */
   toggleOnline(): Observable<RiderOnlineToggle> {
     return this.post<RiderOnlineToggle>(API_CONFIG.endpoints.riders.toggleOnline, {});
+  }
+
+  // ===== PAYOUT ENDPOINTS =====
+
+  /** Get pending payout summary for all riders in a branch (manager view) */
+  getPendingPayouts(branchId?: string): Observable<RiderPendingPayout[]> {
+    const params = branchId ? { branch_id: branchId } : undefined;
+    return this.get<RiderPendingPayout[]>(API_CONFIG.endpoints.deliveries.pendingPayouts, undefined, params);
+  }
+
+  /** Get pending payout details for a specific rider */
+  getRiderPendingPayouts(riderId: string): Observable<RiderPayoutDetail> {
+    return this.get<RiderPayoutDetail>(buildUrl(API_CONFIG.endpoints.riders.pendingPayouts, { id: riderId }));
+  }
+
+  /** Get earnings/payout ledger for a rider */
+  getRiderLedger(riderId: string, limit?: number): Observable<RiderLedgerEntry[]> {
+    const params = limit ? { limit: String(limit) } : undefined;
+    return this.get<RiderLedgerEntry[]>(buildUrl(API_CONFIG.endpoints.riders.ledger, { id: riderId }), undefined, params);
+  }
+
+  /** Get payout batch history for a rider */
+  getRiderPayoutBatches(riderId: string, limit?: number): Observable<PayoutBatch[]> {
+    const params = limit ? { limit: String(limit) } : undefined;
+    return this.get<PayoutBatch[]>(buildUrl(API_CONFIG.endpoints.riders.payoutBatches, { id: riderId }), undefined, params);
+  }
+
+  /** Process payout for a rider (manager/owner only) */
+  processRiderPayout(riderId: string, data: ProcessPayoutRequest): Observable<{ batch: PayoutBatch; deliveriesPaid: number; totalKobo: number }> {
+    return this.post<{ batch: PayoutBatch; deliveriesPaid: number; totalKobo: number }>(buildUrl(API_CONFIG.endpoints.riders.processPayout, { id: riderId }), data);
   }
 }

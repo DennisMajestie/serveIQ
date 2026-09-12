@@ -36,7 +36,11 @@
       @for (rider of filteredRiders(); track rider.id) {
         <div class="rider-card" [class.inactive]="!rider.isActive">
           <div class="rider-top">
-            <div class="avatar">{{ getInitials(rider.fullName) }}</div>
+            @if (rider.avatarUrl) {
+              <img class="avatar-img" [src]="rider.avatarUrl" [alt]="rider.fullName || 'Rider'" />
+            } @else {
+              <div class="avatar">{{ getInitials(rider.fullName) }}</div>
+            }
             <div class="rider-meta">
               <span class="rider-name">{{ rider.fullName || 'Unnamed Rider' }}</span>
               <span class="rider-email">{{ rider.email || '—' }}</span>

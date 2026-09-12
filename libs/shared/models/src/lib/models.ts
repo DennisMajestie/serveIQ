@@ -132,11 +132,75 @@ export interface Rider {
   businessId: string;
   isOnline: boolean;
   vehicle: string | null;
+  avatarUrl: string | null;
   fullName: string | null;
   email: string | null;
   phone: string | null;
   isActive: boolean;
   createdAt: string;
+}
+
+export interface RiderPendingPayout {
+  riderId: string;
+  riderName: string;
+  pendingDeliveries: number;
+  totalPayoutKobo: number;
+}
+
+export interface RiderPayoutDetail {
+  deliveries: DeliveryJob[];
+  totalPayoutKobo: number;
+}
+
+export enum LedgerType {
+  DELIVERY_EARNING = 'delivery_earning',
+  PAYOUT = 'payout',
+  ADJUSTMENT = 'adjustment',
+}
+
+export enum LedgerRefType {
+  DELIVERY = 'delivery',
+  MANUAL_PAYOUT = 'manual_payout',
+  BATCH_PAYOUT = 'batch_payout',
+}
+
+export interface RiderLedgerEntry {
+  id: string;
+  riderId: string;
+  businessId: string;
+  type: LedgerType;
+  amountKobo: number;
+  refType: LedgerRefType | null;
+  refId: string | null;
+  description: string | null;
+  createdAt: string;
+}
+
+export enum PayoutBatchStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+}
+
+export enum PayoutProvider {
+  PAYSTACK = 'paystack',
+  FLUTTERWAVE = 'flutterwave',
+  MANUAL = 'manual',
+}
+
+export interface PayoutBatch {
+  id: string;
+  businessId: string;
+  riderId: string;
+  provider: PayoutProvider;
+  providerBatchId: string | null;
+  totalKobo: number;
+  status: PayoutBatchStatus;
+  failureReason: string | null;
+  createdBy: string | null;
+  createdAt: string;
+  completedAt: string | null;
 }
 
 export interface DeliveryJob {

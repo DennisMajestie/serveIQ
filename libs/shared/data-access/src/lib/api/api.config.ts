@@ -113,6 +113,11 @@ export const API_CONFIG = {
       update: '/api/v1/riders/:id',
       delete: '/api/v1/riders/:id',
       toggleOnline: '/api/v1/riders/me/toggle-online',
+      // Payout endpoints
+      pendingPayouts: '/api/v1/riders/:id/payouts/pending',
+      ledger: '/api/v1/riders/:id/ledger',
+      payoutBatches: '/api/v1/riders/:id/payout-batches',
+      processPayout: '/api/v1/riders/:id/payout',
     },
     // Dispatch deliveries
     deliveries: {
@@ -122,6 +127,11 @@ export const API_CONFIG = {
       accept: '/api/v1/deliveries/:id/accept',
       delivered: '/api/v1/deliveries/:id/delivered',
       reassign: '/api/v1/deliveries/:id/reassign',
+      // Payout endpoints
+      pendingPayouts: '/api/v1/deliveries/payouts/pending',
+      payoutBatches: '/api/v1/deliveries/payout-batches',
+      completePayoutBatch: '/api/v1/deliveries/payout-batches/:id/complete',
+      failPayoutBatch: '/api/v1/deliveries/payout-batches/:id/fail',
     },
     // Bills
     bills: {

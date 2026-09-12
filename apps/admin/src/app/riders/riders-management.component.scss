@@ -117,6 +117,13 @@
   font-size: 14px;
 }
 
+.avatar-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
 .rider-meta {
   flex: 1;
   min-width: 0;
