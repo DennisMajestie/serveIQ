@@ -341,6 +341,7 @@ export interface Tab {
   deliveryDetails?: DeliveryDetails;
   delivery?: DeliveryData | null;
   orderItems?: OrderItem[];
+  trackingCode?: string;
 }
 
 export interface OrderItem {

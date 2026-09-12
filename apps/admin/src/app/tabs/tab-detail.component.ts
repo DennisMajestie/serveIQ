@@ -331,6 +331,14 @@ export class TabDetailComponent implements OnInit {
     return item.id;
   }
 
+  copyTrackingCode() {
+    const tab = this.tab();
+    if (!tab?.trackingCode) return;
+    navigator.clipboard.writeText(tab.trackingCode).then(() => {
+      Swal.fire({ icon: 'success', title: 'Tracking Code Copied', text: tab.trackingCode, timer: 2000, showConfirmButton: false });
+    });
+  }
+
   voidTab() {
     const orderCount = this.orders().length;
     const itemsText = orderCount > 0
