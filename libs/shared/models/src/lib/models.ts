@@ -203,6 +203,108 @@ export interface PayoutBatch {
   completedAt: string | null;
 }
 
+export enum ReservationStatus {
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  SEATED = 'seated',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  NO_SHOW = 'no_show',
+}
+
+export enum ReservationSource {
+  PUBLIC = 'public',
+  WALKIN = 'walkin',
+  PHONE = 'phone',
+  ADMIN = 'admin',
+}
+
+export interface Reservation {
+  id: string;
+  businessId: string;
+  branchId: string;
+  tableId: string | null;
+  tableNumber: string | null;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string | null;
+  partySize: number;
+  reservationTime: string;
+  durationMinutes: number;
+  endTime: string;
+  status: ReservationStatus;
+  specialRequests: string | null;
+  source: ReservationSource;
+  confirmationCode: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateReservationRequest {
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  partySize: number;
+  reservationTime: string;
+  durationMinutes?: number;
+  specialRequests?: string;
+  source?: ReservationSource;
+}
+
+export interface UpdateReservationRequest {
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  partySize?: number;
+  reservationTime?: string;
+  durationMinutes?: number;
+  status?: ReservationStatus;
+  specialRequests?: string;
+  cancellationReason?: string;
+}
+
+export interface ReservationQuery {
+  branchId?: string;
+  tableId?: string;
+  status?: ReservationStatus;
+  from?: string;
+  to?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface AvailabilityQuery {
+  date: string;
+  partySize: number;
+  branchId?: string;
+}
+
+export interface AvailabilitySlot {
+  start: string;
+  end: string;
+  availableTables: number;
+}
+
+export interface AvailabilityResponse {
+  date: string;
+  slots: AvailabilitySlot[];
+}
+
+export interface WalkinReservationRequest {
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  partySize: number;
+  durationMinutes?: number;
+  tableId?: string;
+  specialRequests?: string;
+}
+
+export interface ConfirmReservationRequest {
+  confirmationCode: string;
+}
+
 export interface DeliveryJob {
   id: string;
   tabId: string;

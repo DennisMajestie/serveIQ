@@ -142,6 +142,12 @@ interface MobileTab {
                 <span>Tables</span>
               </a>
             </li>
+            <li class="nav-item" *ngIf="permissionService.hasPermission('manage_reservations')">
+              <a class="nav-link" routerLink="/app/reservations" routerLinkActive="active">
+                <span class="material-symbols-outlined">event_available</span>
+                <span>Reservations</span>
+              </a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" routerLink="/app/waiter-calls" routerLinkActive="active">
                 <span class="material-symbols-outlined">room_service</span>

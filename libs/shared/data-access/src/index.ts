@@ -50,4 +50,5 @@ export * from './lib/api/reviews-api.service';
 export * from './lib/api/waiter-calls-api.service';
 export * from './lib/api/riders-api.service';
 export * from './lib/api/deliveries-api.service';
+export * from './lib/api/reservations-api.service';
 export * from './lib/realtime-socket.service';

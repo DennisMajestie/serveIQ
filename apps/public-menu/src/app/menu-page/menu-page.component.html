@@ -81,6 +81,11 @@
           </button>
         }
       </nav>
+
+      <a class="reserve-btn" [routerLink]="['/public/menu', cartService.branchId(), 'reserve']">
+        <span class="reserve-icon">📅</span>
+        Book a Table
+      </a>
     </div>
 
     <!-- Order type -->

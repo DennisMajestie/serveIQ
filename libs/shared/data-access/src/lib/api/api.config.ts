@@ -209,6 +209,22 @@ export const API_CONFIG = {
     publicTracking: '/api/v1/tracking/:code',
     publicAds: '/api/v1/public/ads/:branchId',
     publicBusinesses: '/api/v1/public/businesses',
+    // Reservations
+    reservations: {
+      list: '/api/v1/reservations',
+      get: '/api/v1/reservations/:id',
+      book: '/api/v1/reservations/book',
+      create: '/api/v1/reservations/book',
+      update: '/api/v1/reservations/:id',
+      today: '/api/v1/reservations/today',
+      walkin: '/api/v1/reservations/walkin',
+      seat: '/api/v1/reservations/:id/seat',
+      confirm: '/api/v1/reservations/confirm/:code',
+      cancel: '/api/v1/reservations/cancel/:code',
+      lookup: '/api/v1/reservations/lookup/:code',
+      availability: '/api/v1/reservations/availability',
+      reminders: '/api/v1/reservations/reminders/send',
+    },
     // AI / Nemotron
     ai: {
       generateLogic: '/api/v1/ai/generate-logic',

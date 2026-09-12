@@ -1,0 +1,118 @@
+<div class="reservation-booking">
+  <div class="progress-bar" role="progressbar" aria-valuenow="{{ progressValue() }}" aria-valuemin="1" aria-valuemax="4">
+    <div class="progress-step" [class.active]="step() === 'date'" [class.completed]="stepIndex('date') < currentStepIndex()">
+      <span class="step-number">1</span>
+      <span class="step-label">Date</span>
+    </div>
+    <div class="progress-step" [class.active]="step() === 'time'" [class.completed]="stepIndex('time') < currentStepIndex()">
+      <span class="step-number">2</span>
+      <span class="step-label">Time</span>
+    </div>
+    <div class="progress-step" [class.active]="step() === 'details'" [class.completed]="stepIndex('details') < currentStepIndex()">
+      <span class="step-number">3</span>
+      <span class="step-label">Details</span>
+    </div>
+    <div class="progress-step" [class.active]="step() === 'confirm'" [class.completed]="stepIndex('confirm') < currentStepIndex()">
+      <span class="step-number">4</span>
+      <span class="step-label">Confirm</span>
+    </div>
+  </div>
+
+  <div class="booking-card">
+    <!-- Step 1: Select Date -->
+    @if (step() === 'date') {
+      <div class="step-content">
+        <h2>When would you like to dine?</h2>
+        <p class="step-hint">Select a date within the next 30 days</p>
+        <div class="date-picker">
+          <input type="date" [min]="minDate" [max]="maxDate" [value]="selectedDate()" (change)="onDateInput($event)" />
+        </div>
+        <button class="btn-primary" [disabled]="!selectedDate()" (click)="step.set('time')">
+          Next: Choose Time
+        </button>
+      </div>
+    }
+
+    <!-- Step 2: Select Time Slot -->
+    @if (step() === 'time') {
+      <div class="step-content">
+        <h2>What time works for you?</h2>
+        <p class="step-hint">{{ selectedDate() | date:'fullDate' }} • Party of {{ partySize() }}</p>
+        <div class="party-size-selector">
+          <label>Party Size</label>
+          <div class="number-input">
+            <button type="button" (click)="partySize.update(v => Math.max(1, v - 1))" aria-label="Decrease">−</button>
+            <input type="number" [value]="partySize()" (input)="onPartyInput($event)" min="1" max="20" />
+            <button type="button" (click)="partySize.update(v => Math.min(20, v + 1))" aria-label="Increase">+</button>
+          </div>
+        </div>
+        @if (isLoading()) {
+          <div class="slots-loading"><div class="spinner"></div><p>Loading available times...</p></div>
+        } @else if (slots().length === 0) {
+          <div class="no-slots">
+            <p>No available tables for this date/time</p>
+            <button type="button" class="btn-secondary" (click)="step.set('date')">Try another date</button>
+          </div>
+        } @else {
+          <div class="slots-grid">
+            @for (slot of slots(); track slot.start) {
+              <button
+                type="button"
+                class="slot-btn"
+                [class.selected]="selectedSlot()?.start === slot.start"
+                (click)="selectSlot(slot)"
+              >
+                <span class="slot-time">{{ formatTime(slot.start) }} – {{ getSlotEndTime(slot) }}</span>
+                <span class="slot-availability">{{ slot.availableTables }} table{{ slot.availableTables !== 1 ? 's' : '' }} available</span>
+              </button>
+            }
+          </div>
+        }
+        <div class="step-actions">
+          <button type="button" class="btn-secondary" (click)="step.set('date')">Back</button>
+          <button type="button" class="btn-primary" [disabled]="!selectedSlot()" (click)="step.set('details')">Next: Your Details</button>
+        </div>
+      </div>
+    }
+
+    <!-- Step 3: Customer Details -->
+    @if (step() === 'details') {
+      <div class="step-content">
+        <h2>Your Details</h2>
+        <p class="step-hint">{{ formatDateTime(form().reservationTime) }} • Party of {{ partySize() }}</p>
+        <form (ngSubmit)="submit()" class="booking-form">
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input id="name" type="text" required [(ngModel)]="form().customerName" (ngModelChange)="form.set({...form(), customerName: $event})" placeholder="John Doe" />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input id="phone" type="tel" required [(ngModel)]="form().customerPhone" (ngModelChange)="form.set({...form(), customerPhone: $event})" placeholder="+234 801 234 5678" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email (optional)</label>
+            <input id="email" type="email" [(ngModel)]="form().customerEmail" (ngModelChange)="form.set({...form(), customerEmail: $event})" placeholder="john@example.com" />
+          </div>
+          <div class="form-group">
+            <label for="requests">Special Requests</label>
+            <textarea id="requests" rows="3" [(ngModel)]="form().specialRequests" (ngModelChange)="form.set({...form(), specialRequests: $event})" placeholder="Window seat, high chair, birthday celebration..."></textarea>
+          </div>
+          <div class="step-actions">
+            <button type="button" class="btn-secondary" (click)="step.set('time')">Back</button>
+            <button type="submit" class="btn-primary" [disabled]="isSubmitting()">{{ isSubmitting() ? 'Booking...' : 'Confirm Reservation' }}</button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Step 4: Confirmation -->
+    @if (step() === 'confirm') {
+      <div class="step-content confirmation">
+        <div class="confirm-icon">✓</div>
+        <h2>Reservation Confirmed!</h2>
+        <p>We've sent the details to your phone. See you soon!</p>
+        <button type="button" class="btn-primary" (click)="restart()">Book Another Table</button>
+      </div>
+    }
+  </div>
+</div>

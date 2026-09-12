@@ -1,0 +1,333 @@
+.reservation-booking {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+.progress-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+
+  .progress-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 4px;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--outline-variant);
+      z-index: 0;
+    }
+
+    &:first-child::before { display: none; }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface-container-high);
+      color: var(--on-surface-variant);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      position: relative;
+      z-index: 1;
+      transition: all 0.2s;
+    }
+
+    .step-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    &.active .step-number {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    &.completed .step-number {
+      background: var(--success);
+      color: #fff;
+    }
+
+    &.completed .step-label {
+      color: var(--success);
+    }
+  }
+}
+
+.booking-card {
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.step-content {
+  h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--on-surface);
+  }
+
+  .step-hint {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: var(--on-surface-variant);
+  }
+}
+
+.date-picker {
+  margin-bottom: 16px;
+
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--outline-variant);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    background: var(--surface);
+    color: var(--on-surface);
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+  }
+}
+
+.party-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--on-surface);
+  }
+}
+
+.number-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  button {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--outline-variant);
+    background: var(--surface);
+    color: var(--on-surface);
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover { background: var(--surface-container-high); }
+  }
+
+  input {
+    width: 80px;
+    height: 44px;
+    text-align: center;
+    border: 1px solid var(--outline-variant);
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    background: var(--surface);
+    color: var(--on-surface);
+  }
+}
+
+.slots-loading, .no-slots {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--on-surface-variant);
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 12px;
+    border: 3px solid var(--outline-variant);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+.slots-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.slot-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--outline-variant);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 5%, var(--surface));
+  }
+
+  &.selected {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
+  }
+
+  .slot-time {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--on-surface);
+  }
+
+  .slot-availability {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+  }
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+
+    input, textarea {
+      padding: 12px 14px;
+      border: 1px solid var(--outline-variant);
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      background: var(--surface);
+      color: var(--on-surface);
+      transition: border-color 0.15s, box-shadow 0.15s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
+      }
+
+      &::placeholder { color: var(--on-surface-variant); }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+}
+
+.step-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+
+  button {
+    flex: 1;
+  }
+}
+
+.btn-primary, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--secondary);
+  border: 1px solid var(--outline-variant);
+}
+
+.confirmation {
+  text-align: center;
+  padding: 16px 0;
+
+  .confirm-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--success) 15%, transparent);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 700;
+  }
+
+  h2 { margin: 0 0 8px; font-size: 24px; color: var(--on-surface); }
+  p { margin: 0 0 24px; color: var(--on-surface-variant); }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

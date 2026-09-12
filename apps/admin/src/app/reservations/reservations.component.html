@@ -1,0 +1,157 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="space-font">Reservations</h1>
+      <p class="subtitle">Manage table bookings and walk-ins</p>
+    </div>
+    <div class="header-actions">
+      <select class="branch-select" [value]="branchId()" (change)="onBranchChange($event)">
+        <option value="">All branches</option>
+        @for (b of branches(); track b.id) {
+          <option [value]="b.id">{{ b.name }}</option>
+        }
+      </select>
+      <button class="btn-ghost" (click)="sendReminders()">
+        <span class="material-symbols-outlined">notifications_active</span>
+        Send Reminders
+      </button>
+      <button class="btn-primary" (click)="openWalkinForm()">
+        <span class="material-symbols-outlined">add</span>
+        New Walk-in
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <span class="card-icon pending">schedule</span>
+      <span class="card-value">{{ summary().pending }}</span>
+      <span class="card-label">Pending</span>
+    </div>
+    <div class="summary-card">
+      <span class="card-icon upcoming">event_available</span>
+      <span class="card-value">{{ summary().upcoming }}</span>
+      <span class="card-label">Upcoming</span>
+    </div>
+    <div class="summary-card">
+      <span class="card-icon seated">restaurant</span>
+      <span class="card-value">{{ summary().seated }}</span>
+      <span class="card-label">Seated</span>
+    </div>
+    <div class="summary-card">
+      <span class="card-icon completed">task_alt</span>
+      <span class="card-value">{{ summary().completed }}</span>
+      <span class="card-label">Completed</span>
+    </div>
+    <div class="summary-card">
+      <span class="card-icon walkin">directions_walk</span>
+      <span class="card-value">{{ summary().walkins }}</span>
+      <span class="card-label">Walk-ins</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="status-tabs">
+      @for (opt of statusOptions; track opt.label) {
+        <button
+          class="status-tab"
+          [class.active]="statusFilter() === opt.value"
+          (click)="statusFilter.set(opt.value)"
+        >
+          {{ opt.label }}
+        </button>
+      }
+    </div>
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input
+        type="search"
+        placeholder="Search name, phone, code..."
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+      />
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    @if (isLoading()) {
+      <div class="state-block">
+        <div class="spinner"></div>
+        <p>Loading reservations...</p>
+      </div>
+    } @else if (filteredReservations().length === 0) {
+      <div class="state-block">
+        <span class="material-symbols-outlined state-icon">event_busy</span>
+        <p>No reservations match your filters</p>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table class="res-table">
+          <thead>
+            <tr>
+              <th>Guest</th>
+              <th>Party</th>
+              <th>Reserved</th>
+              <th>Table</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th class="actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of filteredReservations(); track r.id) {
+              <tr>
+                <td>
+                  <div class="guest-cell">
+                    <span class="guest-avatar">{{ r.customerName.charAt(0).toUpperCase() }}</span>
+                    <div class="guest-info">
+                      <span class="guest-name">{{ r.customerName }}</span>
+                      <span class="guest-meta">{{ r.customerPhone }}@if (r.confirmationCode) { · {{ r.confirmationCode }} }</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="party-pill">{{ r.partySize }} seats</span></td>
+                <td>
+                  <div class="time-cell">
+                    <span>{{ formatDateTime(r.reservationTime) }}</span>
+                    <span class="guest-meta">{{ r.durationMinutes }} min</span>
+                  </div>
+                </td>
+                <td>{{ r.tableNumber || '—' }}</td>
+                <td>
+                  <span class="source-pill" [class.walkin]="r.source === ReservationSource.WALKIN">
+                    {{ r.source }}
+                  </span>
+                </td>
+                <td><span class="badge {{ statusClass(r.status) }}">{{ statusLabel(r.status) }}</span></td>
+                <td>
+                  <div class="row-actions">
+                    @if (r.status === ReservationStatus.PENDING || r.status === ReservationStatus.CONFIRMED) {
+                      <button class="icon-btn" [class.accent]="r.status === ReservationStatus.PENDING" title="Confirm" (click)="confirmReservation(r)">
+                        <span class="material-symbols-outlined">check_circle</span>
+                      </button>
+                      <button class="icon-btn success" title="Seat" (click)="seatReservation(r)">
+                        <span class="material-symbols-outlined">restaurant</span>
+                      </button>
+                    }
+                    @if (r.status !== ReservationStatus.CANCELLED && r.status !== ReservationStatus.NO_SHOW && r.status !== ReservationStatus.COMPLETED) {
+                      <button class="icon-btn warning" title="No-show" (click)="markNoShow(r)">
+                        <span class="material-symbols-outlined">person_off</span>
+                      </button>
+                      <button class="icon-btn danger" title="Cancel" (click)="cancelReservation(r)">
+                        <span class="material-symbols-outlined">close</span>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
