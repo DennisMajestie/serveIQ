@@ -31,6 +31,7 @@
     <section class="methods-section">
       <p class="methods-label">Method</p>
       <div class="methods-grid">
+        @if (!isTakeaway()) {
         <button
           class="method-btn"
           [class.selected]="selectedMethod === 'cash'"
@@ -38,6 +39,7 @@
           <span class="material-symbols-outlined method-icon" [class.selected-icon]="selectedMethod === 'cash'">payments</span>
           <span class="method-text">Cash</span>
         </button>
+        }
 
         <button
           class="method-btn"

@@ -1,10 +1,12 @@
 import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG, OfflineCacheService } from '@serveiq/shared/data-access';
+import { MenuApiService, TablesApiService, TabsApiService, ENVIRONMENT_CONFIG, OfflineCacheService, BranchesApiService, DepartmentsApiService } from '@serveiq/shared/data-access';
 import { MenuItem, Table, Tab, resolveImageUrl, normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 import { CurrencyContextService } from '../services/currency-context.service';
 import { OfflineDataService } from '../services/offline-data.service';
+import Swal from 'sweetalert2';
 
 interface Portion { id: string; name: string; price: number; }
 
@@ -17,6 +19,8 @@ interface LocalMenuItem {
   isAvailable: boolean;
   portions?: Portion[];
   defaultPortionId?: string;
+  prepType?: string;
+  prepTimeSeconds?: number;
 }
 
 interface CartItem extends LocalMenuItem {
@@ -29,7 +33,7 @@ interface CartItem extends LocalMenuItem {
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './menu.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./menu.component.scss']
@@ -45,6 +49,8 @@ export class MenuComponent implements OnInit {
   private readonly currency = inject(CurrencyContextService);
   private readonly offlineData = inject(OfflineDataService);
   private readonly cache = inject(OfflineCacheService);
+  private readonly branchesApi = inject(BranchesApiService);
+  private readonly departmentsApi = inject(DepartmentsApiService);
 
   currencySymbol = computed(() => this.currency.getSymbol());
   formatAmount = (amount: number) => this.currency.formatAmount(amount);
@@ -56,6 +62,12 @@ export class MenuComponent implements OnInit {
   tableNumber: string | null = null;
   isVipTable = signal(false);
   isLoading = signal(true);
+
+  /** KDS-direct flow: when the branch enables KDS, this menu shows a station
+   *  picker on punch so orders skip the supervisor straight to the kitchen. */
+  isKdsEnabled = signal(false);
+  departments = signal<{ id: string; name: string }[]>([]);
+  selectedDepartmentId = signal('');
 
   /** VIP price multiplier = 1 + vipSurchargePercent/100, applied only on VIP tables. */
   vipMultiplier = computed(() =>
@@ -85,6 +97,39 @@ export class MenuComponent implements OnInit {
       next: (items: any) => this.processMenuItems(items),
       error: () => this.isLoading.set(false),
     });
+
+    this.loadKdsFlow();
+  }
+
+  /** Load the branch KDS flag + departments so the punch-time station picker
+   *  can appear. Mirrors the supervisor screen's department source. */
+  private loadKdsFlow() {
+    const branchId = localStorage.getItem('branchId') || '';
+    if (!branchId) return;
+    this.branchesApi.getFeatureFlags(branchId).subscribe({
+      next: (flags) => {
+        const on = !!(flags?.['kds_enabled'] || flags?.['kdsEnabled']);
+        this.isKdsEnabled.set(on);
+        if (on) this.loadDepartments(branchId);
+      },
+      error: () => this.isKdsEnabled.set(false),
+    });
+  }
+
+  private loadDepartments(branchId: string) {
+    this.departmentsApi.getAll(false, branchId).subscribe({
+      next: (depts) => {
+        this.departments.set((depts || []).map((d: any) => ({ id: d.id, name: d.name })));
+      },
+      error: () => this.departments.set([]),
+    });
+  }
+
+  /** Format a prep time in seconds as e.g. "15 min" (or "45 sec" under a minute). */
+  formatPrepTime(seconds: number | null | undefined): string {
+    if (!seconds || seconds <= 0) return '';
+    if (seconds < 60) return `${Math.round(seconds)} sec`;
+    return `${Math.round(seconds / 60)} min`;
   }
 
   private processMenuItems(items: any[]): void {
@@ -101,6 +146,8 @@ export class MenuComponent implements OnInit {
         image: resolveImageUrl(i.imageUrl, this.env.apiUrl),
         price: (i.priceKobo ?? i.price_kobo ?? 0) / 100,
         isAvailable: isManuallyAvailable && !outOfStock,
+        prepType: i.prepType ?? i.prep_type ?? 'cook',
+        prepTimeSeconds: i.prepTimeSeconds ?? i.prep_time_seconds ?? null,
       };
     });
     const cats = ['All', ...groupCategoryNames(items.map(i => i.category))];
@@ -194,13 +241,33 @@ export class MenuComponent implements OnInit {
   }
 
   sendOrder() {
+    if (this.isKdsEnabled() && this.hasCookItems() && !this.selectedDepartmentId()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Select a Station',
+        text: 'Choose the kitchen department for this order before sending.',
+      });
+      return;
+    }
     this.showReview.set(false);
     const targetId = this.tabId || this.tableId;
     if (targetId) {
-      this.router.navigate(['/tabs/detail', targetId], { state: { selectedItems: this.selectedItems } });
+      const items = this.selectedItems.map(i => ({
+        ...i,
+        ...(this.isKdsEnabled() ? {
+          department: this.selectedDepartmentId() || undefined,
+          estimated_preparation_time_seconds: i.prepTimeSeconds || undefined,
+        } : {}),
+      }));
+      this.router.navigate(['/tabs/detail', targetId], { state: { selectedItems: items } });
     } else {
       this.router.navigate(['/tables']);
     }
+  }
+
+  /** Whether any selected item is a cook item needing a station in KDS mode. */
+  hasCookItems(): boolean {
+    return this.selectedItems.some(i => (i.prepType ?? 'cook') !== 'instant');
   }
 
   getLineTotal(item: CartItem): number {

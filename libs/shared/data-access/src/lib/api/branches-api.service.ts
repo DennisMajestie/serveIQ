@@ -39,6 +39,7 @@ export interface UpdateBranchSettings {
   settings?: Record<string, any>;
   delivery?: BranchDeliverySettings;
   reservation?: BranchReservationSettings;
+  kds_default_department_id?: string;
 }
 
 /** Manages CRUD operations for restaurant branches. */

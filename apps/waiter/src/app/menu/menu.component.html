@@ -88,6 +88,19 @@
                 </div>
                 <div class="card-content p-4 space-y-3">
                   <h3 class="text-[16px] leading-[1.5] font-medium text-[#dce1fb] line-clamp-1" style="font-family:'Inter',sans-serif">{{ item.name }}</h3>
+                  @if ((item.prepType ?? 'cook') === 'cook') {
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-[11px] text-[#bccbb9]">local_fire_department</span>
+                      <span class="text-[11px] leading-none font-semibold text-[#bccbb9]"
+                        [class.text-[#4be277]]="!!formatPrepTime(item.prepTimeSeconds)" style="font-family:'Inter',sans-serif">
+                        @if (formatPrepTime(item.prepTimeSeconds)) {
+                          {{ formatPrepTime(item.prepTimeSeconds) }} prep
+                        } @else {
+                          To cook
+                        }
+                      </span>
+                    </div>
+                  }
                   <div class="flex justify-between items-center">
                     <span class="text-[18px] leading-none font-semibold text-[#4be277]" [class.text-[#bccbb9]]="!item.isAvailable" style="font-family:'Space Grotesk',sans-serif">{{ formatAmount(getDisplayPrice(item)) }}</span>
                     @if (!item.isAvailable) {
@@ -190,6 +203,24 @@
         </div>
 
         <div class="overflow-y-auto p-5 flex-1">
+          @if (isKdsEnabled() && hasCookItems()) {
+            <div class="mb-4 p-4 rounded-2xl bg-[#4be277]/10 border border-[#4be277]/20">
+              <div class="flex items-center gap-2 mb-2.5">
+                <span class="material-symbols-outlined text-[#4be277] text-[18px]">local_fire_department</span>
+                <p class="text-[14px] leading-none font-semibold text-[#dce1fb]" style="font-family:'Inter',sans-serif">Kitchen Station (direct to kitchen)</p>
+              </div>
+              <select [ngModel]="selectedDepartmentId()" (ngModelChange)="selectedDepartmentId.set($event)"
+                class="w-full h-11 px-4 rounded-xl bg-white/5 text-[#dce1fb] text-[14px] leading-[1.5] appearance-none border border-white/10" style="font-family:'Inter',sans-serif">
+                <option value="" class="bg-[#0c1324]">Select station...</option>
+                @for (d of departments(); track d.id) {
+                  <option [value]="d.id" class="bg-[#0c1324]">{{ d.name }}</option>
+                }
+              </select>
+              @if (departments().length === 0) {
+                <p class="text-[11px] leading-[1.4] text-[#bccbb9]/70 mt-2" style="font-family:'Inter',sans-serif">No departments on this branch yet — order will route to the branch default / claimable on the kitchen board.</p>
+              }
+            </div>
+          }
           @for (item of selectedItems; track item.id + (item.selectedPortionId ?? '')) {
             <div class="flex items-center justify-between gap-3 py-3 border-b border-white/5">
               <div class="min-w-0">

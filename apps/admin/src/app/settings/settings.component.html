@@ -177,6 +177,31 @@
                   </span>
                 </div>
               </div>
+              @if (kdsEnabled()) {
+                <div class="mt-5 pt-5 border-t border-[var(--surface-variant)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <p class="text-[14px] font-semibold text-[var(--on-background)]" style="font-family:'Inter',sans-serif">Default Kitchen Department</p>
+                    <p class="text-[13px] leading-[1.4] text-[var(--on-surface-variant)] mt-1" style="font-family:'Inter',sans-serif">Self-service orders (no waiter) and orders without a punched station route here. Empty = "Unassigned", claimable on the kitchen board.</p>
+                  </div>
+                  <div class="flex items-center gap-3 shrink-0">
+                    <select [ngModel]="kdsDefaultDepartmentId()" (ngModelChange)="kdsDefaultDepartmentId.set($event)"
+                      class="h-11 px-4 rounded-xl glass-input text-[var(--on-background)] text-[14px] leading-[1.5] appearance-none min-w-[200px]" style="font-family:'Inter',sans-serif">
+                      <option value="" class="bg-[var(--background)]">Unassigned</option>
+                      @for (d of kdsDepartments(); track d.id) {
+                        <option [value]="d.id" class="bg-[var(--background)]">{{ d.name }}</option>
+                      }
+                    </select>
+                    <button (click)="saveKdsDefaultDepartment()" [disabled]="isKdsDeptSaving()"
+                      class="h-11 px-4 rounded-xl text-[14px] font-semibold flex items-center gap-2 transition-all active:scale-95"
+                      [class.bg-[var(--primary)]]="!isKdsDeptSaving()"
+                      [class.text-[var(--on-primary)]]="!isKdsDeptSaving()"
+                      [class.bg-[var(--surface-variant)]]="isKdsDeptSaving()"
+                      [class.text-[var(--on-surface-variant)]]="isKdsDeptSaving()">
+                      {{ isKdsDeptSaving() ? 'Saving...' : 'Save Default' }}
+                    </button>
+                  </div>
+                </div>
+              }
             </div>
 
             <!-- Operational Pulse -->

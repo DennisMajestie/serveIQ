@@ -82,6 +82,9 @@ export class PaymentComponent implements OnInit, OnDestroy {
       next: (tab: Tab | null) => {
         if (tab) {
           this.tabType.set((tab as any).tabType ?? (tab as any).tab_type ?? '');
+          if (this.isTakeaway() && this.selectedMethod === 'cash') {
+            this.selectedMethod = 'card';
+          }
           if (tab.tableId) {
             this.offlineData.getTable(tab.tableId).subscribe({
               next: (table) => { if (table) this.table.set(table); }

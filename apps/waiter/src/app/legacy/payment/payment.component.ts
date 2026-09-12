@@ -24,9 +24,11 @@ export class LegacyPaymentComponent implements OnInit {
 
   tabId = signal('');
   table = signal<Table | null>(null);
+  tabType = signal<string>('');
   bill = signal<Bill | null>(null);
   isLoading = signal(true);
   selectedMethod: 'cash' | 'card' | 'transfer' | 'ussd' = 'cash';
+  isTakeaway = computed(() => this.tabType() === 'takeaway');
   currentAmount = signal('0');
   isEditingAmount = false;
   isProcessing = signal(false);
@@ -70,6 +72,10 @@ export class LegacyPaymentComponent implements OnInit {
   loadTableInfo(tabId: string) {
     this.tabService.getTab(tabId).subscribe({
       next: (tab: Tab) => {
+        this.tabType.set((tab as any).tabType ?? (tab as any).tab_type ?? '');
+        if (this.isTakeaway() && this.selectedMethod === 'cash') {
+          this.selectedMethod = 'card';
+        }
         if (tab.tableId) {
           this.tableService.getTable(tab.tableId).subscribe({
             next: (table) => this.table.set(table)

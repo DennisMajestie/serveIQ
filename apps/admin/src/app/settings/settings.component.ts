@@ -2,7 +2,7 @@ import { Component, signal, computed, OnInit, inject, ChangeDetectionStrategy } 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, ENVIRONMENT_CONFIG, EnvironmentConfig, PlatformPaymentProviderSummary } from '@serveiq/shared/data-access';
+import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, DepartmentsApiService, ENVIRONMENT_CONFIG, EnvironmentConfig, PlatformPaymentProviderSummary } from '@serveiq/shared/data-access';
 import { Branch, User, Business, COUNTRIES, getCountryByCode, getCountryByCurrency } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -28,6 +28,7 @@ type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verificatio
 })
 export class SettingsComponent implements OnInit {
   private branchesApi = inject(BranchesApiService);
+  private departmentsApi = inject(DepartmentsApiService);
   private authService = inject(AuthService);
   private userApi = inject(UserApiService);
   private businessApi = inject(BusinessApiService);
@@ -72,6 +73,10 @@ navItems: { key: Section; label: string; icon: string }[] = [
   // Kitchen Display (KDS) — per-branch feature flag
   kdsEnabled = signal(false);
   isKdsLoading = signal(false);
+  /** Departments available on the KDS branch, used for the default-station picker. */
+  kdsDepartments = signal<{ id: string; name: string }[]>([]);
+  kdsDefaultDepartmentId = signal('');
+  isKdsDeptSaving = signal(false);
 
   // Payment settings
   platformProviders = signal<PlatformPaymentProviderSummary[]>([]);
@@ -253,6 +258,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
     this.loadBusinessSettings();
     this.loadWaiters();
     this.loadKdsFlag();
+    this.loadKdsDepartments();
   }
 
   loadBusinessSettings() {
@@ -709,6 +715,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
     this.activeBranchId.set(branchId);
     localStorage.setItem('activeBranchId', branchId);
     this.loadKdsFlag();
+    this.loadKdsDepartments();
   }
 
   loadKdsFlag() {
@@ -756,6 +763,56 @@ navItems: { key: Section; label: string; icon: string }[] = [
         Swal.fire({ icon: 'error', title: 'Update Failed', text: 'Could not update the Kitchen Display flag.' });
       },
     });
+  }
+
+  /** Load the departments for the selected KDS branch and its stored default. */
+  loadKdsDepartments() {
+    const branchId = this.kdsBranch();
+    this.kdsDepartments.set([]);
+    this.kdsDefaultDepartmentId.set('');
+    if (!branchId) return;
+    this.departmentsApi.getAll(false, branchId).subscribe({
+      next: (depts) => {
+        const list = (depts || []).map((d: any) => ({
+          id: d.id || '',
+          name: d.name,
+        }));
+        this.kdsDepartments.set(list);
+        const branch = this.branches().find((b) => b.id === branchId);
+        const defaultDept = (branch as any)?.settings?.kds_default_department_id;
+        if (defaultDept) this.kdsDefaultDepartmentId.set(defaultDept);
+      },
+      error: () => this.kdsDepartments.set([]),
+    });
+  }
+
+  saveKdsDefaultDepartment() {
+    const branchId = this.kdsBranch();
+    if (!branchId) {
+      Swal.fire({ icon: 'error', title: 'No Branch Selected', text: 'Select a branch first.' });
+      return;
+    }
+    this.isKdsDeptSaving.set(true);
+    this.branchesApi
+      .updateSettings(branchId, { kds_default_department_id: this.kdsDefaultDepartmentId() || undefined })
+      .subscribe({
+        next: () => {
+          this.isKdsDeptSaving.set(false);
+          Swal.fire({
+            icon: 'success',
+            title: 'Default Kitchen Department Saved',
+            text: this.kdsDefaultDepartmentId()
+              ? 'Self-service and bypassed orders will route to the selected station.'
+              : 'Self-service and bypassed orders will appear as "Unassigned".',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        },
+        error: () => {
+          this.isKdsDeptSaving.set(false);
+          Swal.fire({ icon: 'error', title: 'Update Failed', text: 'Could not save the default kitchen department.' });
+        },
+      });
   }
 
   getInitials(name: string | undefined | null): string {

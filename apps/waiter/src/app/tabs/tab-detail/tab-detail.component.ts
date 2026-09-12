@@ -247,7 +247,7 @@ export class TabDetailComponent implements OnInit, OnDestroy {
   private readRouterStateOnce() {
     if (this.orderPosted) return;
 
-    const state = history.state as { selectedItems?: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }> } | undefined;
+    const state = history.state as { selectedItems?: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number; department?: string; estimated_preparation_time_seconds?: number }> } | undefined;
     if (state?.selectedItems?.length) {
       this.orderPosted = true;
       this.addItemsFromMenu(state.selectedItems);
@@ -561,12 +561,16 @@ export class TabDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/notifications']);
   }
 
-  private addItemsFromMenu(selectedItems: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number }>) {
+  private addItemsFromMenu(selectedItems: Array<{ id: string; name: string; qty: number; selectedPortionId?: string; portionName?: string; portionPrice?: number; price: number; department?: string; estimated_preparation_time_seconds?: number }>) {
     const orderItems = selectedItems.map(item => ({
       menu_item_id: item.id,
       name: item.name,
       quantity: item.qty,
-      notes: item.portionName ? `Portion: ${item.portionName}` : ''
+      notes: item.portionName ? `Portion: ${item.portionName}` : '',
+      ...(item.department ? { department: item.department } : {}),
+      ...(item.estimated_preparation_time_seconds
+        ? { estimated_preparation_time_seconds: item.estimated_preparation_time_seconds }
+        : {}),
     }));
     from(this.offlineData.addOrderItems(this.tabId(), orderItems)).subscribe({
       next: (response) => {

@@ -43,6 +43,7 @@
 
       <!-- Settle Methods -->
       <section class="grid grid-cols-2 gap-5">
+        @if (!isTakeaway()) {
         <button (click)="selectMethod('cash')" class="glass-card p-6 rounded-2xl flex flex-col items-center gap-4 border active:scale-95 transition-all group"
           [class.border-[#4be277]/30]="selectedMethod === 'cash'"
           [class.bg-[#4be277]/5]="selectedMethod === 'cash'"
@@ -58,6 +59,7 @@
             [class.text-[#4be277]]="selectedMethod === 'cash'"
             [class.text-[#dce1fb]]="selectedMethod !== 'cash'">Cash</span>
         </button>
+        }
         <button (click)="selectMethod('card')" class="glass-card p-6 rounded-2xl flex flex-col items-center gap-4 border active:scale-95 transition-all group"
           [class.border-[#4be277]/30]="selectedMethod === 'card'"
           [class.bg-[#4be277]/5]="selectedMethod === 'card'"
