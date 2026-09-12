@@ -113,11 +113,11 @@ export const API_CONFIG = {
       update: '/api/v1/riders/:id',
       delete: '/api/v1/riders/:id',
       toggleOnline: '/api/v1/riders/me/toggle-online',
-      // Payout endpoints
-      pendingPayouts: '/api/v1/riders/:id/payouts/pending',
-      ledger: '/api/v1/riders/:id/ledger',
-      payoutBatches: '/api/v1/riders/:id/payout-batches',
-      processPayout: '/api/v1/riders/:id/payout',
+      // Payout endpoints (served by the deliveries module)
+      pendingPayouts: '/api/v1/deliveries/riders/:id/payouts/pending',
+      ledger: '/api/v1/deliveries/riders/:id/ledger',
+      payoutBatches: '/api/v1/deliveries/riders/:id/payout-batches',
+      processPayout: '/api/v1/deliveries/riders/:id/payout',
     },
     // Dispatch deliveries
     deliveries: {
