@@ -1,0 +1,42 @@
+{
+  "name": "ServeIQ",
+  "short_name": "ServeIQ",
+  "description": "The operating system for modern restaurants — POS, KDS, inventory, staff management, analytics, and payments in one platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#F97316",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/brand/serveiq-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/brand/serveiq-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "food"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Start Free Trial",
+      "short_name": "Free Trial",
+      "description": "Start your free trial of ServeIQ",
+      "url": "/register",
+      "icons": [{ "src": "assets/brand/serveiq-logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Log In",
+      "short_name": "Log In",
+      "description": "Log in to your ServeIQ dashboard",
+      "url": "/login",
+      "icons": [{ "src": "assets/brand/serveiq-logo.png", "sizes": "96x96" }]
+    }
+  ]
+}
