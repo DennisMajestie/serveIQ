@@ -9,6 +9,8 @@ It is a monorepo (Nx + Angular) with three deployable apps, backed by a NestJS +
 ## What makes ServeIQ different
 
 - **Per-guest split payments with item-level allocation** — charge each guest exactly for the items they ate; the tab closes only when the last share is paid.
+- **Reservations** — a public "Book a Table" flow (date + party-size → available time slots → details → confirmation code), reservation management and walk-in seating in the admin dashboard, and reservation settings per branch.
+- **Delivery dispatch** — takeaway delivery with rider management, a live delivery board with driver status, dispatch fees on bills, and a driver payouts system with a per-rider earnings ledger and payout batches.
 - **Offline-first** — orders, bills and payments queue on the device and sync (with idempotency) when connectivity returns.
 - **Emerging-market ready** — multi-currency (including NGN), transfer/USSD/cash/card settlement, multi-branch, role-based access.
 - **Live guest experience** — table-QR menus, online ordering, a real-time order-tracking page, and a table-call button for the waiter.
@@ -18,9 +20,9 @@ It is a monorepo (Nx + Angular) with three deployable apps, backed by a NestJS +
 
 | Path | What it is |
 |---|---|
-| `apps/waiter` | Angular app for waiters, chefs, supervisors and cashiers (collect orders, route to kitchen, settle bills, split per guest) |
-| `apps/admin` | Owner / manager / super-admin dashboard (menu, tables, staff, reports, inventory) |
-| `apps/public-menu` | Customer-facing table-QR menu + online ordering + live order tracking |
+| `apps/waiter` | Angular app for waiters, chefs, supervisors, cashiers and riders (collect orders, route to kitchen, settle bills, split per guest, manage deliveries) |
+| `apps/admin` | Owner / manager / super-admin dashboard (menu, tables, staff, reports, inventory, reservations, delivery board, rider payouts) |
+| `apps/public-menu` | Customer-facing table-QR menu + online ordering + live order tracking + reservation booking |
 | `libs/` | Shared Angular libraries (data-access API clients, models) |
 | `backend/` | NestJS + PostgreSQL API (git submodule: `DennisMajestie/ServeIQ-Backend`) |
 
@@ -40,12 +42,13 @@ npm run build -w apps/api
 
 ## Deployment
 
-- **Waiter / admin / public-menu:** Vercel, auto-deploy on push to `master` (`serveiq-admin.vercel.app`).
+- **Waiter / admin / public-menu:** Vercel, auto-deploy on push to `master` (`serve-iq-waiter.vercel.app`, `serve-iq-one.vercel.app`, `serve-iq-menu.vercel.app`).
+- **Marketing site:** `serveiqhq.com` (Vercel).
 - **Backend API:** Render web service at `https://serveiq-backend.onrender.com`, Swagger at `/api/docs`.
 
 ## Links
 
-- Product (coming soon): [https://serveiq.io](https://serveiq.io)
+- Product: [https://serveiqhq.com](https://serveiqhq.com)
 - API docs: [https://serveiq-backend.onrender.com/api/docs](https://serveiq-backend.onrender.com/api/docs)
 - Backend repo: [DennisMajestie/ServeIQ-Backend](https://github.com/DennisMajestie/ServeIQ-Backend)
 - Contact: [hello@serveiq.io](mailto:hello@serveiq.io)
