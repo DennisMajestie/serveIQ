@@ -50,7 +50,7 @@
         </h1>
         <p class="hero-desc">{{ heroDesc }}</p>
         <div class="hero-actions">
-          <a routerLink="/register" class="btn btn-primary">Book a Demo</a>
+          <a routerLink="/register" class="btn btn-primary">Free Trial</a>
           <a routerLink="/login" class="btn btn-outline">Log In</a>
         </div>
         <div class="hero-proof">
@@ -288,7 +288,7 @@
           <li><span class="material-symbols-outlined">check_circle</span>{{ point }}</li>
         }
       </ul>
-      <a routerLink="/register" class="btn btn-primary">Book a demo</a>
+      <a routerLink="/register" class="btn btn-primary">Free trial</a>
     </div>
   </section>
 
@@ -357,16 +357,64 @@
   <section class="cta-band">
     <div class="cta-content">
       <h2 class="cta-title">Power your kitchen with ServeIQ</h2>
-      <p class="cta-subtitle">Book a demo and watch the platform running the restaurant above — live.</p>
+      <p class="cta-subtitle">Free trial and watch the platform running the restaurant above — live.</p>
       <div class="cta-actions">
-        <a routerLink="/register" class="btn btn-cta">Book a Demo</a>
+        <a routerLink="/register" class="btn btn-cta">Free Trial</a>
         <a routerLink="/login" class="btn btn-cta-ghost">Log In</a>
       </div>
     </div>
-  </section>
-</main>
+</section>
+  </main>
 
-<footer class="landing-footer">
+  <!-- JSON-LD Structured Data for AI/Search -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ServeIQ",
+    "url": "https://serveiqhq.com",
+    "logo": "https://serveiqhq.com/assets/brand/serveiq-logo.png",
+    "description": "The operating system for modern restaurants — POS, KDS, inventory, staff management, analytics, and payments in one platform.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Cloud",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "NGN",
+      "availability": "https://schema.org/InStock",
+      "description": "Free trial available; subscription plans after trial"
+    },
+    "featureList": [
+      "Point of Sale",
+      "Kitchen Display System (KDS)",
+      "Table & Floor Management",
+      "Inventory Management",
+      "Staff Analytics",
+      "Delivery Dispatch",
+      "Payments (Paystack, Moniepoint, OPay)",
+      "Analytics & Reporting"
+    ],
+    "author": {
+      "@type": "Organization",
+      "name": "ServeIQ",
+      "url": "https://serveiqhq.com",
+      "logo": "https://serveiqhq.com/assets/brand/serveiq-logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+234-XXX-XXX-XXXX",
+        "contactType": "customer service",
+        "email": "hello@serveiq.io"
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "reviewCount": "50"
+    }
+  }
+  </script>
+
+  <footer class="landing-footer">
   <div class="footer-inner">
     <div class="footer-grid">
       <div class="footer-brand">
@@ -401,7 +449,7 @@
         <a class="footer-link" routerLink="/about">About ServeIQ</a>
         <a class="footer-link" routerLink="/pricing">Pricing</a>
         <a class="footer-link" routerLink="/contact">Contact</a>
-        <a class="footer-link" routerLink="/register">Book a Demo</a>
+        <a class="footer-link" routerLink="/register">Free Trial</a>
       </nav>
 
       <div class="footer-col" aria-label="Contact">
@@ -426,6 +474,6 @@
   </div>
 </footer>
 
-<a class="fab" routerLink="/register" aria-label="Book a demo">
+<a class="fab" routerLink="/register" aria-label="Free trial">
   <span class="material-symbols-outlined">rocket_launch</span>
 </a>

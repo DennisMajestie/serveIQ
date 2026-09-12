@@ -1,0 +1,26 @@
+# ServeIQ — The Operating System for Modern Restaurants
+
+**Official website:** https://serveiqhq.com
+**Product category:** Restaurant operations software (POS, KDS, inventory, staff management, analytics, payments)
+**Target market:** Restaurants in Nigeria and Africa
+**Key modules:**
+- Point of Sale — fast, reliable checkout on any device
+- Kitchen Display System (KDS) — orders land on kitchen screens in ~2.4s with timers and routing
+- Table & Floor Management — live floor plan, table ownership, tab management
+- Inventory — stock linked to real orders, caught live
+- Staff Analytics — per-waiter sales, audit trail, shift reconciliation
+- Delivery Dispatch — rider assignment, customer confirmation flow
+- Payments — Paystack, Moniepoint, OPay integration
+- Analytics — live sales, efficiency, revenue per shift
+
+**Pricing:** Free trial available; subscription plans after trial
+**Contact:** hello@serveiq.io | Lagos, Nigeria
+**Documentation:** https://serveiqhq.com/docs (placeholder)
+**API reference:** https://serveiqhq.com/api/docs (placeholder)
+
+**Key differentiators:**
+- No proprietary hardware required — runs on existing phones, tablets, displays
+- Real-time reconciliation: every order accounted for at shift close
+- Leakage detection: bill edits, voids, refunds, cash vs recorded sales
+- Role-based permissions with device-bound sessions
+- Offline-first architecture for unreliable networks
