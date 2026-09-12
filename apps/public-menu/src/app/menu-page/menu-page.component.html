@@ -165,14 +165,18 @@
         <div class="type-options">
           <button class="type-card takeaway" (click)="choosePickup('self')">
             <span class="type-icon">🥡</span>
-            <span class="type-label">Self Pickup</span>
-            <span class="type-desc">Collect at the counter</span>
+            <span class="type-body">
+              <span class="type-label">Self Pickup</span>
+              <span class="type-desc">Collect at the counter</span>
+            </span>
             <span class="type-hint">Free</span>
           </button>
           <button class="type-card takeaway" (click)="choosePickup('dispatch')">
             <span class="type-icon">🛵</span>
-            <span class="type-label">Home Delivery</span>
-            <span class="type-desc">Delivered by a rider</span>
+            <span class="type-body">
+              <span class="type-label">Home Delivery</span>
+              <span class="type-desc">Delivered by a rider</span>
+            </span>
             <span class="type-hint">{{ cartService.formatKobo(cartService.deliveryFeeKobo()) }}</span>
           </button>
         </div>
@@ -183,21 +187,27 @@
         <div class="type-options">
           <button class="type-card dine-in" (click)="chooseType('dine_in')">
             <span class="type-icon">🍽️</span>
-            <span class="type-label">Dine In</span>
-            <span class="type-desc">Eat at the table</span>
+            <span class="type-body">
+              <span class="type-label">Dine In</span>
+              <span class="type-desc">Eat at the table</span>
+            </span>
             @if (!cartService.hasTable()) {
-              <span class="type-hint">Browse the menu — scan your table's QR to order</span>
+              <span class="type-hint">Scan your QR</span>
             }
           </button>
           <button class="type-card takeaway" (click)="chooseType('takeaway')">
             <span class="type-icon">🥡</span>
-            <span class="type-label">Takeaway</span>
-            <span class="type-desc">Pack and go</span>
+            <span class="type-body">
+              <span class="type-label">Takeaway</span>
+              <span class="type-desc">Pack and go</span>
+            </span>
           </button>
           <button class="type-card reserve" (click)="goToReserve()">
             <span class="type-icon">📅</span>
-            <span class="type-label">Reserve a Table</span>
-            <span class="type-desc">Book ahead for your visit</span>
+            <span class="type-body">
+              <span class="type-label">Reserve a Table</span>
+              <span class="type-desc">Book ahead for your visit</span>
+            </span>
             <span class="type-hint">Instant confirmation</span>
           </button>
         </div>
