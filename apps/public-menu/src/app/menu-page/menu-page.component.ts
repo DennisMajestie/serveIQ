@@ -143,6 +143,13 @@ export class MenuPageComponent implements OnInit {
     this.updateReadOnly();
   }
 
+  goToReserve() {
+    this.showPickupStep.set(false);
+    this.showTypeChooser.set(false);
+    const branchId = this.cartService.branchId();
+    this.router.navigate(['/public/menu', branchId, 'reserve']);
+  }
+
   private updateReadOnly() {
     // Dine-in is waiter-served — only takeaway self-service adds items to the
     // cart. Dine-in customers view the menu read-only and the waiter takes the

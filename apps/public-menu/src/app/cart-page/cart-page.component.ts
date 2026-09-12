@@ -106,6 +106,13 @@ export class CartPageComponent {
     this.finishType('takeaway', mode);
   }
 
+  goToReserve() {
+    this.showTypeModal.set(false);
+    this.showPickupModal.set(false);
+    const branchId = this.cartService.branchId();
+    this.router.navigate(['/public/menu', branchId, 'reserve']);
+  }
+
   private finishType(type: 'dine_in' | 'takeaway', pickup: 'self' | 'dispatch' | null) {
     this.showPickupModal.set(false);
     this.showTypeModal.set(false);

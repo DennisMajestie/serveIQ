@@ -81,11 +81,6 @@
           </button>
         }
       </nav>
-
-      <a class="reserve-btn" [routerLink]="['/public/menu', cartService.branchId(), 'reserve']">
-        <span class="reserve-icon">📅</span>
-        Book a Table
-      </a>
     </div>
 
     <!-- Order type -->
@@ -198,6 +193,12 @@
             <span class="type-icon">🥡</span>
             <span class="type-label">Takeaway</span>
             <span class="type-desc">Pack and go</span>
+          </button>
+          <button class="type-card reserve" (click)="goToReserve()">
+            <span class="type-icon">📅</span>
+            <span class="type-label">Reserve a Table</span>
+            <span class="type-desc">Book ahead for your visit</span>
+            <span class="type-hint">Instant confirmation</span>
           </button>
         </div>
         <button class="cancel-btn" (click)="continueWithoutType()">Continue anyway</button>

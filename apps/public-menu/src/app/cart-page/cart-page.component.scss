@@ -347,6 +347,11 @@
   .type-label { font-size: 0.95rem; font-weight: 700; color: var(--text); }
   .type-desc { font-size: 0.78rem; color: var(--text-secondary); }
   .type-hint { font-size: 0.7rem; color: var(--primary); font-weight: 500; }
+
+  &.reserve {
+    border-style: dashed;
+    background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+  }
 }
 
 .cancel-btn {
