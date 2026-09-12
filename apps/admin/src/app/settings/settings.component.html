@@ -44,10 +44,10 @@
         <!-- Header -->
         <div class="mb-10">
           <h2 class="text-[24px] leading-[1.2] sm:text-[32px] font-semibold text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">
-            {{ activeSection() === 'branch-setup' ? 'Branch Settings' : activeSection() === 'payment' ? 'Payment & Webhooks' : activeSection() === 'delivery' ? 'Delivery Settings' : activeSection() === 'branding' ? 'Branding' : activeSection() === 'staff' ? 'Staff Management' : activeSection() === 'security' ? 'Security' : 'Email Verification' }}
+            {{ activeSection() === 'branch-setup' ? 'Branch Settings' : activeSection() === 'payment' ? 'Payment & Webhooks' : activeSection() === 'delivery' ? 'Delivery Settings' : activeSection() === 'reservations' ? 'Reservation Settings' : activeSection() === 'branding' ? 'Branding' : activeSection() === 'staff' ? 'Staff Management' : activeSection() === 'security' ? 'Security' : 'Email Verification' }}
           </h2>
           <p class="text-[var(--on-surface-variant)] text-[18px] leading-[1.6] mt-1" style="font-family:'Inter',sans-serif">
-            {{ activeSection() === 'branch-setup' ? 'Configure your digital workspace, to maintain your business theme and brand essense.' : activeSection() === 'payment' ? 'Configure payment providers, webhook keys, and takeaway policy.' : activeSection() === 'delivery' ? 'Enable home delivery, set the delivery fee, and configure rider payouts.' : activeSection() === 'branding' ? 'Customize your business appearance, logo, and brand colors.' : activeSection() === 'staff' ? 'Manage waiters, reset PINs, and control staff access.' : activeSection() === 'security' ? 'Update your account password.' : 'Verify your email address to enable all features.' }}
+            {{ activeSection() === 'branch-setup' ? 'Configure your digital workspace, to maintain your business theme and brand essense.' : activeSection() === 'payment' ? 'Configure payment providers, webhook keys, and takeaway policy.' : activeSection() === 'delivery' ? 'Enable home delivery, set the delivery fee, and configure rider payouts.' : activeSection() === 'reservations' ? 'Enable table reservations, set service hours, and control online booking.' : activeSection() === 'branding' ? 'Customize your business appearance, logo, and brand colors.' : activeSection() === 'staff' ? 'Manage waiters, reset PINs, and control staff access.' : activeSection() === 'security' ? 'Update your account password.' : 'Verify your email address to enable all features.' }}
           </p>
         </div>
 
@@ -460,6 +460,101 @@
             </div>
             <button (click)="saveDeliverySettings()" [disabled]="isSavingDelivery()" class="mt-2 px-8 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
               {{ isSavingDelivery() ? 'Saving...' : 'Save Delivery Settings' }}
+            </button>
+          </div>
+        }
+
+        <!-- Reservations Section -->
+        @if (activeSection() === 'reservations') {
+          <div class="space-y-6">
+            <div class="glass-card p-6">
+              <h3 class="text-[18px] leading-[1.6] font-medium text-[var(--on-background)] flex items-center gap-3 mb-6" style="font-family:'Space Grotesk',sans-serif">
+                <span class="material-symbols-outlined text-[var(--primary)]">event_available</span>
+                Table Reservations
+              </h3>
+              <p class="text-[var(--on-surface-variant)] text-[14px] leading-[1.4] mb-6" style="font-family:'Inter',sans-serif">Let customers book tables online on the public menu and manage bookings from the Reservations page. Customers only see times with free tables.</p>
+              <div class="space-y-6">
+                <div class="flex items-center gap-4">
+                  <button (click)="reservationEnabled.set(!reservationEnabled())" class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors active:scale-95"
+                    [class.bg-[var(--primary)]]="reservationEnabled()"
+                    [class.bg-[var(--surface-variant)]]="!reservationEnabled()"
+                    role="switch" [attr.aria-checked]="reservationEnabled()">
+                    <span class="inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform"
+                      [class.translate-x-6]="reservationEnabled()"
+                      [class.translate-x-1]="!reservationEnabled()"></span>
+                  </button>
+                  <span class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif"
+                    [class.text-[var(--primary)]]="reservationEnabled()"
+                    [class.text-[var(--on-surface-variant)]]="!reservationEnabled()">
+                    {{ reservationEnabled() ? 'Reservations enabled' : 'Reservations disabled' }}
+                  </span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div class="flex items-center gap-4 justify-between p-4 rounded-2xl bg-white/5">
+                    <div>
+                      <p class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Allow online booking</p>
+                      <p class="text-[12px] leading-none text-on-surface-variant-60 mt-2" style="font-family:'Inter',sans-serif">Show the Book a Table option on the public menu</p>
+                    </div>
+                    <button (click)="reservationAllowOnline.set(!reservationAllowOnline())" class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors active:scale-95 shrink-0"
+                      [class.bg-[var(--primary)]]="reservationAllowOnline()"
+                      [class.bg-[var(--surface-variant)]]="!reservationAllowOnline()"
+                      role="switch" [attr.aria-checked]="reservationAllowOnline()">
+                      <span class="inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform"
+                        [class.translate-x-6]="reservationAllowOnline()"
+                        [class.translate-x-1]="!reservationAllowOnline()"></span>
+                    </button>
+                  </div>
+                  <div class="flex items-center gap-4 justify-between p-4 rounded-2xl bg-white/5">
+                    <div>
+                      <p class="text-[14px] leading-none font-semibold" style="font-family:'Inter',sans-serif">Auto-confirm bookings</p>
+                      <p class="text-[12px] leading-none text-on-surface-variant-60 mt-2" style="font-family:'Inter',sans-serif">Confirm bookings instantly instead of leaving them pending</p>
+                    </div>
+                    <button (click)="reservationAutoConfirm.set(!reservationAutoConfirm())" class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors active:scale-95 shrink-0"
+                      [class.bg-[var(--primary)]]="reservationAutoConfirm()"
+                      [class.bg-[var(--surface-variant)]]="!reservationAutoConfirm()"
+                      role="switch" [attr.aria-checked]="reservationAutoConfirm()">
+                      <span class="inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform"
+                        [class.translate-x-6]="reservationAutoConfirm()"
+                        [class.translate-x-1]="!reservationAutoConfirm()"></span>
+                    </button>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">OPENING TIME</label>
+                    <input type="time" [ngModel]="reservationOpeningTime()" (ngModelChange)="reservationOpeningTime.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">CLOSING TIME</label>
+                    <input type="time" [ngModel]="reservationClosingTime()" (ngModelChange)="reservationClosingTime.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" style="font-family:'Inter',sans-serif" />
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">MAX PARTY SIZE</label>
+                    <input type="number" min="1" max="50" [ngModel]="reservationMaxPartySize()" (ngModelChange)="reservationMaxPartySize.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 12" style="font-family:'Inter',sans-serif" />
+                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">Largest party a customer can book for online.</span>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">ADVANCE BOOKING DAYS</label>
+                    <input type="number" min="1" max="90" [ngModel]="reservationAdvanceDays()" (ngModelChange)="reservationAdvanceDays.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 30" style="font-family:'Inter',sans-serif" />
+                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">How far ahead customers can book. E.g. 30.</span>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">DEFAULT DURATION (MIN)</label>
+                    <input type="number" min="15" step="15" [ngModel]="reservationDefaultDurationMinutes()" (ngModelChange)="reservationDefaultDurationMinutes.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 90" style="font-family:'Inter',sans-serif" />
+                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">How long a booking reserves a table for.</span>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[12px] leading-none font-bold text-[var(--on-surface-variant)] tracking-wider" style="font-family:'Inter',sans-serif">SLOT INTERVAL (MIN)</label>
+                    <input type="number" min="5" step="5" [ngModel]="reservationSlotIntervalMinutes()" (ngModelChange)="reservationSlotIntervalMinutes.set($event)" class="w-full h-14 px-6 rounded-2xl glass-input text-[var(--on-background)] text-[16px] leading-[1.5]" placeholder="e.g. 30" style="font-family:'Inter',sans-serif" />
+                    <span class="text-[12px] leading-none text-on-surface-variant-60" style="font-family:'Inter',sans-serif">Time between bookable slots on the menu.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button (click)="saveReservationSettings()" [disabled]="isSavingReservation()" class="mt-2 px-8 py-3 rounded-full bg-[var(--primary)] text-[var(--on-primary)] text-[14px] leading-none font-semibold font-bold glow-button active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+              {{ isSavingReservation() ? 'Saving...' : 'Save Reservation Settings' }}
             </button>
           </div>
         }

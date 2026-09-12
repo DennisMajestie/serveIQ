@@ -16,7 +16,7 @@ interface PaymentProviderConfig {
   config: Record<string, string>;
 }
 
-type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification' | 'payment' | 'delivery';
+type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification' | 'payment' | 'delivery' | 'reservations';
 
 @Component({
   selector: 'app-settings',
@@ -47,6 +47,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
     { key: 'branch-setup', label: 'Branch Setup', icon: 'settings' },
     { key: 'payment', label: 'Payment & Webhooks', icon: 'payment' },
     { key: 'delivery', label: 'Delivery', icon: 'delivery_dining' },
+    { key: 'reservations', label: 'Reservations', icon: 'event_available' },
     { key: 'branding', label: 'Branding', icon: 'palette' },
     { key: 'staff', label: 'Staff Management', icon: 'group' },
     { key: 'security', label: 'Security', icon: 'lock' },
@@ -199,6 +200,18 @@ navItems: { key: Section; label: string; icon: string }[] = [
   riderPayout = signal(0);
   isSavingDelivery = signal(false);
 
+  // Reservations
+  reservationEnabled = signal(false);
+  reservationAllowOnline = signal(true);
+  reservationAutoConfirm = signal(false);
+  reservationOpeningTime = signal('11:00');
+  reservationClosingTime = signal('22:00');
+  reservationMaxPartySize = signal(12);
+  reservationAdvanceDays = signal(30);
+  reservationDefaultDurationMinutes = signal(90);
+  reservationSlotIntervalMinutes = signal(30);
+  isSavingReservation = signal(false);
+
   isSavingSettings = signal(false);
   brandPrimaryColor = signal('#F97316');
   brandAccentColor = signal('#d97706');
@@ -307,6 +320,58 @@ navItems: { key: Section; label: string; icon: string }[] = [
     if (section === 'delivery') {
       this.loadDeliverySettings();
     }
+    if (section === 'reservations') {
+      this.loadReservationSettings();
+    }
+  }
+
+  loadReservationSettings() {
+    const branchId = this.activeBranchId() || this.branches()[0]?.id || '';
+    if (!branchId) return;
+    this.activeBranchId.set(branchId);
+    this.branchesApi.getById(branchId).subscribe({
+      next: (branch) => {
+        const r = branch.settings?.reservation || {};
+        this.reservationEnabled.set(!!r.enabled);
+        this.reservationAllowOnline.set(r.allow_online !== false);
+        this.reservationAutoConfirm.set(!!r.auto_confirm);
+        this.reservationOpeningTime.set(r.opening_time || '11:00');
+        this.reservationClosingTime.set(r.closing_time || '22:00');
+        this.reservationMaxPartySize.set(Number(r.max_party_size) || 12);
+        this.reservationAdvanceDays.set(Number(r.advance_days) || 30);
+        this.reservationDefaultDurationMinutes.set(Number(r.default_duration_minutes) || 90);
+        this.reservationSlotIntervalMinutes.set(Number(r.slot_interval_minutes) || 30);
+      },
+      error: () => undefined,
+    });
+  }
+
+  saveReservationSettings() {
+    const branchId = this.activeBranchId();
+    if (!branchId) return;
+    this.isSavingReservation.set(true);
+    this.branchesApi.updateSettings(branchId, {
+      reservation: {
+        enabled: this.reservationEnabled(),
+        allow_online: this.reservationAllowOnline(),
+        auto_confirm: this.reservationAutoConfirm(),
+        opening_time: this.reservationOpeningTime(),
+        closing_time: this.reservationClosingTime(),
+        max_party_size: Math.max(1, Math.round(Number(this.reservationMaxPartySize()) || 1)),
+        advance_days: Math.max(1, Math.round(Number(this.reservationAdvanceDays()) || 1)),
+        default_duration_minutes: Math.max(15, Math.round(Number(this.reservationDefaultDurationMinutes()) || 90)),
+        slot_interval_minutes: Math.max(5, Math.round(Number(this.reservationSlotIntervalMinutes()) || 30)),
+      },
+    }).subscribe({
+      next: () => {
+        this.isSavingReservation.set(false);
+        Swal.fire({ icon: 'success', title: 'Reservation Settings Saved', timer: 1500, showConfirmButton: false });
+      },
+      error: () => {
+        this.isSavingReservation.set(false);
+        Swal.fire({ icon: 'error', title: 'Failed to save reservation settings' });
+      }
+    });
   }
 
   loadDeliverySettings() {

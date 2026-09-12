@@ -22,9 +22,23 @@ export interface BranchDeliverySettings {
   rider_payout_kobo: number;
 }
 
+export interface BranchReservationSettings {
+  enabled?: boolean;
+  allow_online?: boolean;
+  auto_confirm?: boolean;
+  require_confirmation?: boolean;
+  opening_time?: string;
+  closing_time?: string;
+  max_party_size?: number;
+  advance_days?: number;
+  default_duration_minutes?: number;
+  slot_interval_minutes?: number;
+}
+
 export interface UpdateBranchSettings {
   settings?: Record<string, any>;
   delivery?: BranchDeliverySettings;
+  reservation?: BranchReservationSettings;
 }
 
 /** Manages CRUD operations for restaurant branches. */
