@@ -84,7 +84,7 @@ export class TablesManagementComponent implements OnInit, OnDestroy {
     from.setHours(0, 0, 0, 0);
     const to = new Date();
     to.setHours(23, 59, 59, 999);
-    this.reservationsApi.list({ branchId, from: from.toISOString(), to: to.toISOString(), limit: 200 })
+    this.reservationsApi.list({ branchId, from: from.toISOString(), to: to.toISOString(), limit: 100 })
       .pipe(catchError(() => of([])))
       .subscribe((res) => this.activeReservations.set(Array.isArray(res) ? res : []));
   }
