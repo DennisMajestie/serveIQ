@@ -9,7 +9,7 @@
 ## 0. TL;DR — the five-move game
 
 1. **Own the entity.** "ServeIQ" must resolve to *our* product everywhere a search engine or AI looks: one authoritative site, consistent naming, structured data, listings (G2/Capterra/Crunchbase/Product Hunt), GitHub org, docs.
-2. **Build the indexable front door.** There is **no public marketing site today** — SEO/AEO is impossible on a login-gated app. Ship a fast marketing site on **serveiq.io** first.
+2. **Build the indexable front door.** SEO/AEO is impossible on a login-gated app. Serve the marketing site on the brand domain **serveiqhq.com** first.
 3. **Structure for answers.** Every page answers its question in the first paragraph, then proves it with tables, numbers and schema — the exact pattern AI engines cite.
 4. **Turn the product into an SEO surface.** Each restaurant's public QR menu page and every printed receipt footer is distributable real estate. Index and mark it up.
 5. **Feed authority and measure.** Reviews, links, community and a free-calculator asset earn rankings and citations; a weekly **AI Answer Monitor** tells us what's working.
@@ -20,7 +20,7 @@
 
 | Surface | Exists today? | Indexable? | Verdict |
 |---|---|---|---|
-| Marketing / landing site on brand domain | ✗ (serveiq.io only used for email: hello@serveiq.io, support@serveiq.io) | — | **Build first** |
+| Marketing / landing site on brand domain | ✓ serveiqhq.com (Astro on Vercel); serveiq.io only used for email: hello@serveiq.io, support@serveiq.io | Yes (crawlable SSG) | **Keep iterating** |
 | Waiter app | Angular SPA on Vercel | Login-gated | keep `noindex`; not an SEO surface |
 | Admin app (terms/privacy/contact pages live *inside* it) | Angular SPA on Vercel | Login-gated subdomain | move real pages to the marketing site; keep app `noindex` |
 | Public QR menu + online ordering + order status | Angular app, per restaurant/table | Dynamic, thin, no schema | **Turn into an SEO surface** |
@@ -66,9 +66,9 @@ Search engines and AI engines both resolve **named entities** before they rank p
 **Actions (weeks 1–6):**
 1. **Canonical truth set.** One description used verbatim everywhere:
    > *"ServeIQ is a cloud restaurant management and point-of-sale (POS) platform with per-guest split payments, offline-first ordering, table-QR menus, and real-time kitchen and guest tracking."*
-2. **Single authoritative site** `serveiq.io` (marketing + `/learn` + `/pricing`), with `docs.serveiq.io` for documentation. Every property cross-links to it.
-3. **Consistent naming** on: Product Hunt, G2, Capterra, GetApp, Crunchbase, LinkedIn company page, YouTube channel, GitHub org bio, app stores, support email signatures, **printed receipt footers** (add serveiq.io to the PDF receipt), and every public-menu page.
-4. **Structured identity** (JSON-LD on serveiq.io): `Organization`, `SoftwareApplication` (`applicationCategory: BusinessApplication`, `operatingSystem`, `aggregateRating` once reviews exist), with an identical `sameAs` array across properties.
+2. **Single authoritative site** `serveiqhq.com` (marketing + `/learn` + `/pricing`), with `docs.serveiqhq.com` for documentation. Every property cross-links to it.
+3. **Consistent naming** on: Product Hunt, G2, Capterra, GetApp, Crunchbase, LinkedIn company page, YouTube channel, GitHub org bio, app stores, support email signatures, **printed receipt footers** (add serveiqhq.com to the PDF receipt), and every public-menu page.
+4. **Structured identity** (JSON-LD on serveiqhq.com): `Organization`, `SoftwareApplication` (`applicationCategory: BusinessApplication`, `operatingSystem`, `aggregateRating` once reviews exist), with an identical `sameAs` array across properties.
 5. **Disambiguation `/about`**: name the company, founder(s), product, domain — so answer engines learn *which* ServeIQ is the restaurant POS.
 6. **Trademark + handle posture:** monitor "ServeIQ" in trademark registries and social handles monthly; claim brand-handle variants.
 
@@ -76,7 +76,7 @@ Search engines and AI engines both resolve **named entities** before they rank p
 
 ## 4. Pillar 2 — Marketing site + technical SEO foundation
 
-**Build `serveiq.io` as SSG/ISR (Next.js or Astro; free on Vercel).** Not the Angular SPA pattern — marketing must be fully crawlable, fast, and schema-rich.
+**Build `serveiqhq.com` as SSG/ISR (Next.js or Astro; free on Vercel).** Not the Angular SPA pattern — marketing must be fully crawlable, fast, and schema-rich.
 
 **Page architecture (target tree):**
 ```
@@ -93,7 +93,7 @@ Search engines and AI engines both resolve **named entities** before they rank p
 ├─ /tools/split-calculator          # free, linkable calculator (see 5c)
 ├─ m/{restaurant-slug}              # per-restaurant public menu (programmatic)
 ├─ /about, /contact, /privacy, /terms
-└─ docs.serveiq.io                  # documentation subdomain
+└─ docs.serveiqhq.com              # documentation subdomain
 ```
 
 **Technical checklist (week 2):**
@@ -143,7 +143,7 @@ Links remain the ranking fuel and the strongest citation proxy for AI engines.
 4. **Expert/E-E-A-T citations:** public docs with named authors, changelog, uptime/volume statements; respond to HARO/Connectively-style journalist queries on restaurant tech.
 5. **Partnership links:** restaurant accountants, POS resellers, restaurant consultants, food bloggers — link exchanges on genuinely relevant pages.
 6. **GitHub as an SEO/AEO surface:** rewrite `README.md`s (root + backend + api) to give ServeIQ a precise, keyword-rich but honest description, badges, and links — GitHub content is heavily scraped by AI and ranks on its own.
-7. **Receipt + QR distribution:** append `serveiq.io` + scan-to-order link to every printed receipt and QR table card — every paying restaurant distributes our brand.
+7. **Receipt + QR distribution:** append `serveiqhq.com` + scan-to-order link to every printed receipt and QR table card — every paying restaurant distributes our brand.
 
 ---
 
@@ -151,7 +151,7 @@ Links remain the ranking fuel and the strongest citation proxy for AI engines.
 
 ### Classic SEO metrics
 - Google Search Console: impressions/clicks by query, brand vs category share.
-- GA4: traffic to serveiq.io by section; micro-conversion (start-trial / contact / split-calculator use).
+- GA4: traffic to serveiqhq.com by section; micro-conversion (start-trial / contact / split-calculator use).
 - Rankings (light tooling is fine early): brand queries, top 20 category queries, top 20 question queries.
 - Crawl health: sitemap errors, CWV, index coverage.
 
@@ -165,7 +165,7 @@ Track whether the top ~20 target questions (from 5b) produce an answer that ment
 ### KPI targets (12 months)
 | Metric | Today | 6 mo | 12 mo |
 |---|---|---|---|
-| serveiq.io indexed pages | 0 | 60 | 150+ |
+| serveiqhq.com indexed pages | 0 | 60 | 150+ |
 | Brand query visibility (top 3) | unknown (~0) | 100% of positions 1–2 | hold 1–2 |
 | Category queries ranking p.1 (top 20) | 0 | 6 | 12+ |
 | AI answer mentions of ServeIQ (20-question set) | 0 | 6 | 12+ |
@@ -179,11 +179,11 @@ Track whether the top ~20 target questions (from 5b) produce an answer that ment
 
 | Window | Focus | Deliverable | Owner | Success signal |
 |---|---|---|---|---|
-| Weeks 1–2 | Foundation | serveiq.io skeleton (Next/Astro) + schema + analytics + sitemaps/robots; `noindex` audit of apps; README rewrites | Dev | site live; indexed in GSC |
-| Weeks 2–4 | Brand entity | `/`, `/about`, `/pricing`, `/features/*`; JSON-LD; Brand SERP monitor live; trademark/handle scan | Dev + brand | brand query shows serveiq.io p.1 |
+| Weeks 1–2 | Foundation | serveiqhq.com skeleton (Next/Astro) + schema + analytics + sitemaps/robots; `noindex` audit of apps; README rewrites | Dev | site live; indexed in GSC |
+| Weeks 2–4 | Brand entity | `/`, `/about`, `/pricing`, `/features/*`; JSON-LD; Brand SERP monitor live; trademark/handle scan | Dev + brand | brand query shows serveiqhq.com p.1 |
 | Weeks 4–6 | First AEO cluster | `/learn` question hub + FAQPage schema + split-calculator asset + first 3 guides | Content + dev | AI mentions ≥ 1 |
 | Weeks 6–8 | Distribution | G2/Capterra/GetApp listings, Product Hunt launch, first reviews, community posts | Growth | ≥ 5 reviews; ≥ 10 referring domains |
-| Weeks 8–12 | Programmatic | public-menu indexing + schema; first 4 "serveiq-vs-*" pages; docs.serveiq.io | Dev | ≥ 40 indexed pages |
+| Weeks 8–12 | Programmatic | public-menu indexing + schema; first 4 "serveiq-vs-*" pages; docs.serveiqhq.com | Dev | ≥ 40 indexed pages |
 | Weeks 12+ | Scale + measure | AI Answer Monitor running weekly; monthly content cadence; iterate on cited pages | All | KPI table on track |
 
 ---
@@ -208,9 +208,9 @@ Track whether the top ~20 target questions (from 5b) produce an answer that ment
 
 ## 11. First five actions (this week)
 1. Create the canonical ServeIQ description (Section 3.1) and paste it into the GitHub org + repo READMEs.
-2. Scaffold the serveiq.io marketing site (Next.js or Astro) with `/`, `/features`, `/pricing`, `/about`, `/learn` and JSON-LD; deploy to Vercel.
+2. Keep iterating the serveiqhq.com marketing site (Astro) with `/`, `/features`, `/pricing`, `/about`, `/learn` and JSON-LD.
 3. Wire GSC + GA4 + Bing Webmaster; add sitemap/robots; confirm waiter/admin apps are `noindex`.
-4. Add `serveiq.io` to the receipt footer and QR table-card copy (print assets).
+4. Add `serveiqhq.com` to the receipt footer and QR table-card copy (print assets).
 5. Stand up the AI Answer Monitor sheet (question set from Section 5b) and record the baseline.
 
 ---

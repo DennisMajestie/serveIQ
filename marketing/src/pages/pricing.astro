@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FAQ from '../components/FAQ.astro';
 
-const canonical = 'https://serveiq.io/pricing';
+const canonical = 'https://serveiqhq.com/pricing';
 const description = 'Beta pricing for restaurants, bars and hotels — early partners lock in their first-year rate. No setup fees, no per-order cut. Plan for a single location up to multi-branch. Naira, VAT exclusive.';
 
 const jsonLd = {
@@ -11,53 +11,56 @@ const jsonLd = {
   name: 'Pricing',
   description,
   url: canonical,
-  isPartOf: { '@type': 'WebSite', name: 'ServeIQ', url: 'https://serveiq.io' },
+  isPartOf: { '@type': 'WebSite', name: 'ServeIQ', url: 'https://serveiqhq.com' },
 };
 
 const plans = [
   {
-    name: 'Starter',
-    price: '₦15,000',
-    period: '/month',
+    name: 'Basic',
+    price: 'Free',
+    period: '',
     description: 'Everything a single location needs to stop leaking revenue.',
     features: [
       'Point of sale & kitchen display',
       'Live floor plan and QR menu',
-      'Up to 5 staff PINs',
       'Paystack / transfer payments',
+      'Up to 3 staff PINs',
+      'Up to 5 tables',
       'Daily sales summary',
     ],
-    cta: 'Start free trial',
+    cta: 'Get started free',
     ctaHref: 'https://serve-iq-one.vercel.app/register',
     highlighted: false,
   },
   {
-    name: 'Growth',
+    name: 'Pro',
     price: '₦35,000',
     period: '/month',
     description: 'Inventory, tabs and shift control for busy kitchens.',
     features: [
-      'Everything in Starter',
+      'Everything in Basic',
       'Recipe-level inventory & suppliers',
       'Open tabs — trusted customer credit',
       'Shifts with cash handoff',
       'Full analytics & staff performance',
-      'Up to 20 staff PINs',
+      'Up to 15 staff PINs',
+      'Up to 20 tables',
     ],
     cta: 'Start free trial',
     ctaHref: 'https://serve-iq-one.vercel.app/register',
     highlighted: true,
   },
   {
-    name: 'Multi-branch',
-    price: 'Custom',
-    period: '',
+    name: 'Enterprise',
+    price: '₦100,000',
+    period: '/month',
     description: 'One view across every branch, with enterprise controls.',
     features: [
-      'Everything in Growth',
+      'Everything in Pro',
       'Cross-branch dashboard & reports',
       'Device management & audit logs',
-      'Unlimited staff PINs',
+      'Up to 50 staff PINs',
+      'Up to 100 tables',
       'Dedicated onboarding & support',
     ],
     cta: 'Talk to us',

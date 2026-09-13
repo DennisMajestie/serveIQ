@@ -20,7 +20,7 @@ category: "ordering"
 ---
 ---
 question: "How much does ServeIQ cost?"
-answer: "Visit serveiq.io/pricing for current plans. ServeIQ offers transparent pricing with no hidden fees and no per-terminal charges."
+answer: "Visit serveiqhq.com/pricing for current plans. ServeIQ offers transparent pricing with no hidden fees and no per-terminal charges."
 category: "pricing"
 ---
 ---
