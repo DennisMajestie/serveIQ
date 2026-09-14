@@ -2,7 +2,7 @@ import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@ang
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '@serveiq/shared/data-access';
+import { AuthService, NETWORK_ERROR_MESSAGE } from '@serveiq/shared/data-access';
 import { PermissionService } from '../core/permission.service';
 import { ThemeService } from '../core/theme.service';
 import Swal from 'sweetalert2';
@@ -125,17 +125,26 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading.set(false);
-        if (err.status === 401) {
+        // API calls go through handleApiError, so err is a mapped ApiError
+        // with statusCode/serverMessage (not a raw HttpErrorResponse).
+        const status = err?.statusCode ?? err?.status;
+        if (status === 401) {
           Swal.fire({
             icon: 'error',
             title: 'Authentication Failed',
             text: 'Invalid email or password'
           });
+        } else if (status === 0 || err?.serverMessage === NETWORK_ERROR_MESSAGE) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Connection Error',
+            text: NETWORK_ERROR_MESSAGE
+          });
         } else {
           Swal.fire({
             icon: 'error',
-            title: 'Authentication Failed',
-            text: err.error?.message || 'Please check your credentials and try again.'
+            title: 'Login Failed',
+            text: err?.serverMessage || err?.message || 'Please try again.'
           });
         }
       }
