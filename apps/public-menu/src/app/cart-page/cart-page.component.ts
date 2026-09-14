@@ -181,8 +181,23 @@ export class CartPageComponent {
         quantity: i.quantity,
         notes: i.notes || undefined,
       }));
+      const meta: any = { branch_id: branchId };
+      if (this.customerName) meta.customer_name = this.customerName;
+      if (this.partySize) meta.party_size = this.partySize;
+      if (effectiveType === 'takeaway') {
+        const mode = this.pickupMode();
+        meta.pickup_mode = mode;
+        if (mode === 'dispatch') {
+          meta.delivery_details = {
+            full_name: this.deliveryName.trim() || undefined,
+            phone: this.deliveryPhone.trim(),
+            address: this.deliveryAddress.trim(),
+            notes: this.deliveryNotes.trim() || undefined,
+          };
+        }
+      }
 
-      this.api.placeOrder(tabId, trackingCode, items).subscribe({
+      this.api.placeOrder(tabId, trackingCode, items, meta).subscribe({
         next: () => {
           this.placed = true;
           this.cartService.clearCart();

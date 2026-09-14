@@ -163,9 +163,9 @@ export class CustomerApiService {
     );
   }
 
-  placeOrder(tabId: string, trackingCode: string, items: { menu_item_id: string; quantity: number; notes?: string; modifiers?: any[] }[]): Observable<PlaceOrderResponse> {
+  placeOrder(tabId: string, trackingCode: string, items: { menu_item_id: string; quantity: number; notes?: string; modifiers?: any[] }[], meta?: { branch_id?: string; customer_name?: string; party_size?: number; pickup_mode?: string; delivery_details?: DeliveryAddressDetails }): Observable<PlaceOrderResponse> {
     const url = `${this.apiUrl}/api/v1/public/tabs/${tabId}/orders`;
-    return this.http.post<any>(url, { items }, { headers: { 'x-tracking-code': trackingCode, 'Content-Type': 'application/json' } }).pipe(
+    return this.http.post<any>(url, { items, ...meta }, { headers: { 'x-tracking-code': trackingCode, 'Content-Type': 'application/json' } }).pipe(
       map(res => {
         let data = res && typeof res === 'object' && 'data' in res ? res.data : res;
         while (data && typeof data === 'object' && 'data' in data) data = data.data;
