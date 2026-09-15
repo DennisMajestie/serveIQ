@@ -58,6 +58,13 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   cashPending = signal(false);
   showCashModal = signal(false);
 
+  // ── Pay-before-release reminder (prepaid takeaway) ────────────────────────
+  // When a branch policy holds takeaway orders until the customer pays
+  // (`pending_payment_approval`), a one-time informational modal tells the
+  // customer to pay so the kitchen can start. Shown only once per session.
+  showPaymentModal = signal(false);
+  private paymentModalShown = false;
+
   // ── Dispatch delivery confirmation (rider handed over, awaiting customer) ──
   deliveryConfirming = signal(false);
   readonly needsDeliveryConfirm = computed(
@@ -108,6 +115,29 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   private audioCtx?: AudioContext | null;
   private canvas?: HTMLCanvasElement | null;
   private anim?: number;
+
+  /** A held-before-payment order exists (branch policy = prepay). This is the
+   *  only client-side signal that payment gates the kitchen. */
+  readonly heldForPayment = computed(() => {
+    const tab = this.tabData();
+    if (!tab || tab.orders.length === 0) return false;
+    return tab.orders.some(
+      o => (o.orderStatus || '').toLowerCase() === 'pending_payment_approval',
+    );
+  });
+
+  /** One-time pay-before-release modal. Fires when held orders appear and has
+   *  already been dismissed in this session. */
+  private paymentModalWatcher = effect(() => {
+    if (this.heldForPayment() && !this.paymentModalShown) {
+      this.paymentModalShown = true;
+      this.showPaymentModal.set(true);
+    }
+  });
+
+  closePaymentModal() {
+    this.showPaymentModal.set(false);
+  }
 
   private pickupWatcherEffect = effect(() => {
     if (this.pickupReady()) {
@@ -512,6 +542,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     this.stopPolling();
     this.pickupWatcherEffect.destroy();
     this.servedWatcher.destroy();
+    this.paymentModalWatcher.destroy();
     this.stopPickupAlarm();
     if (this.anim !== undefined) cancelAnimationFrame(this.anim);
     if (this.canvas) {

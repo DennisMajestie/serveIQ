@@ -433,6 +433,24 @@
     </div>
   }
 
+  @if (showPaymentModal()) {
+    <div class="review-overlay" (click)="closePaymentModal()">
+      <div class="review-modal" (click)="$event.stopPropagation()">
+        <button type="button" class="review-close" (click)="closePaymentModal()" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <span class="big-icon">💳</span>
+        <h3>Please Pay for Your Order</h3>
+        <p class="review-sub">
+          Your order is saving you a spot, but the kitchen will only start
+          preparing it once payment is received. Tap the <strong>Pay Now</strong>
+          button below to complete your payment.
+        </p>
+        <button type="button" class="review-submit" (click)="closePaymentModal()">Got it</button>
+      </div>
+    </div>
+  }
+
   @if (showCashModal()) {
     <div class="review-overlay" (click)="cancelRequestCash()">
       <div class="review-modal" (click)="$event.stopPropagation()">
