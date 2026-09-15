@@ -309,5 +309,29 @@ export const appRoutes: Route[] = [
   {
     path: 'about',
     loadComponent: () => import('./site/about.page').then(m => m.AboutPageComponent)
+  },
+  {
+    path: 'features/split-payments',
+    loadComponent: () => import('./site/features-split-payments.page').then(m => m.SplitPaymentsPageComponent)
+  },
+  {
+    path: 'features/qr-menu',
+    loadComponent: () => import('./site/features-qr-menu.page').then(m => m.QrMenuPageComponent)
+  },
+  {
+    path: 'features/pos',
+    loadComponent: () => import('./site/features-pos.page').then(m => m.PosPageComponent)
+  },
+  {
+    path: 'features/offline-mode',
+    loadComponent: () => import('./site/features-offline-mode.page').then(m => m.OfflineModePageComponent)
+  },
+  {
+    path: 'compare/serveiq-vs-toast',
+    loadComponent: () => import('./site/compare-serveiq-vs-toast.page').then(m => m.ServeiqVsToastPageComponent)
+  },
+  {
+    path: 'learn/bill-splitting-guide',
+    loadComponent: () => import('./site/learn-bill-splitting-guide.page').then(m => m.BillSplittingGuidePageComponent)
   }
 ];

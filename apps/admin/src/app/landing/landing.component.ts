@@ -28,6 +28,13 @@ interface ServiceItem {
   desc: string;
 }
 
+interface MarketingFeature {
+  icon: string;
+  title: string;
+  desc: string;
+  href: string;
+}
+
 interface PaymentPartner {
   name: string;
   image: string;
@@ -219,7 +226,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   heroTitleLead = 'One system for the whole restaurant.';
   heroTitleAccent = 'From till to stockroom.';
 
-  heroDesc = 'ServeIQ connects the point of sale, the kitchen display, the floor plan, and the inventory — so orders, stock, and cash never slip between them.';
+  heroDesc = 'ServeIQ connects the point of sale, the kitchen display, the floor plan, and the inventory — so orders, stock, and cash never slip between them. Guests split the bill by what they ate, order from the table, and pay with the methods they already use.';
 
   heroProof = 'Now onboarding pilot restaurants across Africa';
 
@@ -275,6 +282,33 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     { icon: 'table_restaurant', label: 'Table & Floor', desc: 'Live floor plan and table ownership.' },
     { icon: 'inventory_2', label: 'Inventory', desc: 'Stock linked to real orders, caught live.' },
     { icon: 'analytics', label: 'Staff Analytics', desc: 'Per-waiter sales and audit trail.' }
+  ];
+
+  marketingFeatures: MarketingFeature[] = [
+    {
+      icon: 'call_split',
+      title: 'Split the bill, not the night',
+      desc: 'Guests pay for exactly what they ate — by item, amount, percentage, or remainder. The tab stays open until every share is settled.',
+      href: '/features/split-payments'
+    },
+    {
+      icon: 'cloud_off',
+      title: 'Works offline',
+      desc: 'Orders and payments queue locally and sync with idempotency protection when connectivity returns. No orders lost, ever.',
+      href: '/features/offline-mode'
+    },
+    {
+      icon: 'qr_code_scanner',
+      title: 'QR menu & live tracking',
+      desc: 'Table QR codes open a no-install PWA where guests browse, order, and watch their order move through the kitchen in real time.',
+      href: '/features/qr-menu'
+    },
+    {
+      icon: 'point_of_sale',
+      title: 'Full POS terminal',
+      desc: 'Accept cash, card, transfer, USSD, and Paystack payments. Department-routed kitchen orders and real-time dashboard.',
+      href: '/features/pos'
+    }
   ];
 
   paymentPartners: PaymentPartner[] = [

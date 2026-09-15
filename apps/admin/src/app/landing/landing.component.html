@@ -180,6 +180,26 @@
     </div>
   </section>
 
+  <!-- Marketing Features -->
+  <section class="marketing-features">
+    <div class="section-head">
+      <span class="section-eyebrow">Features</span>
+      <h2 class="section-title">Everything your restaurant needs</h2>
+      <p class="section-desc">The guest-facing tools that turn a table into a smooth, modern experience.</p>
+    </div>
+    <div class="marketing-features-grid">
+      @for (mf of marketingFeatures; track mf.href) {
+        <a class="marketing-feature-card" [routerLink]="mf.href">
+          <span class="marketing-feature-icon">
+            <span class="material-symbols-outlined">{{ mf.icon }}</span>
+          </span>
+          <h3 class="marketing-feature-title">{{ mf.title }}</h3>
+          <p class="marketing-feature-desc">{{ mf.desc }}</p>
+        </a>
+      }
+    </div>
+  </section>
+
   <!-- Payment Partners -->
   <section class="partners">
     <div class="partners-head">
@@ -495,10 +515,11 @@
 
       <nav class="footer-col" aria-label="Product">
         <h3 class="footer-heading">Product</h3>
-        <a class="footer-link" href="#modules">Point of Sale</a>
-        <a class="footer-link" href="#modules">Kitchen Display</a>
-        <a class="footer-link" href="#platform">Ops Analytics</a>
-        <a class="footer-link" href="#faq">FAQ</a>
+        <a class="footer-link" routerLink="/features/split-payments">Split Payments</a>
+        <a class="footer-link" routerLink="/features/qr-menu">QR Menu & Tracking</a>
+        <a class="footer-link" routerLink="/features/offline-mode">Offline Mode</a>
+        <a class="footer-link" routerLink="/features/pos">POS Terminal</a>
+        <a class="footer-link" routerLink="/compare/serveiq-vs-toast">ServeIQ vs Toast</a>
       </nav>
 
       <nav class="footer-col" aria-label="Company">

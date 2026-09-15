@@ -650,6 +650,67 @@
   }
 }
 
+/* ===== Marketing Features ===== */
+.marketing-features {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 72px 24px;
+}
+
+.marketing-features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.marketing-feature-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 24px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface-container) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-background) 10%, transparent);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  &:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+    box-shadow: 0 24px 48px color-mix(in srgb, var(--primary) 12%, transparent);
+  }
+}
+
+.marketing-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  margin-bottom: 18px;
+  .material-symbols-outlined {
+    font-size: 26px;
+  }
+}
+
+.marketing-feature-title {
+  margin: 0 0 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--on-background);
+}
+
+.marketing-feature-desc {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--secondary);
+}
+
 /* ===== Modules ===== */
 .top-list,
 .services {
@@ -1549,6 +1610,9 @@
   .dishes-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .marketing-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1611,6 +1675,9 @@
 @media (min-width: 1024px) {
   .dishes-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+  .marketing-features-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
   .gallery-grid {
     grid-template-columns: repeat(3, 1fr);
