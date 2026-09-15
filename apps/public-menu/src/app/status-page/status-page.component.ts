@@ -115,6 +115,11 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   private audioCtx?: AudioContext | null;
   private canvas?: HTMLCanvasElement | null;
   private anim?: number;
+  private gestureCleanup?: () => void;
+
+  /** Chrome blocks `navigator.vibrate` until the user has gestured on the frame;
+   *  set on first pointer/key interaction so alarm ticks don't log interventions. */
+  private hasUserGesture = false;
 
   /** A held-before-payment order exists (branch policy = prepay). This is the
    *  only client-side signal that payment gates the kitchen. */
@@ -147,15 +152,23 @@ export class StatusPageComponent implements OnInit, OnDestroy {
     }
   });
 
+  /** Vibration is only permitted once the user has gestured on the frame;
+   *  calling earlier logs a Chrome intervention. */
+  private canVibrate(): boolean {
+    return this.hasUserGesture &&
+      typeof navigator !== 'undefined' &&
+      'vibrate' in navigator;
+  }
+
   private startPickupAlarm() {
     this.stopPickupAlarm();
     // Beep every ~1.5s while waiting, plus vibration pulse on mobile.
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    if (this.canVibrate()) {
       navigator.vibrate?.(300);
     }
     this.playPickupBeep();
     this.pickupTimer = setInterval(() => {
-      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      if (this.canVibrate()) {
         navigator.vibrate?.([80, 60, 80]);
       }
       this.playPickupBeep();
@@ -167,7 +180,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
       clearInterval(this.pickupTimer);
       this.pickupTimer = undefined;
     }
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    if (this.canVibrate()) {
       navigator.vibrate?.(0);
     }
   }
@@ -501,6 +514,15 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
+    const markGesture = () => { this.hasUserGesture = true; };
+    const gestureCleanup = () => {
+      window.removeEventListener('pointerdown', markGesture);
+      window.removeEventListener('keydown', markGesture);
+    };
+    window.addEventListener('pointerdown', markGesture, { once: true });
+    window.addEventListener('keydown', markGesture, { once: true });
+    this.gestureCleanup = gestureCleanup;
+
     const codeParam = this.route.snapshot.paramMap.get('code');
     const tabId = this.cartService.tabId();
     const trackingCode = this.cartService.trackingCode();
@@ -539,6 +561,7 @@ export class StatusPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.gestureCleanup) this.gestureCleanup();
     this.stopPolling();
     this.pickupWatcherEffect.destroy();
     this.servedWatcher.destroy();
