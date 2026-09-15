@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { Branch, CreateBranchRequest, DashboardStats, BusinessKPIs, BranchKPI } from '@serveiq/shared/models';
+import { snakeToCamel, camelToSnake, Branch, CreateBranchRequest, DashboardStats, BusinessKPIs, BranchKPI } from '@serveiq/shared/models';
 
 export interface PlatformPaymentProviderSummary {
   name: string;
@@ -54,27 +55,37 @@ export class BranchesApiService extends BaseApiService {
 
   /** List all branches for the authenticated business. */
   list(): Observable<Branch[]> {
-    return this.get<Branch[]>(API_CONFIG.endpoints.branches.list);
+    return this.get<Branch[]>(API_CONFIG.endpoints.branches.list).pipe(
+      map((branches) => (Array.isArray(branches) ? branches.map((b) => this.toBranch(b)) : branches)),
+    );
   }
 
   /** Get a single branch by ID. */
   getById(id: string): Observable<Branch> {
-    return this.get<Branch>(buildUrl(API_CONFIG.endpoints.branches.get, { id }));
+    return this.get<Branch>(buildUrl(API_CONFIG.endpoints.branches.get, { id })).pipe(
+      map((b) => this.toBranch(b)),
+    );
   }
 
   /** Create a new branch. */
   create(data: CreateBranchRequest): Observable<Branch> {
-    return this.post<Branch>(API_CONFIG.endpoints.branches.create, data);
+    return this.post<Branch>(API_CONFIG.endpoints.branches.create, data).pipe(
+      map((b) => this.toBranch(b)),
+    );
   }
 
   /** Update an existing branch. */
   update(id: string, data: Partial<CreateBranchRequest>): Observable<Branch> {
-    return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }), data);
+    return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }), data).pipe(
+      map((b) => this.toBranch(b)),
+    );
   }
 
   /** Update branch settings (payment provider, webhook keys, takeaway policy, delivery). */
   updateSettings(id: string, data: UpdateBranchSettings): Observable<Branch> {
-    return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }) + '/settings', data);
+    return this.patch<Branch>(buildUrl(API_CONFIG.endpoints.branches.update, { id }) + '/settings', data).pipe(
+      map((b) => this.toBranch(b)),
+    );
   }
 
   /** Get per-branch feature flags (e.g. { kds_enabled: true }). */
@@ -119,5 +130,23 @@ export class BranchesApiService extends BaseApiService {
   generateQrCode(id: string): Observable<Blob> {
     const url = `${this.apiUrl}${buildUrl(API_CONFIG.endpoints.branches.generateQr, { id })}`;
     return this.http.post(url, {}, { responseType: 'blob' });
+  }
+
+  /** Branch.settings is a free-form JSON blob stored in snake_case (payment
+   *  providers, webhook secrets, delivery, reservations, feature flags…). The
+   *  generic snakeToCamel response transform rewrites those nested keys, which
+   *  makes saved settings look lost after a reload. Restore the settings
+   *  subtree to snake_case so consumers can read settings.* as the API stores it. */
+  private toBranch<T extends { settings?: unknown }>(data: unknown): T {
+    const branch = snakeToCamel<T>(data);
+    if (
+      branch &&
+      typeof branch === 'object' &&
+      branch.settings &&
+      typeof branch.settings === 'object'
+    ) {
+      branch.settings = camelToSnake(branch.settings);
+    }
+    return branch;
   }
 }
