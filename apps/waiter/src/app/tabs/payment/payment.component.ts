@@ -4,12 +4,20 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { TabsApiService, TablesApiService, PosApiService, OfflineCacheService } from '@serveiq/shared/data-access';
+import {
+  TabsApiService,
+  TablesApiService,
+  PosApiService,
+  OfflineCacheService,
+  MoniepointErpApiService,
+  MoniepointErpPush,
+} from '@serveiq/shared/data-access';
 import { Bill, Tab, Table } from '@serveiq/shared/models';
 import Swal from 'sweetalert2';
 import { CurrencyContextService } from '../../services/currency-context.service';
 import { OfflineDataService } from '../../services/offline-data.service';
-import { interval, Subscription, switchMap, map } from 'rxjs';
+import { interval, Subscription, switchMap, map, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-payment',
@@ -27,6 +35,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   private tableService = inject(TablesApiService);
   private http = inject(HttpClient);
   private posApi = inject(PosApiService);
+  private erp = inject(MoniepointErpApiService);
   private currency = inject(CurrencyContextService);
   private offlineData = inject(OfflineDataService);
   private cache = inject(OfflineCacheService);
@@ -59,8 +68,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
     if (!id) return '';
     return this.terminals().find(t => t.id === id)?.label ?? '';
   });
+  pushStatus = signal('');
 
   private pollSubscription?: Subscription;
+  private pushPollSubscription?: Subscription;
+  private pushPollCount = 0;
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -171,6 +183,13 @@ export class PaymentComponent implements OnInit, OnDestroy {
   private stopPaymentPolling() {
     this.pollSubscription?.unsubscribe();
     this.pollSubscription = undefined;
+    this.stopPushPolling();
+  }
+
+  private stopPushPolling() {
+    this.pushPollSubscription?.unsubscribe();
+    this.pushPollSubscription = undefined;
+    this.pushPollCount = 0;
   }
 
   get totalDueNaira(): string {
@@ -279,29 +298,170 @@ export class PaymentComponent implements OnInit, OnDestroy {
       const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
       const apiMethod = this.selectedMethod === 'ussd' ? 'transfer' : this.selectedMethod;
 
-      this.offlineData.recordPayment(this.tabId(), {
-        amount,
-        method: apiMethod,
-        terminal_id: this.selectedMethod !== 'cash' ? this.selectedTerminalId() : undefined,
-      }).then(() => {
-        this.isProcessing.set(false);
-        this.isSuccess.set(true);
+      if (this.selectedMethod !== 'cash') {
+        const terminal = this.terminals().find(t => t.id === this.selectedTerminalId());
+        const serial = terminal?.serialNumber ?? '';
+        if (serial) {
+          this.settleViaTerminal(terminal, serial, amount, apiMethod);
+          return;
+        }
+      }
+
+      // No terminal serial (or cash) — fall back to the legacy manual record.
+      this.recordPaymentLegacy(amount, apiMethod, this.selectedTerminalId());
+    });
+  }
+
+  /**
+   * Push a payment request to the physical POS terminal via the branch
+   * Moniepoint ERP credential. The guest completes the transaction at the
+   * terminal; the Moniepoint webhook then settles the bill (matched by the
+   * bill payment reference), surfacing as `paidAt` via normal bill polling.
+   */
+  private settleViaTerminal(terminal: any, serial: string, amount: number, apiMethod: string) {
+    this.pushStatus.set('sending');
+    this.erp.push({
+      terminalSerial: serial,
+      amount,
+      billId: this.tabId(),
+      paymentMethod: apiMethod === 'transfer' ? 'POS_TRANSFER' : 'CARD_PURCHASE',
+    }).subscribe({
+      next: () => {
+        this.pushStatus.set('pending');
         this.startPaymentPolling(this.tabId());
-        setTimeout(() => this.router.navigate(['/tabs/payment-success', this.tabId()], {
-          state: {
-            terminalLabel: this.selectedTerminalLabel(),
-            showConfetti: true,
-          }
-        }), 1000);
-      }).catch(() => {
+        this.startPushPolling(this.tabId());
+      },
+      error: (err) => {
         this.isProcessing.set(false);
-        Swal.fire({ icon: 'error', title: 'Payment Failed', text: 'Could not process payment. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
-      });
+        this.pushStatus.set('');
+        const message = err?.serverMessage || err?.message || 'Could not send the payment request to the terminal.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Terminal Push Failed',
+          text: `${message}\n\nYou can still record the payment manually.`,
+          confirmButtonText: 'Record Manually',
+          showCancelButton: true,
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#f97316',
+          cancelButtonColor: '#6b7280',
+          background: '#1e293b',
+          color: '#fff',
+        }).then(r => {
+          if (r.isConfirmed) this.recordPaymentLegacy(amount, apiMethod, terminal?.id);
+        });
+      }
+    });
+  }
+
+  /** Watch the push + the linked bill until the terminal settles it. */
+  private startPushPolling(tabId: string) {
+    this.stopPushPolling();
+    this.pushPollSubscription = interval(3000).pipe(
+      switchMap(() => this.erp.listPushes({ billId: tabId }).pipe(
+        catchError(() => of({ pushes: [] as MoniepointErpPush[] }))
+      ))
+    ).subscribe({
+      next: (res) => {
+        const push = (res.pushes ?? [])[0];
+        if (!push) return;
+        this.pushStatus.set(push.status);
+        if (push.status === 'paid' || push.settled) {
+          this.stopPushPolling();
+          return; // bill polling will navigate once paidAt is set
+        }
+        if (push.status === 'declined' || push.status === 'expired' || push.status === 'cancelled') {
+          this.stopPushPolling();
+          this.isProcessing.set(false);
+          this.pushStatus.set('');
+          Swal.fire({
+            icon: 'error',
+            title: `Payment ${push.status.charAt(0).toUpperCase() + push.status.slice(1)}`,
+            text: push.error || 'The terminal did not complete the payment. Ask the guest to try again or record manually.',
+            confirmButtonText: 'Record Manually',
+            showCancelButton: true,
+            cancelButtonText: 'Keep Waiting',
+            confirmButtonColor: '#f97316',
+            cancelButtonColor: '#6b7280',
+            background: '#1e293b',
+            color: '#fff',
+          }).then(r => {
+            if (r.isConfirmed) {
+              const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
+              const terminal = this.terminals().find(t => t.id === this.selectedTerminalId());
+              this.recordPaymentLegacy(
+                amount,
+                this.selectedMethod === 'ussd' ? 'transfer' : this.selectedMethod,
+                terminal?.id
+              );
+            }
+          });
+          return;
+        }
+        // Still pending — give up after ~3 minutes and surface a manual option.
+        this.pushPollCount++;
+        if (this.pushPollCount > 60) {
+          this.stopPushPolling();
+          this.isProcessing.set(false);
+          this.pushStatus.set('');
+          Swal.fire({
+            icon: 'warning',
+            title: 'Still Waiting for Terminal',
+            text: 'The push is pending but the terminal has not completed the payment. Record it manually?',
+            confirmButtonText: 'Record Manually',
+            showCancelButton: true,
+            cancelButtonText: 'Keep Waiting',
+            confirmButtonColor: '#f97316',
+            cancelButtonColor: '#6b7280',
+            background: '#1e293b',
+            color: '#fff',
+          }).then(r => {
+            if (r.isConfirmed) {
+              const amount = Math.round(parseFloat(this.currentAmount().replace(/,/g, '')) * 100);
+              const terminal = this.terminals().find(t => t.id === this.selectedTerminalId());
+              this.recordPaymentLegacy(
+                amount,
+                this.selectedMethod === 'ussd' ? 'transfer' : this.selectedMethod,
+                terminal?.id
+              );
+            }
+          });
+        }
+      },
+      error: () => undefined,
+    });
+  }
+
+  /** Legacy path: marks the bill paid immediately via bills/tab/:id/pay. */
+  private recordPaymentLegacy(amount: number, apiMethod: string, terminalId?: string) {
+    this.isProcessing.set(true);
+    this.offlineData.recordPayment(this.tabId(), {
+      amount,
+      method: apiMethod,
+      terminal_id: terminalId || undefined,
+    }).then(() => {
+      this.isProcessing.set(false);
+      this.isSuccess.set(true);
+      this.pushStatus.set('');
+      this.startPaymentPolling(this.tabId());
+      setTimeout(() => this.router.navigate(['/tabs/payment-success', this.tabId()], {
+        state: {
+          terminalLabel: this.selectedTerminalLabel(),
+          showConfetti: true,
+        }
+      }), 1000);
+    }).catch(() => {
+      this.isProcessing.set(false);
+      this.pushStatus.set('');
+      Swal.fire({ icon: 'error', title: 'Payment Failed', text: 'Could not process payment. Please try again.', background: '#1e293b', color: '#fff', confirmButtonColor: '#f97316' });
     });
   }
 
   getButtonText(): string {
-    if (this.isProcessing()) return 'Processing...';
+    if (this.isProcessing()) {
+      if (this.pushStatus() === 'sending') return 'Sending to Terminal...';
+      if (this.pushStatus() === 'pending') return 'Waiting for Terminal Payment...';
+      return 'Processing...';
+    }
     if (this.isSuccess()) return this.isAutoConfirmed() ? 'Payment Auto-Confirmed' : 'Payment Successful ✓';
     return 'Confirm Payment';
   }

@@ -251,6 +251,12 @@ interface MobileTab {
                 <span>POS</span>
               </a>
             </li>
+            <li class="nav-item" *ngIf="permissionService.hasPermission('payment_gateway')">
+              <a class="nav-link" routerLink="/app/moniepoint-erp" routerLinkActive="active">
+                <span class="material-symbols-outlined">link</span>
+                <span>Moniepoint</span>
+              </a>
+            </li>
             <li class="nav-item" *ngIf="permissionService.hasPermission('view_billing') && profile().role !== 'super_admin'">
               <a class="nav-link" routerLink="/app/billing" routerLinkActive="active">
                 <span class="material-symbols-outlined">credit_card</span>

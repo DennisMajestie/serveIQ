@@ -240,6 +240,12 @@ export const API_CONFIG = {
       update: '/api/v1/pos/terminals/:id',
       delete: '/api/v1/pos/terminals/:id',
     },
+    // Moniepoint ERP (Channel push-payment)
+    moniepointErp: {
+      credential: '/api/v1/moniepoint/erp/credential',
+      push: '/api/v1/moniepoint/erp/push',
+      pushes: '/api/v1/moniepoint/erp/pushes',
+    },
     // Subscriptions
     subscriptions: {
       current: '/api/v1/subscriptions/current',

@@ -14,6 +14,7 @@
       <thead>
         <tr>
           <th>Label</th>
+          <th>Serial Number</th>
           <th>Account Number</th>
           <th>Status</th>
           <th style="width:140px;">Actions</th>
@@ -32,6 +33,9 @@
               </div>
               <span>{{ terminal.label }}</span>
             </div>
+          </td>
+          <td data-label="Serial Number">
+            <span class="mono">{{ terminal.serialNumber || '—' }}</span>
           </td>
           <td data-label="Account Number">
             <span class="mono">{{ terminal.accountNumber || '—' }}</span>
@@ -88,6 +92,11 @@
       <div class="form-group">
         <label>LABEL</label>
         <input type="text" [(ngModel)]="formLabel" placeholder="e.g. POS 1">
+      </div>
+      <div class="form-group">
+        <label>SERIAL NUMBER</label>
+        <input type="text" [(ngModel)]="formSerial" placeholder="e.g. P260xyz (Moniepoint terminal serial)">
+        <small class="field-hint">Required for push-to-terminal payments on the Moniepoint ERP channel.</small>
       </div>
       <div class="form-group">
         <label>ACCOUNT NUMBER</label>

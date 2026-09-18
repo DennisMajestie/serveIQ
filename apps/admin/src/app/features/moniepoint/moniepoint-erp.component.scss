@@ -1,0 +1,83 @@
+.card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.card-subtitle {
+  margin: 4px 0 0;
+  color: var(--on-surface-variant);
+  font-size: 14px;
+}
+
+.credential-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.credential-meta {
+  margin-left: 12px;
+  color: var(--on-surface-variant);
+  font-size: 13px;
+}
+
+.credential-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.env-pill {
+  margin-left: 8px;
+  background: rgba(5, 102, 217, 0.15);
+  color: #0566d9;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.status-pill.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.status-pill.declined {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.history-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-controls select,
+.env-select {
+  padding: 8px 12px;
+  border: 1px solid var(--outline-variant);
+  border-radius: 8px;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--on-surface-variant);
+  font-size: 12px;
+}

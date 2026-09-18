@@ -198,6 +198,11 @@ export const appRoutes: Route[] = [
             loadComponent: () => import('./features/pos/pos-management.component').then(m => m.PosManagementComponent)
           },
           {
+            path: 'moniepoint-erp',
+            canActivate: [permissionGuard('payment_gateway')],
+            loadComponent: () => import('./features/moniepoint/moniepoint-erp.component').then(m => m.MoniepointErpComponent)
+          },
+          {
             path: 'reports',
             canActivate: [permissionGuard('view_reports')],
             loadComponent: () => import('./reports/reports.component').then(m => m.ReportsComponent)

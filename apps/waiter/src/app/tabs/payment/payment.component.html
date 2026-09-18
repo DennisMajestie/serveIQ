@@ -123,6 +123,12 @@
               {{ selectedTerminalLabel() }}
             </p>
           }
+          @if (pushStatus() === 'pending') {
+            <p class="mt-2 text-[13px] leading-none font-medium text-amber-300 flex items-center gap-1" style="font-family:'Inter',sans-serif">
+              <span class="material-symbols-outlined text-[18px] animate-spin">sync</span>
+              Waiting for the guest to complete the payment at the terminal…
+            </p>
+          }
         </section>
       }
 
@@ -200,7 +206,7 @@
           }
           @if (isProcessing()) {
             <span class="material-symbols-outlined animate-spin">sync</span>
-            <span>Processing...</span>
+            <span>{{ pushStatus() === 'sending' ? 'Sending to Terminal...' : pushStatus() === 'pending' ? 'Waiting for Terminal Payment...' : 'Processing...' }}</span>
           }
           @if (isSuccess()) {
             <span class="material-symbols-outlined">task_alt</span>

@@ -1,0 +1,123 @@
+<div class="page-container">
+  <div class="section-header">
+    <div>
+      <h2>Moniepoint ERP</h2>
+      <p>Push-to-terminal payments for this branch. When the guest taps or enters their card at the POS terminal, the bill is settled automatically.</p>
+    </div>
+    <button class="btn-primary" *ngIf="!enrolled() && !showEnrollForm()" (click)="openEnrollForm()">+ Enroll Credential</button>
+  </div>
+
+  <div class="loading-spinner" *ngIf="isLoading()">Loading credential status...</div>
+
+  <!-- Enroll form -->
+  <ng-container *ngIf="!isLoading() && !enrolled()">
+    <div class="card" *ngIf="showEnrollForm()">
+      <h3 class="card-title">Enroll Moniepoint Credential</h3>
+      <p class="card-subtitle">Use the client ID and client secret from the Moniepoint ERP Integration console. Secrets are encrypted and never shown again.</p>
+      <div class="form-group">
+        <label>CLIENT ID</label>
+        <input type="text" [(ngModel)]="formClientId" placeholder="e.g. api-client-19011590-xxxx">
+      </div>
+      <div class="form-group">
+        <label>CLIENT SECRET</label>
+        <input type="password" [(ngModel)]="formClientSecret" placeholder="Paste your client secret">
+      </div>
+      <div class="form-group">
+        <label>ENVIRONMENT</label>
+        <select [(ngModel)]="formEnvironment">
+          <option *ngFor="let env of envOptions" [ngValue]="env">{{ env }}</option>
+        </select>
+        <small class="field-hint">Start with SANDBOX for testing. Switch to PROD after verifying a live push.</small>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeEnrollForm()" [disabled]="saving()">Cancel</button>
+        <button class="btn-primary" (click)="enroll()" [disabled]="saving() || !formClientId() || !formClientSecret()">
+          {{ saving() ? 'Enrolling...' : 'Enroll Credential' }}
+        </button>
+      </div>
+    </div>
+    <div class="empty-state" *ngIf="!showEnrollForm()">
+      <span class="material-symbols-outlined" style="font-size:48px;color:#d1d5db;">link_off</span>
+      <p>No Moniepoint ERP credential enrolled for this branch.</p>
+      <button class="btn-primary" style="margin-top:12px;" (click)="openEnrollForm()">+ Enroll Credential</button>
+    </div>
+  </ng-container>
+
+  <!-- Enrolled status -->
+  <ng-container *ngIf="!isLoading() && enrolled()">
+    <div class="card">
+      <div class="credential-row">
+        <div>
+          <h3 class="card-title">Credential Status</h3>
+          <p class="card-subtitle">
+            <span class="status-pill" [class.active]="credential()!.isActive" [class.inactive]="!credential()!.isActive">
+              {{ credential()!.isActive ? 'Active' : 'Inactive' }}
+            </span>
+            <span class="status-pill env-pill">{{ credential()!.environment }}</span>
+            <span class="credential-meta">Enrolled {{ formatDate(credential()!.createdAt) }}</span>
+          </p>
+        </div>
+        <div class="credential-actions">
+          <button class="btn-secondary" (click)="rotateSecret()">Rotate Secret</button>
+          <button class="btn-secondary" (click)="toggleActive()">
+            {{ credential()!.isActive ? 'Deactivate' : 'Activate' }}
+          </button>
+          <select class="env-select" [ngModel]="credential()!.environment" (ngModelChange)="setEnvironment($event)">
+            <option *ngFor="let env of envOptions" [ngValue]="env">{{ env }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Push history -->
+  <div class="card table-card" style="margin-top:24px;">
+    <div class="history-header">
+      <h3 class="card-title">Push History</h3>
+      <div class="history-controls">
+        <select [(ngModel)]="statusFilter" (ngModelChange)="loadPushes()">
+          <option value="">All statuses</option>
+          <option *ngFor="let s of statusOptions" [ngValue]="s">{{ s || 'All statuses' }}</option>
+        </select>
+        <button class="btn-secondary" (click)="loadPushes()" [disabled]="pushesLoading()">
+          Refresh
+        </button>
+      </div>
+    </div>
+    <div class="loading-spinner" *ngIf="pushesLoading()">Loading pushes...</div>
+    <table class="data-table" *ngIf="!pushesLoading() && pushes().length > 0">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Amount</th>
+          <th>Terminal</th>
+          <th>Status</th>
+          <th>Settled</th>
+          <th>Pushed At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let push of pushes()">
+          <td><span class="mono">{{ push.merchantReference }}</span></td>
+          <td><span class="mono">₦{{ formatAmountKobo(push.amountKobo) }}</span></td>
+          <td><span class="mono">{{ push.terminalSerial }}</span></td>
+          <td>
+            <span class="status-pill" [class]="statusClass(push.status)">
+              {{ push.status }}
+            </span>
+          </td>
+          <td>
+            <span *ngIf="push.settled === undefined">—</span>
+            <span class="status-pill" [class.active]="push.settled" [class.inactive]="!push.settled" *ngIf="push.settled !== undefined">
+              {{ push.settled ? 'Yes' : 'No' }}
+            </span>
+          </td>
+          <td>{{ formatDate(push.pushedAt) }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty-state" *ngIf="!pushesLoading() && pushes().length === 0">
+      <p>No pushes yet.</p>
+    </div>
+  </div>
+</div>
