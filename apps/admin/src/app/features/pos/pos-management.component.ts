@@ -11,7 +11,6 @@ import {
   BranchesApiService,
   PlatformPaymentProviderSummary,
 } from '@serveiq/shared/data-access';
-import { PermissionService } from '../../core/permission.service';
 import Swal from 'sweetalert2';
 
 interface PosTerminal {
@@ -48,42 +47,18 @@ export class PosManagementComponent implements OnInit {
   private posApi = inject(PosApiService);
   private erp = inject(MoniepointErpApiService);
   private branchesApi = inject(BranchesApiService);
-  private permService = inject(PermissionService);
 
   // ─────────────────────────────────────────────────────────────
   // SIDEBAR / NAVIGATION
   // ─────────────────────────────────────────────────────────────
   activeSection = signal<PosSection>('terminals');
-  readonly showMoniepoint = computed(() =>
-    this.permService.hasPermission('payment_gateway')
-  );
   readonly navItems = computed<
     { key: PosSection; label: string; icon: string }[]
-  >(() => {
-    const items: { key: PosSection; label: string; icon: string }[] = [
-      { key: 'terminals', label: 'POS Terminals', icon: 'point_of_sale' },
-    ];
-    if (this.showMoniepoint()) {
-      items.push({
-        key: 'moniepoint',
-        label: 'Moniepoint ERP',
-        icon: 'account_balance_wallet',
-      });
-    }
-    items.push(
-      {
-        key: 'payment-webhooks',
-        label: 'Payment & Webhooks',
-        icon: 'sync_alt',
-      },
-      {
-        key: 'takeaway-policy',
-        label: 'Takeaway Policy',
-        icon: 'restaurant',
-      }
-    );
-    return items;
-  });
+  >(() => [
+    { key: 'terminals', label: 'POS Terminals', icon: 'point_of_sale' },
+    { key: 'payment-webhooks', label: 'Payment & Webhooks', icon: 'sync_alt' },
+    { key: 'takeaway-policy', label: 'Takeaway Policy', icon: 'restaurant' },
+  ]);
   setActiveSection(section: PosSection) {
     this.activeSection.set(section);
   }
