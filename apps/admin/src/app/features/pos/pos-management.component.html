@@ -1,83 +1,423 @@
-<div class="page-container">
-  <div class="section-header">
-    <div>
-      <h2>POS Terminals</h2>
-      <p>Manage point-of-sale devices connected to this branch.</p>
+<div class="page-shell">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1 class="sidebar-title">POS</h1>
+      <p class="sidebar-subtitle">Payments &amp; Terminals</p>
     </div>
-    <button class="btn-primary" (click)="openAddModal()">+ Add POS</button>
-  </div>
+    <nav class="sidebar-nav">
+      @for (item of navItems(); track item.key) {
+        <button
+          (click)="setActiveSection(item.key)"
+          class="nav-btn"
+          [class.nav-btn-active]="activeSection() === item.key"
+        >
+          <span class="material-symbols-outlined nav-icon">{{ item.icon }}</span>
+          <span class="nav-label">{{ item.label }}</span>
+        </button>
+      }
+    </nav>
+  </aside>
 
-  <div class="loading-spinner" *ngIf="isLoading()">Loading terminals...</div>
+  <main class="main-panel">
+    <!-- Section Header (dynamic) -->
+    <div class="section-header">
+      <div>
+        @if (activeSection() === 'terminals') {
+          <h2>POS Terminals</h2>
+          <p>Manage point-of-sale devices connected to this branch.</p>
+        }
+        @else if (activeSection() === 'moniepoint') {
+          <h2>Moniepoint ERP</h2>
+          <p>Push-to-terminal payments for this branch. When the guest taps or enters their card at the POS terminal, the bill is settled automatically.</p>
+        }
+        @else if (activeSection() === 'payment-webhooks') {
+          <h2>Payment &amp; Webhooks</h2>
+          <p>Configure how payments are confirmed for this branch. Manual requires staff to confirm on the waiter app. Webhook providers auto-confirm when the customer completes payment.</p>
+        }
+        @else if (activeSection() === 'takeaway-policy') {
+          <h2>Takeaway Policy</h2>
+          <p>Control whether takeaway orders are held until payment or sent to the kitchen immediately.</p>
+        }
+      </div>
+      <div class="section-header-actions">
+        @if (activeSection() === 'terminals') {
+          <button class="btn-primary" (click)="openAddModal()">+ Add POS</button>
+        }
+        @if (activeSection() === 'moniepoint' && enrolled() === false && showEnrollForm() === false) {
+          <button class="btn-primary" (click)="openEnrollForm()">+ Enroll Credential</button>
+        }
+      </div>
+    </div>
 
-  <div class="card table-card" *ngIf="!isLoading() && terminals().length > 0; else emptyState">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Label</th>
-          <th>Serial Number</th>
-          <th>Account Number</th>
-          <th>Status</th>
-          <th style="width:140px;">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let terminal of terminals()">
-          <td>
-            <div class="cell-label">
-              <div class="icon-circle">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                  <line x1="8" y1="21" x2="16" y2="21"/>
-                  <line x1="12" y1="17" x2="12" y2="21"/>
-                </svg>
+    <!-- SECTION 1: POS TERMINALS -->
+    @if (activeSection() === 'terminals') {
+      <div class="loading-spinner" *ngIf="isLoading()">Loading terminals...</div>
+
+      <div class="card table-card" *ngIf="!isLoading() && terminals().length > 0; else emptyTerminals">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Serial Number</th>
+              <th>Account Number</th>
+              <th>Status</th>
+              <th style="width:140px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let terminal of terminals()">
+              <td>
+                <div class="cell-label">
+                  <div class="icon-circle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                      <line x1="8" y1="21" x2="16" y2="21"/>
+                      <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                  </div>
+                  <span>{{ terminal.label }}</span>
+                </div>
+              </td>
+              <td data-label="Serial Number">
+                <span class="mono">{{ terminal.serialNumber || '—' }}</span>
+              </td>
+              <td data-label="Account Number">
+                <span class="mono">{{ terminal.accountNumber || '—' }}</span>
+              </td>
+              <td data-label="Status">
+                <span class="status-pill" [class.active]="terminal.isActive" [class.inactive]="!terminal.isActive">
+                  {{ terminal.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td data-label="Actions">
+                <div class="action-buttons">
+                  <button class="btn-icon" (click)="editTerminal(terminal)" title="Edit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 3a2.828 2.828 1 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                    </svg>
+                  </button>
+                  <button class="btn-icon btn-icon-danger" (click)="deleteTerminal(terminal.id)" title="Delete">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #emptyTerminals>
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;color:#d1d5db;">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <p>No POS terminals yet.</p>
+        </div>
+      </ng-template>
+    }
+
+    <!-- SECTION 2: MONIEPOINT ERP -->
+    @if (activeSection() === 'moniepoint') {
+      <div class="loading-spinner" *ngIf="monieLoading()">Loading credential status...</div>
+
+      <ng-container *ngIf="!monieLoading() && !enrolled()">
+        <div class="card" *ngIf="showEnrollForm()">
+          <h3 class="card-title">Enroll Moniepoint Credential</h3>
+          <p class="card-subtitle">Use the client ID and client secret from the Moniepoint ERP Integration console. Secrets are encrypted and never shown again.</p>
+          <div class="form-group">
+            <label>CLIENT ID</label>
+            <input type="text" [ngModel]="formClientId()" (ngModelChange)="formClientId.set($event)" placeholder="e.g. api-client-19011590-xxxx">
+          </div>
+          <div class="form-group">
+            <label>CLIENT SECRET</label>
+            <input type="password" [ngModel]="formClientSecret()" (ngModelChange)="formClientSecret.set($event)" placeholder="Paste your client secret">
+          </div>
+          <div class="form-group">
+            <label>ENVIRONMENT</label>
+            <select [ngModel]="formEnvironment()" (ngModelChange)="formEnvironment.set($event)">
+              <option *ngFor="let env of envOptions" [ngValue]="env">{{ env }}</option>
+            </select>
+            <small class="field-hint">Start with SANDBOX for testing. Switch to PROD after verifying a live push.</small>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary" (click)="closeEnrollForm()" [disabled]="mpSaving()">Cancel</button>
+            <button class="btn-primary" (click)="enroll()" [disabled]="mpSaving() || !formClientId() || !formClientSecret()">
+              {{ mpSaving() ? 'Enrolling...' : 'Enroll Credential' }}
+            </button>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="!showEnrollForm()">
+          <span class="material-symbols-outlined" style="font-size:48px;color:var(--outline)">link_off</span>
+          <p>No Moniepoint ERP credential enrolled for this branch.</p>
+          <button class="btn-primary" (click)="openEnrollForm()">+ Enroll Credential</button>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!monieLoading() && enrolled()">
+        <div class="card">
+          <div class="credential-row">
+            <div>
+              <h3 class="card-title">Credential Status</h3>
+              <p class="card-subtitle">
+                <span class="status-pill" [class.active]="credential()!.isActive" [class.inactive]="!credential()!.isActive">
+                  {{ credential()!.isActive ? 'Active' : 'Inactive' }}
+                </span>
+                <span class="status-pill env-pill">{{ credential()!.environment }}</span>
+                <span class="credential-meta">Enrolled {{ formatDate(credential()!.createdAt) }}</span>
+              </p>
+            </div>
+            <div class="credential-actions">
+              <button class="btn-secondary" (click)="rotateSecret()">Rotate Secret</button>
+              <button class="btn-secondary" (click)="toggleMpActive()">
+                {{ credential()!.isActive ? 'Deactivate' : 'Activate' }}
+              </button>
+              <select class="env-select" [ngModel]="credential()!.environment" (ngModelChange)="setEnvironment($event)">
+                <option *ngFor="let env of envOptions" [ngValue]="env">{{ env }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="card table-card">
+        <div class="history-header">
+          <h3 class="card-title">Push History</h3>
+          <div class="history-controls">
+            <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); loadPushes()">
+              <option value="">All statuses</option>
+              <option *ngFor="let s of statusOptions" [ngValue]="s">{{ s || 'All statuses' }}</option>
+            </select>
+            <button class="btn-secondary" (click)="loadPushes()" [disabled]="pushesLoading()">
+              Refresh
+            </button>
+          </div>
+        </div>
+        <div class="loading-spinner" *ngIf="pushesLoading()">Loading pushes...</div>
+        <table class="data-table" *ngIf="!pushesLoading() && pushes().length > 0">
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Amount</th>
+              <th>Terminal</th>
+              <th>Status</th>
+              <th>Settled</th>
+              <th>Pushed At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let push of pushes()">
+              <td data-label="Reference"><span class="mono">{{ push.merchantReference }}</span></td>
+              <td data-label="Amount"><span class="mono">₦{{ formatAmountKobo(push.amountKobo) }}</span></td>
+              <td data-label="Terminal"><span class="mono">{{ push.terminalSerial }}</span></td>
+              <td data-label="Status">
+                <span class="status-pill" [class]="statusClass(push.status)">
+                  {{ push.status }}
+                </span>
+              </td>
+              <td data-label="Settled">
+                <span *ngIf="push.settled === undefined">—</span>
+                <span class="status-pill" [class.active]="push.settled" [class.inactive]="!push.settled" *ngIf="push.settled !== undefined">
+                  {{ push.settled ? 'Yes' : 'No' }}
+                </span>
+              </td>
+              <td data-label="Pushed At">{{ formatDate(push.pushedAt) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty-state" *ngIf="!pushesLoading() && pushes().length === 0">
+          <span class="material-symbols-outlined" style="font-size:40px;color:var(--outline)">receipt_long</span>
+          <p>No pushes yet.</p>
+        </div>
+      </div>
+    }
+
+    <!-- SECTION 3: PAYMENT & WEBHOOKS -->
+    @if (activeSection() === 'payment-webhooks') {
+      <div class="space-y-6">
+        <!-- Branch picker (multi-branch) -->
+        @if (branches().length > 1) {
+          <div class="card">
+            <div class="flex-row-space">
+              <div>
+                <h3 class="card-title">Active Branch</h3>
+                <p class="card-subtitle">Payment &amp; webhook settings are per-branch. Select the branch you're configuring.</p>
               </div>
-              <span>{{ terminal.label }}</span>
+              <select class="form-select-inline" [ngModel]="activeBranchId()" (ngModelChange)="setActiveBranchId($event)">
+                <option value="" class="bg-[var(--background)]">All Branches</option>
+                @for (b of branches(); track b.id) {
+                  <option [value]="b.id">{{ b.name }}</option>
+                }
+              </select>
             </div>
-          </td>
-          <td data-label="Serial Number">
-            <span class="mono">{{ terminal.serialNumber || '—' }}</span>
-          </td>
-          <td data-label="Account Number">
-            <span class="mono">{{ terminal.accountNumber || '—' }}</span>
-          </td>
-          <td data-label="Status">
-            <span class="status-pill" [class.active]="terminal.isActive" [class.inactive]="!terminal.isActive">
-              {{ terminal.isActive ? 'Active' : 'Inactive' }}
-            </span>
-          </td>
-          <td data-label="Actions">
-            <div class="action-buttons">
-              <button class="btn-icon" (click)="editTerminal(terminal)" title="Edit">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-                </svg>
-              </button>
-              <button class="btn-icon btn-icon-danger" (click)="deleteTerminal(terminal.id)" title="Delete">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6"/>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                </svg>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+          </div>
+        }
 
-  <ng-template #emptyState>
-    <div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;color:#d1d5db;">
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-        <line x1="8" y1="21" x2="16" y2="21"/>
-        <line x1="12" y1="17" x2="12" y2="21"/>
-      </svg>
-      <p>No POS terminals yet.</p>
-    </div>
-  </ng-template>
+        <div class="card">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="card-title">
+              <span class="material-symbols-outlined section-icon text-primary">payment</span>
+              Payment Providers
+            </h3>
+          </div>
+          <p class="card-subtitle mb-6">Configure how payments are confirmed for this branch. Manual requires staff to confirm on the waiter app. Webhook providers auto-confirm when the customer completes payment.</p>
+
+          @if (isLoadingPlatform()) {
+            <p class="card-subtitle mb-6">Loading available payment providers…</p>
+          }
+
+          <div class="provider-list">
+            @for (provider of paymentProviders(); track provider.name) {
+              @let enabled = enabledProviders().includes(provider.name);
+              <div class="provider-card" [class.provider-card-enabled]="enabled">
+                <div class="provider-header">
+                  <div class="provider-name-row">
+                    <div class="provider-icon-wrap"
+                         [style.background]="enabled ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : 'color-mix(in srgb, var(--on-surface-variant) 10%, transparent)'">
+                      <span class="material-symbols-outlined provider-icon">{{ provider.type === 'webhook' ? 'sync' : 'manual' }}</span>
+                    </div>
+                    <div>
+                      <p class="provider-name">{{ provider.label }}</p>
+                      <p class="provider-meta">
+                        {{ provider.type === 'webhook' ? 'Webhook auto-confirm' : 'Manual confirmation' }}
+                        @if (provider.verification_method && provider.verification_method !== 'none') { · {{ provider.verification_method }} }
+                      </p>
+                    </div>
+                  </div>
+                  <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      class="h-5 w-5 accent-[var(--primary)] cursor-pointer"
+                      [checked]="enabled"
+                      [disabled]="provider.type === 'manual'"
+                      (change)="toggleProvider(provider.name, $event.target.checked)"
+                    />
+                    <span class="provider-toggle-label">{{ provider.type === 'manual' ? 'Always on' : 'Enabled' }}</span>
+                  </label>
+                </div>
+
+                @if (provider.type === 'webhook' && enabled) {
+                  <div class="provider-config-area">
+                    @if (provider.verification_method === 'hmac-sha512') {
+                      <div class="form-group">
+                        <label>Webhook Secret</label>
+                        <input type="text" [ngModel]="providerConfigValue(provider, 'webhook_secret')" (ngModelChange)="setProviderConfig(provider, 'webhook_secret', $event)" placeholder="whsec_...">
+                        <small class="field-hint">HMAC-SHA512 secret from your {{ provider.label }} dashboard. Used to verify webhook signatures.</small>
+                      </div>
+                    }
+                    @if (provider.verification_method === 'rsa') {
+                      <div class="form-group">
+                        <label>Public Key</label>
+                        <input type="text" [ngModel]="providerConfigValue(provider, 'public_key')" (ngModelChange)="setProviderConfig(provider, 'public_key', $event)" placeholder="-----BEGIN PUBLIC KEY-----">
+                        <small class="field-hint">RSA public key from your {{ provider.label }} dashboard. Used to verify webhook signatures.</small>
+                      </div>
+                    }
+                    <div class="form-group">
+                      <label>Transfer Account Number</label>
+                      <input type="text" [ngModel]="providerConfigValue(provider, 'account_number')" (ngModelChange)="setProviderConfig(provider, 'account_number', $event)" placeholder="e.g. 0123456789">
+                      <small class="field-hint">Account to show customers for bank transfers via {{ provider.label }}.</small>
+                    </div>
+                    @if (provider.verification_method === 'none' || !provider.verification_method) {
+                      <p class="card-subtitle">No signature verification configured for this provider.</p>
+                    }
+                  </div>
+                }
+              </div>
+            }
+            @if (!isLoadingPlatform() && platformProviders().length === 0) {
+              <p class="card-subtitle">No payment providers have been enabled yet by the platform admin. Contact your admin to activate providers.</p>
+            }
+          </div>
+
+          <!-- Readiness -->
+          <div class="readiness-panel"
+               [class.readiness-ready]="autoConfirmReady()">
+            <p class="readiness-title">
+              @if (enabledWebhookProviders().length === 0) {
+                <span class="material-symbols-outlined readiness-icon align-middle">handle</span> Manual confirmation
+              } @else if (autoConfirmReady()) {
+                <span class="material-symbols-outlined readiness-icon align-middle">verified</span> {{ enabledWebhookProviders().length }} provider(s) configured — payments auto-confirm
+              } @else {
+                <span class="material-symbols-outlined readiness-icon align-middle">warning</span> Enabled provider(s) not fully configured
+              }
+            </p>
+            <p class="card-subtitle mt-1">
+              @if (enabledWebhookProviders().length === 0) {
+                Staff confirm payments on the waiter side.
+              } @else if (autoConfirmReady()) {
+                Incoming transactions for each enabled provider are verified and confirmed by its own webhook.
+                @for (e of enabledTransferAccounts(); track e.label) { Transfer account — {{ e.label }}: <strong>{{ e.account }}</strong>. }
+              } @else {
+                Add the webhook secret (or public key) for every enabled provider below to enable auto-confirmation.
+              }
+            </p>
+          </div>
+        </div>
+
+        <button (click)="savePaymentSettings()" [disabled]="isSavingPayment()" class="btn-primary btn-lg">
+          {{ isSavingPayment() ? 'Saving...' : 'Save Payment Settings' }}
+        </button>
+      </div>
+    }
+
+    <!-- SECTION 4: TAKEAWAY POLICY -->
+    @if (activeSection() === 'takeaway-policy') {
+      <div class="space-y-6">
+        <!-- Branch picker (multi-branch) -->
+        @if (branches().length > 1) {
+          <div class="card">
+            <div class="flex-row-space">
+              <div>
+                <h3 class="card-title">Active Branch</h3>
+                <p class="card-subtitle">Takeaway policy is configured per-branch. Select the branch you're configuring.</p>
+              </div>
+              <select class="form-select-inline" [ngModel]="activeBranchId()" (ngModelChange)="setActiveBranchId($event)">
+                <option value="" class="bg-[var(--background)]">All Branches</option>
+                @for (b of branches(); track b.id) {
+                  <option [value]="b.id">{{ b.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        }
+
+        <div class="card">
+          <h3 class="card-title">
+            <span class="material-symbols-outlined section-icon text-primary">restaurant</span>
+            Takeaway Payment Policy
+          </h3>
+          <p class="card-subtitle mb-6">Control whether takeaway orders are held until payment or sent to the kitchen immediately.</p>
+          <div class="space-y-4">
+            <div class="form-group">
+              <label>TAKEAWAY PAYMENT POLICY</label>
+              <select [ngModel]="takeawayPolicy()" (ngModelChange)="takeawayPolicy.set($event)">
+                <option value="prepay">Prepay — hold order until customer pays</option>
+                <option value="pay_on_pickup">Pay on Pickup — send to kitchen immediately</option>
+              </select>
+            </div>
+            <p class="card-subtitle">
+              @if (takeawayPolicy() === 'prepay') {
+                Customers pay before their order reaches the kitchen. Held orders show "Awaiting payment" until confirmed.
+              } @else {
+                Orders go straight to the kitchen as soon as they're placed. Payment is collected at pickup.
+              }
+            </p>
+          </div>
+        </div>
+
+        <button (click)="savePaymentSettings()" [disabled]="isSavingPayment()" class="btn-primary btn-lg">
+          {{ isSavingPayment() ? 'Saving...' : 'Save Takeaway Policy' }}
+        </button>
+      </div>
+    }
+  </main>
 </div>
 
-<!-- Modal (outside page-container since it's fixed position) -->
+<!-- POS Add/Edit Modal -->
 <div class="modal-overlay" *ngIf="showModal()" (click)="showModal.set(false)">
   <div class="modal-panel" (click)="$event.stopPropagation()">
     <div class="modal-header">

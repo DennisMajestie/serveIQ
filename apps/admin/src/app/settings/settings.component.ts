@@ -1,22 +1,14 @@
-import { Component, signal, computed, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, DepartmentsApiService, ENVIRONMENT_CONFIG, EnvironmentConfig, PlatformPaymentProviderSummary } from '@serveiq/shared/data-access';
+import { BranchesApiService, AuthService, UserApiService, BusinessApiService, UploadApiService, DepartmentsApiService, ENVIRONMENT_CONFIG, EnvironmentConfig } from '@serveiq/shared/data-access';
 import { Branch, User, Business, COUNTRIES, getCountryByCode, getCountryByCurrency } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import Swal from 'sweetalert2';
 import { toDataURL } from '../../lib/qrcode/index';
 
-interface PaymentProviderConfig {
-  name: string;
-  type: 'manual' | 'webhook';
-  label: string;
-  verification_method?: 'hmac-sha512' | 'rsa' | 'none';
-  config: Record<string, string>;
-}
-
-type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification' | 'payment' | 'delivery' | 'reservations';
+type Section = 'branch-setup' | 'branding' | 'staff' | 'security' | 'verification' | 'delivery' | 'reservations';
 
 @Component({
   selector: 'app-settings',
@@ -46,7 +38,6 @@ export class SettingsComponent implements OnInit {
 
 navItems: { key: Section; label: string; icon: string }[] = [
     { key: 'branch-setup', label: 'Branch Setup', icon: 'settings' },
-    { key: 'payment', label: 'Payment & Webhooks', icon: 'payment' },
     { key: 'delivery', label: 'Delivery', icon: 'delivery_dining' },
     { key: 'reservations', label: 'Reservations', icon: 'event_available' },
     { key: 'branding', label: 'Branding', icon: 'palette' },
@@ -66,7 +57,6 @@ navItems: { key: Section; label: string; icon: string }[] = [
   branchFormPhone = signal('');
   branchFormLocation = signal('');
   isSavingBranch = signal(false);
-  isSavingPayment = signal(false);
   activeBranchId = signal(localStorage.getItem('activeBranchId') || '');
   businessSettings = signal<Business | null>(null);
 
@@ -78,71 +68,6 @@ navItems: { key: Section; label: string; icon: string }[] = [
   kdsDefaultDepartmentId = signal('');
   isKdsDeptSaving = signal(false);
 
-  // Payment settings
-  platformProviders = signal<PlatformPaymentProviderSummary[]>([]);
-  isLoadingPlatform = signal(false);
-  takeawayPolicy = signal<'prepay' | 'pay_on_pickup'>('prepay');
-  businessCode = signal('');
-  copiedCode = signal(false);
-
-  /** Providers the owner has selected (multi). 'manual' is always on and
-   *  represents "no webhook provider" — the fallback that staff confirm. */
-  enabledProviders = signal<string[]>(['manual']);
-  paymentProviders = signal<PaymentProviderConfig[]>([]);
-
-  /** Webhook providers currently enabled and saved with their secrets. */
-  readonly enabledWebhookProviders = computed(() =>
-    this.paymentProviders().filter(
-      (p) => p.type === 'webhook' && this.enabledProviders().includes(p.name),
-    ),
-  );
-
-  /** Whether every enabled webhook provider has its secret/key stored. */
-  readonly autoConfirmReady = computed(() =>
-    this.enabledWebhookProviders().every((p) => this.isProvConfigured(p)),
-  );
-
-  readonly enabledTransferAccounts = computed(() =>
-    this.enabledWebhookProviders()
-      .map((p) => ({ label: p.label, account: this.provAccount(p) }))
-      .filter((e) => !!e.account),
-  );
-
-  isProvConfigured(provider?: PaymentProviderConfig | null): boolean {
-    if (!provider) return false;
-    const config = provider.config || {};
-    if (provider.type === 'webhook') {
-      if (provider.verification_method === 'rsa') {
-        return !!(config['public_key'] || config['publicKey']);
-      }
-      return !!(config['webhook_secret'] || config['secret']);
-    }
-    return true;
-  }
-
-  provAccount(provider?: PaymentProviderConfig | null): string | null {
-    if (!provider) return null;
-    const config = provider.config || {};
-    return config['account_number'] || null;
-  }
-
-  toggleProvider(name: string, checked: boolean) {
-    const current = this.enabledProviders();
-    if (checked && !current.includes(name)) {
-      this.enabledProviders.set([...current, name]);
-    } else if (!checked) {
-      this.enabledProviders.set(current.filter((n) => n !== name));
-    }
-  }
-
-  providerConfigValue(provider: PaymentProviderConfig, key: string): string {
-    return provider.config[key] || '';
-  }
-
-  setProviderConfig(provider: PaymentProviderConfig, key: string, value: string) {
-    provider.config[key] = value;
-    this.paymentProviders.set([...this.paymentProviders()]);
-  }
   taxRate = signal<number | null>(null);
   vipSurchargePercent = signal<number | null>(null);
   serviceChargePercent = signal<number | null>(null);
@@ -251,7 +176,6 @@ navItems: { key: Section; label: string; icon: string }[] = [
       next: (b) => {
         this.branches.set(Array.isArray(b) ? b : []);
         this.isLoading.set(false);
-        if (this.branches().length) this.loadPaymentSettings();
       },
       error: () => this.isLoading.set(false)
     });
@@ -265,7 +189,6 @@ navItems: { key: Section; label: string; icon: string }[] = [
     this.businessApi.getBusiness().subscribe({
       next: (b) => {
         this.businessSettings.set(b);
-        this.businessCode.set(b.businessCode || '');
         this.taxRate.set(b.taxRate == null ? null : Number(b.taxRate));
         this.vipSurchargePercent.set(b.vipSurchargePercent == null ? null : Number(b.vipSurchargePercent));
         this.serviceChargePercent.set(b.serviceChargePercent == null ? null : Number(b.serviceChargePercent));
@@ -320,9 +243,6 @@ navItems: { key: Section; label: string; icon: string }[] = [
 
   setActiveSection(section: Section) {
     this.activeSection.set(section);
-    if (section === 'payment') {
-      this.loadPaymentSettings();
-    }
     if (section === 'delivery') {
       this.loadDeliverySettings();
     }
@@ -414,114 +334,6 @@ navItems: { key: Section; label: string; icon: string }[] = [
       error: () => {
         this.isSavingDelivery.set(false);
         Swal.fire({ icon: 'error', title: 'Failed to save delivery settings' });
-      }
-    });
-  }
-
-  loadPaymentSettings() {
-    const branchId = this.activeBranchId() || this.branches()[0]?.id || '';
-    if (!branchId) {
-      this.enabledProviders.set(['manual']);
-      return;
-    }
-    this.activeBranchId.set(branchId);
-    this.branchesApi.getById(branchId).subscribe({
-      next: (branch) => {
-        const settings = branch.settings || {};
-        this.takeawayPolicy.set(settings.takeaway_payment_policy || 'prepay');
-        const storedProviders: PaymentProviderConfig[] = Array.isArray(settings.payment_providers) ? settings.payment_providers : [];
-        const migrated = this.migrateLegacyEnabled(settings, storedProviders);
-        this.loadPlatformProviders(migrated);
-      },
-      error: () => undefined,
-    });
-  }
-
-  /** Builds the stored provider list, honoring the legacy single-select
-   *  `payment_provider` / `monniepoint_webhook_secret` fields if the new
-   *  `enabled_providers` array is not present yet. */
-  private migrateLegacyEnabled(
-    settings: any,
-    storedProviders: PaymentProviderConfig[],
-  ): PaymentProviderConfig[] {
-    const manual: PaymentProviderConfig = { name: 'manual', type: 'manual', label: 'Manual', config: {} };
-    const providers = storedProviders.length ? storedProviders : [manual];
-
-    // Legacy secrets stored flat (global signals) — fold them into config if present.
-    if (settings.monniepoint_webhook_secret) {
-      const mp = providers.find((p) => p.name === 'monniepoint');
-      if (mp) {
-        if (!mp.config) mp.config = {};
-        mp.config['webhook_secret'] = settings.monniepoint_webhook_secret;
-      }
-    }
-    if (settings.opay_public_key) {
-      const op = providers.find((p) => p.name === 'opay');
-      if (op) {
-        if (!op.config) op.config = {};
-        op.config['public_key'] = settings.opay_public_key;
-      }
-    }
-
-    const enabledFromLegacy: string[] = Array.isArray(settings.enabled_providers)
-      ? settings.enabled_providers
-      : settings.payment_provider && settings.payment_provider !== 'manual'
-        ? [settings.payment_provider]
-        : [];
-    this.enabledProviders.set(['manual', ...enabledFromLegacy]);
-    return providers;
-  }
-
-  private loadPlatformProviders(existing: PaymentProviderConfig[]) {
-    this.isLoadingPlatform.set(true);
-    this.branchesApi.getPlatformPaymentProviders().subscribe({
-      next: (platform) => {
-        const list = Array.isArray(platform) ? platform : [];
-        const merged = [...existing];
-        for (const gp of list) {
-          if (!merged.some((p) => p.name === gp.name)) {
-            merged.push({
-              name: gp.name,
-              type: gp.type,
-              label: gp.label,
-              verification_method: gp.verificationMethod || gp.verification_method,
-              config: {},
-            });
-          }
-        }
-        this.paymentProviders.set(merged);
-        const existingNames = new Set(merged.map((p) => p.name));
-        this.enabledProviders.set(this.enabledProviders().filter((n) => existingNames.has(n)));
-        this.isLoadingPlatform.set(false);
-      },
-      error: () => this.isLoadingPlatform.set(false),
-    });
-  }
-
-  savePaymentSettings() {
-    const branchId = this.activeBranchId();
-    if (!branchId) return;
-    this.isSavingPayment.set(true);
-    const enabled = this.enabledProviders();
-    const persisted = this.paymentProviders().map((p) => ({
-      ...p,
-      config: { ...(p.config || {}) },
-    }));
-    this.branchesApi.updateSettings(branchId, {
-      settings: {
-        payment_provider: enabled.find((n) => n !== 'manual') || 'manual',
-        enabled_providers: enabled,
-        payment_providers: persisted,
-        takeaway_payment_policy: this.takeawayPolicy(),
-      }
-    }).subscribe({
-      next: () => {
-        this.isSavingPayment.set(false);
-        Swal.fire({ icon: 'success', title: 'Payment Settings Saved', timer: 1500, showConfirmButton: false });
-      },
-      error: () => {
-        this.isSavingPayment.set(false);
-        Swal.fire({ icon: 'error', title: 'Failed to save payment settings' });
       }
     });
   }
@@ -1025,11 +837,5 @@ navItems: { key: Section; label: string; icon: string }[] = [
 
   getPublicMenuUrl(branchId: string): string {
     return `${this.env.publicMenuBaseUrl}/public/menu/${branchId}`;
-  }
-
-  copyBusinessCode() {
-    navigator.clipboard.writeText(this.businessCode());
-    this.copiedCode.set(true);
-    setTimeout(() => this.copiedCode.set(false), 2000);
   }
 }
