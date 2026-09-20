@@ -1,5 +1,7 @@
+:host { display: block; }
+
 .riders-page {
-  padding: 24px;
+  padding: 24px 32px;
 }
 
 .page-header {
@@ -7,20 +9,21 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 
   h1 {
-    margin: 0 0 4px;
-    font-size: 24px;
-    line-height: 32px;
+    margin: 0 0 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.75rem;
+    line-height: normal;
     font-weight: 700;
     color: var(--on-surface);
   }
 
   .subtitle {
     margin: 0;
-    font-size: 14px;
-    color: var(--on-surface-variant);
+    font-size: 0.9375rem;
+    color: var(--secondary);
   }
 }
 
@@ -34,7 +37,7 @@
     align-items: center;
     gap: 12px;
     font-size: 13px;
-    color: var(--on-surface-variant);
+    color: var(--secondary);
 
     .stat {
       display: flex;
@@ -88,10 +91,11 @@
 }
 
 .rider-card {
-  background: var(--surface-container-low);
+  background: var(--surface-container-lowest);
   border: 1px solid var(--outline-variant);
   border-radius: 16px;
   padding: 16px;
+  box-shadow: 0 4px 16px rgba(11, 28, 48, 0.04);
 
   &.inactive {
     opacity: 0.6;
@@ -141,7 +145,7 @@
   .rider-email {
     display: block;
     font-size: 12px;
-    color: var(--on-surface-variant);
+    color: var(--secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -157,15 +161,15 @@
   padding: 6px 12px;
   border-radius: 999px;
   cursor: pointer;
-  border: 1px solid var(--outline-variant);
-  color: var(--on-surface-variant);
+  border: 1px solid var(--secondary);
+  color: var(--secondary);
   background: var(--surface);
 
   .dot {
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: var(--outline-variant);
+    background: var(--secondary);
   }
 
   &.on {
@@ -182,7 +186,7 @@
   gap: 12px;
   margin: 12px 0;
   font-size: 13px;
-  color: var(--on-surface-variant);
+  color: var(--secondary);
 }
 
 .rider-footer {
@@ -195,7 +199,7 @@
 
   .branch {
     font-size: 12px;
-    color: var(--on-surface-variant);
+    color: var(--secondary);
   }
 
   .actions {
@@ -219,7 +223,7 @@
 .state {
   text-align: center;
   padding: 48px 16px;
-  color: var(--on-surface-variant);
+  color: var(--secondary);
   font-size: 14px;
 
   .spinner {
@@ -246,28 +250,40 @@
   align-items: center;
   gap: 6px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
   border: none;
   border-radius: 10px;
-  padding: 10px 16px;
-  font-size: 14px;
+  padding: 12px 24px;
+  font-size: 0.875rem;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 25%, transparent);
+  transition: background 0.15s;
 
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:hover { background: color-mix(in srgb, var(--primary) 85%, black); }
+
+  &:disabled {
+    background: color-mix(in srgb, var(--on-background) 15%, transparent);
+    color: var(--secondary);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
 }
 
 .btn-secondary {
-  background: transparent;
+  background: var(--surface-container-low);
   color: var(--secondary);
-  border: 1px solid var(--outline-variant);
+  border: none;
   border-radius: 10px;
-  padding: 10px 16px;
-  font-size: 14px;
+  padding: 12px 24px;
+  font-size: 0.875rem;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: var(--surface-container-high); color: var(--on-surface); }
 }
 
 .modal-overlay {
@@ -290,8 +306,14 @@
   max-height: 90vh;
   overflow-y: auto;
 
-  h2 { margin: 0 0 4px; font-size: 20px; color: var(--on-surface); }
-  .modal-sub { margin: 0 0 16px; font-size: 13px; color: var(--on-surface-variant); }
+  h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    color: var(--on-surface);
+  }
+  .modal-sub { margin: 0 0 16px; font-size: 13px; color: var(--secondary); }
 }
 
 .form {
@@ -301,21 +323,24 @@
 
   label {
     margin-top: 10px;
-    font-size: 12px;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--on-surface-variant);
+    color: var(--secondary);
+    margin-bottom: 8px;
   }
 
   input, select {
     margin-top: 4px;
-    padding: 10px 12px;
-    border: 1px solid var(--outline-variant);
+    padding: 12px 16px;
+    border: 1.5px solid var(--outline-variant);
     border-radius: 10px;
     background: var(--surface);
     color: var(--on-surface);
-    font-size: 14px;
+    font-size: 0.9375rem;
     font-family: 'Inter', sans-serif;
     outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
 
     &:focus { border-color: var(--primary); }
   }

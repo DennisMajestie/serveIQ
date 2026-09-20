@@ -16,15 +16,15 @@
       <p class="card-subtitle">Use the client ID and client secret from the Moniepoint ERP Integration console. Secrets are encrypted and never shown again.</p>
       <div class="form-group">
         <label>CLIENT ID</label>
-        <input type="text" [(ngModel)]="formClientId" placeholder="e.g. api-client-19011590-xxxx">
+        <input type="text" [ngModel]="formClientId()" (ngModelChange)="formClientId.set($event)" placeholder="e.g. api-client-19011590-xxxx">
       </div>
       <div class="form-group">
         <label>CLIENT SECRET</label>
-        <input type="password" [(ngModel)]="formClientSecret" placeholder="Paste your client secret">
+        <input type="password" [ngModel]="formClientSecret()" (ngModelChange)="formClientSecret.set($event)" placeholder="Paste your client secret">
       </div>
       <div class="form-group">
         <label>ENVIRONMENT</label>
-        <select [(ngModel)]="formEnvironment">
+        <select [ngModel]="formEnvironment()" (ngModelChange)="formEnvironment.set($event)">
           <option *ngFor="let env of envOptions" [ngValue]="env">{{ env }}</option>
         </select>
         <small class="field-hint">Start with SANDBOX for testing. Switch to PROD after verifying a live push.</small>
@@ -37,9 +37,9 @@
       </div>
     </div>
     <div class="empty-state" *ngIf="!showEnrollForm()">
-      <span class="material-symbols-outlined" style="font-size:48px;color:#d1d5db;">link_off</span>
+      <span class="material-symbols-outlined" style="font-size:48px;color:var(--outline)">link_off</span>
       <p>No Moniepoint ERP credential enrolled for this branch.</p>
-      <button class="btn-primary" style="margin-top:12px;" (click)="openEnrollForm()">+ Enroll Credential</button>
+      <button class="btn-primary" (click)="openEnrollForm()">+ Enroll Credential</button>
     </div>
   </ng-container>
 
@@ -71,11 +71,11 @@
   </ng-container>
 
   <!-- Push history -->
-  <div class="card table-card" style="margin-top:24px;">
+  <div class="card table-card">
     <div class="history-header">
       <h3 class="card-title">Push History</h3>
       <div class="history-controls">
-        <select [(ngModel)]="statusFilter" (ngModelChange)="loadPushes()">
+        <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); loadPushes()">
           <option value="">All statuses</option>
           <option *ngFor="let s of statusOptions" [ngValue]="s">{{ s || 'All statuses' }}</option>
         </select>
@@ -98,25 +98,26 @@
       </thead>
       <tbody>
         <tr *ngFor="let push of pushes()">
-          <td><span class="mono">{{ push.merchantReference }}</span></td>
-          <td><span class="mono">₦{{ formatAmountKobo(push.amountKobo) }}</span></td>
-          <td><span class="mono">{{ push.terminalSerial }}</span></td>
-          <td>
+          <td data-label="Reference"><span class="mono">{{ push.merchantReference }}</span></td>
+          <td data-label="Amount"><span class="mono">₦{{ formatAmountKobo(push.amountKobo) }}</span></td>
+          <td data-label="Terminal"><span class="mono">{{ push.terminalSerial }}</span></td>
+          <td data-label="Status">
             <span class="status-pill" [class]="statusClass(push.status)">
               {{ push.status }}
             </span>
           </td>
-          <td>
+          <td data-label="Settled">
             <span *ngIf="push.settled === undefined">—</span>
             <span class="status-pill" [class.active]="push.settled" [class.inactive]="!push.settled" *ngIf="push.settled !== undefined">
               {{ push.settled ? 'Yes' : 'No' }}
             </span>
           </td>
-          <td>{{ formatDate(push.pushedAt) }}</td>
+          <td data-label="Pushed At">{{ formatDate(push.pushedAt) }}</td>
         </tr>
       </tbody>
     </table>
     <div class="empty-state" *ngIf="!pushesLoading() && pushes().length === 0">
+      <span class="material-symbols-outlined" style="font-size:40px;color:var(--outline)">receipt_long</span>
       <p>No pushes yet.</p>
     </div>
   </div>

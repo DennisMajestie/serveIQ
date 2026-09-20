@@ -1,5 +1,7 @@
+:host { display: block; }
+
 .payouts-page {
-  padding: 24px;
+  padding: 24px 32px;
 }
 
 .page-header {
@@ -7,20 +9,21 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 
   h1 {
-    margin: 0 0 4px;
-    font-size: 24px;
-    line-height: 32px;
+    margin: 0 0 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.75rem;
+    line-height: normal;
     font-weight: 700;
     color: var(--on-surface);
   }
 
   .subtitle {
     margin: 0;
-    font-size: 14px;
-    color: var(--on-surface-variant);
+    font-size: 0.9375rem;
+    color: var(--secondary);
   }
 }
 
@@ -37,10 +40,11 @@
 }
 
 .payout-card {
-  background: var(--surface-container-low);
+  background: var(--surface-container-lowest);
   border: 1px solid var(--outline-variant);
   border-radius: 16px;
   padding: 20px;
+  box-shadow: 0 4px 16px rgba(11, 28, 48, 0.04);
 }
 
 .rider-header {
@@ -62,7 +66,7 @@
 
     .rider-id {
       font-size: 12px;
-      color: var(--on-surface-variant);
+      color: var(--secondary);
       font-family: monospace;
     }
   }
@@ -95,7 +99,7 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: var(--on-surface-variant);
+      color: var(--secondary);
     }
 
     .meta-value {
@@ -121,35 +125,42 @@
   justify-content: center;
   gap: 6px;
   border-radius: 10px;
-  padding: 10px 16px;
-  font-size: 14px;
+  padding: 12px 24px;
+  font-size: 0.875rem;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
   border: none;
-  transition: opacity 0.2s, background 0.2s;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
 }
 
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 25%, transparent);
+  transition: background 0.15s;
+
+  &:hover { background: color-mix(in srgb, var(--primary) 85%, black); }
+
+  &:disabled {
+    background: color-mix(in srgb, var(--on-background) 15%, transparent);
+    color: var(--secondary);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
 }
 
 .btn-secondary {
-  background: transparent;
+  background: var(--surface-container-low);
   color: var(--secondary);
-  border: 1px solid var(--outline-variant);
+  transition: all 0.2s;
+
+  &:hover { background: var(--surface-container-high); color: var(--on-surface); }
 }
 
 .state {
   text-align: center;
   padding: 48px 16px;
-  color: var(--on-surface-variant);
+  color: var(--secondary);
   font-size: 14px;
 
   .spinner {
@@ -205,7 +216,13 @@
   padding: 16px 24px;
   border-bottom: 1px solid var(--outline-variant);
 
-  h2 { margin: 0; font-size: 18px; color: var(--on-surface); }
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    color: var(--on-surface);
+  }
 }
 
 .icon-btn {
@@ -235,7 +252,7 @@
   padding: 12px 20px;
   background: transparent;
   border: none;
-  color: var(--on-surface-variant);
+  color: var(--secondary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -266,6 +283,10 @@
   border-collapse: collapse;
   font-size: 13px;
 
+  thead {
+    border-bottom: 2px solid var(--outline-variant);
+  }
+
   th, td {
     padding: 10px 12px;
     text-align: left;
@@ -274,7 +295,7 @@
 
   th {
     font-weight: 600;
-    color: var(--on-surface-variant);
+    color: var(--secondary);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -306,13 +327,13 @@
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 11px;
-    color: var(--on-surface-variant);
+    color: var(--secondary);
     margin-right: 4px;
 
     code { font-family: monospace; font-size: 11px; }
   }
 
-  .empty-row { text-align: center; color: var(--on-surface-variant); }
+  .empty-row { text-align: center; color: var(--secondary); }
 }
 
 .batches-list {
@@ -322,10 +343,11 @@
 }
 
 .batch-card {
-  background: var(--surface-container-low);
+  background: var(--surface-container-lowest);
   border: 1px solid var(--outline-variant);
   border-radius: 12px;
   padding: 16px;
+  box-shadow: 0 4px 16px rgba(11, 28, 48, 0.04);
 
   &.batch-completed { border-left: 4px solid var(--success); }
   &.batch-pending { border-left: 4px solid var(--warning); }
@@ -344,7 +366,7 @@
       padding: 2px 8px;
       border-radius: 999px;
       background: var(--surface);
-      color: var(--on-surface-variant);
+      color: var(--secondary);
       margin-left: 8px;
     }
   }
@@ -376,7 +398,7 @@
       align-items: flex-end;
       gap: 2px;
       font-size: 12px;
-      color: var(--on-surface-variant);
+      color: var(--secondary);
     }
   }
 
@@ -415,7 +437,7 @@
       gap: 2px;
 
       .pending-id { font-family: monospace; font-size: 13px; color: var(--on-surface); }
-      .pending-date { font-size: 11px; color: var(--on-surface-variant); }
+      .pending-date { font-size: 11px; color: var(--secondary); }
     }
 
     .pending-amount { font-weight: 600; color: var(--on-surface); }
