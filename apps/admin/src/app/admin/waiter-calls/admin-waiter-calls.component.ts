@@ -48,9 +48,10 @@ export class AdminWaiterCallsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     const token = this.auth.getToken() ?? '';
-    this.socket = this.socketSvc.connect(token);
+    const socket = await this.socketSvc.connect(token);
+    this.socket = socket;
     const events: WaiterCallEvent[] = [
       'waiter.request.created',
       'waiter.request.queued',

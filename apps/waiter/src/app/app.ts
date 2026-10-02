@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { OfflineBannerComponent } from './shared/components/offline-banner/offline-banner.component';
 import { OfflineSyncEngine, OfflineCacheService, ENVIRONMENT_CONFIG } from '@serveiq/shared/data-access';
+import { revealIconsWhenFontReady } from '@serveiq/shared/models';
 import { firstValueFrom } from 'rxjs';
 import { WaiterCallAlertComponent } from './waiter-calls/waiter-call-alert.component';
 import { WaiterCallAlertService } from './waiter-calls/waiter-call-alert.service';
@@ -24,15 +25,7 @@ export class App implements OnInit {
   private callAlert = inject(WaiterCallAlertService);
 
   async ngOnInit() {
-    if ('fonts' in document) {
-      (document as any).fonts.ready.then(() => {
-        document.body.classList.add('fonts-loaded');
-      });
-    } else {
-      setTimeout(() => {
-        document.body.classList.add('fonts-loaded');
-      }, 300);
-    }
+    revealIconsWhenFontReady();
     this.callAlert.connect();
     await this.bootstrapOfflineCache();
   }

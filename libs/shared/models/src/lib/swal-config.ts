@@ -1,4 +1,4 @@
-import Swal, { type SweetAlertOptions } from 'sweetalert2';
+import type { SweetAlertOptions } from 'sweetalert2';
 
 const appDefaults: SweetAlertOptions = {
   background: '#1e293b',
@@ -21,15 +21,34 @@ const appDefaults: SweetAlertOptions = {
   },
 };
 
-const origFire = Swal.fire.bind(Swal) as (...args: any[]) => any;
+let pending: Promise<void> | null = null;
 
-Swal.fire = ((...args: unknown[]) => {
-  if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null) {
-    return origFire({ ...appDefaults, ...args[0] });
-  }
-  return origFire(args[0], args[1], args[2]);
-}) as typeof Swal.fire;
+/**
+ * Applies the app-wide SweetAlert2 defaults to the shared `Swal` singleton.
+ *
+ * `sweetalert2` is imported dynamically (the `import type` above is erased at
+ * compile time) so that this module can live in the app's statically-imported
+ * barrel without dragging ~93 kB of dialog library into the initial bundle.
+ * Components still `import Swal from 'sweetalert2'` and call `Swal.fire(...)`
+ * directly; because ESM modules are singletons, the patch below mutates that
+ * same shared object.
+ *
+ * The patch must land before the first `Swal.fire` call. Nothing in app
+ * bootstrap or the root providers opens a dialog, and route components are
+ * lazily loaded, so awaiting this at startup is sufficient.
+ */
+export function bootstrapSwal(): Promise<void> {
+  pending ??= (async () => {
+    const { default: Swal } = await import('sweetalert2');
+    const origFire = Swal.fire.bind(Swal) as (...args: any[]) => any;
 
-export function bootstrapSwal(): void {
-  /* patch applied at import time */
+    Swal.fire = ((...args: unknown[]) => {
+      if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null) {
+        return origFire({ ...appDefaults, ...args[0] });
+      }
+      return origFire(args[0], args[1], args[2]);
+    }) as typeof Swal.fire;
+  })();
+
+  return pending;
 }

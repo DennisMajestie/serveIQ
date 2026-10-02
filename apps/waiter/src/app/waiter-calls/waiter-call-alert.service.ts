@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { RealtimeSocketService, WaiterCallSocketPayload } from '@serveiq/shared/data-access';
 import { AuthService } from '@serveiq/shared/data-access';
-import { Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 
 export interface IncomingWaiterCall {
   id: string;
@@ -21,6 +21,7 @@ export class WaiterCallAlertService {
   readonly alertVisible = signal(false);
 
   private socket: Socket | null = null;
+  private connecting: Promise<void> | null = null;
   private consumedIds = new Set<string>();
   private tokenSub?: { unsubscribe(): void };
   private myId: string | null = null;
@@ -51,16 +52,25 @@ export class WaiterCallAlertService {
     }
   }
 
-  private connectWithToken(token: string) {
-    if (this.socket && this.socket.connected) return;
-    this.socket = this.socketSvc.connect(token);
-    this.socket.on('waiter.request.created', (p: WaiterCallSocketPayload) => this.onCall(p));
-    this.socket.on('waiter.request.assigned', (p: WaiterCallSocketPayload) => this.onCall(p));
-    this.socket.on('waiter.request.accepted', (p: WaiterCallSocketPayload) =>
-      this.onTakenByOther(p),
-    );
-    this.socket.on('waiter.request.resolved', (p: WaiterCallSocketPayload) => this.onTakenByOther(p));
-    this.socket.on('waiter.request.cancelled', (p: WaiterCallSocketPayload) => this.onTakenByOther(p));
+  private connectWithToken(token: string): void {
+    if (this.socket?.connected) return;
+    if (this.connecting) return;
+    this.connecting = (async () => {
+      try {
+        const socket = await this.socketSvc.connect(token);
+        if (this.socket && this.socket.connected) return;
+        this.socket = socket;
+        socket.on('waiter.request.created', (p: WaiterCallSocketPayload) => this.onCall(p));
+        socket.on('waiter.request.assigned', (p: WaiterCallSocketPayload) => this.onCall(p));
+        socket.on('waiter.request.accepted', (p: WaiterCallSocketPayload) =>
+          this.onTakenByOther(p),
+        );
+        socket.on('waiter.request.resolved', (p: WaiterCallSocketPayload) => this.onTakenByOther(p));
+        socket.on('waiter.request.cancelled', (p: WaiterCallSocketPayload) => this.onTakenByOther(p));
+      } finally {
+        this.connecting = null;
+      }
+    })();
   }
 
   private onCall(p: WaiterCallSocketPayload) {

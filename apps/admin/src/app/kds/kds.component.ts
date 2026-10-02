@@ -116,9 +116,9 @@ export class KdsComponent implements OnInit, OnDestroy {
   }
 
   // ── realtime ──
-  private connectRealtime() {
+  private async connectRealtime() {
     const token = this.auth.getToken() ?? '';
-    this.socket = this.socketSvc.connect(token);
+    this.socket = await this.socketSvc.connect(token);
     if (this.branchId) {
       this.socket.emit('subscribe:orders', { branchId: this.branchId });
     }

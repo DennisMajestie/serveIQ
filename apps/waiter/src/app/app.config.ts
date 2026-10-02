@@ -3,7 +3,6 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { provideRouter, withRouterConfig } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   provideHttpClient,
   withInterceptorsFromDi,
@@ -21,7 +20,12 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes, withRouterConfig({ onSameUrlNavigation: 'reload' })),
-    provideAnimations(),
+    // No animations provider on purpose. Nothing here uses the Angular animations
+    // API (no @angular/animations import, no @trigger or [@binding] anywhere; all
+    // motion is CSS @keyframes or requestAnimationFrame). provideAnimations()
+    // still dragged the ~72 kB animation engine into the initial bundle, and
+    // provideNoopAnimations() does not help because the
+    // @angular/platform-browser/animations barrel itself re-exports the package.
     provideHttpClient(withXhr(), withInterceptorsFromDi(), withInterceptors([paymentRequiredInterceptor])),
     {
       provide: HTTP_INTERCEPTORS,

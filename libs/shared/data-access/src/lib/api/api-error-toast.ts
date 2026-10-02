@@ -1,4 +1,3 @@
-import Swal from 'sweetalert2';
 import { NETWORK_ERROR_MESSAGE } from './api-error';
 
 export function showApiErrorToast(err: any, fallbackMessage: string): string {
@@ -47,11 +46,20 @@ export function showApiErrorToast(err: any, fallbackMessage: string): string {
     }
   }
 
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: message,
-  });
+  // SweetAlert2 is imported dynamically on purpose. This module is reachable
+  // from the eagerly-loaded HTTP interceptor chain, so a static `import Swal`
+  // here pulled the whole ~90 kB dialog library into the initial bundle of every
+  // app in the workspace. The toast is informational and nothing consumes the
+  // resolved value, so it is safe to let the chunk load in the background.
+  void import('sweetalert2')
+    .then(({ default: Swal }) =>
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+      }),
+    )
+    .catch(() => undefined);
 
   return message;
 }

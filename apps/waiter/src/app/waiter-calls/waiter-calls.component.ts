@@ -34,9 +34,10 @@ export class WaiterCallsComponent implements OnInit, OnDestroy {
   private pollTimer: any = null;
   private handlers: Partial<Record<WaiterCallEvent, () => void>> = {};
 
-  ngOnInit() {
+  async ngOnInit() {
     const token = this.auth.getToken() ?? '';
-    this.socket = this.socketSvc.connect(token);
+    const socket = await this.socketSvc.connect(token);
+    this.socket = socket;
     const events: WaiterCallEvent[] = [
       'waiter.request.created',
       'waiter.request.queued',

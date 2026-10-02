@@ -1,24 +1,18 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { App } from './app/app';
-import { bootstrapSwal } from '@serveiq/shared/models';
+import { bootstrapSwal, revealIconsWhenFontReady } from '@serveiq/shared/models';
 import { initSentry } from './sentry';
 
-initSentry();
-
-bootstrapSwal();
+// Both load their heavy dependencies (Sentry, SweetAlert2) via dynamic import,
+// so they are deliberately not awaited here: neither is needed to render, and
+// awaiting would put them straight back on the critical path.
+void initSentry();
+void bootstrapSwal();
 
 const savedTheme = localStorage.getItem('serveiq-admin-theme');
 document.documentElement.setAttribute('data-theme', savedTheme || 'light');
 
 bootstrapApplication(App, appConfig).catch((err) => console.error(err));
 
-// Font loading detection — prevent FOUC of icon text
-if ('fonts' in document) {
-  Promise.allSettled([
-    document.fonts.load('24px "Material Icons"'),
-    document.fonts.load('24px "Material Symbols Outlined"'),
-  ]).then(() => {
-    document.body.classList.add('fonts-loaded');
-  });
-}
+revealIconsWhenFontReady();
