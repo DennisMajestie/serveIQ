@@ -54,6 +54,29 @@
         <!-- Branch Setup Section -->
         @if (activeSection() === 'branch-setup') {
           <div class="grid grid-cols-12 gap-6">
+            <!-- Business Code -->
+            @if (businessSettings()?.businessCode) {
+              <div class="col-span-12 glass-card p-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-primary-10 rounded-lg">
+                      <span class="material-symbols-outlined text-[var(--primary)]">key</span>
+                    </div>
+                    <div>
+                      <h3 class="text-[18px] leading-[1.3] font-medium text-[var(--on-background)]" style="font-family:'Space Grotesk',sans-serif">Your Business Code</h3>
+                      <p class="text-[var(--on-surface-variant)] text-[12px] mt-1" style="font-family:'Inter',sans-serif">Share this code with your staff so they can sign in to the waiter app.</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="px-4 py-2 rounded-xl bg-primary-10 text-[var(--primary)] text-[18px] font-bold tracking-[0.2em]" style="font-family:'Space Grotesk',sans-serif">{{ businessSettings()?.businessCode }}</span>
+                    <button (click)="copyBusinessCode()" class="h-10 px-4 rounded-xl bg-[var(--primary)] text-[var(--on-primary)] text-[14px] font-semibold flex items-center gap-2 active:scale-95 transition-all" style="font-family:'Inter',sans-serif">
+                      <span class="material-symbols-outlined text-sm">{{ copiedBusinessCode() ? 'check' : 'content_copy' }}</span>
+                      {{ copiedBusinessCode() ? 'Copied' : 'Copy' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
             <!-- Branch Global Identity -->
             <div class="col-span-12 lg:col-span-8 glass-card p-6">
               <div class="flex items-center gap-3 mb-8">

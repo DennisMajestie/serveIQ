@@ -46,6 +46,7 @@ navItems: { key: Section; label: string; icon: string }[] = [
     { key: 'verification', label: 'Email Verification', icon: 'verified' },
   ];
   copiedBranchId = signal<string | null>(null);
+  copiedBusinessCode = signal(false);
   isEmailVerified = signal(false);
   profileName = signal('');
   profileEmail = signal('');
@@ -497,6 +498,14 @@ navItems: { key: Section; label: string; icon: string }[] = [
     navigator.clipboard.writeText(branchId);
     this.copiedBranchId.set(branchId);
     setTimeout(() => this.copiedBranchId.set(null), 2000);
+  }
+
+  copyBusinessCode() {
+    const code = this.businessSettings()?.businessCode;
+    if (!code) return;
+    navigator.clipboard.writeText(code);
+    this.copiedBusinessCode.set(true);
+    setTimeout(() => this.copiedBusinessCode.set(false), 2000);
   }
 
   isCopied(branchId: string): boolean {

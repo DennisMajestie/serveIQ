@@ -24,8 +24,16 @@ import Swal from 'sweetalert2';
         <div *ngIf="subService.subscription() as sub" class="current-subscription">
           <div class="sub-header">
             <h3>Current Subscription</h3>
-            <span class="status-badge" [class]="'status-' + sub.status">
-              {{ sub.status | titlecase }}
+            <span class="status-badge" [class]="isOverdue() ? 'status-overdue' : 'status-' + sub.status">
+              {{ isOverdue() ? 'Renewal Overdue' : (sub.status | titlecase) }}
+            </span>
+          </div>
+
+          <div *ngIf="isOverdue()" class="overdue-alert">
+            <span class="material-symbols-outlined">warning</span>
+            <span>
+              Your renewal date ({{ sub.currentPeriodEnd | date:'mediumDate' }}) has passed and payment may have failed.
+              Retry payment now to keep using ServeIQ without interruption.
             </span>
           </div>
 
@@ -36,7 +44,7 @@ import Swal from 'sweetalert2';
             </div>
             <div class="detail-row" *ngIf="sub.currentPeriodEnd">
               <span class="label">Renewal Date</span>
-              <span class="value">{{ sub.currentPeriodEnd | date:'mediumDate' }}</span>
+              <span class="value" [class.urgent]="isOverdue()">{{ sub.currentPeriodEnd | date:'mediumDate' }}</span>
             </div>
             <div class="detail-row" *ngIf="sub.trialEndsAt">
               <span class="label">Trial Ends</span>
@@ -52,12 +60,12 @@ import Swal from 'sweetalert2';
             </div>
           </div>
 
-          <div class="sub-actions" *ngIf="sub.status === 'active' || sub.status === 'trialing'">
+          <div class="sub-actions" *ngIf="(sub.status === 'active' || sub.status === 'trialing') && !isOverdue()">
             <button class="btn btn-secondary" (click)="cancelSubscription()">Cancel Subscription</button>
           </div>
-          <div class="sub-actions" *ngIf="sub.status === 'past_due' || sub.status === 'expired'">
+          <div class="sub-actions" *ngIf="sub.status === 'past_due' || sub.status === 'expired' || isOverdue()">
             <button class="btn btn-primary" (click)="retryPayment()" [disabled]="isProcessing()">
-              {{ isProcessing() ? 'Processing...' : 'Retry Payment' }}
+              {{ isProcessing() ? 'Processing...' : (sub.status === 'expired' ? 'Renew Subscription' : 'Retry Payment') }}
             </button>
           </div>
         </div>
@@ -120,6 +128,10 @@ import Swal from 'sweetalert2';
     .status-past_due { background: #fef3c7; color: #92400e; }
     .status-canceled { background: #f3f4f6; color: #374151; }
     .status-expired { background: #fee2e2; color: #991b1b; }
+    .status-overdue { background: #fef3c7; color: #92400e; animation: pulse-warn 2s infinite; }
+    @keyframes pulse-warn { 0%, 100% { opacity: 1; } 50% { opacity: 0.75; } }
+    .overdue-alert { display: flex; align-items: flex-start; gap: 10px; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
+    .overdue-alert .material-symbols-outlined { font-size: 20px; flex-shrink: 0; }
     .sub-details { display: flex; flex-direction: column; gap: 12px; }
     .detail-row { display: flex; justify-content: space-between; align-items: center; }
     .detail-row .label { color: var(--secondary); font-size: 14px; }
@@ -203,6 +215,12 @@ export class BillingComponent implements OnInit {
       return [...filtered, ...fallbackPlans];
     }
     return filtered;
+  });
+
+  isOverdue = computed(() => {
+    const sub = this.subService.subscription();
+    if (!sub || sub.status !== 'active' || !sub.currentPeriodEnd) return false;
+    return new Date(sub.currentPeriodEnd).getTime() < Date.now();
   });
 
   ngOnInit() {

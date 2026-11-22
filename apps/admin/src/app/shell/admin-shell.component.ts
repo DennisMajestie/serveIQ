@@ -366,6 +366,10 @@ interface MobileTab {
             <span class="material-symbols-outlined">info</span>
             <span>Free trial — {{ daysLeft(sub.trialEndsAt) }} days remaining. <a routerLink="/app/billing">Choose a plan</a> to keep access.</span>
           </div>
+          <div class="sub-banner-inner status-overdue" *ngIf="sub.status === 'active' && isSubOverdue(sub.currentPeriodEnd)">
+            <span class="material-symbols-outlined">warning</span>
+            <span>Subscription renewal is overdue — payment may have failed. <a routerLink="/app/billing">Renew now</a> to keep access.</span>
+          </div>
           <div class="sub-banner-inner status-{{ sub.status }}" *ngIf="sub.status === 'past_due'">
             <span class="material-symbols-outlined">warning</span>
             <span>Payment failed — {{ daysLeft(sub.gracePeriodEndsAt) }} days before lockout. <a routerLink="/app/billing">Update payment</a>.</span>
@@ -779,6 +783,7 @@ interface MobileTab {
     .sub-banner-inner a { color: inherit; font-weight: 700; text-decoration: underline; }
     .sub-banner-inner.status-trialing { background: color-mix(in srgb, var(--tertiary) 20%, var(--surface)); color: var(--on-tertiary-container); }
     .sub-banner-inner.status-past_due { background: color-mix(in srgb, var(--secondary) 20%, var(--surface)); color: var(--on-secondary-container); }
+    .sub-banner-inner.status-overdue { background: color-mix(in srgb, #f59e0b 18%, var(--surface)); color: #92400e; }
     .sub-banner-inner.status-expired { background: color-mix(in srgb, var(--error) 20%, var(--surface)); color: var(--on-error-container); }
     .sub-banner-inner.status-canceled { background: color-mix(in srgb, var(--on-surface-variant) 15%, var(--surface)); color: var(--on-surface-variant); }
     .sub-banner-inner .material-symbols-outlined { font-size: 20px; }
@@ -1045,6 +1050,11 @@ export class AdminShellComponent implements OnInit, OnDestroy {
     if (!dateStr) return 0;
     const diff = new Date(dateStr).getTime() - Date.now();
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  }
+
+  isSubOverdue(date: string | null): boolean {
+    if (!date) return false;
+    return new Date(date).getTime() < Date.now();
   }
 
   ngOnInit() {
