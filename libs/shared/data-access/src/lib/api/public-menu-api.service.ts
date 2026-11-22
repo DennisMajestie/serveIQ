@@ -20,6 +20,13 @@ export interface PublicMenuData {
   businessName: string;
   branchName: string;
   logoUrl?: string;
+  coverImageUrl?: string | null;
+  isOpen?: boolean;
+  closingTime?: string;
+  location?: string | null;
+  prepTimeMinMinutes?: number;
+  prepTimeMaxMinutes?: number;
+  verified?: boolean;
   brandPrimaryColor?: string;
   brandAccentColor?: string;
   currency?: string;

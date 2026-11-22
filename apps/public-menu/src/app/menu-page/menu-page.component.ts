@@ -2,11 +2,17 @@ import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { PublicMenuApiService, PublicMenuData } from '@serveiq/shared/data-access';
+import { PublicMenuApiService, PublicMenuData, PublicMenuItem } from '@serveiq/shared/data-access';
 import { normalizeCategory, groupCategoryNames } from '@serveiq/shared/models';
 import { CartService, OrderType, PickupMode } from '../services/cart.service';
 import { CallWaiterComponent } from '../call-waiter/call-waiter.component';
 import { finalize } from 'rxjs';
+
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  'grills & proteins': 'Grilled meats and rich protein dishes.',
+  'main dish': 'Hearty favourites, made fresh to order.',
+  'small chops': 'Bite-sized treats, perfect for sharing.',
+};
 
 @Component({
   selector: 'app-menu-page',
@@ -29,6 +35,7 @@ export class MenuPageComponent implements OnInit {
   selectedCategory = signal<string>('');
   searchQuery = signal('');
   addedItemId = signal<string | null>(null);
+  showSearch = signal(false);
   showTypeChooser = signal(false);
   showPickupStep = signal(false);
   readOnly = signal(false);
@@ -49,6 +56,46 @@ export class MenuPageComponent implements OnInit {
         || (i.description?.toLowerCase().includes(q) ?? false);
       return catOk && qOk;
     });
+  });
+
+  coverImageUrl = computed(() => {
+    const menu = this.data();
+    return menu?.coverImageUrl || menu?.logoUrl || null;
+  });
+
+  prepTimeLabel = computed(() => {
+    const menu = this.data();
+    if (!menu) return '';
+    const min = menu.prepTimeMinMinutes;
+    const max = menu.prepTimeMaxMinutes;
+    if (!min && !max) return '';
+    if (min && max && min !== max) return `${min}-${max} min`;
+    return `${max || min} min`;
+  });
+
+  closingTimeLabel = computed(() => {
+    const value = this.data()?.closingTime;
+    if (!value) return '';
+    const [hour, minute] = value.split(':').map(Number);
+    if (!Number.isFinite(hour) || !Number.isFinite(minute)) return value;
+    const suffix = hour >= 12 ? 'pm' : 'am';
+    return `${hour % 12 || 12}:${String(minute).padStart(2, '0')}${suffix}`;
+  });
+
+  menuGroups = computed(() => {
+    const groups = new Map<string, PublicMenuItem[]>();
+    for (const item of this.filteredItems()) {
+      const category = item.category || 'Menu';
+      const list = groups.get(category) ?? [];
+      list.push(item);
+      groups.set(category, list);
+    }
+    return [...groups.entries()].map(([category, items]) => ({
+      category,
+      description:
+        CATEGORY_DESCRIPTIONS[category.toLowerCase()] ?? `${items.length} dishes`,
+      items,
+    }));
   });
 
   ngOnInit() {
@@ -155,6 +202,22 @@ export class MenuPageComponent implements OnInit {
     // cart. Dine-in customers view the menu read-only and the waiter takes the
     // order. A scanned table QR does not enable self-ordering for dine-in.
     this.readOnly.set(this.cartService.orderType() !== 'takeaway');
+  }
+
+  goBack() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
+  focusSearch(input: HTMLInputElement) {
+    this.showSearch.set(true);
+    setTimeout(() => {
+      input.focus();
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   }
 
   private applyBrandColors(menu: PublicMenuData): void {
