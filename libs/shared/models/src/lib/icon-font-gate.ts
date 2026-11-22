@@ -4,32 +4,26 @@ const ICON_FONTS = [
 ];
 
 const NO_FONTSET_REVEAL_DELAY_MS = 300;
+const FONT_REVEAL_FALLBACK_MS = 1500;
 
 /**
  * Material icon markup holds ligature words (`event_available`) that the webfont
  * swaps for glyphs. Global stylesheets keep that text hidden until `body` carries
  * `fonts-loaded`, so the raw words never reach the page.
  *
- * The gate must only open when the webfont genuinely arrived. `fonts.ready` and
- * `Promise.allSettled` both settle on failure too, which revealed the words and
- * let them overflow fixed-size icon boxes. `FontFaceSet.load()` resolves with the
- * faces it actually matched, so an empty array is a real failure signal.
- *
- * On failure the icons stay hidden; adjacent text labels carry the meaning.
+ * The gate opens once the webfonts are reported loaded. If they cannot be resolved
+ * (for example, the stylesheet is injected after this runs, or a font request
+ * fails), it still opens on a short fallback timer: icons hidden forever is worse
+ * than a brief flash of the raw ligature words.
  */
 export function revealIconsWhenFontReady(): void {
+  const reveal = () => document.body.classList.add('fonts-loaded');
+
   if (!('fonts' in document)) {
-    setTimeout(() => document.body.classList.add('fonts-loaded'), NO_FONTSET_REVEAL_DELAY_MS);
+    setTimeout(reveal, NO_FONTSET_REVEAL_DELAY_MS);
     return;
   }
 
-  Promise.all(
-    ICON_FONTS.map((font) => document.fonts.load(font).catch(() => [] as FontFace[])),
-  ).then((results) => {
-    if (results.some((faces) => faces.length > 0)) {
-      document.body.classList.add('fonts-loaded');
-    } else {
-      console.warn('[fonts] Material icon webfonts unavailable — icons hidden.');
-    }
-  });
+  Promise.allSettled(ICON_FONTS.map((font) => document.fonts.load(font))).then(reveal);
+  setTimeout(reveal, FONT_REVEAL_FALLBACK_MS);
 }
