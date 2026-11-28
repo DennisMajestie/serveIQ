@@ -173,6 +173,15 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./chef/chef.component').then((m) => m.ChefComponent),
   },
 
+  // ===== My Active Orders =====
+  {
+    path: 'my-orders',
+    canActivate: [authGuard, waiterGuard],
+    canMatch: [prefersCurrentTheme],
+    loadComponent: () =>
+      import('./my-orders/my-orders.component').then((m) => m.MyOrdersComponent),
+  },
+
   // ===== Activity History =====
   {
     path: 'activity',

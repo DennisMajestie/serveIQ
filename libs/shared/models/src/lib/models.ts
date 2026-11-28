@@ -881,6 +881,10 @@ export interface OrderGroup {
   departmentName?: string;
   tabType?: string;
   trackingCode?: string;
+  trackingGeneratedAt?: string;
+  customerName?: string;
+  partySize?: number;
+  pickupMode?: string;
   items: OrderGroupItem[];
 }
 

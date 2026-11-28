@@ -8,6 +8,9 @@
         </div>
       </div>
       <h1 class="text-[16px] sm:text-[20px] leading-[1.2] font-semibold tracking-tight text-[#4be277] flex-1 min-w-0 truncate text-center px-2" style="text-shadow:0 0 10px rgba(75,226,119,0.4);font-family:'Space Grotesk',sans-serif" title="{{ branchName() }}">{{ branchName() || 'ServeIQ' }}</h1>
+      <a routerLink="/my-orders" class="relative active:scale-95 transition-transform p-2 bg-white/5 rounded-full shrink-0" aria-label="My active orders">
+        <span class="material-symbols-outlined text-[#4be277]">receipt_long</span>
+      </a>
       <button (click)="openNotifications()" class="relative active:scale-95 transition-transform p-2 bg-white/5 rounded-full shrink-0">
         <span class="material-symbols-outlined text-[#4be277]">notifications</span>
         @if (unreadCount() > 0) {
