@@ -884,6 +884,15 @@ export interface OrderGroup {
   items: OrderGroupItem[];
 }
 
+export interface KitchenCrewMember {
+  id: string;
+  fullName: string;
+  role: string;
+  avatarUrl?: string;
+  activeOrders: number;
+  isAvailable: boolean;
+}
+
 export interface OrderGroupItem {
   id: string;
   menuItemId: string;
@@ -894,6 +903,9 @@ export interface OrderGroupItem {
   notes?: string;
   modifiers?: any;
   orderStatus?: string;
+  acceptedBy?: string;
+  acceptedByName?: string;
+  timerStartedAt?: string;
   timerEndsAt?: string;
   trackingCode?: string;
   declineReason?: string;
@@ -903,6 +915,10 @@ export interface OrderGroupItem {
 
 export interface ApproveOrderRequest {
   department: string;
+  estimatedPreparationTimeSeconds: number;
+}
+
+export interface AcceptOrderRequest {
   estimatedPreparationTimeSeconds: number;
 }
 

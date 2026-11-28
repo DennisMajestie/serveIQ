@@ -98,6 +98,7 @@ export const API_CONFIG = {
       approve: '/api/v1/orders/:id/approve',
       decline: '/api/v1/orders/:id/decline',
       preparing: '/api/v1/orders/preparing',
+      kitchenCrew: '/api/v1/orders/kitchen-crew',
       readyForPickup: '/api/v1/orders/ready-for-pickup',
       pendingCash: '/api/v1/orders/pending-cash',
       outForDelivery: '/api/v1/orders/out-for-delivery',

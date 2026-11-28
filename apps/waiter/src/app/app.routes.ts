@@ -1,7 +1,7 @@
 import { Route } from '@angular/router';
 
 import { authGuard } from './core/auth.guard';
-import { waiterGuard } from './core/role.guards';
+import { waiterGuard, chefGuard } from './core/role.guards';
 import { prefersCurrentTheme, prefersLegacyTheme } from './core/theme.guards';
 
 /*
@@ -169,7 +169,7 @@ export const appRoutes: Route[] = [
   // ===== Chef Kitchen Display =====
   {
     path: 'chef',
-    canActivate: [authGuard, waiterGuard],
+    canActivate: [authGuard, chefGuard],
     loadComponent: () => import('./chef/chef.component').then((m) => m.ChefComponent),
   },
 

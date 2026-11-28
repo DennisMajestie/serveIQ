@@ -16,9 +16,10 @@ import {
   RealtimeSocketService,
   BranchesApiService,
 } from '@serveiq/shared/data-access';
-import { OrderGroup, OrderGroupItem } from '@serveiq/shared/models';
+import { OrderGroup, OrderGroupItem, KitchenCrewMember } from '@serveiq/shared/models';
 import { Socket } from 'socket.io-client';
 import { interval, Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 interface DoneEntry {
   id: string;
@@ -50,6 +51,9 @@ export class KdsComponent implements OnInit, OnDestroy {
   done = signal<DoneEntry[]>([]);
   /** branch kds_enabled feature flag, read from the branch settings. */
   isKdsEnabled = signal(false);
+  activeChef = signal(localStorage.getItem('userName') || '');
+  activeChefId = signal('');
+  kitchenCrew = signal<KitchenCrewMember[]>([]);
 
   muted = signal(localStorage.getItem('kds_muted') === '1');
   lastBeep = 0;
@@ -78,6 +82,7 @@ export class KdsComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
+    this.loadActiveChef();
     this.loadAll();
     this.loadFeatureFlag();
     this.pollSub = interval(15000).subscribe(() => this.loadAll());
@@ -85,6 +90,16 @@ export class KdsComponent implements OnInit, OnDestroy {
       this.preparing.update((o) => [...o]);
     }, 1000);
     this.connectRealtime();
+  }
+
+  private loadActiveChef() {
+    this.auth.getMe().subscribe({
+      next: (me) => {
+        this.activeChef.set(me.fullName || me.email || this.activeChef());
+        this.activeChefId.set(me.id || '');
+      },
+      error: () => null,
+    });
   }
 
   private loadFeatureFlag() {
@@ -148,6 +163,10 @@ export class KdsComponent implements OnInit, OnDestroy {
   private loadAll() {
     this.loadPreparing();
     this.loadReady();
+    this.ordersApi.getKitchenCrew().subscribe({
+      next: (crew) => this.kitchenCrew.set(crew || []),
+      error: () => null,
+    });
   }
 
   loadPreparing() {
@@ -185,9 +204,9 @@ export class KdsComponent implements OnInit, OnDestroy {
   }
 
   acceptAllStation(orders: OrderGroup[]) {
-    for (const order of orders) {
-      this.acceptAll(order);
-    }
+    this.acceptItemsWithPrompt(
+      orders.flatMap((order) => order.items.filter((i) => this.canAccept(i))),
+    );
   }
 
   bumpAllStation(orders: OrderGroup[]) {
@@ -228,16 +247,82 @@ export class KdsComponent implements OnInit, OnDestroy {
     );
   }
 
-  acceptItem(group: OrderGroup, item: OrderGroupItem) {
-    this.ordersApi.acceptOrder(item.id).subscribe({
+  private async promptPrepTime(count: number): Promise<number | null> {
+    const html = `
+      <div style="text-align:left;">
+        <p style="font-size:13px;color:#52607a;margin:0 0 12px;">
+          Choose how long ${count > 1 ? `these ${count} items` : 'this item'} will take. The timer starts when you confirm.
+        </p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${[5, 10, 15, 25].map((t) => `<button type="button" class="kds-time-opt" data-time="${t}" style="flex:1;min-width:64px;padding:10px;border-radius:10px;border:1px solid #dbe3f0;background:#f8f9ff;color:#0b1c30;font-size:14px;font-weight:600;cursor:pointer;">${t} min</button>`).join('')}
+        </div>
+        <div style="margin-top:12px;display:flex;align-items:center;gap:8px;">
+          <label for="kds-custom-time" style="font-size:12px;color:#52607a;">Custom</label>
+          <input id="kds-custom-time" type="number" min="1" max="120" value="5" style="width:88px;padding:8px 10px;border-radius:10px;border:1px solid #dbe3f0;background:#fff;color:#0b1c30;font-size:14px;">
+          <span style="font-size:12px;color:#52607a;">minutes (1–120)</span>
+        </div>
+      </div>`;
+
+    const result = await Swal.fire({
+      title: count > 1 ? `Claim ${count} items` : 'Start preparing',
+      html,
+      showCancelButton: true,
+      confirmButtonText: 'Start timer',
+      confirmButtonColor: '#00a455',
+      cancelButtonText: 'Cancel',
+      background: '#ffffff',
+      color: '#0b1c30',
+      didOpen: () => {
+        const buttons = document.querySelectorAll('.kds-time-opt');
+        buttons.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            buttons.forEach((b) => ((b as HTMLElement).style.borderColor = '#dbe3f0'));
+            (btn as HTMLElement).style.borderColor = '#00a455';
+            const input = document.getElementById('kds-custom-time') as HTMLInputElement | null;
+            if (input) input.value = (btn as HTMLElement).dataset['time'] || '5';
+          });
+        });
+      },
+      preConfirm: () => {
+        const input = document.getElementById('kds-custom-time') as HTMLInputElement | null;
+        const minutes = Number(input?.value);
+        if (!Number.isFinite(minutes) || minutes < 1 || minutes > 120) {
+          Swal.showValidationMessage('Choose between 1 and 120 minutes');
+          return false;
+        }
+        return { seconds: Math.round(minutes * 60) };
+      },
+    });
+
+    return result.isConfirmed && result.value ? (result.value as { seconds: number }).seconds : null;
+  }
+
+  async acceptItem(group: OrderGroup, item: OrderGroupItem) {
+    const seconds = await this.promptPrepTime(1);
+    if (seconds === null) return;
+    this.ordersApi.acceptOrder(item.id, {
+      estimatedPreparationTimeSeconds: seconds,
+    }).subscribe({
       next: () => this.refreshAll(),
       error: () => this.loadAll(),
     });
   }
 
-  acceptAll(group: OrderGroup) {
-    const pending = group.items.filter((i) => this.canAccept(i));
-    this.executeBatched(pending, (i) => this.ordersApi.acceptOrder(i.id));
+  async acceptAll(group: OrderGroup) {
+    await this.acceptItemsWithPrompt(
+      group.items.filter((i) => this.canAccept(i)),
+    );
+  }
+
+  private async acceptItemsWithPrompt(pending: OrderGroupItem[]) {
+    if (!pending.length) return;
+    const seconds = await this.promptPrepTime(pending.length);
+    if (seconds === null) return;
+    this.executeBatched(pending, (i) =>
+      this.ordersApi.acceptOrder(i.id, {
+        estimatedPreparationTimeSeconds: seconds,
+      }),
+    );
   }
 
   bumpItem(group: OrderGroup, item: OrderGroupItem) {

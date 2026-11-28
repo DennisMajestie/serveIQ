@@ -11,3 +11,13 @@ export const waiterGuard: CanActivateFn = () => {
   }
   return true;
 };
+
+export const chefGuard: CanActivateFn = () => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
+  const role = authService.getTokenRole();
+  if (!['chef', 'supervisor', 'manager', 'owner'].includes(role)) {
+    return router.createUrlTree(['/login']);
+  }
+  return true;
+};

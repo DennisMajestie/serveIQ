@@ -74,6 +74,8 @@ export class LoginComponent {
             return;
           }
           this.router.navigate(['/supervisor/orders']);
+        } else if (role === 'chef') {
+          this.router.navigate(['/chef']);
         } else if (role === 'rider') {
           const adminUrl = (this.env.adminBaseUrl || this.env.publicMenuBaseUrl).replace(/\/+$/, '');
           const staffToken = this.authService.getToken();

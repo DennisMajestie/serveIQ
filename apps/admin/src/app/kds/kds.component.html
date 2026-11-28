@@ -10,11 +10,24 @@
       </div>
     </div>
     <div class="topbar-actions">
+      <span class="active-chef" *ngIf="activeChef()">
+        <span class="active-chef-avatar">{{ activeChef().charAt(0).toUpperCase() }}</span>
+        <span>Active chef · <strong>{{ activeChef() }}</strong></span>
+      </span>
       <span class="muted-chip" (click)="toggleMute()" [class.muted]="muted()">
         {{ muted() ? '&#128263; Muted' : '&#128266; Sound On' }}
       </span>
     </div>
   </header>
+
+  <div class="crew-strip" *ngIf="kitchenCrew().length > 0">
+    <span class="crew-label">Kitchen crew</span>
+    <span class="crew-chip" *ngFor="let member of kitchenCrew()" [class.is-me]="member.id === activeChefId()" [class.busy]="!member.isAvailable">
+      <span class="crew-dot"></span>
+      {{ member.fullName }}
+      <span class="crew-count">{{ member.isAvailable ? 'Available' : member.activeOrders + ' active' }}</span>
+    </span>
+  </div>
 
   <ng-container *ngIf="!isKdsEnabled()">
     <div class="disabled-banner">
@@ -68,6 +81,7 @@
             >
             <span class="item-qty">{{ item.quantity }}x</span>
             <span class="item-name">{{ item.menuItemName }}</span>
+            <span class="accepted-by" *ngIf="item.acceptedByName">by {{ item.acceptedByName }}</span>
             <span
               class="item-timer"
               [class.urgent]="isUrgent(order.timerEndsAt)"

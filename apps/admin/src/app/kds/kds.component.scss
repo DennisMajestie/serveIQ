@@ -102,6 +102,58 @@
   color: var(--error);
 }
 
+.active-chef {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px 4px 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--on-surface);
+  font-size: 12px;
+}
+.active-chef strong { color: var(--primary); }
+.active-chef-avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+}
+
+.crew-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.crew-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--on-surface-variant);
+  margin-right: 4px;
+}
+.crew-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--surface-container);
+  color: var(--on-surface);
+  font-size: 11px;
+}
+.crew-chip.is-me { background: color-mix(in srgb, var(--primary) 14%, transparent); }
+.crew-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--primary); }
+.crew-chip.busy .crew-dot { background: var(--tertiary); }
+.crew-count { color: var(--on-surface-variant); font-size: 10px; }
+
 /* Banner */
 .disabled-banner {
   display: flex;
@@ -243,6 +295,12 @@
   font-size: 15px;
   font-weight: 600;
   flex: 1;
+}
+.accepted-by {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+  white-space: nowrap;
 }
 
 .status-chip {

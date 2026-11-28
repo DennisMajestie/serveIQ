@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 import { API_CONFIG, buildUrl } from './api.config';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment.token';
-import { OrderItem, AddOrderItemsRequest, Order, OrderGroup, ApproveOrderRequest, DeclineOrderRequest } from '@serveiq/shared/models';
+import { OrderItem, AddOrderItemsRequest, Order, OrderGroup, KitchenCrewMember, ApproveOrderRequest, AcceptOrderRequest, DeclineOrderRequest } from '@serveiq/shared/models';
 
 @Injectable({ providedIn: 'root' })
 export class OrdersApiService extends BaseApiService {
@@ -55,6 +55,10 @@ export class OrdersApiService extends BaseApiService {
     return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.preparing);
   }
 
+  getKitchenCrew(): Observable<KitchenCrewMember[]> {
+    return this.get<KitchenCrewMember[]>(API_CONFIG.endpoints.orders.kitchenCrew);
+  }
+
   getReadyForPickup(): Observable<OrderGroup[]> {
     return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.readyForPickup);
   }
@@ -75,8 +79,8 @@ export class OrdersApiService extends BaseApiService {
     return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.confirmPickup, { id }), {});
   }
 
-  acceptOrder(id: string): Observable<Order> {
-    return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.accept, { id }), {});
+  acceptOrder(id: string, body: AcceptOrderRequest): Observable<Order> {
+    return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.accept, { id }), body);
   }
 
   bumpOrder(id: string): Observable<Order> {
