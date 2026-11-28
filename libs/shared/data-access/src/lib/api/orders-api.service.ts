@@ -43,6 +43,14 @@ export class OrdersApiService extends BaseApiService {
     return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.pending);
   }
 
+  getActiveOrders(query?: { page?: number; per_page?: number; waiterId?: string }): Observable<OrderGroup[]> {
+    const queryParams: Record<string, string> = {};
+    if (query?.page) queryParams['page'] = String(query.page);
+    if (query?.per_page) queryParams['per_page'] = String(query.per_page);
+    if (query?.waiterId) queryParams['waiter_id'] = query.waiterId;
+    return this.get<OrderGroup[]>(API_CONFIG.endpoints.orders.active, undefined, queryParams);
+  }
+
   approveOrder(id: string, body: ApproveOrderRequest): Observable<Order> {
     return this.post<Order>(buildUrl(API_CONFIG.endpoints.orders.approve, { id }), body);
   }

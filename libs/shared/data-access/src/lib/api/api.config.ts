@@ -95,6 +95,7 @@ export const API_CONFIG = {
       delete: '/api/v1/orders/:id',
       cancel: '/api/v1/orders/:id/cancel',
       pending: '/api/v1/orders/pending',
+      active: '/api/v1/orders/active',
       approve: '/api/v1/orders/:id/approve',
       decline: '/api/v1/orders/:id/decline',
       preparing: '/api/v1/orders/preparing',
